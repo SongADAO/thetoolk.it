@@ -7,7 +7,7 @@ import {
   type ServiceFormField,
   type ServiceFormState,
 } from "@/app/components/ServiceForm";
-import { YoutubeContext } from "@/app/services/youtube/YoutubeContext";
+import { YoutubeContext } from "@/app/services/youtube/Context";
 
 export function YoutubeForm() {
   const { clientId, setClientId, clientSecret, setClientSecret } =

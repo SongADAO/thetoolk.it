@@ -4,8 +4,8 @@ import { use } from "react";
 import { FaYoutube } from "react-icons/fa6";
 
 import { ServiceSwitch } from "@/app/components/ServiceSwitch";
-import { YoutubeContext } from "@/app/services/youtube/YoutubeContext";
-import { YoutubeForm } from "@/app/services/youtube/YoutubeForm";
+import { YoutubeContext } from "@/app/services/youtube/Context";
+import { YoutubeForm } from "@/app/services/youtube/Form";
 
 export function YoutubeSwitch() {
   const { isComplete, isEnabled, configId, setIsEnabled } = use(YoutubeContext);

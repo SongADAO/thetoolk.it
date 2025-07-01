@@ -3,15 +3,15 @@
 import { ReactNode, useMemo, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
-import { YoutubeTokens } from "@/app/services/youtube/types";
 import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
   hasTokenExpired,
   refreshAccessToken,
   shouldHandleCodeAndScope,
-} from "@/app/services/youtube/youtube-auth";
-import { YoutubeContext } from "@/app/services/youtube/YoutubeContext";
+} from "@/app/services/youtube/auth";
+import { YoutubeContext } from "@/app/services/youtube/Context";
+import { YoutubeTokens } from "@/app/services/youtube/types";
 
 interface Props {
   children: ReactNode;

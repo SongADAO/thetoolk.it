@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { use, useEffect } from "react";
 
-import { YoutubeContext } from "@/app/services/youtube/YoutubeContext";
+import { YoutubeContext } from "@/app/services/youtube/Context";
 
 export function YoutubeRedirectHandler() {
   const { initAuthCodes } = use(YoutubeContext);

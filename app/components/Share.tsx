@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 
 import { S3Provider } from "@/app/services/s3/S3Provider";
-import { YoutubeAuthorize } from "@/app/services/youtube/YoutubeAuthorize";
-import { YoutubeProvider } from "@/app/services/youtube/YoutubeProvider";
-import { YoutubeRedirectHandler } from "@/app/services/youtube/YoutubeRedirectHandler";
-import { YoutubeSwitch } from "@/app/services/youtube/YoutubeSwitch";
+import { YoutubeAuthorize } from "@/app/services/youtube/Authorize";
+import { YoutubeProvider } from "@/app/services/youtube/Provider";
+import { YoutubeRedirectHandler } from "@/app/services/youtube/RedirectHandler";
+import { YoutubeSwitch } from "@/app/services/youtube/Switch";
 
 export default function Share() {
   return (
