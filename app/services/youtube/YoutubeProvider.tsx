@@ -11,13 +11,13 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   const [clientId, setClientId] = useLocalStorage(
     "thetoolkit-youtube-client-id",
     "",
-    { initializeWithValue: false },
+    { initializeWithValue: true },
   );
 
   const [clientSecret, setClientSecret] = useLocalStorage(
     "thetoolkit-youtube-client-secret",
     "",
-    { initializeWithValue: false },
+    { initializeWithValue: true },
   );
 
   const providerValues = useMemo(
