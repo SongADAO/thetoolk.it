@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 import { YoutubeTokens } from "@/app/services/youtube/types";
@@ -9,6 +10,7 @@ import {
   getAuthorizationUrl,
   hasTokenExpired,
   refreshAccessToken,
+  shouldHandleCodeAndScope,
 } from "@/app/services/youtube/youtube-auth";
 import { YoutubeContext } from "@/app/services/youtube/YoutubeContext";
 
@@ -17,6 +19,11 @@ interface Props {
 }
 
 export function YoutubeProvider({ children }: Readonly<Props>) {
+  const searchParams = useSearchParams();
+
+  const queryCode = searchParams.get("code");
+  const queryScope = searchParams.get("scope");
+
   const [clientId, setClientId] = useLocalStorage(
     "thetoolkit-youtube-client-id",
     "",
@@ -123,6 +130,24 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
     return accessToken;
   }
+
+  async function initAuthCodes(code: string | null, scope: string | null) {
+    try {
+      if (code && scope && shouldHandleCodeAndScope(code, scope)) {
+        await exchangeCode(code);
+
+        window.location.href = "/";
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    initAuthCodes(queryCode, queryScope);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryCode, queryScope]);
 
   const providerValues = useMemo(
     () => {

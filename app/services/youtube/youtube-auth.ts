@@ -109,9 +109,14 @@ function hasTokenExpired(tokenExpiry: Date | null) {
   return tokenExpiry && now.getTime() > tokenExpiry.getTime() - bufferTime;
 }
 
+function shouldHandleCodeAndScope(code: string | null, scope: string | null) {
+  return code && scope?.includes("https://www.googleapis.com");
+}
+
 export {
   exchangeCodeForTokens,
   getAuthorizationUrl,
   hasTokenExpired,
   refreshAccessToken,
+  shouldHandleCodeAndScope,
 };
