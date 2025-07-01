@@ -29,12 +29,8 @@ export function YoutubeForm() {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function saveForm(previousState: FormState, formData: FormData): FormState {
-    console.log(previousState);
-    console.log(formData);
-    console.log(formData.get("clientId"));
-    console.log(formData.get("clientSecret"));
-
     const newState = fromFormData(formData);
     setClientId(newState.clientId);
     setClientSecret(newState.clientSecret);
