@@ -1,5 +1,3 @@
-"use client";
-
 import { Form } from "radix-ui";
 import { useActionState } from "react";
 
