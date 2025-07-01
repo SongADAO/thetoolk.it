@@ -1,5 +1,3 @@
-"use client";
-
 import { S3Provider } from "@/app/services/s3/S3Provider";
 import { YoutubeProvider } from "@/app/services/youtube/YoutubeProvider";
 

@@ -9,19 +9,19 @@ import { Providers } from "./providers";
 
 // eslint-disable-next-line new-cap
 const geistSans = Geist({
-  variable: "--font-geist-sans",
   subsets: ["latin"],
+  variable: "--font-geist-sans",
 });
 
 // eslint-disable-next-line new-cap
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
-  title: "TheToolk.it",
   description: "TheToolk.it",
+  title: "TheToolk.it",
 };
 
 export default function RootLayout({
