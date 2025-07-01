@@ -26,14 +26,17 @@ export function YoutubeSwitch() {
 
   return (
     <Accordion.Root
-      className="w-[300px] rounded-md bg-gray-300 shadow-[0_2px_10px] shadow-black/5"
+      className="w-[300px] rounded bg-gray-300 shadow-[0_2px_10px] shadow-black/5"
       collapsible
       onValueChange={(value: string) => setIsOpen(value === "open")}
       type="single"
       value={isOpen ? "open" : "closed"}
     >
       <Accordion.Item value="open">
-        <div className="grid grid-cols-[40px_1fr] items-center justify-between rounded border-b border-gray-200 bg-[#f00] p-2">
+        <div
+          className="grid grid-cols-[40px_1fr] items-center justify-between rounded bg-gray-400 p-2 data-[enabled=yes]:bg-[#f00]"
+          data-enabled={isEnabled ? "yes" : "no"}
+        >
           <Checkbox.Root
             checked={isEnabled}
             className="shadow-blackA4 hover:bg-violet3 flex size-[25px] appearance-none items-center justify-center rounded bg-white shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px_black]"
