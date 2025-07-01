@@ -49,11 +49,16 @@ async function exchangeCodeForTokens(
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
 
+  const refreshExpiryTime = new Date(
+    Date.now() + tokens.refresh_token_expires_in * 1000,
+  );
+
   // Store in localStorage
   return {
     access_token: tokens.access_token,
     expires_at: expiryTime.toISOString(),
     refresh_token: tokens.refresh_token,
+    refresh_token_expires_in: refreshExpiryTime.toISOString(),
   };
 }
 
@@ -92,10 +97,15 @@ async function refreshAccessToken(
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
 
+  const refreshExpiryTime = new Date(
+    Date.now() + tokens.refresh_token_expires_in * 1000,
+  );
+
   return {
     access_token: tokens.access_token,
     expires_at: expiryTime.toISOString(),
     refresh_token: tokens.refresh_token,
+    refresh_token_expires_in: refreshExpiryTime.toISOString(),
   };
 }
 

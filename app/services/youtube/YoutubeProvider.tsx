@@ -36,10 +36,6 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const isComplete = clientId !== "" && clientSecret !== "";
-
-  const configId = `${clientId}-${clientSecret}`;
-
   const [accessToken, setAccessToken] = useLocalStorage(
     "thetoolkit-youtube-access-token",
     "",
@@ -52,11 +48,28 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const [tokenExpiry, setTokenExpiry] = useLocalStorage(
-    "thetoolkit-youtube-refresh-token",
+  const [accessTokenExpiry, setAccessTokenExpiry] = useLocalStorage(
+    "thetoolkit-youtube-access-token-expiry",
     "",
     { initializeWithValue: true },
   );
+
+  const [refreshTokenExpiry, setRefreshTokenExpiry] = useLocalStorage(
+    "thetoolkit-youtube-refresh-token-expiry",
+    "",
+    { initializeWithValue: true },
+  );
+
+  const isComplete = clientId !== "" && clientSecret !== "";
+
+  const isAuthorized =
+    accessToken !== "" &&
+    refreshToken !== "" &&
+    accessTokenExpiry !== "" &&
+    refreshTokenExpiry !== "" &&
+    !hasTokenExpired(refreshTokenExpiry);
+
+  const configId = `${clientId}-${clientSecret}`;
 
   const [error, setError] = useState("");
 
@@ -84,7 +97,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
       setAccessToken(tokens.access_token);
       setRefreshToken(tokens.refresh_token);
-      setTokenExpiry(tokens.expires_at);
+      setAccessTokenExpiry(tokens.expires_at);
+      setRefreshTokenExpiry(tokens.refresh_token_expires_in);
 
       setError("");
 
@@ -112,7 +126,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
       setAccessToken(tokens.access_token);
       setRefreshToken(tokens.refresh_token);
-      setTokenExpiry(tokens.expires_at);
+      setAccessTokenExpiry(tokens.expires_at);
+      setRefreshTokenExpiry(tokens.refresh_token_expires_in);
 
       setError("");
 
@@ -132,7 +147,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   // Get valid access token (refresh if needed)
   async function getValidAccessToken(): Promise<string> {
-    if (hasTokenExpired(tokenExpiry)) {
+    if (hasTokenExpired(accessTokenExpiry)) {
       console.log("Token expired or about to expire, refreshing...");
       const newTokens = await refreshTokens();
 
@@ -173,6 +188,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
         exchangeCode,
         getValidAccessToken,
         initAuthCodes,
+        isAuthorized,
         isComplete,
         isEnabled,
         setClientId,
@@ -187,10 +203,12 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       clientSecret,
       configId,
       error,
+      isAuthorized,
       isComplete,
       isEnabled,
       refreshToken,
-      tokenExpiry,
+      accessTokenExpiry,
+      refreshTokenExpiry,
     ],
   );
 
