@@ -2,7 +2,7 @@
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const USE_TESTNET = process.env.NEXT_PUBLIC_USE_TESTNET === true || process.env.NEXT_PUBLIC_USE_TESTNET === "true";
+export const USE_TESTNET = process.env.NEXT_PUBLIC_USE_TESTNET === "true";
 
 // API Keys
 // =============================================================================
