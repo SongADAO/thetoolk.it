@@ -373,6 +373,7 @@ module.exports = {
     // TODO
     // ---------------------------------------------------------------------
     "sort-keys": "off",
+    "@typescript-eslint/max-params": "off",
     // "@typescript-eslint/no-unnecessary-condition": "off",
   },
 };
