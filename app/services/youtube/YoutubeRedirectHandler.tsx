@@ -10,14 +10,14 @@ export function YoutubeRedirectHandler() {
 
   const searchParams = useSearchParams();
 
-  const queryCode = searchParams.get("code");
-  const queryScope = searchParams.get("scope");
+  const code = searchParams.get("code");
+  const scope = searchParams.get("scope");
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    initAuthCodes(queryCode, queryScope);
+    initAuthCodes(code, scope);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryCode, queryScope]);
+  }, [code, scope]);
 
   return null;
 }
