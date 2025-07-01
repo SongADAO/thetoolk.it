@@ -9,11 +9,11 @@ import { YoutubeForm } from "@/app/services/youtube/Form";
 export function YoutubeSwitch() {
   const {
     brandColor,
-    label,
+    configId,
     icon,
     isComplete,
     isEnabled,
-    configId,
+    label,
     setIsEnabled,
   } = use(YoutubeContext);
 
