@@ -15,11 +15,11 @@ interface ServiceFormField {
 }
 
 interface Props {
-  initial: ServiceFormState;
   fields: ServiceFormField[];
+  initial: ServiceFormState;
 }
 
-function ServiceForm({ initial, fields }: Readonly<Props>) {
+function ServiceForm({ fields, initial }: Readonly<Props>) {
   function fromFormData(formData: FormData): ServiceFormState {
     return Object.fromEntries(
       fields.map((field) => [field.name, String(formData.get(field.name))]),
