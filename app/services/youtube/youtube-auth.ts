@@ -99,14 +99,20 @@ async function refreshAccessToken(
   };
 }
 
-function hasTokenExpired(tokenExpiry: Date | null) {
+function hasTokenExpired(tokenExpiry: string | null) {
+  if (!tokenExpiry) {
+    return false;
+  }
+
+  const tokenExpiryDate = new Date(tokenExpiry);
+
   // Check if token is expired or about to expire (5 minutes buffer)
   const now = new Date();
 
   // 5 minutes in milliseconds
   const bufferTime = 5 * 60 * 1000;
 
-  return tokenExpiry && now.getTime() > tokenExpiry.getTime() - bufferTime;
+  return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
 }
 
 function shouldHandleCodeAndScope(code: string | null, scope: string | null) {

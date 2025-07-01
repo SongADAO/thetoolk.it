@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { S3Provider } from "@/app/services/s3/S3Provider";
+import { YoutubeAuthorize } from "@/app/services/youtube/YoutubeAuthorize";
 import { YoutubeProvider } from "@/app/services/youtube/YoutubeProvider";
 import { YoutubeRedirectHandler } from "@/app/services/youtube/YoutubeRedirectHandler";
 import { YoutubeSwitch } from "@/app/services/youtube/YoutubeSwitch";
@@ -11,6 +12,7 @@ export default function Share() {
       <S3Provider>
         <YoutubeProvider>
           <YoutubeSwitch />
+          <YoutubeAuthorize />
           <Suspense fallback={<div>Loading...</div>}>
             <YoutubeRedirectHandler />
           </Suspense>

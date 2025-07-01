@@ -40,11 +40,23 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   const configId = `${clientId}-${clientSecret}`;
 
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useLocalStorage(
+    "thetoolkit-youtube-access-token",
+    "",
+    { initializeWithValue: true },
+  );
 
-  const [refreshToken, setRefreshToken] = useState("");
+  const [refreshToken, setRefreshToken] = useLocalStorage(
+    "thetoolkit-youtube-refresh-token",
+    "",
+    { initializeWithValue: true },
+  );
 
-  const [tokenExpiry, setTokenExpiry] = useState<Date | null>(null);
+  const [tokenExpiry, setTokenExpiry] = useLocalStorage(
+    "thetoolkit-youtube-refresh-token",
+    "",
+    { initializeWithValue: true },
+  );
 
   const [error, setError] = useState("");
 
@@ -69,7 +81,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
       setAccessToken(tokens.access_token);
       setRefreshToken(tokens.refresh_token);
-      setTokenExpiry(new Date(tokens.expires_at));
+      setTokenExpiry(tokens.expires_at);
 
       setError("");
 
@@ -97,7 +109,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
       setAccessToken(tokens.access_token);
       setRefreshToken(tokens.refresh_token);
-      setTokenExpiry(new Date(tokens.expires_at));
+      setTokenExpiry(tokens.expires_at);
 
       setError("");
 
@@ -140,7 +152,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       if (code && scope && shouldHandleCodeAndScope(code, scope)) {
         await exchangeCode(code);
 
-        window.location.href = "/";
+        // window.location.href = "/";
       }
     } catch (err) {
       console.error(err);
