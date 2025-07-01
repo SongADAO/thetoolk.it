@@ -10,6 +10,7 @@ interface YoutubeContextType {
   error: string;
   exchangeCode: (code: string) => Promise<YoutubeTokens | null>;
   getValidAccessToken: () => Promise<string>;
+  initAuthCodes: (code: string | null, scope: string | null) => Promise<void>;
   isComplete: boolean;
   isEnabled: boolean;
   setClientId: (clientId: string) => void;
@@ -26,6 +27,7 @@ const YoutubeContext = createContext<YoutubeContextType>({
   error: "",
   exchangeCode: async (code: string) => null,
   getValidAccessToken: async () => "",
+  initAuthCodes: async (code: string | null, scope: string | null) => {},
   isComplete: false,
   isEnabled: false,
   setClientId: (clientId: string) => {},

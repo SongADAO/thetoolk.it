@@ -1,7 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 import { YoutubeTokens } from "@/app/services/youtube/types";
@@ -19,11 +18,6 @@ interface Props {
 }
 
 export function YoutubeProvider({ children }: Readonly<Props>) {
-  const searchParams = useSearchParams();
-
-  const queryCode = searchParams.get("code");
-  const queryScope = searchParams.get("scope");
-
   const [isEnabled, setIsEnabled] = useLocalStorage(
     "thetoolkit-youtube-is-enabled",
     false,
@@ -153,12 +147,6 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    initAuthCodes(queryCode, queryScope);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryCode, queryScope]);
-
   const providerValues = useMemo(
     () => {
       return {
@@ -169,6 +157,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
         error,
         exchangeCode,
         getValidAccessToken,
+        initAuthCodes,
         isComplete,
         isEnabled,
         setClientId,
