@@ -61,7 +61,10 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   const [error, setError] = useState("");
 
   function getRedirectUri() {
-    return window.location.href;
+    const url = new URL(window.location.href);
+    const baseUrl = url.origin + url.pathname;
+
+    return baseUrl;
   }
 
   function authorize() {
