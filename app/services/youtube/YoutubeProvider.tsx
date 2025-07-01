@@ -24,6 +24,12 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   const queryCode = searchParams.get("code");
   const queryScope = searchParams.get("scope");
 
+  const [isEnabled, setIsEnabled] = useLocalStorage(
+    "thetoolkit-youtube-is-enabled",
+    false,
+    { initializeWithValue: false },
+  );
+
   const [clientId, setClientId] = useLocalStorage(
     "thetoolkit-youtube-client-id",
     "",
@@ -35,6 +41,10 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     "",
     { initializeWithValue: true },
   );
+
+  const isComplete = clientId !== "" && clientSecret !== "";
+
+  const configId = `${clientId}-${clientSecret}`;
 
   const [accessToken, setAccessToken] = useState("");
 
@@ -155,15 +165,29 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
         authorize,
         clientId,
         clientSecret,
+        configId,
         error,
         exchangeCode,
         getValidAccessToken,
+        isComplete,
+        isEnabled,
         setClientId,
         setClientSecret,
+        setIsEnabled,
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [clientId, clientSecret, accessToken, refreshToken, tokenExpiry, error],
+    [
+      accessToken,
+      clientId,
+      clientSecret,
+      configId,
+      error,
+      isComplete,
+      isEnabled,
+      refreshToken,
+      tokenExpiry,
+    ],
   );
 
   return (

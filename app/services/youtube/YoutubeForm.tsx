@@ -55,7 +55,7 @@ export function YoutubeForm() {
           defaultValue={state.clientId}
           disabled={isPending}
           placeholder="Client ID"
-          required
+          // required
           title="Client ID"
           type="text"
         />
@@ -77,7 +77,7 @@ export function YoutubeForm() {
           defaultValue={state.clientSecret}
           disabled={isPending}
           placeholder="Client Secret"
-          required
+          // required
           title="Client Secret"
           type="text"
         />
@@ -91,7 +91,10 @@ export function YoutubeForm() {
         </div>
       </Form.Field>
 
-      <Form.Submit disabled={isPending}>
+      <Form.Submit
+        className="w-full rounded bg-black px-2 py-2 text-white"
+        disabled={isPending}
+      >
         {isPending ? <ButtonSpinner /> : null}
         Save
       </Form.Submit>
