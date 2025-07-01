@@ -96,9 +96,9 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       );
 
       setAccessToken(tokens.access_token);
+      setAccessTokenExpiry(tokens.access_token_expires_at);
       setRefreshToken(tokens.refresh_token);
-      setAccessTokenExpiry(tokens.expires_at);
-      setRefreshTokenExpiry(tokens.refresh_token_expires_in);
+      setRefreshTokenExpiry(tokens.refresh_token_expires_at);
 
       setError("");
 
@@ -125,9 +125,9 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       );
 
       setAccessToken(tokens.access_token);
+      setAccessTokenExpiry(tokens.access_token_expires_at);
       setRefreshToken(tokens.refresh_token);
-      setAccessTokenExpiry(tokens.expires_at);
-      setRefreshTokenExpiry(tokens.refresh_token_expires_in);
+      setRefreshTokenExpiry(tokens.refresh_token_expires_at);
 
       setError("");
 

@@ -56,9 +56,9 @@ async function exchangeCodeForTokens(
   // Store in localStorage
   return {
     access_token: tokens.access_token,
-    expires_at: expiryTime.toISOString(),
+    access_token_expires_at: expiryTime.toISOString(),
     refresh_token: tokens.refresh_token,
-    refresh_token_expires_in: refreshExpiryTime.toISOString(),
+    refresh_token_expires_at: refreshExpiryTime.toISOString(),
   };
 }
 
@@ -103,9 +103,9 @@ async function refreshAccessToken(
 
   return {
     access_token: tokens.access_token,
-    expires_at: expiryTime.toISOString(),
+    access_token_expires_at: expiryTime.toISOString(),
     refresh_token: tokens.refresh_token,
-    refresh_token_expires_in: refreshExpiryTime.toISOString(),
+    refresh_token_expires_at: refreshExpiryTime.toISOString(),
   };
 }
 
