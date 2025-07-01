@@ -1,8 +1,13 @@
 "use client";
 
 import { ReactNode, useMemo, useState } from "react";
+import { FaYoutube } from "react-icons/fa6";
 import { useLocalStorage } from "usehooks-ts";
 
+import type {
+  ServiceFormField,
+  ServiceFormState,
+} from "@/app/components/ServiceForm";
 import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
@@ -18,6 +23,14 @@ interface Props {
 }
 
 export function YoutubeProvider({ children }: Readonly<Props>) {
+  const label = "YouTube";
+
+  const brandColor = "youtube";
+
+  const icon = <FaYoutube className="size-6" />;
+
+  const [error, setError] = useState("");
+
   const [isEnabled, setIsEnabled] = useLocalStorage(
     "thetoolkit-youtube-is-enabled",
     false,
@@ -70,8 +83,6 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     !hasTokenExpired(refreshTokenExpiry);
 
   const configId = `${clientId}-${clientSecret}`;
-
-  const [error, setError] = useState("");
 
   function getRedirectUri() {
     const url = new URL(window.location.href);
@@ -177,20 +188,45 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
+  const serviceFormInitial: ServiceFormState = {
+    clientId,
+    clientSecret,
+  };
+
+  const serviceFormFields: ServiceFormField[] = [
+    {
+      label: "Client ID",
+      name: "clientId",
+      placeholder: "Client ID",
+      setter: setClientId,
+    },
+    {
+      label: "Client Secret",
+      name: "clientSecret",
+      placeholder: "Client Secret",
+      setter: setClientSecret,
+    },
+  ];
+
   const providerValues = useMemo(
     () => {
       return {
         authorize,
+        brandColor,
         clientId,
         clientSecret,
         configId,
         error,
         exchangeCode,
         getValidAccessToken,
+        icon,
         initAuthCodes,
         isAuthorized,
         isComplete,
         isEnabled,
+        label,
+        serviceFormFields,
+        serviceFormInitial,
         setClientId,
         setClientSecret,
         setIsEnabled,
@@ -199,16 +235,20 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       accessToken,
+      accessTokenExpiry,
+      brandColor,
       clientId,
       clientSecret,
       configId,
       error,
+      icon,
       isAuthorized,
       isComplete,
       isEnabled,
+      label,
       refreshToken,
-      accessTokenExpiry,
       refreshTokenExpiry,
+      serviceFormInitial,
     ],
   );
 

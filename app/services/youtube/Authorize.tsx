@@ -2,11 +2,10 @@
 
 import { use } from "react";
 
-// import { FaYoutube } from "react-icons/fa6";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 
 export function YoutubeAuthorize() {
-  const { isComplete, isEnabled, isAuthorized, authorize } =
+  const { isComplete, isEnabled, isAuthorized, authorize, icon } =
     use(YoutubeContext);
 
   if (!isComplete || !isEnabled) {
@@ -15,7 +14,7 @@ export function YoutubeAuthorize() {
 
   return (
     <button onClick={authorize} type="button">
-      {isAuthorized ? "Reauthorize" : "Authorize"} YouTube
+      {isAuthorized ? "Reauthorize" : "Authorize"} YouTube {icon}
     </button>
   );
 }

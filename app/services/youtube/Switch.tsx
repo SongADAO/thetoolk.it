@@ -1,23 +1,30 @@
 "use client";
 
 import { use } from "react";
-import { FaYoutube } from "react-icons/fa6";
 
 import { ServiceSwitch } from "@/app/components/ServiceSwitch";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 import { YoutubeForm } from "@/app/services/youtube/Form";
 
 export function YoutubeSwitch() {
-  const { isComplete, isEnabled, configId, setIsEnabled } = use(YoutubeContext);
+  const {
+    brandColor,
+    label,
+    icon,
+    isComplete,
+    isEnabled,
+    configId,
+    setIsEnabled,
+  } = use(YoutubeContext);
 
   return (
     <ServiceSwitch
-      brandColor="youtube"
+      brandColor={brandColor}
       configId={configId}
-      icon={<FaYoutube className="h-6 w-6" />}
+      icon={icon}
       isComplete={isComplete}
       isEnabled={isEnabled}
-      label="YouTube"
+      label={label}
       setIsEnabled={setIsEnabled}
     >
       <YoutubeForm />
