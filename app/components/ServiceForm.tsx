@@ -21,13 +21,9 @@ interface Props {
 
 function ServiceForm({ initial, fields }: Readonly<Props>) {
   function fromFormData(formData: FormData): ServiceFormState {
-    const newState: ServiceFormState = {};
-
-    fields.forEach((field) => {
-      newState[field.name] = String(formData.get(field.name));
-    });
-
-    return newState;
+    return Object.fromEntries(
+      fields.map((field) => [field.name, String(formData.get(field.name))]),
+    );
   }
 
   function saveForm(
@@ -35,13 +31,10 @@ function ServiceForm({ initial, fields }: Readonly<Props>) {
     previousState: ServiceFormState,
     formData: FormData,
   ): ServiceFormState {
-    const newState = fromFormData(formData);
-
-    fields.forEach((field) => {
-      field.setter(newState[field.name]);
-    });
-
-    return newState;
+    return fields.reduce((state, { name, setter }) => {
+      setter(state[name]);
+      return state;
+    }, fromFormData(formData));
   }
 
   const [state, formAction, isPending] = useActionState<
