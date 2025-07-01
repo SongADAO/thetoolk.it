@@ -1,0 +1,20 @@
+{
+    "extends": [
+        "./.scss.stylelintrc.json",
+        "stylelint-prettier/recommended"
+    ],
+    "rules": {
+        "prettier/prettier": [
+            true,
+            {
+                "printWidth": 120
+            }
+        ],
+        "selector-pseudo-class-no-unknown": [
+            true,
+            {
+                "ignorePseudoClasses": ["deep"]
+            }
+        ]
+    }
+}

@@ -1,0 +1,10 @@
+/.git/
+/node_modules/
+/dist/
+/dist-ssr/
+/package-lock.json
+
+vite-env.d.ts
+next-env.d.ts
+
+/public/fonts

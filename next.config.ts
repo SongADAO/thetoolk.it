@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    reactCompiler: true,
+    staleTimes: {
+      dynamic: 0,
+    },
+  },
+  reactStrictMode: true,
 };
 
 export default nextConfig;
