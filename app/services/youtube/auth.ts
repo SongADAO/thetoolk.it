@@ -1,3 +1,12 @@
+interface GoogleTokenResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  refresh_token_expires_in: number;
+  scope: string;
+  token_type: string;
+}
+
 function getAuthorizationUrl(clientId: string, redirectUri: string) {
   const SCOPES = [
     "https://www.googleapis.com/auth/youtube.readonly",
@@ -14,6 +23,22 @@ function getAuthorizationUrl(clientId: string, redirectUri: string) {
   });
 
   return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+}
+
+function formatTokens(tokens: GoogleTokenResponse) {
+  // Calculate expiry time
+  const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
+
+  const refreshExpiryTime = new Date(
+    Date.now() + tokens.refresh_token_expires_in * 1000,
+  );
+
+  return {
+    accessToken: tokens.access_token,
+    accessTokenExpiresAt: expiryTime.toISOString(),
+    refreshToken: tokens.refresh_token,
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
+  };
 }
 
 // Exchange authorization code for access token
@@ -46,19 +71,7 @@ async function exchangeCodeForTokens(
 
   const tokens = await tokenResponse.json();
 
-  // Calculate expiry time
-  const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
-
-  const refreshExpiryTime = new Date(
-    Date.now() + tokens.refresh_token_expires_in * 1000,
-  );
-
-  return {
-    accessToken: tokens.access_token,
-    accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.refresh_token,
-    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
-  };
+  return formatTokens(tokens);
 }
 
 // Refresh access token using refresh token
@@ -93,19 +106,7 @@ async function refreshAccessToken(
 
   const tokens = await tokenResponse.json();
 
-  // Calculate expiry time
-  const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
-
-  const refreshExpiryTime = new Date(
-    Date.now() + tokens.refresh_token_expires_in * 1000,
-  );
-
-  return {
-    accessToken: tokens.access_token,
-    accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.refresh_token,
-    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
-  };
+  return formatTokens(tokens);
 }
 
 function hasTokenExpired(tokenExpiry: string | null) {
