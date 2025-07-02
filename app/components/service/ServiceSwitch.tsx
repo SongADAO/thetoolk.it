@@ -39,7 +39,7 @@ function ServiceSwitch({
 
   return (
     <Accordion.Root
-      className="group rounded bg-gray-300"
+      className={`group rounded bg-gray-300 data-[enabled=yes]:text-brand-${brandColor}-inverse data-[enabled=yes]:bg-brand-${brandColor}`}
       collapsible
       data-enabled={isEnabled ? "yes" : "no"}
       onValueChange={(value: string) => setIsOpen(value === "open")}
@@ -75,7 +75,7 @@ function ServiceSwitch({
           </Accordion.Trigger>
         </div>
         <Accordion.Content className="data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown overflow-hidden">
-          <div className="px-5 py-[15px]">{children}</div>
+          <div className="m-2 rounded bg-[#fff0] p-2">{children}</div>
         </Accordion.Content>
       </Accordion.Item>
     </Accordion.Root>

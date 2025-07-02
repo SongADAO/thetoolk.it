@@ -49,6 +49,7 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
           <Form.Label>{field.label}</Form.Label>
           <Form.Control
             autoComplete="off"
+            className="rounded text-black"
             defaultValue={state[field.name]}
             disabled={isPending}
             placeholder={field.placeholder}
@@ -68,7 +69,7 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
       ))}
 
       <Form.Submit
-        className="flex w-full items-center justify-center gap-2 rounded bg-black px-2 py-2 text-white"
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-gray-900"
         disabled={isPending}
       >
         {isPending ? <ButtonSpinner /> : null}
