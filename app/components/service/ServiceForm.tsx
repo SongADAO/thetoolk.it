@@ -68,7 +68,7 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
       ))}
 
       <Form.Submit
-        className="w-full rounded bg-black px-2 py-2 text-white"
+        className="flex w-full items-center justify-center gap-2 rounded bg-black px-2 py-2 text-white"
         disabled={isPending}
       >
         {isPending ? <ButtonSpinner /> : null}
