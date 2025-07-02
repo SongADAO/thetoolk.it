@@ -10,6 +10,7 @@ import {
 } from "@/app/services/youtube/types";
 
 interface YoutubeContextType {
+  authorizationExpiresAt: string;
   authorize: () => void;
   brandColor: string;
   configId: string;
@@ -30,6 +31,7 @@ interface YoutubeContextType {
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 const YoutubeContext = createContext<YoutubeContextType>({
+  authorizationExpiresAt: "",
   authorize: () => {},
   brandColor: "",
   configId: "",

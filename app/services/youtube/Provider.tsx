@@ -67,6 +67,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     authorization.refreshTokenExpiresAt !== "" &&
     !hasTokenExpired(authorization.refreshTokenExpiresAt);
 
+  const authorizationExpiresAt = authorization.refreshTokenExpiresAt;
+
   function getRedirectUri() {
     const url = new URL(window.location.href);
     const baseUrl = url.origin + url.pathname;
@@ -197,6 +199,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   const providerValues = useMemo(
     () => {
       return {
+        authorizationExpiresAt,
         authorize,
         brandColor,
         configId,

@@ -2,11 +2,13 @@
 @plugin "@tailwindcss/forms";
 
 @theme {
-  --color-brand-youtube: #f00;
+  --color-brand-youtube: #ea333d;
+  --color-brand-youtube-inverse: #fff;
 }
 
-@source inline("bg-brand-youtube");
-@source inline("data-[enabled=yes]:bg-brand-youtube");
+@source inline("group-data-[enabled=yes]:bg-brand-youtube");
+@source inline("group-data-[enabled=yes]:text-brand-youtube");
+@source inline("group-data-[enabled=yes]:text-brand-youtube-inverse");
 
 /* :root {
   --background: #ffffff;

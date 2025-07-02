@@ -39,29 +39,31 @@ function ServiceSwitch({
 
   return (
     <Accordion.Root
-      className="w-[300px] rounded bg-gray-300 shadow-[0_2px_10px] shadow-black/5"
+      className="group rounded bg-gray-300"
       collapsible
+      data-enabled={isEnabled ? "yes" : "no"}
       onValueChange={(value: string) => setIsOpen(value === "open")}
       type="single"
       value={isOpen ? "open" : "closed"}
     >
       <Accordion.Item value="open">
         <div
-          className={`grid grid-cols-[40px_1fr] items-center justify-between rounded bg-gray-400 p-2 data-[enabled=yes]:bg-brand-${brandColor}`}
-          data-enabled={isEnabled ? "yes" : "no"}
+          className={`flex items-center justify-between gap-2 rounded p-2 text-black group-data-[enabled=yes]:text-brand-${brandColor}-inverse group-data-[enabled=yes]:bg-brand-${brandColor}`}
         >
           <Checkbox.Root
             checked={isEnabled}
-            className="shadow-blackA4 hover:bg-violet3 flex size-[25px] appearance-none items-center justify-center rounded bg-white shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px_black]"
+            className="flex size-[36px] cursor-pointer appearance-none items-center justify-center rounded bg-white outline-none hover:bg-gray-200"
             id="c1"
             onCheckedChange={(checked) => setIsEnabled(Boolean(checked))}
           >
-            <Checkbox.Indicator className="text-violet11">
-              <CheckIcon />
+            <Checkbox.Indicator
+              className={`group-data-[enabled=yes]:text-brand-${brandColor} text-black`}
+            >
+              <CheckIcon className="size-8" />
             </Checkbox.Indicator>
           </Checkbox.Root>
 
-          <Accordion.Trigger className="group flex flex-1 cursor-pointer items-center justify-between px-5 outline-none">
+          <Accordion.Trigger className="group flex min-h-[36px] flex-1 cursor-pointer items-center justify-between rounded bg-[#fff2] px-2 py-1 outline-none hover:bg-[#fff4]">
             <span className="flex items-center gap-x-2">
               {icon} {label}
             </span>

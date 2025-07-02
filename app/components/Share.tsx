@@ -12,8 +12,10 @@ export default function Share() {
       <S3Provider>
         <YoutubeProvider>
           <div>
-            <YoutubeSwitch />
-            <YoutubeAuthorize />
+            <div className="flex flex-col gap-1">
+              <YoutubeSwitch />
+              <YoutubeAuthorize />
+            </div>
             <Suspense>
               <YoutubeRedirectHandler />
             </Suspense>
