@@ -7,7 +7,7 @@ import { useLocalStorage } from "usehooks-ts";
 import type {
   ServiceFormField,
   ServiceFormState,
-} from "@/app/components/ServiceForm";
+} from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
@@ -16,7 +16,12 @@ import {
   shouldHandleCodeAndScope,
 } from "@/app/services/youtube/auth";
 import { YoutubeContext } from "@/app/services/youtube/Context";
-import { YoutubeTokens } from "@/app/services/youtube/types";
+import {
+  defaultAuthorization,
+  defaultCredentials,
+  type YoutubeAuthorization,
+  type YoutubeCredentials,
+} from "@/app/services/youtube/types";
 
 interface Props {
   children: ReactNode;
@@ -31,58 +36,36 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useLocalStorage(
-    "thetoolkit-youtube-is-enabled",
+  const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
+    "thetoolkit-youtube-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [clientId, setClientId] = useLocalStorage(
-    "thetoolkit-youtube-client-id",
-    "",
+  const [credentials, setCredentials] = useLocalStorage<YoutubeCredentials>(
+    "thetoolkit-youtube-credentials",
+    defaultCredentials,
     { initializeWithValue: true },
   );
 
-  const [clientSecret, setClientSecret] = useLocalStorage(
-    "thetoolkit-youtube-client-secret",
-    "",
-    { initializeWithValue: true },
-  );
+  const [authorization, setAuthorization] =
+    useLocalStorage<YoutubeAuthorization>(
+      "thetoolkit-youtube-authorization",
+      defaultAuthorization,
+      { initializeWithValue: true },
+    );
 
-  const [accessToken, setAccessToken] = useLocalStorage(
-    "thetoolkit-youtube-access-token",
-    "",
-    { initializeWithValue: true },
-  );
+  const configId = JSON.stringify(credentials);
 
-  const [refreshToken, setRefreshToken] = useLocalStorage(
-    "thetoolkit-youtube-refresh-token",
-    "",
-    { initializeWithValue: true },
-  );
-
-  const [accessTokenExpiry, setAccessTokenExpiry] = useLocalStorage(
-    "thetoolkit-youtube-access-token-expiry",
-    "",
-    { initializeWithValue: true },
-  );
-
-  const [refreshTokenExpiry, setRefreshTokenExpiry] = useLocalStorage(
-    "thetoolkit-youtube-refresh-token-expiry",
-    "",
-    { initializeWithValue: true },
-  );
-
-  const isComplete = clientId !== "" && clientSecret !== "";
+  const isComplete =
+    credentials.clientId !== "" && credentials.clientSecret !== "";
 
   const isAuthorized =
-    accessToken !== "" &&
-    refreshToken !== "" &&
-    accessTokenExpiry !== "" &&
-    refreshTokenExpiry !== "" &&
-    !hasTokenExpired(refreshTokenExpiry);
-
-  const configId = `${clientId}-${clientSecret}`;
+    authorization.accessToken !== "" &&
+    authorization.accessTokenExpiresAt !== "" &&
+    authorization.refreshToken !== "" &&
+    authorization.refreshTokenExpiresAt !== "" &&
+    !hasTokenExpired(authorization.refreshTokenExpiresAt);
 
   function getRedirectUri() {
     const url = new URL(window.location.href);
@@ -92,30 +75,29 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   }
 
   function authorize() {
-    const authUrl = getAuthorizationUrl(clientId, getRedirectUri());
+    const authUrl = getAuthorizationUrl(credentials.clientId, getRedirectUri());
 
     window.location.href = authUrl;
   }
 
-  async function exchangeCode(code: string): Promise<YoutubeTokens | null> {
+  async function exchangeCode(
+    code: string,
+  ): Promise<YoutubeAuthorization | null> {
     try {
-      const tokens = await exchangeCodeForTokens(
+      const newAuthorization = await exchangeCodeForTokens(
         code,
-        clientId,
-        clientSecret,
+        credentials.clientId,
+        credentials.clientSecret,
         getRedirectUri(),
       );
 
-      setAccessToken(tokens.access_token);
-      setAccessTokenExpiry(tokens.access_token_expires_at);
-      setRefreshToken(tokens.refresh_token);
-      setRefreshTokenExpiry(tokens.refresh_token_expires_at);
+      setAuthorization(newAuthorization);
 
       setError("");
 
       console.log("Tokens obtained successfully");
 
-      return tokens;
+      return newAuthorization;
     } catch (err: unknown) {
       console.error("Token exchange error:", err);
 
@@ -127,24 +109,21 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokens(): Promise<YoutubeTokens | null> {
+  async function refreshTokens(): Promise<YoutubeAuthorization | null> {
     try {
-      const tokens = await refreshAccessToken(
-        clientId,
-        clientSecret,
+      const newAuthorization = await refreshAccessToken(
+        credentials.clientId,
+        credentials.clientSecret,
         getRedirectUri(),
       );
 
-      setAccessToken(tokens.access_token);
-      setAccessTokenExpiry(tokens.access_token_expires_at);
-      setRefreshToken(tokens.refresh_token);
-      setRefreshTokenExpiry(tokens.refresh_token_expires_at);
+      setAuthorization(newAuthorization);
 
       setError("");
 
       console.log("Access token refreshed successfully");
 
-      return tokens;
+      return newAuthorization;
     } catch (err: unknown) {
       console.error("Token refresh error:", err);
 
@@ -158,22 +137,22 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   // Get valid access token (refresh if needed)
   async function getValidAccessToken(): Promise<string> {
-    if (hasTokenExpired(accessTokenExpiry)) {
+    if (hasTokenExpired(authorization.accessTokenExpiresAt)) {
       console.log("Token expired or about to expire, refreshing...");
-      const newTokens = await refreshTokens();
+      const newAuthorization = await refreshTokens();
 
-      if (!newTokens) {
+      if (!newAuthorization) {
         throw new Error("Failed to refresh token");
       }
 
-      return newTokens.access_token;
+      return newAuthorization.accessToken;
     }
 
-    if (!accessToken) {
+    if (!authorization.accessToken) {
       throw new Error("No access token available. Please authorize first.");
     }
 
-    return accessToken;
+    return authorization.accessToken;
   }
 
   async function initAuthCodes(code: string | null, scope: string | null) {
@@ -188,33 +167,38 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
-  const serviceFormInitial: ServiceFormState = {
-    clientId,
-    clientSecret,
-  };
-
   const serviceFormFields: ServiceFormField[] = [
     {
       label: "Client ID",
       name: "clientId",
       placeholder: "Client ID",
-      setter: setClientId,
     },
     {
       label: "Client Secret",
       name: "clientSecret",
       placeholder: "Client Secret",
-      setter: setClientSecret,
     },
   ];
+
+  const serviceFormInitial: ServiceFormState = {
+    clientId: credentials.clientId,
+    clientSecret: credentials.clientSecret,
+  };
+
+  function serviceFormSaveData(formState: ServiceFormState): ServiceFormState {
+    setCredentials({
+      clientId: formState.clientId,
+      clientSecret: formState.clientSecret,
+    });
+
+    return formState;
+  }
 
   const providerValues = useMemo(
     () => {
       return {
         authorize,
         brandColor,
-        clientId,
-        clientSecret,
         configId,
         error,
         exchangeCode,
@@ -227,18 +211,15 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
         label,
         serviceFormFields,
         serviceFormInitial,
-        setClientId,
-        setClientSecret,
+        serviceFormSaveData,
         setIsEnabled,
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      accessToken,
-      accessTokenExpiry,
+      authorization,
       brandColor,
-      clientId,
-      clientSecret,
+      credentials,
       configId,
       error,
       icon,
@@ -246,8 +227,6 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       label,
-      refreshToken,
-      refreshTokenExpiry,
       serviceFormInitial,
     ],
   );

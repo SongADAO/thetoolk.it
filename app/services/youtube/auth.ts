@@ -53,12 +53,11 @@ async function exchangeCodeForTokens(
     Date.now() + tokens.refresh_token_expires_in * 1000,
   );
 
-  // Store in localStorage
   return {
-    access_token: tokens.access_token,
-    access_token_expires_at: expiryTime.toISOString(),
-    refresh_token: tokens.refresh_token,
-    refresh_token_expires_at: refreshExpiryTime.toISOString(),
+    accessToken: tokens.access_token,
+    accessTokenExpiresAt: expiryTime.toISOString(),
+    refreshToken: tokens.refresh_token,
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
 
@@ -102,10 +101,10 @@ async function refreshAccessToken(
   );
 
   return {
-    access_token: tokens.access_token,
-    access_token_expires_at: expiryTime.toISOString(),
-    refresh_token: tokens.refresh_token,
-    refresh_token_expires_at: refreshExpiryTime.toISOString(),
+    accessToken: tokens.access_token,
+    accessTokenExpiresAt: expiryTime.toISOString(),
+    refreshToken: tokens.refresh_token,
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
 

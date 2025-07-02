@@ -3,17 +3,18 @@ import { createContext, ReactNode } from "react";
 import type {
   ServiceFormField,
   ServiceFormState,
-} from "@/app/components/ServiceForm";
-import { YoutubeTokens } from "@/app/services/youtube/types";
+} from "@/app/components/service/ServiceForm";
+import {
+  defaultCredentials,
+  type YoutubeAuthorization,
+} from "@/app/services/youtube/types";
 
 interface YoutubeContextType {
   authorize: () => void;
   brandColor: string;
-  clientId: string;
-  clientSecret: string;
   configId: string;
   error: string;
-  exchangeCode: (code: string) => Promise<YoutubeTokens | null>;
+  exchangeCode: (code: string) => Promise<YoutubeAuthorization | null>;
   getValidAccessToken: () => Promise<string>;
   icon: ReactNode | undefined;
   initAuthCodes: (code: string | null, scope: string | null) => Promise<void>;
@@ -23,8 +24,7 @@ interface YoutubeContextType {
   label: string;
   serviceFormFields: ServiceFormField[];
   serviceFormInitial: ServiceFormState;
-  setClientId: (clientId: string) => void;
-  setClientSecret: (clientSecret: string) => void;
+  serviceFormSaveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
@@ -32,8 +32,6 @@ interface YoutubeContextType {
 const YoutubeContext = createContext<YoutubeContextType>({
   authorize: () => {},
   brandColor: "",
-  clientId: "",
-  clientSecret: "",
   configId: "",
   error: "",
   exchangeCode: async (code: string) => null,
@@ -46,8 +44,10 @@ const YoutubeContext = createContext<YoutubeContextType>({
   label: "",
   serviceFormFields: [],
   serviceFormInitial: {},
-  setClientId: (clientId: string) => {},
-  setClientSecret: (clientSecret: string) => {},
+  serviceFormSaveData: (formState: ServiceFormState) =>
+    Object.fromEntries(
+      Object.entries(defaultCredentials).map(([key, value]) => [key, value]),
+    ),
   setIsEnabled: (isEnabled: boolean) => {},
 });
 /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */

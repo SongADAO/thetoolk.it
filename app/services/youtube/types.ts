@@ -1,8 +1,30 @@
-interface YoutubeTokens {
-  access_token: string;
-  access_token_expires_at: string;
-  refresh_token: string;
-  refresh_token_expires_at: string;
+interface YoutubeAuthorization {
+  accessToken: string;
+  accessTokenExpiresAt: string;
+  refreshToken: string;
+  refreshTokenExpiresAt: string;
 }
 
-export type { YoutubeTokens };
+interface YoutubeCredentials {
+  clientId: string;
+  clientSecret: string;
+}
+
+const defaultAuthorization: YoutubeAuthorization = {
+  accessToken: "",
+  accessTokenExpiresAt: "",
+  refreshToken: "",
+  refreshTokenExpiresAt: "",
+};
+
+const defaultCredentials: YoutubeCredentials = {
+  clientId: "",
+  clientSecret: "",
+};
+
+export {
+  defaultAuthorization,
+  defaultCredentials,
+  type YoutubeAuthorization,
+  type YoutubeCredentials,
+};

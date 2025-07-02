@@ -11,11 +11,13 @@ export default function Share() {
     <div className="bg-gray-100 p-8">
       <S3Provider>
         <YoutubeProvider>
-          <YoutubeSwitch />
-          <YoutubeAuthorize />
-          <Suspense fallback={<div>Loading...</div>}>
-            <YoutubeRedirectHandler />
-          </Suspense>
+          <div>
+            <YoutubeSwitch />
+            <YoutubeAuthorize />
+            <Suspense>
+              <YoutubeRedirectHandler />
+            </Suspense>
+          </div>
         </YoutubeProvider>
       </S3Provider>
     </div>

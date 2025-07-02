@@ -9,15 +9,15 @@ interface ServiceFormField {
   label: string;
   name: string;
   placeholder: string;
-  setter: (value: string) => void;
 }
 
 interface Props {
   fields: ServiceFormField[];
   initial: ServiceFormState;
+  saveData: (formState: ServiceFormState) => ServiceFormState;
 }
 
-function ServiceForm({ fields, initial }: Readonly<Props>) {
+function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
   function fromFormData(formData: FormData): ServiceFormState {
     return Object.fromEntries(
       fields.map((field) => [field.name, String(formData.get(field.name))]),
@@ -29,10 +29,7 @@ function ServiceForm({ fields, initial }: Readonly<Props>) {
     previousState: ServiceFormState,
     formData: FormData,
   ): ServiceFormState {
-    return fields.reduce((state, { name, setter }) => {
-      setter(state[name]);
-      return state;
-    }, fromFormData(formData));
+    return saveData(fromFormData(formData));
   }
 
   const [state, formAction, isPending] = useActionState<

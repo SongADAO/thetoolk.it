@@ -2,7 +2,7 @@
 
 import { use } from "react";
 
-import { ServiceSwitch } from "@/app/components/ServiceSwitch";
+import { ServiceSwitch } from "@/app/components/service/ServiceSwitch";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 import { YoutubeForm } from "@/app/services/youtube/Form";
 
