@@ -33,18 +33,16 @@ export function S3Provider({ children }: Readonly<Props>) {
   );
 
   const providerValues = useMemo(
-    () => {
-      return {
-        s3AccessKeyId,
-        s3Bucket,
-        s3Region,
-        s3SecretAccessKey,
-        setS3AccessKeyId,
-        setS3Bucket,
-        setS3Region,
-        setS3SecretAccessKey,
-      };
-    },
+    () => ({
+      s3AccessKeyId,
+      s3Bucket,
+      s3Region,
+      s3SecretAccessKey,
+      setS3AccessKeyId,
+      setS3Bucket,
+      setS3Region,
+      setS3SecretAccessKey,
+    }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [s3AccessKeyId, s3Bucket, s3Region, s3SecretAccessKey],
   );

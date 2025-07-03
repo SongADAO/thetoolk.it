@@ -197,27 +197,25 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   }
 
   const providerValues = useMemo(
-    () => {
-      return {
-        authorizationExpiresAt,
-        authorize,
-        brandColor,
-        configId,
-        error,
-        exchangeCode,
-        getValidAccessToken,
-        icon,
-        initAuthCodes,
-        isAuthorized,
-        isComplete,
-        isEnabled,
-        label,
-        serviceFormFields,
-        serviceFormInitial,
-        serviceFormSaveData,
-        setIsEnabled,
-      };
-    },
+    () => ({
+      authorizationExpiresAt,
+      authorize,
+      brandColor,
+      configId,
+      error,
+      exchangeCode,
+      getValidAccessToken,
+      icon,
+      initAuthCodes,
+      isAuthorized,
+      isComplete,
+      isEnabled,
+      label,
+      serviceFormFields,
+      serviceFormInitial,
+      serviceFormSaveData,
+      setIsEnabled,
+    }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       authorization,
