@@ -152,6 +152,26 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
+  async function initAccounts(): Promise<ServiceAccount[]> {
+    try {
+      const newAccounts = await getInstagramAccounts(authorization.accessToken);
+
+      setAccounts(newAccounts);
+
+      return newAccounts;
+    } catch (err: unknown) {
+      console.error("Token exchange error:", err);
+
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+
+      setError(`Failed to get instagram accounts: ${errMessage}`);
+
+      setAccounts([]);
+
+      return [];
+    }
+  }
+
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
       const code = searchParams.get("code");
@@ -192,28 +212,6 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     });
 
     return formState;
-  }
-
-  async function initAccounts(): Promise<ServiceAccount[]> {
-    try {
-      const instagramAccounts = await getInstagramAccounts(
-        authorization.accessToken,
-      );
-
-      setAccounts(instagramAccounts);
-
-      return instagramAccounts;
-    } catch (err: unknown) {
-      console.error("Token exchange error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to get instagram accounts: ${errMessage}`);
-
-      setAccounts([]);
-
-      return [];
-    }
   }
 
   useEffect(() => {
