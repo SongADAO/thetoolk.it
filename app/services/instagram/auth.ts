@@ -169,6 +169,10 @@ function hasTokenExpired(tokenExpiry: string | null) {
   return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
 }
 
+function getCredentialsId(credentials: OauthCredentials) {
+  return JSON.stringify(credentials);
+}
+
 function hasCompleteCredentials(credentials: OauthCredentials) {
   return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
@@ -297,6 +301,7 @@ async function getInstagramAccounts(token: string): Promise<ServiceAccount[]> {
 export {
   exchangeCodeForTokens,
   getAuthorizationUrl,
+  getCredentialsId,
   getInstagramAccounts,
   getRedirectUri,
   hasCompleteAuthorization,

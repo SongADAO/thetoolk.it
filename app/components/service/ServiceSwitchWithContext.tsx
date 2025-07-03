@@ -20,7 +20,7 @@ export function ServiceSwitchWithContext<T extends ServiceSwitchContextProps>({
 
   const props: ServiceSwitchProps = {
     brandColor: contextValue.brandColor,
-    configId: contextValue.configId,
+    credentialsId: contextValue.credentialsId,
     form,
     icon: contextValue.icon,
     isComplete: contextValue.isComplete,

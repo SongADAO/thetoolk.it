@@ -11,6 +11,7 @@ import type {
 import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
+  getCredentialsId,
   getInstagramAccounts,
   getRedirectUri,
   hasCompleteAuthorization,
@@ -61,7 +62,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
   const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
 
-  const configId = JSON.stringify(credentials);
+  const credentialsId = getCredentialsId(credentials);
 
   const isComplete = hasCompleteCredentials(credentials);
 
@@ -222,7 +223,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       authorizationExpiresAt,
       authorize,
       brandColor,
-      configId,
+      credentialsId,
       error,
       exchangeCode,
       fields,
@@ -242,7 +243,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       accounts,
       authorization,
       brandColor,
-      configId,
+      credentialsId,
       credentials,
       error,
       icon,

@@ -11,7 +11,7 @@ interface ServiceContextType {
   authorizationExpiresAt: string;
   authorize: () => void;
   brandColor: string;
-  configId: string;
+  credentialsId: string;
   error: string;
   exchangeCode: (code: string) => Promise<OauthAuthorization | null>;
   fields: ServiceFormField[];
@@ -33,7 +33,7 @@ const serviceContextDefault = {
   authorizationExpiresAt: "",
   authorize: () => {},
   brandColor: "",
-  configId: "",
+  credentialsId: "",
   error: "",
   exchangeCode: async (code: string) => null,
   fields: [],

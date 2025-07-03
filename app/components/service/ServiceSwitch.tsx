@@ -6,7 +6,7 @@ import { ReactNode, useEffect, useState } from "react";
 
 interface Props {
   brandColor: string;
-  configId: string;
+  credentialsId: string;
   form: ReactNode;
   icon: ReactNode;
   isComplete: boolean;
@@ -17,7 +17,7 @@ interface Props {
 
 function ServiceSwitch({
   brandColor,
-  configId,
+  credentialsId,
   form,
   icon,
   isComplete,
@@ -35,7 +35,7 @@ function ServiceSwitch({
     } else {
       setIsOpen(false);
     }
-  }, [isEnabled, isComplete, configId]);
+  }, [isEnabled, isComplete, credentialsId]);
 
   return (
     <Accordion.Root

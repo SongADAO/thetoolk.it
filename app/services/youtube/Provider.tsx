@@ -18,6 +18,7 @@ import {
 import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
+  getCredentialsId,
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
@@ -61,7 +62,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
 
-  const configId = JSON.stringify(credentials);
+  const credentialsId = getCredentialsId(credentials);
 
   const isComplete = hasCompleteCredentials(credentials);
 
@@ -195,7 +196,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       authorizationExpiresAt,
       authorize,
       brandColor,
-      configId,
+      credentialsId,
       error,
       exchangeCode,
       fields,
@@ -215,7 +216,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       accounts,
       authorization,
       brandColor,
-      configId,
+      credentialsId,
       credentials,
       error,
       icon,
