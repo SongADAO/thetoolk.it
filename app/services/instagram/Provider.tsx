@@ -205,6 +205,8 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
       setError(`Failed to get instagram accounts: ${errMessage}`);
 
+      setAccounts([]);
+
       return [];
     }
   }

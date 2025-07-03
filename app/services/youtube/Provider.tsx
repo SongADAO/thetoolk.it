@@ -190,6 +190,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   const providerValues = useMemo(
     () => ({
+      accounts,
       authorizationExpiresAt,
       authorize,
       brandColor,
@@ -210,6 +211,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      accounts,
       authorization,
       brandColor,
       configId,

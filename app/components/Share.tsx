@@ -19,7 +19,7 @@ export default function Share() {
       <S3Provider>
         <YoutubeProvider>
           <InstagramProvider>
-            <div>
+            <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-1">
                 <ServiceSwitchWithContext
                   context={YoutubeContext}

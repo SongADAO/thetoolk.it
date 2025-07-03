@@ -27,8 +27,6 @@ function ServiceAuthorize({
     return null;
   }
 
-  console.log(accounts);
-
   return (
     <div>
       <button
