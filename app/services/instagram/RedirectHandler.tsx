@@ -6,18 +6,15 @@ import { use, useEffect } from "react";
 import { InstagramContext } from "@/app/services/instagram/Context";
 
 export function InstagramRedirectHandler() {
-  const { initAuthCodes } = use(InstagramContext);
+  const { handleAuthRedirect } = use(InstagramContext);
 
   const searchParams = useSearchParams();
 
-  const code = searchParams.get("code");
-  const state = searchParams.get("state");
-
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    initAuthCodes(code, state);
+    handleAuthRedirect(searchParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, state]);
+  }, [searchParams]);
 
   return null;
 }

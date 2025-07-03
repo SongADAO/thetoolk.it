@@ -17,6 +17,7 @@ import {
 } from "@/app/services/types";
 import {
   exchangeCodeForTokens,
+  getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
@@ -24,7 +25,7 @@ import {
   hasCompleteCredentials,
   hasTokenExpired,
   refreshAccessToken,
-  shouldHandleCodeAndScope,
+  shouldHandleAuthRedirect,
 } from "@/app/services/youtube/auth";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 
@@ -68,7 +69,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
-  const authorizationExpiresAt = authorization.refreshTokenExpiresAt;
+  const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
   function authorize() {
     const authUrl = getAuthorizationUrl(credentials.clientId, getRedirectUri());
@@ -151,9 +152,12 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
-  async function initAuthCodes(code: string | null, scope: string | null) {
+  async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
-      if (code && scope && shouldHandleCodeAndScope(code, scope)) {
+      const code = searchParams.get("code");
+      const scope = searchParams.get("scope");
+
+      if (code && scope && shouldHandleAuthRedirect(code, scope)) {
         await exchangeCode(code);
 
         // window.location.href = "/";
@@ -201,8 +205,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       exchangeCode,
       fields,
       getValidAccessToken,
+      handleAuthRedirect,
       icon,
-      initAuthCodes,
       initial,
       isAuthorized,
       isComplete,

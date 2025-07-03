@@ -187,6 +187,10 @@ function hasCompleteAuthorization(authorization: OauthAuthorization) {
   );
 }
 
+function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+  return authorization.refreshTokenExpiresAt;
+}
+
 function getRedirectUri() {
   const url = new URL(window.location.href);
   const baseUrl = url.origin + url.pathname;
@@ -194,7 +198,7 @@ function getRedirectUri() {
   return baseUrl;
 }
 
-function shouldHandleCodeAndState(code: string | null, state: string | null) {
+function shouldHandleAuthRedirect(code: string | null, state: string | null) {
   return code && state?.includes("instagram_auth");
 }
 
@@ -300,6 +304,7 @@ async function getInstagramAccounts(token: string): Promise<ServiceAccount[]> {
 
 export {
   exchangeCodeForTokens,
+  getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getInstagramAccounts,
@@ -308,5 +313,5 @@ export {
   hasCompleteCredentials,
   hasTokenExpired,
   refreshAccessToken,
-  shouldHandleCodeAndState,
+  shouldHandleAuthRedirect,
 };

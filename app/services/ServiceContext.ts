@@ -16,8 +16,8 @@ interface ServiceContextType {
   exchangeCode: (code: string) => Promise<OauthAuthorization | null>;
   fields: ServiceFormField[];
   getValidAccessToken: () => Promise<string>;
+  handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
   icon: ReactNode | undefined;
-  initAuthCodes: (code: string | null, scope: string | null) => Promise<void>;
   initial: ServiceFormState;
   isAuthorized: boolean;
   isComplete: boolean;
@@ -38,8 +38,8 @@ const serviceContextDefault = {
   exchangeCode: async (code: string) => null,
   fields: [],
   getValidAccessToken: async () => "",
+  handleAuthRedirect: async () => {},
   icon: undefined,
-  initAuthCodes: async (code: string | null, scope: string | null) => {},
   initial: {},
   isAuthorized: false,
   isComplete: false,

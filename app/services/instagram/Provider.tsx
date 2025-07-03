@@ -10,6 +10,7 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
+  getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getInstagramAccounts,
@@ -18,7 +19,7 @@ import {
   hasCompleteCredentials,
   hasTokenExpired,
   refreshAccessToken,
-  shouldHandleCodeAndState,
+  shouldHandleAuthRedirect,
 } from "@/app/services/instagram/auth";
 import { InstagramContext } from "@/app/services/instagram/Context";
 import {
@@ -68,7 +69,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
-  const authorizationExpiresAt = authorization.refreshTokenExpiresAt;
+  const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
   function authorize() {
     const authUrl = getAuthorizationUrl(credentials.clientId, getRedirectUri());
@@ -151,9 +152,12 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
-  async function initAuthCodes(code: string | null, state: string | null) {
+  async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
-      if (code && state && shouldHandleCodeAndState(code, state)) {
+      const code = searchParams.get("code");
+      const state = searchParams.get("state");
+
+      if (code && state && shouldHandleAuthRedirect(code, state)) {
         await exchangeCode(code);
 
         // window.location.href = "/";
@@ -228,8 +232,8 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       exchangeCode,
       fields,
       getValidAccessToken,
+      handleAuthRedirect,
       icon,
-      initAuthCodes,
       initial,
       isAuthorized,
       isComplete,

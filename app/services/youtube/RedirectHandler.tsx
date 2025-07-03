@@ -6,18 +6,15 @@ import { use, useEffect } from "react";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 
 export function YoutubeRedirectHandler() {
-  const { initAuthCodes } = use(YoutubeContext);
+  const { handleAuthRedirect } = use(YoutubeContext);
 
   const searchParams = useSearchParams();
 
-  const code = searchParams.get("code");
-  const scope = searchParams.get("scope");
-
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    initAuthCodes(code, scope);
+    handleAuthRedirect(searchParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, scope]);
+  }, [searchParams]);
 
   return null;
 }

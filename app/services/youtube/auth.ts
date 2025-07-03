@@ -148,6 +148,10 @@ function hasCompleteAuthorization(authorization: OauthAuthorization) {
   );
 }
 
+function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+  return authorization.refreshTokenExpiresAt;
+}
+
 function getRedirectUri() {
   const url = new URL(window.location.href);
   const baseUrl = url.origin + url.pathname;
@@ -155,12 +159,13 @@ function getRedirectUri() {
   return baseUrl;
 }
 
-function shouldHandleCodeAndScope(code: string | null, scope: string | null) {
+function shouldHandleAuthRedirect(code: string | null, scope: string | null) {
   return code && scope?.includes("https://www.googleapis.com");
 }
 
 export {
   exchangeCodeForTokens,
+  getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
@@ -168,5 +173,5 @@ export {
   hasCompleteCredentials,
   hasTokenExpired,
   refreshAccessToken,
-  shouldHandleCodeAndScope,
+  shouldHandleAuthRedirect,
 };
