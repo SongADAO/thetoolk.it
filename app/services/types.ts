@@ -22,9 +22,16 @@ const defaultOauthCredentials: OauthCredentials = {
   clientSecret: "",
 };
 
+interface ServiceAccount {
+  accessToken: string;
+  id: string;
+  username: string;
+}
+
 export {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   type OauthAuthorization,
   type OauthCredentials,
+  type ServiceAccount,
 };

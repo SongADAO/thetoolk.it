@@ -1,6 +1,7 @@
 import type {
   OauthAuthorization,
   OauthCredentials,
+  ServiceAccount,
 } from "@/app/services/types";
 
 interface GoogleTokenResponse {
@@ -10,6 +11,12 @@ interface GoogleTokenResponse {
   refresh_token_expires_in: number;
   scope: string;
   token_type: string;
+}
+
+interface FacebookPage {
+  id: string;
+  name: string;
+  access_token: string;
 }
 
 const SCOPES = [
@@ -33,7 +40,7 @@ function getAuthorizationUrl(clientId: string, redirectUri: string) {
 }
 
 function formatTokens(tokens: GoogleTokenResponse) {
-  const expiresIn = 5184000;
+  const expiresIn = 5184000000;
 
   // Calculate expiry time
   // const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
@@ -46,6 +53,8 @@ function formatTokens(tokens: GoogleTokenResponse) {
   return {
     accessToken: tokens.access_token,
     accessTokenExpiresAt: expiryTime.toISOString(),
+    refreshToken: tokens.access_token,
+    refreshTokenExpiresAt: expiryTime.toISOString(),
     // refreshToken: tokens.refresh_token,
     // refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
@@ -185,9 +194,110 @@ function shouldHandleCodeAndState(code: string | null, state: string | null) {
   return code && state?.includes("instagram_auth");
 }
 
+// Get Facebook Pages
+async function getFacebookAccounts(token: string) {
+  console.log("Getting Facebook pages...");
+
+  const pagesResponse = await fetch(
+    `https://graph.facebook.com/v23.0/me/accounts?access_token=${token}`,
+  );
+
+  if (!pagesResponse.ok) {
+    const error = await pagesResponse.json();
+    console.error("Pages API error:", error);
+    throw new Error(
+      `Failed to get Facebook pages: ${error.error?.message ?? pagesResponse.statusText}`,
+    );
+  }
+
+  const pagesData = await pagesResponse.json();
+  console.log("Pages data:", pagesData);
+
+  if (!pagesData.data || pagesData.data.length === 0) {
+    throw new Error(
+      "No Facebook pages found. You need to create a Facebook page to post videos.",
+    );
+  }
+
+  console.log(`Found ${pagesData.data.length} Facebook page(s)`);
+
+  return pagesData.data;
+}
+
+async function getInstagramAccountFromPage(
+  page: FacebookPage,
+): Promise<ServiceAccount> {
+  console.log(`Checking page: ${page.name} (ID: ${page.id})`);
+
+  const accessToken = page.access_token;
+
+  const igResponse = await fetch(
+    `https://graph.facebook.com/v23.0/${page.id}/instagram_accounts?access_token=${accessToken}`,
+  );
+
+  if (!igResponse.ok) {
+    console.error("Instagram API error:", await igResponse.text());
+    throw new Error(`Failed to check Instagram for page ${page.name}:`);
+  }
+
+  const igData = await igResponse.json();
+  console.log(`Instagram data for page ${page.name}:`, igData);
+
+  if (!igData.data || igData.data.length === 0) {
+    throw new Error(
+      `No IG data returned for instagram account for page ${page.name}.`,
+    );
+  }
+
+  // Check if it's actually accessible
+  const id = igData.data[0].id;
+
+  // Test access to the Instagram account
+  const testResponse = await fetch(
+    `https://graph.facebook.com/v23.0/${id}?fields=id,username&access_token=${accessToken}`,
+  );
+
+  if (!testResponse.ok) {
+    console.error("Instagram API error:", await testResponse.text());
+    throw new Error(
+      `Instagram account found but not accessible: ${page.name}:`,
+    );
+  }
+
+  const testData = await testResponse.json();
+  console.log("✅ Instagram Account Details:", testData);
+
+  return {
+    accessToken,
+    id: testData.id,
+    username: testData.username,
+  };
+}
+
+// Get Instagram Accounts from Facebook Pages
+async function getInstagramAccounts(token: string): Promise<ServiceAccount[]> {
+  const facebookAccounts = await getFacebookAccounts(token);
+
+  const igAccounts = [];
+
+  for (const page of facebookAccounts) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const igAccount = await getInstagramAccountFromPage(page);
+
+      igAccounts.push(igAccount);
+    } catch (error) {
+      console.error("Error getting Instagram account:", error);
+    }
+  }
+
+  return igAccounts;
+}
+
 export {
   exchangeCodeForTokens,
   getAuthorizationUrl,
+  getInstagramAccounts,
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,

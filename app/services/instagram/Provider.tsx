@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaInstagram } from "react-icons/fa6";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -11,6 +11,7 @@ import type {
 import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
+  getInstagramAccounts,
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
@@ -24,6 +25,7 @@ import {
   defaultOauthCredentials,
   type OauthAuthorization,
   type OauthCredentials,
+  type ServiceAccount,
 } from "@/app/services/types";
 
 interface Props {
@@ -56,6 +58,8 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
+
+  const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
 
   const configId = JSON.stringify(credentials);
 
@@ -185,8 +189,33 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     return formState;
   }
 
+  async function initAccounts(): Promise<ServiceAccount[]> {
+    try {
+      const instagramAccounts = await getInstagramAccounts(
+        authorization.accessToken,
+      );
+
+      setAccounts(instagramAccounts);
+
+      return instagramAccounts;
+    } catch (err: unknown) {
+      console.error("Token exchange error:", err);
+
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+
+      setError(`Failed to get instagram accounts: ${errMessage}`);
+
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    initAccounts();
+  }, [authorization.accessToken]);
+
   const providerValues = useMemo(
     () => ({
+      accounts,
       authorizationExpiresAt,
       authorize,
       brandColor,
@@ -207,6 +236,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      accounts,
       authorization,
       brandColor,
       configId,

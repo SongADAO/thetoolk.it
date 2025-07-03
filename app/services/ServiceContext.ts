@@ -7,9 +7,11 @@ import type {
 import {
   defaultOauthCredentials,
   type OauthAuthorization,
+  type ServiceAccount,
 } from "@/app/services/types";
 
 interface ServiceContextType {
+  accounts: ServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
   brandColor: string;
@@ -31,6 +33,7 @@ interface ServiceContextType {
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 const serviceContextDefault = {
+  accounts: [],
   authorizationExpiresAt: "",
   authorize: () => {},
   brandColor: "",

@@ -1,6 +1,9 @@
 import { ReactNode } from "react";
 
+import type { ServiceAccount } from "@/app/services/types";
+
 interface Props {
+  accounts: ServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
   icon: ReactNode;
@@ -11,6 +14,7 @@ interface Props {
 }
 
 function ServiceAuthorize({
+  accounts,
   authorizationExpiresAt,
   authorize,
   icon,
@@ -23,6 +27,8 @@ function ServiceAuthorize({
     return null;
   }
 
+  console.log(accounts);
+
   return (
     <div>
       <button
@@ -33,12 +39,19 @@ function ServiceAuthorize({
       >
         {isAuthorized ? "Reauthorize" : "Authorize"} {icon} {label}
       </button>
+
       {isAuthorized && authorizationExpiresAt ? (
         <div className="text-center text-sm">
           Authorization Expires:{" "}
           {new Date(authorizationExpiresAt).toLocaleString()}
         </div>
       ) : null}
+
+      {accounts.map((account) => (
+        <div className="text-center text-sm" key={account.id}>
+          {account.id} - {account.username}
+        </div>
+      ))}
     </div>
   );
 }

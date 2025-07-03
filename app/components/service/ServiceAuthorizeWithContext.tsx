@@ -16,6 +16,7 @@ export function ServiceAuthorizeWithContext<T extends ServiceAuthorizeProps>({
   const contextValue = use(context);
 
   const props: ServiceAuthorizeProps = {
+    accounts: contextValue.accounts,
     authorizationExpiresAt: contextValue.authorizationExpiresAt,
     authorize: contextValue.authorize,
     icon: contextValue.icon,

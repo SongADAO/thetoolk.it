@@ -13,6 +13,7 @@ import {
   defaultOauthCredentials,
   type OauthAuthorization,
   type OauthCredentials,
+  type ServiceAccount,
 } from "@/app/services/types";
 import {
   exchangeCodeForTokens,
@@ -56,6 +57,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
+
+  const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
 
   const configId = JSON.stringify(credentials);
 
