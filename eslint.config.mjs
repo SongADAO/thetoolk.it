@@ -3,8 +3,9 @@ import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import globals from "globals";
 import importPlugin from "eslint-plugin-import";
+// import jsdoc from 'eslint-plugin-jsdoc';
 import prettier from "eslint-plugin-prettier";
-import reactHooks from "eslint-plugin-react-hooks";
+// import reactHooks from "eslint-plugin-react-hooks";
 import reactPlugin from "eslint-plugin-react";
 import reactRefresh from "eslint-plugin-react-refresh";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
@@ -27,9 +28,9 @@ export default tseslint.config(
   // reactPlugin.configs.flat.recommended
   reactPlugin.configs.flat.all,
 
-  // reactHooks.configs['recommended-latest'],
-
   reactRefresh.configs.recommended,
+
+  // reactHooks.configs['recommended-latest'],
 
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript"],
@@ -37,6 +38,9 @@ export default tseslint.config(
 
   // importPlugin.flatConfigs.recommended,
   // importPlugin.flatConfigs.typescript,
+
+  // jsdoc.configs['flat/recommended'],
+  // jsdoc.configs['flat/recommended-typescript'],
 
   eslintConfigPrettier,
 
@@ -381,17 +385,13 @@ export default tseslint.config(
 
       // JSDoc
       // ---------------------------------------------------------------------
-      // "jsdoc/check-examples": "off",
       // // "jsdoc/check-examples": "error",
       // "jsdoc/check-indentation": "error",
       // "jsdoc/check-syntax": "error",
       // "jsdoc/match-description": "error",
-      // "jsdoc/no-types": "off",
-      // "jsdoc/no-undefined-types": "error",
       // "jsdoc/require-description-complete-sentence": "error",
       // "jsdoc/require-description": "error",
-      // "jsdoc/require-example": "off",
-      // "jsdoc/require-hyphen-before-param-description": ["error", "never"]
+      // "jsdoc/require-hyphen-before-param-description": ["error", "never"],
 
       // Prettier
       // ---------------------------------------------------------------------
