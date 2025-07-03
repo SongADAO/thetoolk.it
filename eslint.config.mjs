@@ -3,6 +3,7 @@ import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import globals from "globals";
 import importPlugin from "eslint-plugin-import";
+import prettier from "eslint-plugin-prettier";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactPlugin from "eslint-plugin-react";
 import reactRefresh from "eslint-plugin-react-refresh";
@@ -42,6 +43,7 @@ export default tseslint.config(
   {
     plugins: {
       "simple-import-sort": simpleImportSort,
+      prettier: prettier,
     },
     languageOptions: {
       ecmaVersion: 2020,
@@ -393,7 +395,7 @@ export default tseslint.config(
 
       // Prettier
       // ---------------------------------------------------------------------
-      // "prettier/prettier": "error",
+      "prettier/prettier": "error",
 
       // TODO
       // ---------------------------------------------------------------------
