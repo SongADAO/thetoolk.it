@@ -9,6 +9,12 @@ import type {
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
 import {
+  defaultOauthAuthorization,
+  defaultOauthCredentials,
+  type OauthAuthorization,
+  type OauthCredentials,
+} from "@/app/services/types";
+import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
   hasTokenExpired,
@@ -16,12 +22,6 @@ import {
   shouldHandleCodeAndScope,
 } from "@/app/services/youtube/auth";
 import { YoutubeContext } from "@/app/services/youtube/Context";
-import {
-  defaultAuthorization,
-  defaultCredentials,
-  type YoutubeAuthorization,
-  type YoutubeCredentials,
-} from "@/app/services/youtube/types";
 
 interface Props {
   children: ReactNode;
@@ -42,18 +42,17 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<YoutubeCredentials>(
+  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
     "thetoolkit-youtube-credentials",
-    defaultCredentials,
+    defaultOauthCredentials,
     { initializeWithValue: true },
   );
 
-  const [authorization, setAuthorization] =
-    useLocalStorage<YoutubeAuthorization>(
-      "thetoolkit-youtube-authorization",
-      defaultAuthorization,
-      { initializeWithValue: true },
-    );
+  const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
+    "thetoolkit-youtube-authorization",
+    defaultOauthAuthorization,
+    { initializeWithValue: true },
+  );
 
   const configId = JSON.stringify(credentials);
 
@@ -84,7 +83,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   async function exchangeCode(
     code: string,
-  ): Promise<YoutubeAuthorization | null> {
+  ): Promise<OauthAuthorization | null> {
     try {
       const newAuthorization = await exchangeCodeForTokens(
         code,
@@ -111,7 +110,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokens(): Promise<YoutubeAuthorization | null> {
+  async function refreshTokens(): Promise<OauthAuthorization | null> {
     try {
       const newAuthorization = await refreshAccessToken(
         credentials.clientId,

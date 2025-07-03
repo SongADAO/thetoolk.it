@@ -1,30 +1,30 @@
-interface YoutubeAuthorization {
+interface OauthAuthorization {
   accessToken: string;
   accessTokenExpiresAt: string;
   refreshToken: string;
   refreshTokenExpiresAt: string;
 }
 
-interface YoutubeCredentials {
+interface OauthCredentials {
   clientId: string;
   clientSecret: string;
 }
 
-const defaultAuthorization: YoutubeAuthorization = {
+const defaultOauthAuthorization: OauthAuthorization = {
   accessToken: "",
   accessTokenExpiresAt: "",
   refreshToken: "",
   refreshTokenExpiresAt: "",
 };
 
-const defaultCredentials: YoutubeCredentials = {
+const defaultOauthCredentials: OauthCredentials = {
   clientId: "",
   clientSecret: "",
 };
 
 export {
-  defaultAuthorization,
-  defaultCredentials,
-  type YoutubeAuthorization,
-  type YoutubeCredentials,
+  defaultOauthAuthorization,
+  defaultOauthCredentials,
+  type OauthAuthorization,
+  type OauthCredentials,
 };
