@@ -1,18 +1,18 @@
-import { FlatCompat } from '@eslint/eslintrc'
-import eslint from '@eslint/js';
+import { FlatCompat } from "@eslint/eslintrc";
+import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import globals from "globals";
-import importPlugin from 'eslint-plugin-import';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactPlugin from 'eslint-plugin-react';
+import importPlugin from "eslint-plugin-import";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactPlugin from "eslint-plugin-react";
 import reactRefresh from "eslint-plugin-react-refresh";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
-import tseslint from 'typescript-eslint';
+import tseslint from "typescript-eslint";
 
 const compat = new FlatCompat({
   // import.meta.dirname is available after Node.js v20.11.0
   baseDirectory: import.meta.dirname,
-})
+});
 
 export default tseslint.config(
   // eslint.configs.recommended,
@@ -31,7 +31,7 @@ export default tseslint.config(
   reactRefresh.configs.recommended,
 
   ...compat.config({
-    extends: ['next/core-web-vitals', "next/typescript"],
+    extends: ["next/core-web-vitals", "next/typescript"],
   }),
 
   // importPlugin.flatConfigs.recommended,
@@ -184,7 +184,9 @@ export default tseslint.config(
       ],
       "import/no-unassigned-import": [
         "error",
-        { allow: ["rxjs/add/**", "bootstrap.native", "**/*.css", "**/*.woff2"] },
+        {
+          allow: ["rxjs/add/**", "bootstrap.native", "**/*.css", "**/*.woff2"],
+        },
       ],
       "import/extensions": [
         "error",
@@ -278,14 +280,14 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
-          "args": "all",
-          "argsIgnorePattern": "^_",
-          "caughtErrors": "all",
-          "caughtErrorsIgnorePattern": "^_",
-          "destructuredArrayIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "ignoreRestSiblings": true
-        }
+          args: "all",
+          argsIgnorePattern: "^_",
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
       ],
       "@typescript-eslint/no-base-to-string": "off",
       "@typescript-eslint/prefer-destructuring": "off",
@@ -294,7 +296,10 @@ export default tseslint.config(
 
       // React
       // ---------------------------------------------------------------------
-      "react/jsx-filename-extension": ["error", { extensions: [".jsx", ".tsx"] }],
+      "react/jsx-filename-extension": [
+        "error",
+        { extensions: [".jsx", ".tsx"] },
+      ],
       "react/jsx-no-bind": [
         "error",
         { allowArrowFunctions: true, allowFunctions: true },
@@ -396,5 +401,5 @@ export default tseslint.config(
       "@typescript-eslint/max-params": "off",
       // "@typescript-eslint/no-unnecessary-condition": "off",
     },
-  }
+  },
 );
