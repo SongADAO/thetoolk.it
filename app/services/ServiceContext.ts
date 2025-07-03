@@ -4,11 +4,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import {
-  defaultOauthCredentials,
-  type OauthAuthorization,
-  type ServiceAccount,
-} from "@/app/services/types";
+import type { OauthAuthorization, ServiceAccount } from "@/app/services/types";
 
 interface ServiceContextType {
   accounts: ServiceAccount[];
@@ -49,13 +45,7 @@ const serviceContextDefault = {
   isComplete: false,
   isEnabled: false,
   label: "",
-  saveData: (formState: ServiceFormState) =>
-    Object.fromEntries(
-      Object.entries(defaultOauthCredentials).map(([key, value]) => [
-        key,
-        value,
-      ]),
-    ),
+  saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
 };
 /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */

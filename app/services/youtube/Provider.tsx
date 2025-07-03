@@ -58,6 +58,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
 
   const configId = JSON.stringify(credentials);

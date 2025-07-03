@@ -212,6 +212,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     initAccounts();
   }, [authorization.accessToken]);
 
