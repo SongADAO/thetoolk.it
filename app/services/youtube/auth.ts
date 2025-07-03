@@ -12,12 +12,12 @@ interface GoogleTokenResponse {
   token_type: string;
 }
 
-function getAuthorizationUrl(clientId: string, redirectUri: string) {
-  const SCOPES = [
-    "https://www.googleapis.com/auth/youtube.readonly",
-    "https://www.googleapis.com/auth/youtube.upload",
-  ];
+const SCOPES = [
+  "https://www.googleapis.com/auth/youtube.readonly",
+  "https://www.googleapis.com/auth/youtube.upload",
+];
 
+function getAuthorizationUrl(clientId: string, redirectUri: string) {
   const params = new URLSearchParams({
     access_type: "offline",
     client_id: clientId,
