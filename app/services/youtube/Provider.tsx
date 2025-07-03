@@ -169,7 +169,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
-  const serviceFormFields: ServiceFormField[] = [
+  const fields: ServiceFormField[] = [
     {
       label: "Client ID",
       name: "clientId",
@@ -182,12 +182,12 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     },
   ];
 
-  const serviceFormInitial: ServiceFormState = {
+  const initial: ServiceFormState = {
     clientId: credentials.clientId,
     clientSecret: credentials.clientSecret,
   };
 
-  function serviceFormSaveData(formState: ServiceFormState): ServiceFormState {
+  function saveData(formState: ServiceFormState): ServiceFormState {
     setCredentials({
       clientId: formState.clientId,
       clientSecret: formState.clientSecret,
@@ -204,31 +204,31 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       configId,
       error,
       exchangeCode,
+      fields,
       getValidAccessToken,
       icon,
       initAuthCodes,
+      initial,
       isAuthorized,
       isComplete,
       isEnabled,
       label,
-      serviceFormFields,
-      serviceFormInitial,
-      serviceFormSaveData,
+      saveData,
       setIsEnabled,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       authorization,
       brandColor,
-      credentials,
       configId,
+      credentials,
       error,
       icon,
+      initial,
       isAuthorized,
       isComplete,
       isEnabled,
       label,
-      serviceFormInitial,
     ],
   );
 

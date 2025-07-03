@@ -16,16 +16,16 @@ interface YoutubeContextType {
   configId: string;
   error: string;
   exchangeCode: (code: string) => Promise<YoutubeAuthorization | null>;
+  fields: ServiceFormField[];
   getValidAccessToken: () => Promise<string>;
   icon: ReactNode | undefined;
   initAuthCodes: (code: string | null, scope: string | null) => Promise<void>;
+  initial: ServiceFormState;
   isAuthorized: boolean;
   isComplete: boolean;
   isEnabled: boolean;
   label: string;
-  serviceFormFields: ServiceFormField[];
-  serviceFormInitial: ServiceFormState;
-  serviceFormSaveData: (formState: ServiceFormState) => ServiceFormState;
+  saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
@@ -37,16 +37,16 @@ const YoutubeContext = createContext<YoutubeContextType>({
   configId: "",
   error: "",
   exchangeCode: async (code: string) => null,
+  fields: [],
   getValidAccessToken: async () => "",
   icon: undefined,
   initAuthCodes: async (code: string | null, scope: string | null) => {},
+  initial: {},
   isAuthorized: false,
   isComplete: false,
   isEnabled: false,
   label: "",
-  serviceFormFields: [],
-  serviceFormInitial: {},
-  serviceFormSaveData: (formState: ServiceFormState) =>
+  saveData: (formState: ServiceFormState) =>
     Object.fromEntries(
       Object.entries(defaultCredentials).map(([key, value]) => [key, value]),
     ),
