@@ -21,13 +21,12 @@ export function YoutubeSwitch() {
     <ServiceSwitch
       brandColor={brandColor}
       configId={configId}
+      form={<YoutubeForm />}
       icon={icon}
       isComplete={isComplete}
       isEnabled={isEnabled}
       label={label}
       setIsEnabled={setIsEnabled}
-    >
-      <YoutubeForm />
-    </ServiceSwitch>
+    />
   );
 }

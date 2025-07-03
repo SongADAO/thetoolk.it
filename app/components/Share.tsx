@@ -1,10 +1,14 @@
+"use client";
+
 import { Suspense } from "react";
 
+import { ServiceAuthorizeWithContext } from "@/app/components/service/ServiceAuthorizeWithContext";
+import { ServiceSwitchWithContext } from "@/app/components/service/ServiceSwitchWithContext";
 import { S3Provider } from "@/app/services/s3/S3Provider";
-import { YoutubeAuthorize } from "@/app/services/youtube/Authorize";
+import { YoutubeContext } from "@/app/services/youtube/Context";
+import { YoutubeForm } from "@/app/services/youtube/Form";
 import { YoutubeProvider } from "@/app/services/youtube/Provider";
 import { YoutubeRedirectHandler } from "@/app/services/youtube/RedirectHandler";
-import { YoutubeSwitch } from "@/app/services/youtube/Switch";
 
 export default function Share() {
   return (
@@ -13,8 +17,11 @@ export default function Share() {
         <YoutubeProvider>
           <div>
             <div className="flex flex-col gap-1">
-              <YoutubeSwitch />
-              <YoutubeAuthorize />
+              <ServiceSwitchWithContext
+                context={YoutubeContext}
+                form={<YoutubeForm />}
+              />
+              <ServiceAuthorizeWithContext context={YoutubeContext} />
             </div>
             <Suspense>
               <YoutubeRedirectHandler />

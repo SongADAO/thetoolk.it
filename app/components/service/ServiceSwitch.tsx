@@ -6,8 +6,8 @@ import { ReactNode, useEffect, useState } from "react";
 
 interface Props {
   brandColor: string;
-  children: ReactNode;
   configId: string;
+  form: ReactNode;
   icon: ReactNode;
   isComplete: boolean;
   isEnabled: boolean;
@@ -17,8 +17,8 @@ interface Props {
 
 function ServiceSwitch({
   brandColor,
-  children,
   configId,
+  form,
   icon,
   isComplete,
   isEnabled,
@@ -75,7 +75,7 @@ function ServiceSwitch({
           </Accordion.Trigger>
         </div>
         <Accordion.Content className="data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown overflow-hidden">
-          <div className="m-2 rounded bg-[#fff0] p-2">{children}</div>
+          <div className="m-2 rounded bg-[#fff0] p-2">{form}</div>
         </Accordion.Content>
       </Accordion.Item>
     </Accordion.Root>
