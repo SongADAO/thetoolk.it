@@ -1,12 +1,13 @@
 import { FlatCompat } from '@eslint/eslintrc'
 import eslint from '@eslint/js';
 import eslintConfigPrettier from "eslint-config-prettier/flat";
+import globals from "globals";
 import importPlugin from 'eslint-plugin-import';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
+import reactRefresh from "eslint-plugin-react-refresh";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import tseslint from 'typescript-eslint';
-import reactRefresh from "eslint-plugin-react-refresh";
 
 const compat = new FlatCompat({
   // import.meta.dirname is available after Node.js v20.11.0
@@ -43,6 +44,10 @@ export default tseslint.config(
       "simple-import-sort": simpleImportSort,
     },
     languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.browser,
+      },
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
