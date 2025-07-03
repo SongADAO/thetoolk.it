@@ -1,3 +1,8 @@
+import type {
+  OauthAuthorization,
+  OauthCredentials,
+} from "@/app/services/types";
+
 interface GoogleTokenResponse {
   access_token: string;
   expires_in: number;
@@ -125,6 +130,27 @@ function hasTokenExpired(tokenExpiry: string | null) {
   return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
 }
 
+function hasCompleteCredentials(credentials: OauthCredentials) {
+  return credentials.clientId !== "" && credentials.clientSecret !== "";
+}
+
+function hasCompleteAuthorization(authorization: OauthAuthorization) {
+  return (
+    authorization.accessToken !== "" &&
+    authorization.accessTokenExpiresAt !== "" &&
+    authorization.refreshToken !== "" &&
+    authorization.refreshTokenExpiresAt !== "" &&
+    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+  );
+}
+
+function getRedirectUri() {
+  const url = new URL(window.location.href);
+  const baseUrl = url.origin + url.pathname;
+
+  return baseUrl;
+}
+
 function shouldHandleCodeAndScope(code: string | null, scope: string | null) {
   return code && scope?.includes("https://www.googleapis.com");
 }
@@ -132,6 +158,9 @@ function shouldHandleCodeAndScope(code: string | null, scope: string | null) {
 export {
   exchangeCodeForTokens,
   getAuthorizationUrl,
+  getRedirectUri,
+  hasCompleteAuthorization,
+  hasCompleteCredentials,
   hasTokenExpired,
   refreshAccessToken,
   shouldHandleCodeAndScope,

@@ -17,6 +17,9 @@ import {
 import {
   exchangeCodeForTokens,
   getAuthorizationUrl,
+  getRedirectUri,
+  hasCompleteAuthorization,
+  hasCompleteCredentials,
   hasTokenExpired,
   refreshAccessToken,
   shouldHandleCodeAndScope,
@@ -56,24 +59,11 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   const configId = JSON.stringify(credentials);
 
-  const isComplete =
-    credentials.clientId !== "" && credentials.clientSecret !== "";
+  const isComplete = hasCompleteCredentials(credentials);
 
-  const isAuthorized =
-    authorization.accessToken !== "" &&
-    authorization.accessTokenExpiresAt !== "" &&
-    authorization.refreshToken !== "" &&
-    authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt);
+  const isAuthorized = hasCompleteAuthorization(authorization);
 
   const authorizationExpiresAt = authorization.refreshTokenExpiresAt;
-
-  function getRedirectUri() {
-    const url = new URL(window.location.href);
-    const baseUrl = url.origin + url.pathname;
-
-    return baseUrl;
-  }
 
   function authorize() {
     const authUrl = getAuthorizationUrl(credentials.clientId, getRedirectUri());
