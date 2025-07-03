@@ -1,3 +1,5 @@
+// import { dirname } from "path";
+// import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
@@ -10,6 +12,13 @@ import reactPlugin from "eslint-plugin-react";
 import reactRefresh from "eslint-plugin-react-refresh";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import tseslint from "typescript-eslint";
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
+
+// const compat = new FlatCompat({
+//   baseDirectory: __dirname,
+// });
 
 const compat = new FlatCompat({
   // import.meta.dirname is available after Node.js v20.11.0
