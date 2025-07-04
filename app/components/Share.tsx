@@ -4,14 +4,13 @@ import { Suspense } from "react";
 
 import { ServiceAuthorizeWithContext } from "@/app/components/service/ServiceAuthorizeWithContext";
 import { ServiceFormWithContext } from "@/app/components/service/ServiceFormWithContext";
+import { ServiceRedirectHandlerWithContext } from "@/app/components/service/ServiceRedirectHandlerWithContext";
 import { ServiceSwitchWithContext } from "@/app/components/service/ServiceSwitchWithContext";
 import { InstagramContext } from "@/app/services/instagram/Context";
 import { InstagramProvider } from "@/app/services/instagram/Provider";
-import { InstagramRedirectHandler } from "@/app/services/instagram/RedirectHandler";
 import { S3Provider } from "@/app/services/s3/S3Provider";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 import { YoutubeProvider } from "@/app/services/youtube/Provider";
-import { YoutubeRedirectHandler } from "@/app/services/youtube/RedirectHandler";
 
 export default function Share() {
   return (
@@ -26,6 +25,9 @@ export default function Share() {
                   form={<ServiceFormWithContext context={YoutubeContext} />}
                 />
                 <ServiceAuthorizeWithContext context={YoutubeContext} />
+                <Suspense>
+                  <ServiceRedirectHandlerWithContext context={YoutubeContext} />
+                </Suspense>
               </div>
 
               <div className="flex flex-col gap-1">
@@ -34,11 +36,12 @@ export default function Share() {
                   form={<ServiceFormWithContext context={InstagramContext} />}
                 />
                 <ServiceAuthorizeWithContext context={InstagramContext} />
+                <Suspense>
+                  <ServiceRedirectHandlerWithContext
+                    context={InstagramContext}
+                  />
+                </Suspense>
               </div>
-              <Suspense>
-                <YoutubeRedirectHandler />
-                <InstagramRedirectHandler />
-              </Suspense>
             </div>
           </InstagramProvider>
         </YoutubeProvider>

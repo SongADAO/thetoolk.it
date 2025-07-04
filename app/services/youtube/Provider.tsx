@@ -156,6 +156,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     try {
       const code = searchParams.get("code");
       const scope = searchParams.get("scope");
+      console.log("code", code);
+      console.log("scope", scope);
 
       if (code && scope && shouldHandleAuthRedirect(code, scope)) {
         await exchangeCode(code);

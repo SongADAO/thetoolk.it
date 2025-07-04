@@ -176,6 +176,8 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     try {
       const code = searchParams.get("code");
       const state = searchParams.get("state");
+      console.log("code", code);
+      console.log("state", state);
 
       if (code && state && shouldHandleAuthRedirect(code, state)) {
         await exchangeCode(code);
