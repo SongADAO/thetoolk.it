@@ -10,7 +10,7 @@ interface Props {
   readonly context: Context<ServiceContextType>;
 }
 
-export function ShareServiceSettings({ context }: Props) {
+export function PostServiceSettings({ context }: Props) {
   return (
     <>
       <ServiceSwitchWithContext

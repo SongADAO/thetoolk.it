@@ -1,12 +1,11 @@
-// import Image from "next/image";
-import Share from "@/app/components/Share";
+import { Post } from "@/app/components/Post";
 
 export default function Home() {
   return (
     <div>
       <header>TheToolk.it</header>
       <main>
-        <Share />
+        <Post />
       </main>
       <footer>TheToolk.it</footer>
     </div>
