@@ -1,5 +1,3 @@
-"use client";
-
 import { PostSettings } from "@/app/components/PostSettings";
 import { InstagramProvider } from "@/app/services/instagram/Provider";
 import { S3Provider } from "@/app/services/s3/S3Provider";
