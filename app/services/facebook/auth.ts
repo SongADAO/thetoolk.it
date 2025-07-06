@@ -117,39 +117,15 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh access token using refresh token
+/* eslint-disable */
 async function refreshAccessToken(
   clientId: string,
   clientSecret: string,
   refreshToken: string,
 ) {
-  if (!refreshToken) {
-    throw new Error("No refresh token available");
-  }
-
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      grant_type: "refresh_token",
-      refresh_token: refreshToken,
-    }),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    method: "POST",
-  });
-
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
-    throw new Error(
-      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
-    );
-  }
-
-  const tokens = await tokenResponse.json();
-
-  return formatTokens(tokens);
+  throw new Error("refreshAccessToken not implemented");
 }
+/* eslint-enable */
 
 function hasTokenExpired(tokenExpiry: string | null) {
   if (!tokenExpiry) {
@@ -204,8 +180,12 @@ function shouldHandleAuthRedirect(code: string | null, state: string | null) {
 async function getFacebookPages(token: string) {
   console.log("Getting Facebook pages...");
 
+  const params = new URLSearchParams({
+    access_token: token,
+  });
+
   const pagesResponse = await fetch(
-    `https://graph.facebook.com/v23.0/me/accounts?access_token=${token}`,
+    `https://graph.facebook.com/v23.0/me/accounts?${params.toString()}`,
   );
 
   if (!pagesResponse.ok) {
@@ -235,9 +215,14 @@ async function getFacebookAccountFromPage(
 ): Promise<ServiceAccount> {
   console.log(`Checking page: ${page.name} (ID: ${page.id})`);
 
+  const params = new URLSearchParams({
+    access_token: page.access_token,
+    fields: "id,name",
+  });
+
   // Test access to the Facebook account
   const testResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${page.id}?fields=id,name&access_token=${page.access_token}`,
+    `https://graph.facebook.com/v23.0/${page.id}?${params.toString()}`,
   );
 
   if (!testResponse.ok) {

@@ -119,39 +119,15 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh access token using refresh token
+/* eslint-disable */
 async function refreshAccessToken(
   clientId: string,
   clientSecret: string,
   refreshToken: string,
 ) {
-  if (!refreshToken) {
-    throw new Error("No refresh token available");
-  }
-
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      grant_type: "refresh_token",
-      refresh_token: refreshToken,
-    }),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    method: "POST",
-  });
-
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
-    throw new Error(
-      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
-    );
-  }
-
-  const tokens = await tokenResponse.json();
-
-  return formatTokens(tokens);
+  throw new Error("refreshAccessToken not implemented");
 }
+/* eslint-enable */
 
 function hasTokenExpired(tokenExpiry: string | null) {
   if (!tokenExpiry) {
@@ -206,8 +182,12 @@ function shouldHandleAuthRedirect(code: string | null, state: string | null) {
 async function getFacebookPages(token: string) {
   console.log("Getting Facebook pages...");
 
+  const params = new URLSearchParams({
+    access_token: token,
+  });
+
   const pagesResponse = await fetch(
-    `https://graph.facebook.com/v23.0/me/accounts?access_token=${token}`,
+    `https://graph.facebook.com/v23.0/me/accounts?${params.toString()}`,
   );
 
   if (!pagesResponse.ok) {
@@ -237,8 +217,12 @@ async function getInstagramAccountFromPage(
 ): Promise<ServiceAccount> {
   console.log(`Checking page: ${page.name} (ID: ${page.id})`);
 
+  const params = new URLSearchParams({
+    access_token: page.access_token,
+  });
+
   const igResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${page.id}/instagram_accounts?access_token=${page.access_token}`,
+    `https://graph.facebook.com/v23.0/${page.id}/instagram_accounts?${params.toString()}`,
   );
 
   if (!igResponse.ok) {
@@ -258,25 +242,30 @@ async function getInstagramAccountFromPage(
   // Check if it's actually accessible
   const igId = igData.data[0].id;
 
+  const userParams = new URLSearchParams({
+    access_token: page.access_token,
+    fields: "id,username",
+  });
+
   // Test access to the Instagram account
-  const testResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${igId}?fields=id,username&access_token=${page.access_token}`,
+  const userResponse = await fetch(
+    `https://graph.facebook.com/v23.0/${igId}?${userParams.toString()}`,
   );
 
-  if (!testResponse.ok) {
-    console.error("Instagram API error:", await testResponse.text());
+  if (!userResponse.ok) {
+    console.error("Instagram API error:", await userResponse.text());
     throw new Error(
       `Instagram account found but not accessible: ${page.name}:`,
     );
   }
 
-  const testData = await testResponse.json();
-  console.log("✅ Instagram Account Details:", testData);
+  const userData = await userResponse.json();
+  console.log("✅ Instagram Account Details:", userData);
 
   return {
     accessToken: page.access_token,
-    id: testData.id,
-    username: testData.username,
+    id: userData.id,
+    username: userData.username,
   };
 }
 

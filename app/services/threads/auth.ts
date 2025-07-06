@@ -19,13 +19,7 @@ interface FacebookPage {
   access_token: string;
 }
 
-const SCOPES = [
-  "business_management",
-  "threads_basic",
-  "threads_content_publish",
-  "pages_show_list",
-  "pages_read_engagement",
-];
+const SCOPES = ["threads_basic", "threads_content_publish"];
 
 function getAuthorizationUrl(clientId: string, redirectUri: string) {
   const params = new URLSearchParams({
@@ -36,7 +30,7 @@ function getAuthorizationUrl(clientId: string, redirectUri: string) {
     state: "threads_auth",
   });
 
-  return `https://www.facebook.com/v23.0/dialog/oauth?${params.toString()}`;
+  return `https://threads.net/oauth/authorize?${params.toString()}`;
 }
 
 function formatTokens(tokens: GoogleTokenResponse) {
@@ -68,12 +62,13 @@ async function exchangeCodeForTokens(
   redirectUri: string,
 ) {
   const tokenResponse = await fetch(
-    "https://graph.facebook.com/v23.0/oauth/access_token",
+    "https://graph.threads.net/oauth/access_token",
     {
       body: new URLSearchParams({
         client_id: clientId,
         client_secret: clientSecret,
         code,
+        grant_type: "authorization_code",
         redirect_uri: redirectUri,
       }),
       headers: {
@@ -95,14 +90,13 @@ async function exchangeCodeForTokens(
 
   // Get long-lived token
   const longLivedParams = new URLSearchParams({
-    client_id: clientId,
+    access_token: tokens.access_token,
     client_secret: clientSecret,
-    fb_exchange_token: tokens.access_token,
-    grant_type: "fb_exchange_token",
+    grant_type: "th_exchange_token",
   });
 
   const longLivedTokenResponse = await fetch(
-    `https://graph.facebook.com/v23.0/oauth/access_token?${longLivedParams.toString()}`,
+    `https://graph.threads.net/access_token?${longLivedParams.toString()}`,
   );
 
   if (!longLivedTokenResponse.ok) {
@@ -119,39 +113,15 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh access token using refresh token
+/* eslint-disable */
 async function refreshAccessToken(
   clientId: string,
   clientSecret: string,
   refreshToken: string,
 ) {
-  if (!refreshToken) {
-    throw new Error("No refresh token available");
-  }
-
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      grant_type: "refresh_token",
-      refresh_token: refreshToken,
-    }),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    method: "POST",
-  });
-
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
-    throw new Error(
-      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
-    );
-  }
-
-  const tokens = await tokenResponse.json();
-
-  return formatTokens(tokens);
+  throw new Error("refreshAccessToken not implemented");
 }
+/* eslint-enable */
 
 function hasTokenExpired(tokenExpiry: string | null) {
   if (!tokenExpiry) {
@@ -202,100 +172,43 @@ function shouldHandleAuthRedirect(code: string | null, state: string | null) {
   return code && state?.includes("threads_auth");
 }
 
-// Get Facebook Pages
-async function getFacebookPages(token: string) {
-  console.log("Getting Facebook pages...");
+// Get Threads user info to get the correct ID
+async function getThreadsUserInfo(token: string): Promise<ServiceAccount> {
+  console.log(`Checking Threads user info`);
 
-  const pagesResponse = await fetch(
-    `https://graph.facebook.com/v23.0/me/accounts?access_token=${token}`,
+  const params = new URLSearchParams({
+    access_token: token,
+    fields: "id,username",
+  });
+
+  const response = await fetch(
+    `https://graph.threads.net/v1.0/me?${params.toString()}`,
   );
 
-  if (!pagesResponse.ok) {
-    const error = await pagesResponse.json();
-    console.error("Pages API error:", error);
-    throw new Error(
-      `Failed to get Facebook pages: ${error.error?.message ?? pagesResponse.statusText}`,
-    );
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to get user info: ${errorText}`);
   }
 
-  const pagesData = await pagesResponse.json();
-  console.log("Pages data:", pagesData);
-
-  if (!pagesData.data || pagesData.data.length === 0) {
-    throw new Error(
-      "No Facebook pages found. You need to create a Facebook page to post videos.",
-    );
-  }
-
-  console.log(`Found ${pagesData.data.length} Facebook page(s)`);
-
-  return pagesData.data;
-}
-
-async function getThreadsAccountFromPage(
-  page: FacebookPage,
-): Promise<ServiceAccount> {
-  console.log(`Checking page: ${page.name} (ID: ${page.id})`);
-
-  const igResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${page.id}/threads_accounts?access_token=${page.access_token}`,
-  );
-
-  if (!igResponse.ok) {
-    console.error("Threads API error:", await igResponse.text());
-    throw new Error(`Failed to check Threads for page ${page.name}:`);
-  }
-
-  const igData = await igResponse.json();
-  console.log(`Threads data for page ${page.name}:`, igData);
-
-  if (!igData.data || igData.data.length === 0) {
-    throw new Error(
-      `No IG data returned for threads account for page ${page.name}.`,
-    );
-  }
-
-  // Check if it's actually accessible
-  const igId = igData.data[0].id;
-
-  // Test access to the Threads account
-  const testResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${igId}?fields=id,username&access_token=${page.access_token}`,
-  );
-
-  if (!testResponse.ok) {
-    console.error("Threads API error:", await testResponse.text());
-    throw new Error(`Threads account found but not accessible: ${page.name}:`);
-  }
-
-  const testData = await testResponse.json();
-  console.log("✅ Threads Account Details:", testData);
+  const userInfo = await response.json();
+  console.log("Threads user info:", userInfo);
 
   return {
-    accessToken: page.access_token,
-    id: testData.id,
-    username: testData.username,
+    accessToken: token,
+    id: userInfo.id,
+    username: userInfo.username,
   };
 }
 
 // Get Threads Accounts from Facebook Pages
 async function getThreadsAccounts(token: string): Promise<ServiceAccount[]> {
-  const facebookPages = await getFacebookPages(token);
+  const threadsAccounts = [];
 
-  const igAccounts = [];
+  const threadsAccount = await getThreadsUserInfo(token);
 
-  for (const page of facebookPages) {
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      const igAccount = await getThreadsAccountFromPage(page);
+  threadsAccounts.push(threadsAccount);
 
-      igAccounts.push(igAccount);
-    } catch (error) {
-      console.error("Error getting Threads account:", error);
-    }
-  }
-
-  return igAccounts;
+  return threadsAccounts;
 }
 
 export {

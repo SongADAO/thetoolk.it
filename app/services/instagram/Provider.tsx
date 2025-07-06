@@ -106,30 +106,31 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokens(): Promise<OauthAuthorization | null> {
-    try {
-      const newAuthorization = await refreshAccessToken(
-        credentials.clientId,
-        credentials.clientSecret,
-        getRedirectUri(),
-      );
+  function refreshTokens(): Promise<OauthAuthorization | null> | null {
+    return null;
+    // try {
+    //   const newAuthorization = await refreshAccessToken(
+    //     credentials.clientId,
+    //     credentials.clientSecret,
+    //     getRedirectUri(),
+    //   );
 
-      setAuthorization(newAuthorization);
+    //   setAuthorization(newAuthorization);
 
-      setError("");
+    //   setError("");
 
-      console.log("Access token refreshed successfully");
+    //   console.log("Access token refreshed successfully");
 
-      return newAuthorization;
-    } catch (err: unknown) {
-      console.error("Token refresh error:", err);
+    //   return newAuthorization;
+    // } catch (err: unknown) {
+    //   console.error("Token refresh error:", err);
 
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
+    //   const errMessage = err instanceof Error ? err.message : "Unknown error";
 
-      setError(`Failed to refresh token: ${errMessage}`);
+    //   setError(`Failed to refresh token: ${errMessage}`);
 
-      return null;
-    }
+    //   return null;
+    // }
   }
 
   // Get valid access token (refresh if needed)
