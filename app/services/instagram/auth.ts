@@ -41,9 +41,9 @@ function getAuthorizationUrl(clientId: string, redirectUri: string) {
 
 function formatTokens(tokens: GoogleTokenResponse) {
   const expiresIn = 5184000000;
+  // const expiresIn = tokens.expires_in * 1000;
 
   // Calculate expiry time
-  // const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
   const expiryTime = new Date(Date.now() + expiresIn);
 
   // const refreshExpiryTime = new Date(
@@ -119,15 +119,35 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh access token using refresh token
-/* eslint-disable */
-async function refreshAccessToken(
-  clientId: string,
-  clientSecret: string,
-  refreshToken: string,
-) {
-  throw new Error("refreshAccessToken not implemented");
+async function refreshAccessToken(authorization: OauthAuthorization) {
+  if (!authorization.refreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  const params = new URLSearchParams({
+    access_token: authorization.refreshToken,
+  });
+
+  const response = await fetch(
+    `https://graph.facebook.com/v23.0/me/accounts?${params.toString()}`,
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to get user info: ${errorText}`);
+  }
+
+  // Calculate expiry time
+  const expiresIn = 5184000000;
+  const refreshExpiryTime = new Date(Date.now() + expiresIn);
+
+  return {
+    accessToken: authorization.accessToken,
+    accessTokenExpiresAt: authorization.accessTokenExpiresAt,
+    refreshToken: authorization.refreshToken,
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
+  };
 }
-/* eslint-enable */
 
 function hasTokenExpired(tokenExpiry: string | null) {
   if (!tokenExpiry) {
@@ -141,6 +161,22 @@ function hasTokenExpired(tokenExpiry: string | null) {
 
   // 5 minutes in milliseconds
   const bufferTime = 5 * 60 * 1000;
+
+  return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
+}
+
+function needsTokenRefresh(tokenExpiry: string | null) {
+  if (!tokenExpiry) {
+    return false;
+  }
+
+  const tokenExpiryDate = new Date(tokenExpiry);
+
+  // Check if token is expired or about to expire (5 minutes buffer)
+  const now = new Date();
+
+  // 30 days in milliseconds
+  const bufferTime = 30 * 24 * 60 * 60 * 1000;
 
   return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
 }
@@ -299,6 +335,7 @@ export {
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
+  needsTokenRefresh,
   refreshAccessToken,
   shouldHandleAuthRedirect,
 };

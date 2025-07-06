@@ -18,6 +18,7 @@ import {
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
+  needsTokenRefresh,
   refreshAccessToken,
   shouldHandleAuthRedirect,
 } from "@/app/services/instagram/auth";
@@ -106,31 +107,38 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     }
   }
 
-  function refreshTokens(): Promise<OauthAuthorization | null> | null {
+  async function refreshTokens(): Promise<OauthAuthorization | null> {
+    try {
+      const newAuthorization = await refreshAccessToken(authorization);
+
+      setAuthorization(newAuthorization);
+
+      setError("");
+
+      console.log("Access token refreshed successfully");
+
+      return newAuthorization;
+    } catch (err: unknown) {
+      console.error("Token refresh error:", err);
+
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+
+      setError(`Failed to refresh token: ${errMessage}`);
+
+      return null;
+    }
+  }
+
+  async function refreshTokensIfNeeded(): Promise<OauthAuthorization | null> {
+    if (
+      isAuthorized &&
+      needsTokenRefresh(authorization.refreshTokenExpiresAt)
+    ) {
+      console.log("Refresh token will expire within 30 days, refreshing...");
+      return await refreshTokens();
+    }
+
     return null;
-    // try {
-    //   const newAuthorization = await refreshAccessToken(
-    //     credentials.clientId,
-    //     credentials.clientSecret,
-    //     getRedirectUri(),
-    //   );
-
-    //   setAuthorization(newAuthorization);
-
-    //   setError("");
-
-    //   console.log("Access token refreshed successfully");
-
-    //   return newAuthorization;
-    // } catch (err: unknown) {
-    //   console.error("Token refresh error:", err);
-
-    //   const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-    //   setError(`Failed to refresh token: ${errMessage}`);
-
-    //   return null;
-    // }
   }
 
   // Get valid access token (refresh if needed)
@@ -222,6 +230,11 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
     return formState;
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    refreshTokensIfNeeded();
+  }, [authorization.accessToken, isAuthorized]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises

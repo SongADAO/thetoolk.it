@@ -13,12 +13,6 @@ interface GoogleTokenResponse {
   token_type: string;
 }
 
-interface FacebookPage {
-  id: string;
-  name: string;
-  access_token: string;
-}
-
 const SCOPES = ["threads_basic", "threads_content_publish"];
 
 function getAuthorizationUrl(clientId: string, redirectUri: string) {
@@ -34,10 +28,10 @@ function getAuthorizationUrl(clientId: string, redirectUri: string) {
 }
 
 function formatTokens(tokens: GoogleTokenResponse) {
-  const expiresIn = 5184000000;
+  // const expiresIn = 5184000000;
+  const expiresIn = tokens.expires_in * 1000;
 
   // Calculate expiry time
-  // const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
   const expiryTime = new Date(Date.now() + expiresIn);
 
   // const refreshExpiryTime = new Date(
@@ -113,15 +107,31 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh access token using refresh token
-/* eslint-disable */
-async function refreshAccessToken(
-  clientId: string,
-  clientSecret: string,
-  refreshToken: string,
-) {
-  throw new Error("refreshAccessToken not implemented");
+async function refreshAccessToken(authorization: OauthAuthorization) {
+  if (!authorization.refreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  const params = new URLSearchParams({
+    access_token: authorization.refreshToken,
+    grant_type: "th_refresh_token",
+  });
+
+  const tokenResponse = await fetch(
+    `https://graph.threads.net/refresh_access_token?${params.toString()}`,
+  );
+
+  if (!tokenResponse.ok) {
+    const errorData = await tokenResponse.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  const tokens = await tokenResponse.json();
+
+  return formatTokens(tokens);
 }
-/* eslint-enable */
 
 function hasTokenExpired(tokenExpiry: string | null) {
   if (!tokenExpiry) {
@@ -135,6 +145,22 @@ function hasTokenExpired(tokenExpiry: string | null) {
 
   // 5 minutes in milliseconds
   const bufferTime = 5 * 60 * 1000;
+
+  return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
+}
+
+function needsTokenRefresh(tokenExpiry: string | null) {
+  if (!tokenExpiry) {
+    return false;
+  }
+
+  const tokenExpiryDate = new Date(tokenExpiry);
+
+  // Check if token is expired or about to expire (5 minutes buffer)
+  const now = new Date();
+
+  // 30 days in milliseconds
+  const bufferTime = 30 * 24 * 60 * 60 * 1000;
 
   return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
 }
@@ -221,6 +247,7 @@ export {
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
+  needsTokenRefresh,
   refreshAccessToken,
   shouldHandleAuthRedirect,
 };
