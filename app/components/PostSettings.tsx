@@ -1,6 +1,7 @@
 "use client";
 
 import { PostServiceSettings } from "@/app/components/PostServiceSettings";
+import { FacebookContext } from "@/app/services/facebook/Context";
 import { InstagramContext } from "@/app/services/instagram/Context";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 
@@ -8,6 +9,7 @@ export function PostSettings() {
   const contexts = [
     { context: YoutubeContext, id: "YoutubeContext" },
     { context: InstagramContext, id: "InstagramContext" },
+    { context: FacebookContext, id: "FacebookContext" },
   ];
 
   return (
