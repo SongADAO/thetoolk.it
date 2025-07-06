@@ -237,10 +237,8 @@ async function getInstagramAccountFromPage(
 ): Promise<ServiceAccount> {
   console.log(`Checking page: ${page.name} (ID: ${page.id})`);
 
-  const accessToken = page.access_token;
-
   const igResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${page.id}/instagram_accounts?access_token=${accessToken}`,
+    `https://graph.facebook.com/v23.0/${page.id}/instagram_accounts?access_token=${page.access_token}`,
   );
 
   if (!igResponse.ok) {
@@ -258,11 +256,11 @@ async function getInstagramAccountFromPage(
   }
 
   // Check if it's actually accessible
-  const id = igData.data[0].id;
+  const igId = igData.data[0].id;
 
   // Test access to the Instagram account
   const testResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${id}?fields=id,username&access_token=${accessToken}`,
+    `https://graph.facebook.com/v23.0/${igId}?fields=id,username&access_token=${page.access_token}`,
   );
 
   if (!testResponse.ok) {
@@ -276,7 +274,7 @@ async function getInstagramAccountFromPage(
   console.log("✅ Instagram Account Details:", testData);
 
   return {
-    accessToken,
+    accessToken: page.access_token,
     id: testData.id,
     username: testData.username,
   };

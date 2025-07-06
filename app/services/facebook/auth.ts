@@ -235,12 +235,9 @@ async function getFacebookAccountFromPage(
 ): Promise<ServiceAccount> {
   console.log(`Checking page: ${page.name} (ID: ${page.id})`);
 
-  const accessToken = page.access_token;
-  const pageId = page.id;
-
   // Test access to the Facebook account
   const testResponse = await fetch(
-    `https://graph.facebook.com/v23.0/${pageId}?fields=id,username&access_token=${accessToken}`,
+    `https://graph.facebook.com/v23.0/${page.id}?fields=id,name&access_token=${page.access_token}`,
   );
 
   if (!testResponse.ok) {
@@ -252,9 +249,9 @@ async function getFacebookAccountFromPage(
   console.log("✅ Facebook Account Details:", testData);
 
   return {
-    accessToken,
-    id: testData.id,
-    username: testData.username,
+    accessToken: page.access_token,
+    id: page.id,
+    username: page.name,
   };
 }
 

@@ -154,6 +154,12 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
   async function initAccounts(): Promise<ServiceAccount[]> {
     try {
+      if (!isAuthorized) {
+        setAccounts([]);
+
+        return [];
+      }
+
       const newAccounts = await getInstagramAccounts(authorization.accessToken);
 
       setAccounts(newAccounts);
@@ -219,7 +225,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     initAccounts();
-  }, [authorization.accessToken]);
+  }, [authorization.accessToken, isAuthorized]);
 
   const providerValues = useMemo(
     () => ({
