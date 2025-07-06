@@ -2,6 +2,7 @@ import { PostSettings } from "@/app/components/PostSettings";
 import { FacebookProvider } from "@/app/services/facebook/Provider";
 import { InstagramProvider } from "@/app/services/instagram/Provider";
 import { S3Provider } from "@/app/services/s3/S3Provider";
+import { ThreadsProvider } from "@/app/services/threads/Provider";
 import { YoutubeProvider } from "@/app/services/youtube/Provider";
 
 export function Post() {
@@ -10,7 +11,9 @@ export function Post() {
       <YoutubeProvider>
         <InstagramProvider>
           <FacebookProvider>
-            <PostSettings />
+            <ThreadsProvider>
+              <PostSettings />
+            </ThreadsProvider>
           </FacebookProvider>
         </InstagramProvider>
       </YoutubeProvider>
