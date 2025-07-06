@@ -203,7 +203,7 @@ function shouldHandleAuthRedirect(code: string | null, state: string | null) {
 }
 
 // Get Facebook Pages
-async function getFacebookAccounts(token: string) {
+async function getFacebookPages(token: string) {
   console.log("Getting Facebook pages...");
 
   const pagesResponse = await fetch(
@@ -284,11 +284,11 @@ async function getInstagramAccountFromPage(
 
 // Get Instagram Accounts from Facebook Pages
 async function getInstagramAccounts(token: string): Promise<ServiceAccount[]> {
-  const facebookAccounts = await getFacebookAccounts(token);
+  const facebookPages = await getFacebookPages(token);
 
   const igAccounts = [];
 
-  for (const page of facebookAccounts) {
+  for (const page of facebookPages) {
     try {
       // eslint-disable-next-line no-await-in-loop
       const igAccount = await getInstagramAccountFromPage(page);
