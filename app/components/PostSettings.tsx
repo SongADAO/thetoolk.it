@@ -5,6 +5,7 @@ import { BlueskyContext } from "@/app/services/bluesky/Context";
 import { FacebookContext } from "@/app/services/facebook/Context";
 import { InstagramContext } from "@/app/services/instagram/Context";
 import { ThreadsContext } from "@/app/services/threads/Context";
+import { TiktokContext } from "@/app/services/tiktok/Context";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 
 export function PostSettings() {
@@ -14,6 +15,7 @@ export function PostSettings() {
     { context: FacebookContext, id: "FacebookContext" },
     { context: ThreadsContext, id: "ThreadsContext" },
     { context: BlueskyContext, id: "BlueskyContext" },
+    { context: TiktokContext, id: "TiktokContext" },
   ];
 
   return (
