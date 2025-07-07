@@ -2,6 +2,7 @@ import { hasExpired } from "@/app/services/helpers";
 import type {
   OauthAuthorization,
   OauthCredentials,
+  ServiceAccount,
 } from "@/app/services/types";
 
 interface GoogleTokenResponse {
@@ -175,8 +176,66 @@ async function refreshAccessToken(
 
 // -----------------------------------------------------------------------------
 
+async function getUserInfo(token: string): Promise<ServiceAccount> {
+  console.log(`Checking YouTube user info`);
+
+  const params = new URLSearchParams({
+    fields: "items(id,snippet(title,customUrl))",
+    mine: "true",
+    part: "snippet",
+  });
+
+  const response = await fetch(
+    `https://www.googleapis.com/youtube/v3/channels?${params.toString()}`,
+    {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to get user info: ${errorText}`);
+  }
+
+  const data = await response.json();
+
+  if (!data.items || data.items.length === 0) {
+    throw new Error("No channel found for this account");
+  }
+
+  const channel = data.items[0];
+  console.log("YouTube user info:", channel);
+
+  return {
+    accessToken: token,
+    id: channel.id,
+    username: channel.snippet.title,
+  };
+}
+
+async function getAccounts(token: string): Promise<ServiceAccount[]> {
+  const accounts = [];
+
+  // Get the main channel
+  const account = await getUserInfo(token);
+  accounts.push(account);
+
+  // Note: YouTube users can have multiple channels (brand accounts)
+  // If you need to get ALL channels (including brand channels),
+  // you would need additional API calls to get brand accounts
+  // For now, this returns just the main channel like the Threads example
+
+  return accounts;
+}
+
+// -----------------------------------------------------------------------------
+
 export {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,

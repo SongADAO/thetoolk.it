@@ -17,6 +17,7 @@ import {
 } from "@/app/services/types";
 import {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
@@ -163,6 +164,32 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
+  async function initAccounts(): Promise<ServiceAccount[]> {
+    try {
+      if (!isAuthorized) {
+        setAccounts([]);
+
+        return [];
+      }
+
+      const newAccounts = await getAccounts(authorization.accessToken);
+
+      setAccounts(newAccounts);
+
+      return newAccounts;
+    } catch (err: unknown) {
+      console.error("Token exchange error:", err);
+
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+
+      setError(`Failed to get instagram accounts: ${errMessage}`);
+
+      setAccounts([]);
+
+      return [];
+    }
+  }
+
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
       const code = searchParams.get("code");
@@ -210,6 +237,11 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     refreshTokensIfNeeded();
+  }, [authorization.accessToken, isAuthorized]);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    initAccounts();
   }, [authorization.accessToken, isAuthorized]);
 
   const providerValues = useMemo(
