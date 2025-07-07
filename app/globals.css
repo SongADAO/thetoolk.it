@@ -13,6 +13,15 @@
 
   --color-brand-threads: #0a0a0a;
   --color-brand-threads-inverse: #fff;
+
+  --color-brand-bluesky: #3d83f7;
+  --color-brand-bluesky-inverse: #fff;
+
+  --color-brand-tiktok: #ea4459;
+  --color-brand-tiktok-inverse: #fff;
+
+  --color-brand-twitter: #000000;
+  --color-brand-twitter-inverse: #fff;
 }
 
 @source inline("bg-brand-youtube");
@@ -46,6 +55,30 @@
 @source inline("group-data-[enabled=yes]:bg-brand-threads");
 @source inline("group-data-[enabled=yes]:text-brand-threads");
 @source inline("group-data-[enabled=yes]:text-brand-threads-inverse");
+
+@source inline("bg-brand-bluesky");
+@source inline("data-[enabled=yes]:bg-brand-bluesky");
+@source inline("data-[enabled=yes]:text-brand-bluesky");
+@source inline("data-[enabled=yes]:text-brand-bluesky-inverse");
+@source inline("group-data-[enabled=yes]:bg-brand-bluesky");
+@source inline("group-data-[enabled=yes]:text-brand-bluesky");
+@source inline("group-data-[enabled=yes]:text-brand-bluesky-inverse");
+
+@source inline("bg-brand-tiktok");
+@source inline("data-[enabled=yes]:bg-brand-tiktok");
+@source inline("data-[enabled=yes]:text-brand-tiktok");
+@source inline("data-[enabled=yes]:text-brand-tiktok-inverse");
+@source inline("group-data-[enabled=yes]:bg-brand-tiktok");
+@source inline("group-data-[enabled=yes]:text-brand-tiktok");
+@source inline("group-data-[enabled=yes]:text-brand-tiktok-inverse");
+
+@source inline("bg-brand-twitter");
+@source inline("data-[enabled=yes]:bg-brand-twitter");
+@source inline("data-[enabled=yes]:text-brand-twitter");
+@source inline("data-[enabled=yes]:text-brand-twitter-inverse");
+@source inline("group-data-[enabled=yes]:bg-brand-twitter");
+@source inline("group-data-[enabled=yes]:text-brand-twitter");
+@source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
 
 /* :root {
   --background: #ffffff;
