@@ -1,6 +1,7 @@
 "use client";
 
 import { PostServiceSettings } from "@/app/components/PostServiceSettings";
+import { BlueskyContext } from "@/app/services/bluesky/Context";
 import { FacebookContext } from "@/app/services/facebook/Context";
 import { InstagramContext } from "@/app/services/instagram/Context";
 import { ThreadsContext } from "@/app/services/threads/Context";
@@ -12,6 +13,7 @@ export function PostSettings() {
     { context: InstagramContext, id: "InstagramContext" },
     { context: FacebookContext, id: "FacebookContext" },
     { context: ThreadsContext, id: "ThreadsContext" },
+    { context: BlueskyContext, id: "BlueskyContext" },
   ];
 
   return (

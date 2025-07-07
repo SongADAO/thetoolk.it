@@ -1,4 +1,5 @@
 import { PostSettings } from "@/app/components/PostSettings";
+import { BlueskyProvider } from "@/app/services/bluesky/Provider";
 import { FacebookProvider } from "@/app/services/facebook/Provider";
 import { InstagramProvider } from "@/app/services/instagram/Provider";
 import { S3Provider } from "@/app/services/s3/S3Provider";
@@ -12,7 +13,9 @@ export function Post() {
         <InstagramProvider>
           <FacebookProvider>
             <ThreadsProvider>
-              <PostSettings />
+              <BlueskyProvider>
+                <PostSettings />
+              </BlueskyProvider>
             </ThreadsProvider>
           </FacebookProvider>
         </InstagramProvider>
