@@ -1,3 +1,4 @@
+import { hasExpired } from "@/app/services/helpers";
 import type {
   OauthAuthorization,
   OauthCredentials,
@@ -127,35 +128,13 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
 }
 
 function hasTokenExpired(tokenExpiry: string | null) {
-  if (!tokenExpiry) {
-    return false;
-  }
-
-  const tokenExpiryDate = new Date(tokenExpiry);
-
-  // Check if token is expired or about to expire (5 minutes buffer)
-  const now = new Date();
-
-  // 5 minutes in milliseconds
-  const bufferTime = 5 * 60 * 1000;
-
-  return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
+  // 5 minutes buffer
+  return hasExpired(tokenExpiry, 5 * 60);
 }
 
 function needsTokenRefresh(tokenExpiry: string | null) {
-  if (!tokenExpiry) {
-    return false;
-  }
-
-  const tokenExpiryDate = new Date(tokenExpiry);
-
-  // Check if token is expired or about to expire (5 minutes buffer)
-  const now = new Date();
-
-  // 30 days in milliseconds
-  const bufferTime = 30 * 24 * 60 * 60 * 1000;
-
-  return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
+  // 30 day buffer
+  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
 }
 
 function getCredentialsId(credentials: OauthCredentials) {
