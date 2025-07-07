@@ -183,7 +183,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function handleAuthRedirect(searchParams: URLSearchParams) {}
+  async function handleAuthRedirect(searchParams: URLSearchParams) {}
 
   const fields: ServiceFormField[] = [
     {
