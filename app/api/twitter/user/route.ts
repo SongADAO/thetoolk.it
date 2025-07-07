@@ -1,4 +1,6 @@
-export async function GET(request) {
+import { NextRequest } from "next/server";
+
+export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
@@ -24,8 +26,9 @@ export async function GET(request) {
 
     const userData = await response.json();
     return Response.json(userData);
-  } catch (err) {
-    const errMessage = err instanceof Error ? err.message : "Unknown error";
+  } catch (err: unknown) {
+    const errMessage =
+      err instanceof Error ? err.message : "Authentication failed";
     return Response.json({ error: errMessage }, { status: 500 });
   }
 }
