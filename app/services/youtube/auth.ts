@@ -30,8 +30,10 @@ function hasTokenExpired(tokenExpiry: string | null) {
 }
 
 function needsTokenRefresh(tokenExpiry: string | null) {
-  // 30 day buffer
-  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
+  // // 30 day buffer
+  // return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
+  // 5 day buffer
+  return hasExpired(tokenExpiry, 5 * 24 * 60 * 60);
 }
 
 // -----------------------------------------------------------------------------
