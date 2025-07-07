@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaYoutube } from "react-icons/fa6";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -24,6 +24,7 @@ import {
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
+  needsTokenRefresh,
   refreshAccessToken,
   shouldHandleAuthRedirect,
 } from "@/app/services/youtube/auth";
@@ -130,6 +131,18 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
+  async function refreshTokensIfNeeded(): Promise<OauthAuthorization | null> {
+    if (
+      isAuthorized &&
+      needsTokenRefresh(authorization.refreshTokenExpiresAt)
+    ) {
+      console.log("Refresh token will expire within 30 days, refreshing...");
+      return await refreshTokens();
+    }
+
+    return null;
+  }
+
   // Get valid access token (refresh if needed)
   async function getValidAccessToken(): Promise<string> {
     if (hasTokenExpired(authorization.accessTokenExpiresAt)) {
@@ -193,6 +206,11 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
     return formState;
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    refreshTokensIfNeeded();
+  }, [authorization.accessToken, isAuthorized]);
 
   const providerValues = useMemo(
     () => ({

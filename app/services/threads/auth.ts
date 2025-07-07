@@ -102,31 +102,28 @@ async function exchangeCodeForTokens(
   credentials: OauthCredentials,
   redirectUri: string,
 ) {
-  const tokenResponse = await fetch(
-    "https://graph.threads.net/oauth/access_token",
-    {
-      body: new URLSearchParams({
-        client_id: credentials.clientId,
-        client_secret: credentials.clientSecret,
-        code,
-        grant_type: "authorization_code",
-        redirect_uri: redirectUri,
-      }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
+  const response = await fetch("https://graph.threads.net/oauth/access_token", {
+    body: new URLSearchParams({
+      client_id: credentials.clientId,
+      client_secret: credentials.clientSecret,
+      code,
+      grant_type: "authorization_code",
+      redirect_uri: redirectUri,
+    }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-  );
+    method: "POST",
+  });
 
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
       `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
-  const tokens = await tokenResponse.json();
+  const tokens = await response.json();
   console.log(tokens);
 
   // Get long-lived token

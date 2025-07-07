@@ -111,7 +111,7 @@ async function exchangeCodeForTokens(
   credentials: OauthCredentials,
   redirectUri: string,
 ) {
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
     body: new URLSearchParams({
       client_id: credentials.clientId,
       client_secret: credentials.clientSecret,
@@ -125,14 +125,14 @@ async function exchangeCodeForTokens(
     method: "POST",
   });
 
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
       `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
-  const tokens = await tokenResponse.json();
+  const tokens = await response.json();
   console.log(tokens);
 
   return formatTokens(tokens);
@@ -147,7 +147,7 @@ async function refreshAccessToken(
     throw new Error("No refresh token available");
   }
 
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
     body: new URLSearchParams({
       client_id: credentials.clientId,
       client_secret: credentials.clientSecret,
@@ -160,14 +160,15 @@ async function refreshAccessToken(
     method: "POST",
   });
 
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
       `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
-  const tokens = await tokenResponse.json();
+  const tokens = await response.json();
+  console.log(tokens);
 
   return formatTokens(tokens);
 }

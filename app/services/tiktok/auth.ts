@@ -107,31 +107,28 @@ async function exchangeCodeForTokens(
   credentials: OauthCredentials,
   redirectUri: string,
 ) {
-  const tokenResponse = await fetch(
-    "https://open.tiktokapis.com/v2/oauth/token/",
-    {
-      body: new URLSearchParams({
-        client_key: credentials.clientId,
-        client_secret: credentials.clientSecret,
-        code,
-        grant_type: "authorization_code",
-        redirect_uri: redirectUri,
-      }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
+  const response = await fetch("https://open.tiktokapis.com/v2/oauth/token/", {
+    body: new URLSearchParams({
+      client_key: credentials.clientId,
+      client_secret: credentials.clientSecret,
+      code,
+      grant_type: "authorization_code",
+      redirect_uri: redirectUri,
+    }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-  );
+    method: "POST",
+  });
 
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
       `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
-  const tokens = await tokenResponse.json();
+  const tokens = await response.json();
   console.log(tokens);
 
   return formatTokens(tokens);
@@ -165,6 +162,7 @@ async function refreshAccessToken(
   }
 
   const tokens = await response.json();
+  console.log(tokens);
 
   return formatTokens(tokens);
 }

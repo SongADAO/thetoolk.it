@@ -114,7 +114,7 @@ async function exchangeCodeForTokens(
   credentials: OauthCredentials,
   redirectUri: string,
 ) {
-  const tokenResponse = await fetch(
+  const response = await fetch(
     "https://graph.facebook.com/v23.0/oauth/access_token",
     {
       body: new URLSearchParams({
@@ -130,14 +130,14 @@ async function exchangeCodeForTokens(
     },
   );
 
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
       `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
-  const tokens = await tokenResponse.json();
+  const tokens = await response.json();
   console.log(tokens);
 
   // Get long-lived token
