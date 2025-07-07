@@ -24,10 +24,10 @@ import {
 } from "@/app/services/bluesky/auth";
 import { BlueskyContext } from "@/app/services/bluesky/Context";
 import {
+  type BlueskyCredentials,
+  defaultBlueskyCredentials,
   defaultOauthAuthorization,
-  defaultOauthCredentials,
   type OauthAuthorization,
-  type OauthCredentials,
   type ServiceAccount,
 } from "@/app/services/types";
 
@@ -50,9 +50,9 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
+  const [credentials, setCredentials] = useLocalStorage<BlueskyCredentials>(
     "thetoolkit-bluesky-credentials",
-    defaultOauthCredentials,
+    defaultBlueskyCredentials,
     { initializeWithValue: true },
   );
 

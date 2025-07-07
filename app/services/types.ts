@@ -10,6 +10,12 @@ interface OauthCredentials {
   clientSecret: string;
 }
 
+interface BlueskyCredentials {
+  appPassword: string;
+  serviceUrl: string;
+  username: string;
+}
+
 const defaultOauthAuthorization: OauthAuthorization = {
   accessToken: "",
   accessTokenExpiresAt: "",
@@ -22,6 +28,12 @@ const defaultOauthCredentials: OauthCredentials = {
   clientSecret: "",
 };
 
+const defaultBlueskyCredentials: BlueskyCredentials = {
+  appPassword: "",
+  serviceUrl: "",
+  username: "",
+};
+
 interface ServiceAccount {
   accessToken: string;
   id: string;
@@ -29,6 +41,8 @@ interface ServiceAccount {
 }
 
 export {
+  type BlueskyCredentials,
+  defaultBlueskyCredentials,
   defaultOauthAuthorization,
   defaultOauthCredentials,
   type OauthAuthorization,
