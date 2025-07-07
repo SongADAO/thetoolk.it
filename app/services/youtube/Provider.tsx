@@ -109,7 +109,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     try {
       const newAuthorization = await refreshAccessToken(
         credentials,
-        authorization.refreshToken,
+        authorization,
       );
 
       setAuthorization(newAuthorization);
