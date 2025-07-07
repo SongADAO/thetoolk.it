@@ -29,6 +29,11 @@ function hasTokenExpired(tokenExpiry: string | null) {
   return hasExpired(tokenExpiry, 5 * 60);
 }
 
+function needsTokenRefresh(tokenExpiry: string | null) {
+  // 30 day buffer
+  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
+}
+
 // -----------------------------------------------------------------------------
 
 function getCredentialsId(credentials: OauthCredentials) {
@@ -176,6 +181,7 @@ export {
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
+  needsTokenRefresh,
   refreshAccessToken,
   shouldHandleAuthRedirect,
 };
