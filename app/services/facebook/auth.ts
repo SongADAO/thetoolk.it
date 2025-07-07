@@ -280,20 +280,20 @@ async function getFacebookAccountFromPage(
 async function getFacebookAccounts(token: string): Promise<ServiceAccount[]> {
   const facebookPages = await getFacebookPages(token);
 
-  const fbAccounts = [];
+  const facebookAccounts = [];
 
   for (const page of facebookPages) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const fbAccount = await getFacebookAccountFromPage(page);
+      const facebookAccount = await getFacebookAccountFromPage(page);
 
-      fbAccounts.push(fbAccount);
+      facebookAccounts.push(facebookAccount);
     } catch (error) {
       console.error("Error getting Facebook account:", error);
     }
   }
 
-  return fbAccounts;
+  return facebookAccounts;
 }
 
 export {
