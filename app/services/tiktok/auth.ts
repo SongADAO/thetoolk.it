@@ -15,18 +15,59 @@ interface TiktokTokenResponse {
   token_type: string;
 }
 
+// -----------------------------------------------------------------------------
+
 const SCOPES = ["user.info.basic", "video.upload", "video.publish"];
 
-function getAuthorizationUrl(clientId: string, redirectUri: string) {
-  const params = new URLSearchParams({
-    client_key: clientId,
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: SCOPES.join(","),
-    state: "tiktok_auth",
-  });
+const OAUTH_STATE = "tiktok_auth";
 
-  return `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`;
+// -----------------------------------------------------------------------------
+
+function hasTokenExpired(tokenExpiry: string | null) {
+  // 5 minutes buffer
+  return hasExpired(tokenExpiry, 5 * 60);
+}
+
+function needsTokenRefresh(tokenExpiry: string | null) {
+  // 30 day buffer
+  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
+}
+
+// -----------------------------------------------------------------------------
+
+function getCredentialsId(credentials: OauthCredentials) {
+  return JSON.stringify(credentials);
+}
+
+function hasCompleteCredentials(credentials: OauthCredentials) {
+  return credentials.clientId !== "" && credentials.clientSecret !== "";
+}
+
+function hasCompleteAuthorization(authorization: OauthAuthorization) {
+  return (
+    authorization.accessToken !== "" &&
+    authorization.accessTokenExpiresAt !== "" &&
+    authorization.refreshToken !== "" &&
+    authorization.refreshTokenExpiresAt !== "" &&
+    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+  );
+}
+
+function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+  return authorization.refreshTokenExpiresAt;
+}
+
+// -----------------------------------------------------------------------------
+
+function getRedirectUri() {
+  const url = new URL(window.location.href);
+  const baseUrl = url.origin + url.pathname;
+
+  return baseUrl;
+}
+
+function shouldHandleAuthRedirect(code: string | null, state: string | null) {
+  return code && state?.includes(OAUTH_STATE);
 }
 
 function formatTokens(tokens: TiktokTokenResponse) {
@@ -43,6 +84,21 @@ function formatTokens(tokens: TiktokTokenResponse) {
     refreshToken: tokens.refresh_token,
     refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
+}
+
+function getAuthorizationUrl(
+  credentials: OauthCredentials,
+  redirectUri: string,
+) {
+  const params = new URLSearchParams({
+    client_key: credentials.clientId,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: SCOPES.join(","),
+    state: OAUTH_STATE,
+  });
+
+  return `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`;
 }
 
 // Exchange authorization code for access token
@@ -102,8 +158,10 @@ async function refreshAccessToken(
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to get user info: ${errorText}`);
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
   }
 
   const tokens = await response.json();
@@ -111,55 +169,13 @@ async function refreshAccessToken(
   return formatTokens(tokens);
 }
 
-function hasTokenExpired(tokenExpiry: string | null) {
-  // 5 minutes buffer
-  return hasExpired(tokenExpiry, 5 * 60);
-}
+// -----------------------------------------------------------------------------
 
-function needsTokenRefresh(tokenExpiry: string | null) {
-  // 30 day buffer
-  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
-}
-
-function getCredentialsId(credentials: OauthCredentials) {
-  return JSON.stringify(credentials);
-}
-
-function hasCompleteCredentials(credentials: OauthCredentials) {
-  return credentials.clientId !== "" && credentials.clientSecret !== "";
-}
-
-function hasCompleteAuthorization(authorization: OauthAuthorization) {
-  return (
-    authorization.accessToken !== "" &&
-    authorization.accessTokenExpiresAt !== "" &&
-    authorization.refreshToken !== "" &&
-    authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt)
-  );
-}
-
-function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
-  return authorization.refreshTokenExpiresAt;
-}
-
-function getRedirectUri() {
-  const url = new URL(window.location.href);
-  const baseUrl = url.origin + url.pathname;
-
-  return baseUrl;
-}
-
-function shouldHandleAuthRedirect(code: string | null, state: string | null) {
-  return code && state?.includes("tiktok_auth");
-}
-
-// Get Tiktok user info to get the correct ID
-async function getTiktokUserInfo(token: string): Promise<ServiceAccount> {
+async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log(`Checking Tiktok user info`);
 
   const params = new URLSearchParams({
-    fields: "open_id,union_id,avatar_url,display_name",
+    fields: "open_id,display_name",
   });
 
   const response = await fetch(
@@ -187,24 +203,25 @@ async function getTiktokUserInfo(token: string): Promise<ServiceAccount> {
   };
 }
 
-// Get Tiktok Accounts from Facebook Pages
-async function getTiktokAccounts(token: string): Promise<ServiceAccount[]> {
+async function getAccounts(token: string): Promise<ServiceAccount[]> {
   const accounts = [];
 
-  const account = await getTiktokUserInfo(token);
+  const account = await getUserInfo(token);
 
   accounts.push(account);
 
   return accounts;
 }
 
+// -----------------------------------------------------------------------------
+
 export {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
-  getTiktokAccounts,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,

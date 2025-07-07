@@ -10,11 +10,11 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
-  getTiktokAccounts,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
@@ -73,7 +73,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
   function authorize() {
-    const authUrl = getAuthorizationUrl(credentials.clientId, getRedirectUri());
+    const authUrl = getAuthorizationUrl(credentials, getRedirectUri());
 
     window.location.href = authUrl;
   }
@@ -171,7 +171,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
         return [];
       }
 
-      const newAccounts = await getTiktokAccounts(authorization.accessToken);
+      const newAccounts = await getAccounts(authorization.accessToken);
 
       setAccounts(newAccounts);
 

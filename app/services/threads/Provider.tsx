@@ -10,11 +10,11 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
-  getThreadsAccounts,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
@@ -168,7 +168,7 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
         return [];
       }
 
-      const newAccounts = await getThreadsAccounts(authorization.accessToken);
+      const newAccounts = await getAccounts(authorization.accessToken);
 
       setAccounts(newAccounts);
 

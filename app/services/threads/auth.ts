@@ -10,21 +10,59 @@ interface ThreadsTokenResponse {
   expires_in: number;
 }
 
+// -----------------------------------------------------------------------------
+
 const SCOPES = ["threads_basic", "threads_content_publish"];
 
-function getAuthorizationUrl(
-  credentials: OauthCredentials,
-  redirectUri: string,
-) {
-  const params = new URLSearchParams({
-    client_id: credentials.clientId,
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: SCOPES.join(","),
-    state: "threads_auth",
-  });
+const OAUTH_STATE = "threads_auth";
 
-  return `https://threads.net/oauth/authorize?${params.toString()}`;
+// -----------------------------------------------------------------------------
+
+function hasTokenExpired(tokenExpiry: string | null) {
+  // 5 minutes buffer
+  return hasExpired(tokenExpiry, 5 * 60);
+}
+
+function needsTokenRefresh(tokenExpiry: string | null) {
+  // 30 day buffer
+  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
+}
+
+// -----------------------------------------------------------------------------
+
+function getCredentialsId(credentials: OauthCredentials) {
+  return JSON.stringify(credentials);
+}
+
+function hasCompleteCredentials(credentials: OauthCredentials) {
+  return credentials.clientId !== "" && credentials.clientSecret !== "";
+}
+
+function hasCompleteAuthorization(authorization: OauthAuthorization) {
+  return (
+    authorization.accessToken !== "" &&
+    authorization.accessTokenExpiresAt !== "" &&
+    authorization.refreshToken !== "" &&
+    authorization.refreshTokenExpiresAt !== "" &&
+    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+  );
+}
+
+function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+  return authorization.refreshTokenExpiresAt;
+}
+
+// -----------------------------------------------------------------------------
+
+function getRedirectUri() {
+  const url = new URL(window.location.href);
+  const baseUrl = url.origin + url.pathname;
+
+  return baseUrl;
+}
+
+function shouldHandleAuthRedirect(code: string | null, state: string | null) {
+  return code && state?.includes(OAUTH_STATE);
 }
 
 function formatTokens(tokens: ThreadsTokenResponse) {
@@ -41,6 +79,21 @@ function formatTokens(tokens: ThreadsTokenResponse) {
     refreshToken: tokens.access_token,
     refreshTokenExpiresAt: expiryTime.toISOString(),
   };
+}
+
+function getAuthorizationUrl(
+  credentials: OauthCredentials,
+  redirectUri: string,
+) {
+  const params = new URLSearchParams({
+    client_id: credentials.clientId,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: SCOPES.join(","),
+    state: OAUTH_STATE,
+  });
+
+  return `https://threads.net/oauth/authorize?${params.toString()}`;
 }
 
 // Exchange authorization code for access token
@@ -111,67 +164,25 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
     grant_type: "th_refresh_token",
   });
 
-  const tokenResponse = await fetch(
+  const response = await fetch(
     `https://graph.threads.net/refresh_access_token?${params.toString()}`,
   );
 
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
       `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
-  const tokens = await tokenResponse.json();
+  const tokens = await response.json();
 
   return formatTokens(tokens);
 }
 
-function hasTokenExpired(tokenExpiry: string | null) {
-  // 5 minutes buffer
-  return hasExpired(tokenExpiry, 5 * 60);
-}
+// -----------------------------------------------------------------------------
 
-function needsTokenRefresh(tokenExpiry: string | null) {
-  // 30 day buffer
-  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
-}
-
-function getCredentialsId(credentials: OauthCredentials) {
-  return JSON.stringify(credentials);
-}
-
-function hasCompleteCredentials(credentials: OauthCredentials) {
-  return credentials.clientId !== "" && credentials.clientSecret !== "";
-}
-
-function hasCompleteAuthorization(authorization: OauthAuthorization) {
-  return (
-    authorization.accessToken !== "" &&
-    authorization.accessTokenExpiresAt !== "" &&
-    authorization.refreshToken !== "" &&
-    authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt)
-  );
-}
-
-function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
-  return authorization.refreshTokenExpiresAt;
-}
-
-function getRedirectUri() {
-  const url = new URL(window.location.href);
-  const baseUrl = url.origin + url.pathname;
-
-  return baseUrl;
-}
-
-function shouldHandleAuthRedirect(code: string | null, state: string | null) {
-  return code && state?.includes("threads_auth");
-}
-
-// Get Threads user info to get the correct ID
-async function getThreadsUserInfo(token: string): Promise<ServiceAccount> {
+async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log(`Checking Threads user info`);
 
   const params = new URLSearchParams({
@@ -198,24 +209,25 @@ async function getThreadsUserInfo(token: string): Promise<ServiceAccount> {
   };
 }
 
-// Get Threads Accounts from Facebook Pages
-async function getThreadsAccounts(token: string): Promise<ServiceAccount[]> {
+async function getAccounts(token: string): Promise<ServiceAccount[]> {
   const accounts = [];
 
-  const account = await getThreadsUserInfo(token);
+  const account = await getUserInfo(token);
 
   accounts.push(account);
 
   return accounts;
 }
 
+// -----------------------------------------------------------------------------
+
 export {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
-  getThreadsAccounts,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,

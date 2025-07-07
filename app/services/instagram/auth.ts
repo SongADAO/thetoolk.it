@@ -15,6 +15,8 @@ interface FacebookPage {
   access_token: string;
 }
 
+// -----------------------------------------------------------------------------
+
 const SCOPES = [
   "business_management",
   "instagram_basic",
@@ -178,8 +180,10 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to get user info: ${errorText}`);
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
   }
 
   // Calculate expiry time
@@ -229,7 +233,7 @@ async function getFacebookPages(token: string) {
   return pagesData.data;
 }
 
-async function getInstagramAccountFromPage(
+async function getUserInfoFromPage(
   page: FacebookPage,
 ): Promise<ServiceAccount> {
   console.log(`Checking page: ${page.name} (ID: ${page.id})`);
@@ -294,7 +298,7 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
   for (const page of facebookPages) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const account = await getInstagramAccountFromPage(page);
+      const account = await getUserInfoFromPage(page);
 
       accounts.push(account);
     } catch (error) {

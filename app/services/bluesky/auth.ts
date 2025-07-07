@@ -118,8 +118,10 @@ async function refreshAccessToken(
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to get user info: ${errorText}`);
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
   }
 
   const sessionData = await response.json();
