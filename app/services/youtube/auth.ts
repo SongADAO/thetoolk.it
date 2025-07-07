@@ -13,10 +13,74 @@ interface GoogleTokenResponse {
   token_type: string;
 }
 
+// -----------------------------------------------------------------------------
+
 const SCOPES = [
   "https://www.googleapis.com/auth/youtube.readonly",
   "https://www.googleapis.com/auth/youtube.upload",
 ];
+
+const OAUTH_SCOPE_DOMAIN = "https://www.googleapis.com";
+
+// -----------------------------------------------------------------------------
+
+function hasTokenExpired(tokenExpiry: string | null) {
+  // 5 minutes buffer
+  return hasExpired(tokenExpiry, 5 * 60);
+}
+
+// -----------------------------------------------------------------------------
+
+function getCredentialsId(credentials: OauthCredentials) {
+  return JSON.stringify(credentials);
+}
+
+function hasCompleteCredentials(credentials: OauthCredentials) {
+  return credentials.clientId !== "" && credentials.clientSecret !== "";
+}
+
+function hasCompleteAuthorization(authorization: OauthAuthorization) {
+  return (
+    authorization.accessToken !== "" &&
+    authorization.accessTokenExpiresAt !== "" &&
+    authorization.refreshToken !== "" &&
+    authorization.refreshTokenExpiresAt !== "" &&
+    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+  );
+}
+
+function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+  return authorization.refreshTokenExpiresAt;
+}
+
+// -----------------------------------------------------------------------------
+
+function getRedirectUri() {
+  const url = new URL(window.location.href);
+  const baseUrl = url.origin + url.pathname;
+
+  return baseUrl;
+}
+
+function shouldHandleAuthRedirect(code: string | null, scope: string | null) {
+  return code && scope?.includes(OAUTH_SCOPE_DOMAIN);
+}
+
+function formatTokens(tokens: GoogleTokenResponse) {
+  const expiresIn = tokens.expires_in * 1000;
+  const refreshExpiresIn = tokens.refresh_token_expires_in * 1000;
+
+  // Calculate expiry time
+  const expiryTime = new Date(Date.now() + expiresIn);
+  const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
+
+  return {
+    accessToken: tokens.access_token,
+    accessTokenExpiresAt: expiryTime.toISOString(),
+    refreshToken: tokens.refresh_token,
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
+  };
+}
 
 function getAuthorizationUrl(
   credentials: OauthCredentials,
@@ -32,22 +96,6 @@ function getAuthorizationUrl(
   });
 
   return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-}
-
-function formatTokens(tokens: GoogleTokenResponse) {
-  // Calculate expiry time
-  const expiryTime = new Date(Date.now() + tokens.expires_in * 1000);
-
-  const refreshExpiryTime = new Date(
-    Date.now() + tokens.refresh_token_expires_in * 1000,
-  );
-
-  return {
-    accessToken: tokens.access_token,
-    accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.refresh_token,
-    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
-  };
 }
 
 // Exchange authorization code for access token
@@ -78,6 +126,7 @@ async function exchangeCodeForTokens(
   }
 
   const tokens = await tokenResponse.json();
+  console.log(tokens);
 
   return formatTokens(tokens);
 }
@@ -85,9 +134,9 @@ async function exchangeCodeForTokens(
 // Refresh access token using refresh token
 async function refreshAccessToken(
   credentials: OauthCredentials,
-  refreshToken: string,
+  authorization: OauthAuthorization,
 ) {
-  if (!refreshToken) {
+  if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
 
@@ -96,7 +145,7 @@ async function refreshAccessToken(
       client_id: credentials.clientId,
       client_secret: credentials.clientSecret,
       grant_type: "refresh_token",
-      refresh_token: refreshToken,
+      refresh_token: authorization.refreshToken,
     }),
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -116,43 +165,7 @@ async function refreshAccessToken(
   return formatTokens(tokens);
 }
 
-function hasTokenExpired(tokenExpiry: string | null) {
-  // 5 minutes buffer
-  return hasExpired(tokenExpiry, 5 * 60);
-}
-
-function getCredentialsId(credentials: OauthCredentials) {
-  return JSON.stringify(credentials);
-}
-
-function hasCompleteCredentials(credentials: OauthCredentials) {
-  return credentials.clientId !== "" && credentials.clientSecret !== "";
-}
-
-function hasCompleteAuthorization(authorization: OauthAuthorization) {
-  return (
-    authorization.accessToken !== "" &&
-    authorization.accessTokenExpiresAt !== "" &&
-    authorization.refreshToken !== "" &&
-    authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt)
-  );
-}
-
-function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
-  return authorization.refreshTokenExpiresAt;
-}
-
-function getRedirectUri() {
-  const url = new URL(window.location.href);
-  const baseUrl = url.origin + url.pathname;
-
-  return baseUrl;
-}
-
-function shouldHandleAuthRedirect(code: string | null, scope: string | null) {
-  return code && scope?.includes("https://www.googleapis.com");
-}
+// -----------------------------------------------------------------------------
 
 export {
   exchangeCodeForTokens,
