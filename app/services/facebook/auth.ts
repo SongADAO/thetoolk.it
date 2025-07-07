@@ -20,9 +20,12 @@ const SCOPES = [
   "pages_show_list",
 ];
 
-function getAuthorizationUrl(clientId: string, redirectUri: string) {
+function getAuthorizationUrl(
+  credentials: OauthCredentials,
+  redirectUri: string,
+) {
   const params = new URLSearchParams({
-    client_id: clientId,
+    client_id: credentials.clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
@@ -52,16 +55,15 @@ function formatTokens(tokens: FacebookTokenResponse) {
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  clientId: string,
-  clientSecret: string,
+  credentials: OauthCredentials,
   redirectUri: string,
 ) {
   const tokenResponse = await fetch(
     "https://graph.facebook.com/v23.0/oauth/access_token",
     {
       body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
+        client_id: credentials.clientId,
+        client_secret: credentials.clientSecret,
         code,
         redirect_uri: redirectUri,
       }),
@@ -84,8 +86,8 @@ async function exchangeCodeForTokens(
 
   // Get long-lived token
   const longLivedParams = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
+    client_id: credentials.clientId,
+    client_secret: credentials.clientSecret,
     fb_exchange_token: tokens.access_token,
     grant_type: "fb_exchange_token",
   });

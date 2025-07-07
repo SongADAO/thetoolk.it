@@ -47,16 +47,15 @@ function formatTokens(tokens: TiktokTokenResponse) {
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  clientId: string,
-  clientSecret: string,
+  credentials: OauthCredentials,
   redirectUri: string,
 ) {
   const tokenResponse = await fetch(
     "https://open.tiktokapis.com/v2/oauth/token/",
     {
       body: new URLSearchParams({
-        client_key: clientId,
-        client_secret: clientSecret,
+        client_key: credentials.clientId,
+        client_secret: credentials.clientSecret,
         code,
         grant_type: "authorization_code",
         redirect_uri: redirectUri,
@@ -83,8 +82,7 @@ async function exchangeCodeForTokens(
 
 // Refresh access token using refresh token
 async function refreshAccessToken(
-  clientId: string,
-  clientSecret: string,
+  credentials: OauthCredentials,
   authorization: OauthAuthorization,
 ) {
   if (!authorization.refreshToken) {
@@ -92,8 +90,8 @@ async function refreshAccessToken(
   }
 
   const params = new URLSearchParams({
-    client_key: clientId,
-    client_secret: clientSecret,
+    client_key: credentials.clientId,
+    client_secret: credentials.clientSecret,
     grant_type: "refresh_token",
     refresh_token: authorization.refreshToken,
   });

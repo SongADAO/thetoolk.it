@@ -84,8 +84,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
     try {
       const newAuthorization = await exchangeCodeForTokens(
         code,
-        credentials.clientId,
-        credentials.clientSecret,
+        credentials,
         getRedirectUri(),
       );
 
@@ -110,8 +109,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
   async function refreshTokens(): Promise<OauthAuthorization | null> {
     try {
       const newAuthorization = await refreshAccessToken(
-        credentials.clientId,
-        credentials.clientSecret,
+        credentials,
         authorization,
       );
 

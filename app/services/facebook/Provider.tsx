@@ -73,7 +73,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
   function authorize() {
-    const authUrl = getAuthorizationUrl(credentials.clientId, getRedirectUri());
+    const authUrl = getAuthorizationUrl(credentials, getRedirectUri());
 
     window.location.href = authUrl;
   }
@@ -84,8 +84,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     try {
       const newAuthorization = await exchangeCodeForTokens(
         code,
-        credentials.clientId,
-        credentials.clientSecret,
+        credentials,
         getRedirectUri(),
       );
 

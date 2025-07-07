@@ -11,9 +11,12 @@ interface ThreadsTokenResponse {
 
 const SCOPES = ["threads_basic", "threads_content_publish"];
 
-function getAuthorizationUrl(clientId: string, redirectUri: string) {
+function getAuthorizationUrl(
+  credentials: OauthCredentials,
+  redirectUri: string,
+) {
   const params = new URLSearchParams({
-    client_id: clientId,
+    client_id: credentials.clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
@@ -42,16 +45,15 @@ function formatTokens(tokens: ThreadsTokenResponse) {
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  clientId: string,
-  clientSecret: string,
+  credentials: OauthCredentials,
   redirectUri: string,
 ) {
   const tokenResponse = await fetch(
     "https://graph.threads.net/oauth/access_token",
     {
       body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
+        client_id: credentials.clientId,
+        client_secret: credentials.clientSecret,
         code,
         grant_type: "authorization_code",
         redirect_uri: redirectUri,
@@ -76,7 +78,7 @@ async function exchangeCodeForTokens(
   // Get long-lived token
   const longLivedParams = new URLSearchParams({
     access_token: tokens.access_token,
-    client_secret: clientSecret,
+    client_secret: credentials.clientSecret,
     grant_type: "th_exchange_token",
   });
 
