@@ -165,7 +165,7 @@ async function exchangeCodeForTokens(
   return formatTokens(longLivedTokens);
 }
 
-// Refresh access token using refresh token
+// Refresh tokens are automatically refreshed by Facebook when the API is called.
 async function refreshAccessToken(authorization: OauthAuthorization) {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
