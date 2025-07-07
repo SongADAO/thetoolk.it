@@ -17,10 +17,13 @@ const SCOPES = [
   "https://www.googleapis.com/auth/youtube.upload",
 ];
 
-function getAuthorizationUrl(clientId: string, redirectUri: string) {
+function getAuthorizationUrl(
+  credentials: OauthCredentials,
+  redirectUri: string,
+) {
   const params = new URLSearchParams({
     access_type: "offline",
-    client_id: clientId,
+    client_id: credentials.clientId,
     prompt: "consent",
     redirect_uri: redirectUri,
     response_type: "code",
@@ -49,14 +52,13 @@ function formatTokens(tokens: GoogleTokenResponse) {
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  clientId: string,
-  clientSecret: string,
+  credentials: OauthCredentials,
   redirectUri: string,
 ) {
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
     body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: credentials.clientId,
+      client_secret: credentials.clientSecret,
       code,
       grant_type: "authorization_code",
       redirect_uri: redirectUri,
@@ -81,8 +83,7 @@ async function exchangeCodeForTokens(
 
 // Refresh access token using refresh token
 async function refreshAccessToken(
-  clientId: string,
-  clientSecret: string,
+  credentials: OauthCredentials,
   refreshToken: string,
 ) {
   if (!refreshToken) {
@@ -91,8 +92,8 @@ async function refreshAccessToken(
 
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
     body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: credentials.clientId,
+      client_secret: credentials.clientSecret,
       grant_type: "refresh_token",
       refresh_token: refreshToken,
     }),
