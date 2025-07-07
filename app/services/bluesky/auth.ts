@@ -161,40 +161,6 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
   return authorization.refreshTokenExpiresAt;
 }
 
-// Get Bluesky Pages
-async function getBlueskyPages(token: string) {
-  console.log("Getting Bluesky pages...");
-
-  const params = new URLSearchParams({
-    access_token: token,
-  });
-
-  const pagesResponse = await fetch(
-    `https://graph.bluesky.com/v23.0/me/accounts?${params.toString()}`,
-  );
-
-  if (!pagesResponse.ok) {
-    const error = await pagesResponse.json();
-    console.error("Pages API error:", error);
-    throw new Error(
-      `Failed to get Bluesky pages: ${error.error?.message ?? pagesResponse.statusText}`,
-    );
-  }
-
-  const pagesData = await pagesResponse.json();
-  console.log("Pages data:", pagesData);
-
-  if (!pagesData.data || pagesData.data.length === 0) {
-    throw new Error(
-      "No Bluesky pages found. You need to create a Bluesky page to post videos.",
-    );
-  }
-
-  console.log(`Found ${pagesData.data.length} Bluesky page(s)`);
-
-  return pagesData.data;
-}
-
 // Get Bluesky Accounts from Bluesky Pages
 // eslint-disable-next-line @typescript-eslint/require-await
 async function getBlueskyAccounts(
@@ -202,15 +168,15 @@ async function getBlueskyAccounts(
   username: string,
   token: string,
 ): Promise<ServiceAccount[]> {
-  const blueskyAccounts = [];
+  const accounts = [];
 
-  blueskyAccounts.push({
+  accounts.push({
     accessToken: token,
     id: serviceUrl,
     username,
   });
 
-  return blueskyAccounts;
+  return accounts;
 }
 
 export {

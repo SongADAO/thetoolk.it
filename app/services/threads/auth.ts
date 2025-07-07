@@ -228,13 +228,13 @@ async function getThreadsUserInfo(token: string): Promise<ServiceAccount> {
 
 // Get Threads Accounts from Facebook Pages
 async function getThreadsAccounts(token: string): Promise<ServiceAccount[]> {
-  const threadsAccounts = [];
+  const accounts = [];
 
-  const threadsAccount = await getThreadsUserInfo(token);
+  const account = await getThreadsUserInfo(token);
 
-  threadsAccounts.push(threadsAccount);
+  accounts.push(account);
 
-  return threadsAccounts;
+  return accounts;
 }
 
 export {

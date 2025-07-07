@@ -309,20 +309,20 @@ async function getInstagramAccountFromPage(
 async function getInstagramAccounts(token: string): Promise<ServiceAccount[]> {
   const facebookPages = await getFacebookPages(token);
 
-  const igAccounts = [];
+  const accounts = [];
 
   for (const page of facebookPages) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const igAccount = await getInstagramAccountFromPage(page);
+      const account = await getInstagramAccountFromPage(page);
 
-      igAccounts.push(igAccount);
+      accounts.push(account);
     } catch (error) {
       console.error("Error getting Instagram account:", error);
     }
   }
 
-  return igAccounts;
+  return accounts;
 }
 
 export {
