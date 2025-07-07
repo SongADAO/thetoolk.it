@@ -21,19 +21,55 @@ const SCOPES = [
   "pages_show_list",
 ];
 
-function getAuthorizationUrl(
-  credentials: OauthCredentials,
-  redirectUri: string,
-) {
-  const params = new URLSearchParams({
-    client_id: credentials.clientId,
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: SCOPES.join(","),
-    state: "facebook_auth",
-  });
+const OAUTH_STATE = "facebook_auth";
 
-  return `https://www.facebook.com/v23.0/dialog/oauth?${params.toString()}`;
+// -----------------------------------------------------------------------------
+
+function hasTokenExpired(tokenExpiry: string | null) {
+  // 5 minutes buffer
+  return hasExpired(tokenExpiry, 5 * 60);
+}
+
+function needsTokenRefresh(tokenExpiry: string | null) {
+  // 30 day buffer
+  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
+}
+
+// -----------------------------------------------------------------------------
+
+function getCredentialsId(credentials: OauthCredentials) {
+  return JSON.stringify(credentials);
+}
+
+function hasCompleteCredentials(credentials: OauthCredentials) {
+  return credentials.clientId !== "" && credentials.clientSecret !== "";
+}
+
+function hasCompleteAuthorization(authorization: OauthAuthorization) {
+  return (
+    authorization.accessToken !== "" &&
+    authorization.accessTokenExpiresAt !== "" &&
+    authorization.refreshToken !== "" &&
+    authorization.refreshTokenExpiresAt !== "" &&
+    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+  );
+}
+
+function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+  return authorization.refreshTokenExpiresAt;
+}
+
+// -----------------------------------------------------------------------------
+
+function getRedirectUri() {
+  const url = new URL(window.location.href);
+  const baseUrl = url.origin + url.pathname;
+
+  return baseUrl;
+}
+
+function shouldHandleAuthRedirect(code: string | null, state: string | null) {
+  return code && state?.includes(OAUTH_STATE);
 }
 
 function formatTokens(tokens: FacebookTokenResponse) {
@@ -51,6 +87,21 @@ function formatTokens(tokens: FacebookTokenResponse) {
     refreshToken: tokens.access_token,
     refreshTokenExpiresAt: expiryTime.toISOString(),
   };
+}
+
+function getAuthorizationUrl(
+  credentials: OauthCredentials,
+  redirectUri: string,
+) {
+  const params = new URLSearchParams({
+    client_id: credentials.clientId,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: SCOPES.join(","),
+    state: OAUTH_STATE,
+  });
+
+  return `https://www.facebook.com/v23.0/dialog/oauth?${params.toString()}`;
 }
 
 // Exchange authorization code for access token
@@ -141,50 +192,8 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
   };
 }
 
-function hasTokenExpired(tokenExpiry: string | null) {
-  // 5 minutes buffer
-  return hasExpired(tokenExpiry, 5 * 60);
-}
+// -----------------------------------------------------------------------------
 
-function needsTokenRefresh(tokenExpiry: string | null) {
-  // 30 day buffer
-  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
-}
-
-function getCredentialsId(credentials: OauthCredentials) {
-  return JSON.stringify(credentials);
-}
-
-function hasCompleteCredentials(credentials: OauthCredentials) {
-  return credentials.clientId !== "" && credentials.clientSecret !== "";
-}
-
-function hasCompleteAuthorization(authorization: OauthAuthorization) {
-  return (
-    authorization.accessToken !== "" &&
-    authorization.accessTokenExpiresAt !== "" &&
-    authorization.refreshToken !== "" &&
-    authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt)
-  );
-}
-
-function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
-  return authorization.refreshTokenExpiresAt;
-}
-
-function getRedirectUri() {
-  const url = new URL(window.location.href);
-  const baseUrl = url.origin + url.pathname;
-
-  return baseUrl;
-}
-
-function shouldHandleAuthRedirect(code: string | null, state: string | null) {
-  return code && state?.includes("facebook_auth");
-}
-
-// Get Facebook Pages
 async function getFacebookPages(token: string) {
   console.log("Getting Facebook pages...");
 
@@ -248,8 +257,7 @@ async function getFacebookAccountFromPage(
   };
 }
 
-// Get Facebook Accounts from Facebook Pages
-async function getFacebookAccounts(token: string): Promise<ServiceAccount[]> {
+async function getAccounts(token: string): Promise<ServiceAccount[]> {
   const facebookPages = await getFacebookPages(token);
 
   const accounts = [];
@@ -268,12 +276,14 @@ async function getFacebookAccounts(token: string): Promise<ServiceAccount[]> {
   return accounts;
 }
 
+// -----------------------------------------------------------------------------
+
 export {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
-  getFacebookAccounts,
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,

@@ -10,10 +10,10 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
-  getInstagramAccounts,
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
@@ -168,7 +168,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
         return [];
       }
 
-      const newAccounts = await getInstagramAccounts(authorization.accessToken);
+      const newAccounts = await getAccounts(authorization.accessToken);
 
       setAccounts(newAccounts);
 

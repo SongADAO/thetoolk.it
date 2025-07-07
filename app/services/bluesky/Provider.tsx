@@ -10,8 +10,8 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
+  getAccounts,
   getAuthorizationExpiresAt,
-  getBlueskyAccounts,
   getCredentialsId,
   hasCompleteAuthorization,
   hasCompleteCredentials,
@@ -160,7 +160,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         return [];
       }
 
-      const newAccounts = await getBlueskyAccounts(
+      const newAccounts = await getAccounts(
         credentials.serviceUrl,
         credentials.username,
         authorization.accessToken,
