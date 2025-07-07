@@ -22,6 +22,12 @@
 
   --color-brand-twitter: #000000;
   --color-brand-twitter-inverse: #fff;
+
+  --color-brand-farcaster: #7966bb;
+  --color-brand-farcaster-inverse: #fff;
+
+  --color-brand-lens: #2c2d30;
+  --color-brand-lens-inverse: #fff;
 }
 
 @source inline("bg-brand-youtube");
@@ -79,6 +85,22 @@
 @source inline("group-data-[enabled=yes]:bg-brand-twitter");
 @source inline("group-data-[enabled=yes]:text-brand-twitter");
 @source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
+
+@source inline("bg-brand-farcaster");
+@source inline("data-[enabled=yes]:bg-brand-farcaster");
+@source inline("data-[enabled=yes]:text-brand-farcaster");
+@source inline("data-[enabled=yes]:text-brand-farcaster-inverse");
+@source inline("group-data-[enabled=yes]:bg-brand-farcaster");
+@source inline("group-data-[enabled=yes]:text-brand-farcaster");
+@source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
+
+@source inline("bg-brand-lens");
+@source inline("data-[enabled=yes]:bg-brand-lens");
+@source inline("data-[enabled=yes]:text-brand-lens");
+@source inline("data-[enabled=yes]:text-brand-lens-inverse");
+@source inline("group-data-[enabled=yes]:bg-brand-lens");
+@source inline("group-data-[enabled=yes]:text-brand-lens");
+@source inline("group-data-[enabled=yes]:text-brand-lens-inverse");
 
 /* :root {
   --background: #ffffff;
