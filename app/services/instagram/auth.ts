@@ -165,7 +165,7 @@ async function exchangeCodeForTokens(
   return formatTokens(longLivedTokens);
 }
 
-// Refresh tokens are automatically refreshed by Facebook when the API is called.
+// Refresh tokens are automatically refreshed by Facebook when any API is called.
 async function refreshAccessToken(authorization: OauthAuthorization) {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
@@ -185,6 +185,10 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
       `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
+
+  // Refresh tokens are automatically refreshed by Facebook when the API is called.
+  // So instead of getting a new authorization, we just query a basic API to trigger
+  // a refresh and then update the expiration time of the existing tokens.
 
   // Calculate expiry time
   const expiresIn = 5184000000;
