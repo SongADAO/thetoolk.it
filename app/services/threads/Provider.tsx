@@ -249,7 +249,6 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
       brandColor,
       credentialsId,
       error,
-      exchangeCode,
       fields,
       getValidAccessToken,
       handleAuthRedirect,

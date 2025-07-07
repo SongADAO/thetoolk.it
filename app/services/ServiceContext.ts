@@ -4,7 +4,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import type { OauthAuthorization, ServiceAccount } from "@/app/services/types";
+import type { ServiceAccount } from "@/app/services/types";
 
 interface ServiceContextType {
   accounts: ServiceAccount[];
@@ -13,7 +13,6 @@ interface ServiceContextType {
   brandColor: string;
   credentialsId: string;
   error: string;
-  exchangeCode: (code: string) => Promise<OauthAuthorization | null>;
   fields: ServiceFormField[];
   getValidAccessToken: () => Promise<string>;
   handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
@@ -35,7 +34,6 @@ const serviceContextDefault = {
   brandColor: "",
   credentialsId: "",
   error: "",
-  exchangeCode: async (code: string) => null,
   fields: [],
   getValidAccessToken: async () => "",
   handleAuthRedirect: async () => {},

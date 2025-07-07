@@ -1,16 +1,14 @@
 import type {
+  BlueskyCredentials,
   OauthAuthorization,
-  OauthCredentials,
   ServiceAccount,
 } from "@/app/services/types";
 
-interface GoogleTokenResponse {
-  access_token: string;
+interface BlueskyTokenResponse {
+  accessJwt: string;
   expires_in: number;
-  refresh_token: string;
+  refreshJwt: string;
   refresh_token_expires_in: number;
-  scope: string;
-  token_type: string;
 }
 
 interface BlueskyPage {
@@ -19,25 +17,7 @@ interface BlueskyPage {
   access_token: string;
 }
 
-const SCOPES = [
-  "pages_manage_posts",
-  "pages_read_engagement",
-  "pages_show_list",
-];
-
-function getAuthorizationUrl(clientId: string, redirectUri: string) {
-  const params = new URLSearchParams({
-    client_id: clientId,
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: SCOPES.join(","),
-    state: "bluesky_auth",
-  });
-
-  return `https://www.bluesky.com/v23.0/dialog/oauth?${params.toString()}`;
-}
-
-function formatTokens(tokens: GoogleTokenResponse) {
+function formatTokens(tokens: BlueskyTokenResponse) {
   const expiresIn = 5184000000;
   // const expiresIn = tokens.expires_in * 1000;
 
@@ -49,85 +29,67 @@ function formatTokens(tokens: GoogleTokenResponse) {
   // );
 
   return {
-    accessToken: tokens.access_token,
+    accessToken: tokens.accessJwt,
     accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.access_token,
+    refreshToken: tokens.refreshJwt,
     refreshTokenExpiresAt: expiryTime.toISOString(),
     // refreshToken: tokens.refresh_token,
     // refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
 
-// Exchange authorization code for access token
 async function exchangeCodeForTokens(
-  code: string,
-  clientId: string,
-  clientSecret: string,
-  redirectUri: string,
+  appPassword: string,
+  serviceUrl: string,
+  username: string,
 ) {
-  const tokenResponse = await fetch(
-    "https://graph.bluesky.com/v23.0/oauth/access_token",
+  console.log("Starting Bluesky authentication...");
+
+  const response = await fetch(
+    `${serviceUrl}/xrpc/com.atproto.server.createSession`,
     {
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        code,
-        redirect_uri: redirectUri,
+      body: JSON.stringify({
+        identifier: username,
+        password: appPassword,
       }),
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
       method: "POST",
     },
   );
 
-  if (!tokenResponse.ok) {
-    const errorData = await tokenResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
-      `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
+      `Authentication failed: ${errorData.message ?? errorData.error}`,
     );
   }
 
-  const tokens = await tokenResponse.json();
-  console.log(tokens);
+  const sessionData = await response.json();
+  console.log("Session data:", sessionData);
 
-  // Get long-lived token
-  const longLivedParams = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
-    fb_exchange_token: tokens.access_token,
-    grant_type: "fb_exchange_token",
-  });
-
-  const longLivedTokenResponse = await fetch(
-    `https://graph.bluesky.com/v23.0/oauth/access_token?${longLivedParams.toString()}`,
-  );
-
-  if (!longLivedTokenResponse.ok) {
-    const errorData = await longLivedTokenResponse.json();
-    throw new Error(
-      `Long lived token exchange failed: ${errorData.error_description ?? errorData.error}`,
-    );
-  }
-
-  const longLivedTokens = await longLivedTokenResponse.json();
-  console.log(longLivedTokens);
-
-  return formatTokens(longLivedTokens);
+  return formatTokens(sessionData);
 }
 
 // Refresh access token using refresh token
-async function refreshAccessToken(authorization: OauthAuthorization) {
+async function refreshAccessToken(
+  serviceUrl: string,
+  authorization: OauthAuthorization,
+) {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
 
-  const params = new URLSearchParams({
-    access_token: authorization.refreshToken,
-  });
-
   const response = await fetch(
-    `https://graph.bluesky.com/v23.0/me/accounts?${params.toString()}`,
+    `${serviceUrl}/xrpc/com.atproto.server.refreshSession`,
+    {
+      headers: {
+        Authorization: `Bearer ${authorization.refreshToken}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    },
   );
 
   if (!response.ok) {
@@ -135,16 +97,10 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
     throw new Error(`Failed to get user info: ${errorText}`);
   }
 
-  // Calculate expiry time
-  const expiresIn = 5184000000;
-  const refreshExpiryTime = new Date(Date.now() + expiresIn);
+  const sessionData = await response.json();
+  console.log("Session data:", sessionData);
 
-  return {
-    accessToken: authorization.accessToken,
-    accessTokenExpiresAt: authorization.accessTokenExpiresAt,
-    refreshToken: authorization.refreshToken,
-    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
-  };
+  return formatTokens(sessionData);
 }
 
 function hasTokenExpired(tokenExpiry: string | null) {
@@ -179,12 +135,16 @@ function needsTokenRefresh(tokenExpiry: string | null) {
   return now.getTime() > tokenExpiryDate.getTime() - bufferTime;
 }
 
-function getCredentialsId(credentials: OauthCredentials) {
+function getCredentialsId(credentials: BlueskyCredentials) {
   return JSON.stringify(credentials);
 }
 
-function hasCompleteCredentials(credentials: OauthCredentials) {
-  return credentials.clientId !== "" && credentials.clientSecret !== "";
+function hasCompleteCredentials(credentials: BlueskyCredentials) {
+  return (
+    credentials.appPassword !== "" &&
+    credentials.serviceUrl !== "" &&
+    credentials.username !== ""
+  );
 }
 
 function hasCompleteAuthorization(authorization: OauthAuthorization) {
@@ -199,17 +159,6 @@ function hasCompleteAuthorization(authorization: OauthAuthorization) {
 
 function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
   return authorization.refreshTokenExpiresAt;
-}
-
-function getRedirectUri() {
-  const url = new URL(window.location.href);
-  const baseUrl = url.origin + url.pathname;
-
-  return baseUrl;
-}
-
-function shouldHandleAuthRedirect(code: string | null, state: string | null) {
-  return code && state?.includes("bluesky_auth");
 }
 
 // Get Bluesky Pages
@@ -246,67 +195,32 @@ async function getBlueskyPages(token: string) {
   return pagesData.data;
 }
 
-async function getBlueskyAccountFromPage(
-  page: BlueskyPage,
-): Promise<ServiceAccount> {
-  console.log(`Checking page: ${page.name} (ID: ${page.id})`);
+// Get Bluesky Accounts from Bluesky Pages
+// eslint-disable-next-line @typescript-eslint/require-await
+async function getBlueskyAccounts(
+  serviceUrl: string,
+  username: string,
+  token: string,
+): Promise<ServiceAccount[]> {
+  const blueskyAccounts = [];
 
-  const params = new URLSearchParams({
-    access_token: page.access_token,
-    fields: "id,name",
+  blueskyAccounts.push({
+    accessToken: token,
+    id: serviceUrl,
+    username,
   });
 
-  // Test access to the Bluesky account
-  const testResponse = await fetch(
-    `https://graph.bluesky.com/v23.0/${page.id}?${params.toString()}`,
-  );
-
-  if (!testResponse.ok) {
-    console.error("Bluesky API error:", await testResponse.text());
-    throw new Error(`Bluesky account found but not accessible: ${page.name}:`);
-  }
-
-  const testData = await testResponse.json();
-  console.log("✅ Bluesky Account Details:", testData);
-
-  return {
-    accessToken: page.access_token,
-    id: page.id,
-    username: page.name,
-  };
-}
-
-// Get Bluesky Accounts from Bluesky Pages
-async function getBlueskyAccounts(token: string): Promise<ServiceAccount[]> {
-  const blueskyPages = await getBlueskyPages(token);
-
-  const fbAccounts = [];
-
-  for (const page of blueskyPages) {
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      const fbAccount = await getBlueskyAccountFromPage(page);
-
-      fbAccounts.push(fbAccount);
-    } catch (error) {
-      console.error("Error getting Bluesky account:", error);
-    }
-  }
-
-  return fbAccounts;
+  return blueskyAccounts;
 }
 
 export {
   exchangeCodeForTokens,
   getAuthorizationExpiresAt,
-  getAuthorizationUrl,
   getBlueskyAccounts,
   getCredentialsId,
-  getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
   needsTokenRefresh,
   refreshAccessToken,
-  shouldHandleAuthRedirect,
 };

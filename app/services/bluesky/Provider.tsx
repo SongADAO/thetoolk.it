@@ -11,16 +11,13 @@ import type {
 import {
   exchangeCodeForTokens,
   getAuthorizationExpiresAt,
-  getAuthorizationUrl,
   getBlueskyAccounts,
   getCredentialsId,
-  getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   hasTokenExpired,
   needsTokenRefresh,
   refreshAccessToken,
-  shouldHandleAuthRedirect,
 } from "@/app/services/bluesky/auth";
 import { BlueskyContext } from "@/app/services/bluesky/Context";
 import {
@@ -72,21 +69,12 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
-  function authorize() {
-    const authUrl = getAuthorizationUrl(credentials.clientId, getRedirectUri());
-
-    window.location.href = authUrl;
-  }
-
-  async function exchangeCode(
-    code: string,
-  ): Promise<OauthAuthorization | null> {
+  async function exchangeCode(): Promise<OauthAuthorization | null> {
     try {
       const newAuthorization = await exchangeCodeForTokens(
-        code,
-        credentials.clientId,
-        credentials.clientSecret,
-        getRedirectUri(),
+        credentials.appPassword,
+        credentials.serviceUrl,
+        credentials.username,
       );
 
       setAuthorization(newAuthorization);
@@ -109,7 +97,10 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   async function refreshTokens(): Promise<OauthAuthorization | null> {
     try {
-      const newAuthorization = await refreshAccessToken(authorization);
+      const newAuthorization = await refreshAccessToken(
+        credentials.serviceUrl,
+        authorization,
+      );
 
       setAuthorization(newAuthorization);
 
@@ -161,6 +152,10 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
+  async function authorize() {
+    return await exchangeCode();
+  }
+
   async function initAccounts(): Promise<ServiceAccount[]> {
     try {
       if (!isAuthorized) {
@@ -169,7 +164,11 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         return [];
       }
 
-      const newAccounts = await getBlueskyAccounts(authorization.accessToken);
+      const newAccounts = await getBlueskyAccounts(
+        credentials.serviceUrl,
+        credentials.username,
+        authorization.accessToken,
+      );
 
       setAccounts(newAccounts);
 
@@ -187,22 +186,8 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function handleAuthRedirect(searchParams: URLSearchParams) {
-    try {
-      const code = searchParams.get("code");
-      const state = searchParams.get("state");
-      console.log("code", code);
-      console.log("state", state);
-
-      if (code && state && shouldHandleAuthRedirect(code, state)) {
-        await exchangeCode(code);
-
-        // window.location.href = "/";
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function handleAuthRedirect(searchParams: URLSearchParams) {}
 
   const fields: ServiceFormField[] = [
     {
@@ -256,7 +241,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       brandColor,
       credentialsId,
       error,
-      exchangeCode,
       fields,
       getValidAccessToken,
       handleAuthRedirect,
