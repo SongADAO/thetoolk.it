@@ -30,13 +30,11 @@ function getAuthorizationUrl(clientId: string, redirectUri: string) {
 
 function formatTokens(tokens: TiktokTokenResponse) {
   const expiresIn = tokens.expires_in * 1000;
+  const refreshExpiresIn = tokens.refresh_expires_in * 1000;
 
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + expiresIn);
-
-  const refreshExpiryTime = new Date(
-    Date.now() + tokens.refresh_expires_in * 1000,
-  );
+  const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {
     accessToken: tokens.access_token,

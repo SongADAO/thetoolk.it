@@ -4,13 +4,9 @@ import type {
   ServiceAccount,
 } from "@/app/services/types";
 
-interface GoogleTokenResponse {
+interface ThreadsTokenResponse {
   access_token: string;
   expires_in: number;
-  refresh_token: string;
-  refresh_token_expires_in: number;
-  scope: string;
-  token_type: string;
 }
 
 const SCOPES = ["threads_basic", "threads_content_publish"];
@@ -27,24 +23,19 @@ function getAuthorizationUrl(clientId: string, redirectUri: string) {
   return `https://threads.net/oauth/authorize?${params.toString()}`;
 }
 
-function formatTokens(tokens: GoogleTokenResponse) {
-  // const expiresIn = 5184000000;
+function formatTokens(tokens: ThreadsTokenResponse) {
   const expiresIn = tokens.expires_in * 1000;
 
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + expiresIn);
 
-  // const refreshExpiryTime = new Date(
-  //   Date.now() + tokens.refresh_token_expires_in * 1000,
-  // );
+  // Access tokens are the same as the refresh token.
 
   return {
     accessToken: tokens.access_token,
     accessTokenExpiresAt: expiryTime.toISOString(),
     refreshToken: tokens.access_token,
     refreshTokenExpiresAt: expiryTime.toISOString(),
-    // refreshToken: tokens.refresh_token,
-    // refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
 

@@ -71,11 +71,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   async function exchangeCode(): Promise<OauthAuthorization | null> {
     try {
-      const newAuthorization = await exchangeCodeForTokens(
-        credentials.appPassword,
-        credentials.serviceUrl,
-        credentials.username,
-      );
+      const newAuthorization = await exchangeCodeForTokens(credentials);
 
       setAuthorization(newAuthorization);
 
@@ -98,7 +94,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   async function refreshTokens(): Promise<OauthAuthorization | null> {
     try {
       const newAuthorization = await refreshAccessToken(
-        credentials.serviceUrl,
+        credentials,
         authorization,
       );
 

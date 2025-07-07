@@ -6,51 +6,33 @@ import type {
 
 interface BlueskyTokenResponse {
   accessJwt: string;
-  expires_in: number;
   refreshJwt: string;
-  refresh_token_expires_in: number;
-}
-
-interface BlueskyPage {
-  id: string;
-  name: string;
-  access_token: string;
 }
 
 function formatTokens(tokens: BlueskyTokenResponse) {
+  // Tokens have a 60-day lifespan
   const expiresIn = 5184000000;
-  // const expiresIn = tokens.expires_in * 1000;
 
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + expiresIn);
-
-  // const refreshExpiryTime = new Date(
-  //   Date.now() + tokens.refresh_token_expires_in * 1000,
-  // );
 
   return {
     accessToken: tokens.accessJwt,
     accessTokenExpiresAt: expiryTime.toISOString(),
     refreshToken: tokens.refreshJwt,
     refreshTokenExpiresAt: expiryTime.toISOString(),
-    // refreshToken: tokens.refresh_token,
-    // refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
 
-async function exchangeCodeForTokens(
-  appPassword: string,
-  serviceUrl: string,
-  username: string,
-) {
+async function exchangeCodeForTokens(credentials: BlueskyCredentials) {
   console.log("Starting Bluesky authentication...");
 
   const response = await fetch(
-    `${serviceUrl}/xrpc/com.atproto.server.createSession`,
+    `${credentials.serviceUrl}/xrpc/com.atproto.server.createSession`,
     {
       body: JSON.stringify({
-        identifier: username,
-        password: appPassword,
+        identifier: credentials.username,
+        password: credentials.appPassword,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -74,7 +56,7 @@ async function exchangeCodeForTokens(
 
 // Refresh access token using refresh token
 async function refreshAccessToken(
-  serviceUrl: string,
+  credentials: BlueskyCredentials,
   authorization: OauthAuthorization,
 ) {
   if (!authorization.refreshToken) {
@@ -82,7 +64,7 @@ async function refreshAccessToken(
   }
 
   const response = await fetch(
-    `${serviceUrl}/xrpc/com.atproto.server.refreshSession`,
+    `${credentials.serviceUrl}/xrpc/com.atproto.server.refreshSession`,
     {
       headers: {
         Authorization: `Bearer ${authorization.refreshToken}`,
