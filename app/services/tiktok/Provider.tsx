@@ -109,7 +109,11 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   async function refreshTokens(): Promise<OauthAuthorization | null> {
     try {
-      const newAuthorization = await refreshAccessToken(authorization);
+      const newAuthorization = await refreshAccessToken(
+        credentials.clientId,
+        credentials.clientSecret,
+        authorization,
+      );
 
       setAuthorization(newAuthorization);
 

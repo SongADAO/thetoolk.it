@@ -84,17 +84,24 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh access token using refresh token
-async function refreshAccessToken(authorization: OauthAuthorization) {
+async function refreshAccessToken(
+  clientId: string,
+  clientSecret: string,
+  authorization: OauthAuthorization,
+) {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
 
   const params = new URLSearchParams({
-    access_token: authorization.refreshToken,
+    client_key: clientId,
+    client_secret: clientSecret,
+    grant_type: "refresh_token",
+    refresh_token: authorization.refreshToken,
   });
 
   const response = await fetch(
-    `https://graph.tiktok.com/v23.0/me/accounts?${params.toString()}`,
+    `https://open.tiktokapis.com/v2/oauth/token/?${params.toString()}`,
   );
 
   if (!response.ok) {
@@ -102,16 +109,9 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
     throw new Error(`Failed to get user info: ${errorText}`);
   }
 
-  // Calculate expiry time
-  const expiresIn = 5184000000;
-  const refreshExpiryTime = new Date(Date.now() + expiresIn);
+  const tokens = await response.json();
 
-  return {
-    accessToken: authorization.accessToken,
-    accessTokenExpiresAt: authorization.accessTokenExpiresAt,
-    refreshToken: authorization.refreshToken,
-    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
-  };
+  return formatTokens(tokens);
 }
 
 function hasTokenExpired(tokenExpiry: string | null) {
