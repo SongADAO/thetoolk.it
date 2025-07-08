@@ -62,7 +62,11 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
+  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+    "thetoolkit-instagram-accounts",
+    [],
+    { initializeWithValue: true },
+  );
 
   const credentialsId = getCredentialsId(credentials);
 

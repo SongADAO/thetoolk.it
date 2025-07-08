@@ -62,7 +62,11 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
+  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+    "thetoolkit-threads-accounts",
+    [],
+    { initializeWithValue: true },
+  );
 
   const credentialsId = getCredentialsId(credentials);
 

@@ -62,7 +62,11 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
+  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+    "thetoolkit-facebook-accounts",
+    [],
+    { initializeWithValue: true },
+  );
 
   const credentialsId = getCredentialsId(credentials);
 

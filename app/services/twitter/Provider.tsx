@@ -62,7 +62,11 @@ export function TwitterProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
+  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+    "thetoolkit-twitter-accounts",
+    [],
+    { initializeWithValue: true },
+  );
 
   const credentialsId = getCredentialsId(credentials);
 

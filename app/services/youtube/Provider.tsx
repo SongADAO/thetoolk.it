@@ -62,7 +62,11 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
+  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+    "thetoolkit-youtube-accounts",
+    [],
+    { initializeWithValue: true },
+  );
 
   const credentialsId = getCredentialsId(credentials);
 
