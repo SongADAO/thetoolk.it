@@ -41,7 +41,7 @@
     "scss/at-rule-no-unknown": [
       true,
       {
-        "ignoreAtRules": ["tailwind", "plugin", "theme"]
+        "ignoreAtRules": ["tailwind", "plugin", "theme", "source"]
       }
     ],
     "color-hex-length": "short",
