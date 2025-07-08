@@ -14,7 +14,6 @@ interface ServiceContextType {
   credentialsId: string;
   error: string;
   fields: ServiceFormField[];
-  getValidAccessToken: () => Promise<string>;
   handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
   icon: ReactNode | undefined;
   initial: ServiceFormState;
@@ -26,7 +25,7 @@ interface ServiceContextType {
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const serviceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
@@ -35,7 +34,6 @@ const serviceContextDefault = {
   credentialsId: "",
   error: "",
   fields: [],
-  getValidAccessToken: async () => "",
   handleAuthRedirect: async () => {},
   icon: undefined,
   initial: {},
@@ -46,6 +44,6 @@ const serviceContextDefault = {
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
 };
-/* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 export { serviceContextDefault, type ServiceContextType };

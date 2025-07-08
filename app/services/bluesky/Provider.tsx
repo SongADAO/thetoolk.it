@@ -160,10 +160,11 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         return [];
       }
 
+      const accessToken = await getValidAccessToken();
       const newAccounts = await getAccounts(
         credentials.serviceUrl,
         credentials.username,
-        authorization.accessToken,
+        accessToken,
       );
 
       setAccounts(newAccounts);
@@ -238,7 +239,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       credentialsId,
       error,
       fields,
-      getValidAccessToken,
       handleAuthRedirect,
       icon,
       initial,

@@ -62,7 +62,6 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [accounts, setAccounts] = useState<ServiceAccount[]>([]);
 
   const credentialsId = getCredentialsId(credentials);
@@ -172,7 +171,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
         return [];
       }
 
-      const newAccounts = await getAccounts(authorization.accessToken);
+      const accessToken = await getValidAccessToken();
+      const newAccounts = await getAccounts(accessToken);
 
       setAccounts(newAccounts);
 
@@ -253,7 +253,6 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       credentialsId,
       error,
       fields,
-      getValidAccessToken,
       handleAuthRedirect,
       icon,
       initial,

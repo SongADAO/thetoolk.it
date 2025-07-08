@@ -168,7 +168,8 @@ export function FacebookProvider({ children }: Readonly<Props>) {
         return [];
       }
 
-      const newAccounts = await getAccounts(authorization.accessToken);
+      const accessToken = await getValidAccessToken();
+      const newAccounts = await getAccounts(accessToken);
 
       setAccounts(newAccounts);
 
@@ -249,7 +250,6 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       credentialsId,
       error,
       fields,
-      getValidAccessToken,
       handleAuthRedirect,
       icon,
       initial,
