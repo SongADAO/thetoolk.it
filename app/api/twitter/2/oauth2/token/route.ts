@@ -3,20 +3,18 @@ import { NextRequest } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get("authorization");
-    if (!authHeader) {
-      return Response.json(
-        { error: "Authorization header required" },
-        { status: 401 },
-      );
+
+    const headers = new Headers();
+    headers.set("Content-Type", "application/x-www-form-urlencoded");
+
+    if (authHeader) {
+      headers.set("Authorization", authHeader);
     }
 
     const params = await request.json();
     const response = await fetch("https://api.twitter.com/2/oauth2/token", {
       body: new URLSearchParams(params),
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers,
       method: "POST",
     });
 

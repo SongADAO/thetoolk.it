@@ -108,7 +108,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
 
   async function refreshTokens(): Promise<OauthAuthorization | null> {
     try {
-      const newAuthorization = await refreshAccessToken(authorization);
+      const newAuthorization = await refreshAccessToken(
+        credentials,
+        authorization,
+      );
 
       setAuthorization(newAuthorization);
 
@@ -230,10 +233,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
     return formState;
   }
 
-  // useEffect(() => {
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   refreshTokensIfNeeded();
-  // }, [authorization.accessToken, isAuthorized]);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    refreshTokensIfNeeded();
+  }, [authorization.accessToken, isAuthorized]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises

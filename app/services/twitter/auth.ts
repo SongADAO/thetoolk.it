@@ -161,26 +161,30 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh access token using refresh token
-async function refreshAccessToken(authorization: OauthAuthorization) {
-  // TODO: Twitter refresh token renewal
+async function refreshAccessToken(
+  credentials: OauthCredentials,
+  authorization: OauthAuthorization,
+) {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
 
-  const params = new URLSearchParams({
-    access_token: authorization.refreshToken,
-    grant_type: "th_refresh_token",
+  const response = await fetch("/api/twitter/2/oauth2/token", {
+    body: JSON.stringify({
+      client_id: credentials.clientId,
+      grant_type: "refresh_token",
+      refresh_token: authorization.refreshToken,
+    }),
+    headers: {
+      Authorization: `Basic ${btoa(`${credentials.clientId}:${credentials.clientSecret}`)}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
   });
-
-  const response = await fetch(
-    `https://graph.twitter.net/refresh_access_token?${params.toString()}`,
-  );
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(
-      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
-    );
+    throw new Error(`Token exchange failed: ${errorData.error}`);
   }
 
   const tokens = await response.json();
