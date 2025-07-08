@@ -173,6 +173,7 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
   }
 
   const tokens = await response.json();
+  console.log(tokens);
 
   return formatTokens(tokens);
 }
