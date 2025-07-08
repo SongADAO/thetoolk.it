@@ -235,10 +235,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
   //   refreshTokensIfNeeded();
   // }, [authorization.accessToken, isAuthorized]);
 
-  // useEffect(() => {
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   initAccounts();
-  // }, [authorization.accessToken, isAuthorized]);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    initAccounts();
+  }, [authorization.accessToken, isAuthorized]);
 
   const providerValues = useMemo(
     () => ({

@@ -132,7 +132,7 @@ async function exchangeCodeForTokens(
     );
   }
 
-  const response = await fetch("/api/twitter/token", {
+  const response = await fetch("/api/twitter/2/oauth2/token", {
     body: JSON.stringify({
       client_id: credentials.clientId,
       code,
@@ -191,7 +191,7 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
 async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log(`Checking Twitter user info`);
 
-  const response = await fetch("/api/twitter/user", {
+  const response = await fetch("/api/twitter/2/users/me", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
