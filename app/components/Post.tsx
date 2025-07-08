@@ -1,11 +1,8 @@
-"use client";
-
-import { NeynarAuthButton, NeynarContextProvider, Theme } from "@neynar/react";
-
 import { PostSettings } from "@/app/components/PostSettings";
 import { BlueskyProvider } from "@/app/services/bluesky/Provider";
 import { FacebookProvider } from "@/app/services/facebook/Provider";
 import { InstagramProvider } from "@/app/services/instagram/Provider";
+import { NeynarProvider } from "@/app/services/neynar/Provider";
 import { S3Provider } from "@/app/services/s3/S3Provider";
 import { ThreadsProvider } from "@/app/services/threads/Provider";
 import { TiktokProvider } from "@/app/services/tiktok/Provider";
@@ -22,29 +19,9 @@ export function Post() {
               <BlueskyProvider>
                 <TiktokProvider>
                   <TwitterProvider>
-                    <NeynarContextProvider
-                      settings={{
-                        clientId:
-                          process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID ?? "",
-                        defaultTheme: Theme.Light,
-                        eventsCallbacks: {
-                          onAuthSuccess: () => {},
-                          onSignout: () => {},
-                          // onAuthSuccess: ({ user }) => {
-                          //   setUser(user);
-                          //   localStorage.setItem(
-                          //     "thetoolkit-farcaster-authorization",
-                          //     JSON.stringify({ user }),
-                          //   );
-                          // },
-                          // onSignout: () => signOutLocal(),
-                        },
-                      }}
-                    >
+                    <NeynarProvider>
                       <PostSettings />
-
-                      <NeynarAuthButton label="Sign in with Farcaster" />
-                    </NeynarContextProvider>
+                    </NeynarProvider>
                   </TwitterProvider>
                 </TiktokProvider>
               </BlueskyProvider>

@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { NeynarContextProvider, Theme } from "@neynar/react";
+import { ReactNode, useMemo, useState } from "react";
 import { SiFarcaster } from "react-icons/si";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -8,23 +9,23 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-// import {
-//   exchangeCodeForTokens,
-//   getAccounts,
-//   getAuthorizationExpiresAt,
-//   getCredentialsId,
-//   hasCompleteAuthorization,
-//   hasCompleteCredentials,
-//   hasTokenExpired,
-//   needsTokenRefresh,
-//   refreshAccessToken,
-// } from "@/app/services/neynar/auth";
+import {
+  // exchangeCodeForTokens,
+  // getAccounts,
+  getAuthorizationExpiresAt,
+  getCredentialsId,
+  hasCompleteAuthorization,
+  hasCompleteCredentials,
+  // hasTokenExpired,
+  // needsTokenRefresh,
+  // refreshAccessToken,
+} from "@/app/services/neynar/auth";
 import { NeynarContext } from "@/app/services/neynar/Context";
 import {
-  defaultNeynarCredentials,
   defaultOauthAuthorization,
-  type NeynarCredentials,
+  defaultOauthCredentials,
   type OauthAuthorization,
+  type OauthCredentials,
   type ServiceAccount,
 } from "@/app/services/types";
 
@@ -39,6 +40,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   const icon = <SiFarcaster className="size-6" />;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
@@ -47,9 +49,9 @@ export function NeynarProvider({ children }: Readonly<Props>) {
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<NeynarCredentials>(
+  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
     "thetoolkit-neynar-credentials",
-    defaultNeynarCredentials,
+    defaultOauthCredentials,
     { initializeWithValue: true },
   );
 
@@ -73,159 +75,65 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
-  async function exchangeCode(): Promise<OauthAuthorization | null> {
-    try {
-      const newAuthorization = await exchangeCodeForTokens(credentials);
+  // async function exchangeCode(): Promise<OauthAuthorization | null> {
+  //   return null;
+  // }
 
-      setAuthorization(newAuthorization);
+  // async function refreshTokens(): Promise<OauthAuthorization | null> {
+  //   return null;
+  // }
 
-      setError("");
-
-      console.log("Tokens obtained successfully");
-
-      return newAuthorization;
-    } catch (err: unknown) {
-      console.error("Token exchange error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to exchange code for tokens: ${errMessage}`);
-
-      return null;
-    }
-  }
-
-  async function refreshTokens(): Promise<OauthAuthorization | null> {
-    try {
-      const newAuthorization = await refreshAccessToken(
-        credentials,
-        authorization,
-      );
-
-      setAuthorization(newAuthorization);
-
-      setError("");
-
-      console.log("Access token refreshed successfully");
-
-      return newAuthorization;
-    } catch (err: unknown) {
-      console.error("Token refresh error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to refresh token: ${errMessage}`);
-
-      return null;
-    }
-  }
-
-  async function refreshTokensIfNeeded(): Promise<OauthAuthorization | null> {
-    if (
-      isAuthorized &&
-      needsTokenRefresh(authorization.refreshTokenExpiresAt)
-    ) {
-      console.log("Refresh token will expire within 30 days, refreshing...");
-      return await refreshTokens();
-    }
-
-    return null;
-  }
+  // async function refreshTokensIfNeeded(): Promise<OauthAuthorization | null> {
+  //   return null;
+  // }
 
   // Get valid access token (refresh if needed)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function getValidAccessToken(): Promise<string> {
-    if (hasTokenExpired(authorization.accessTokenExpiresAt)) {
-      console.log("Token expired or about to expire, refreshing...");
-      const newAuthorization = await refreshTokens();
 
-      if (!newAuthorization) {
-        throw new Error("Failed to refresh token");
-      }
+  // async function getValidAccessToken(): Promise<string> {
+  //   return "";
+  // }
 
-      return newAuthorization.accessToken;
-    }
+  // async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
+  //   return [];
+  // }
 
-    if (!authorization.accessToken) {
-      throw new Error("No access token available. Please authorize first.");
-    }
-
-    return authorization.accessToken;
-  }
-
-  async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
-    try {
-      const newAccounts = await getAccounts(
-        credentials.serviceUrl,
-        credentials.username,
-        accessToken,
-      );
-
-      setAccounts(newAccounts);
-
-      return newAccounts;
-    } catch (err: unknown) {
-      console.error("Token exchange error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to get neynar accounts: ${errMessage}`);
-
-      setAccounts([]);
-
-      return [];
-    }
-  }
-
-  async function authorize() {
-    const newAuthorization = await exchangeCode();
-    if (newAuthorization) {
-      await initAccounts(newAuthorization.accessToken);
-    }
-  }
+  async function authorize() {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function handleAuthRedirect(searchParams: URLSearchParams) {}
 
   const fields: ServiceFormField[] = [
     {
-      label: "Service URL",
-      name: "serviceUrl",
-      placeholder: "https://bsky.social",
+      label: "Client ID",
+      name: "clientId",
+      placeholder: "Client ID",
     },
-    {
-      label: "Username",
-      name: "username",
-      placeholder: "johndoe.bsky.social",
-    },
-    {
-      label: "App Password",
-      name: "appPassword",
-      placeholder: "xxxx-xxxx-xxxx-xxxx",
-    },
+    // {
+    //   label: "Client Secret",
+    //   name: "clientSecret",
+    //   placeholder: "Client Secret",
+    // },
   ];
 
   const initial: ServiceFormState = {
-    appPassword: credentials.appPassword,
-    serviceUrl: credentials.serviceUrl,
-    username: credentials.username,
+    clientId: credentials.clientId,
+    // clientSecret: credentials.clientSecret,
   };
 
   function saveData(formState: ServiceFormState): ServiceFormState {
     setCredentials({
-      appPassword: formState.appPassword,
-      serviceUrl: formState.serviceUrl,
-      username: formState.username,
+      clientId: formState.clientId,
+      // clientSecret: formState.clientSecret,
+      clientSecret: "",
     });
 
     return formState;
   }
 
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    refreshTokensIfNeeded();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.accessToken, isAuthorized]);
+  // useEffect(() => {
+  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  //   refreshTokensIfNeeded();
+  // }, [authorization.accessToken, isAuthorized]);
 
   const providerValues = useMemo(
     () => ({
@@ -265,7 +173,42 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   return (
     <NeynarContext.Provider value={providerValues}>
-      {children}
+      <NeynarContextProvider
+        key={credentials.clientId}
+        settings={{
+          clientId: credentials.clientId,
+          defaultTheme: Theme.Light,
+          eventsCallbacks: {
+            onAuthSuccess: ({ user }) => {
+              console.log("onAuthSuccess");
+              setAuthorization({
+                accessToken: user.signer_uuid,
+                accessTokenExpiresAt: new Date(
+                  Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
+                ).toISOString(),
+                refreshToken: user.signer_uuid,
+                refreshTokenExpiresAt: new Date(
+                  Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
+                ).toISOString(),
+              });
+              setAccounts([
+                {
+                  accessToken: user.signer_uuid,
+                  id: user.signer_uuid,
+                  username: user.username,
+                },
+              ]);
+            },
+            onSignout: () => () => {
+              console.log("onSignout");
+              setAuthorization(defaultOauthAuthorization);
+              setAccounts([]);
+            },
+          },
+        }}
+      >
+        {children}
+      </NeynarContextProvider>
     </NeynarContext.Provider>
   );
 }

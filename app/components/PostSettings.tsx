@@ -4,6 +4,7 @@ import { PostServiceSettings } from "@/app/components/PostServiceSettings";
 import { BlueskyContext } from "@/app/services/bluesky/Context";
 import { FacebookContext } from "@/app/services/facebook/Context";
 import { InstagramContext } from "@/app/services/instagram/Context";
+import { NeynarContext } from "@/app/services/neynar/Context";
 import { ThreadsContext } from "@/app/services/threads/Context";
 import { TiktokContext } from "@/app/services/tiktok/Context";
 import { TwitterContext } from "@/app/services/twitter/Context";
@@ -18,6 +19,7 @@ export function PostSettings() {
     { context: BlueskyContext, id: "BlueskyContext" },
     { context: TiktokContext, id: "TiktokContext" },
     { context: TwitterContext, id: "TwitterContext" },
+    { context: NeynarContext, id: "NeynarContext" },
   ];
 
   return (

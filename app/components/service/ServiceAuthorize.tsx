@@ -1,3 +1,4 @@
+import { NeynarAuthButton } from "@neynar/react";
 import { ReactNode } from "react";
 
 import type { ServiceAccount } from "@/app/services/types";
@@ -25,6 +26,10 @@ function ServiceAuthorize({
 }: Readonly<Props>) {
   if (!isComplete || !isEnabled) {
     return null;
+  }
+
+  if (label === "Farcaster") {
+    return <NeynarAuthButton label="Sign in with Farcaster" />;
   }
 
   return (
