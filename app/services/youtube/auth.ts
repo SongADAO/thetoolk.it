@@ -171,6 +171,10 @@ async function refreshAccessToken(
   const tokens = await response.json();
   console.log(tokens);
 
+  // The refresh token doesn't change, but is also not in the returned data,
+  // so we copy over the existing one.
+  tokens.refresh_token = authorization.refreshToken;
+
   return formatTokens(tokens);
 }
 
