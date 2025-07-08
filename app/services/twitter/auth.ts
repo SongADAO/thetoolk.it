@@ -12,6 +12,7 @@ import type {
 interface TwitterTokenResponse {
   access_token: string;
   expires_in: number;
+  refresh_token: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -77,17 +78,18 @@ function shouldHandleAuthRedirect(code: string | null, state: string | null) {
 
 function formatTokens(tokens: TwitterTokenResponse) {
   const expiresIn = tokens.expires_in * 1000;
+  // Refresh Tokens have a 6-month lifespan.
+  const refreshExpiresIn = 180 * 24 * 60 * 60 * 1000;
 
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + expiresIn);
-
-  // Access tokens are the same as the refresh token.
+  const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {
     accessToken: tokens.access_token,
     accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.access_token,
-    refreshTokenExpiresAt: expiryTime.toISOString(),
+    refreshToken: tokens.refresh_token,
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
 
