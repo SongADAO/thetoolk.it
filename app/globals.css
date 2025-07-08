@@ -4,28 +4,20 @@
 @theme {
   --color-brand-youtube: #ea333d;
   --color-brand-youtube-inverse: #fff;
-
   --color-brand-facebook: #2c64f6;
   --color-brand-facebook-inverse: #fff;
-
   --color-brand-instagram: #e9388e;
   --color-brand-instagram-inverse: #fff;
-
   --color-brand-threads: #0a0a0a;
   --color-brand-threads-inverse: #fff;
-
   --color-brand-bluesky: #3d83f7;
   --color-brand-bluesky-inverse: #fff;
-
   --color-brand-tiktok: #ea4459;
   --color-brand-tiktok-inverse: #fff;
-
-  --color-brand-twitter: #000000;
+  --color-brand-twitter: #000;
   --color-brand-twitter-inverse: #fff;
-
   --color-brand-farcaster: #7966bb;
   --color-brand-farcaster-inverse: #fff;
-
   --color-brand-lens: #2c2d30;
   --color-brand-lens-inverse: #fff;
 }
@@ -37,7 +29,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-youtube");
 @source inline("group-data-[enabled=yes]:text-brand-youtube");
 @source inline("group-data-[enabled=yes]:text-brand-youtube-inverse");
-
 @source inline("bg-brand-facebook");
 @source inline("data-[enabled=yes]:bg-brand-facebook");
 @source inline("data-[enabled=yes]:text-brand-facebook");
@@ -45,7 +36,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-facebook");
 @source inline("group-data-[enabled=yes]:text-brand-facebook");
 @source inline("group-data-[enabled=yes]:text-brand-facebook-inverse");
-
 @source inline("bg-brand-instagram");
 @source inline("data-[enabled=yes]:bg-brand-instagram");
 @source inline("data-[enabled=yes]:text-brand-instagram");
@@ -53,7 +43,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-instagram");
 @source inline("group-data-[enabled=yes]:text-brand-instagram");
 @source inline("group-data-[enabled=yes]:text-brand-instagram-inverse");
-
 @source inline("bg-brand-threads");
 @source inline("data-[enabled=yes]:bg-brand-threads");
 @source inline("data-[enabled=yes]:text-brand-threads");
@@ -61,7 +50,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-threads");
 @source inline("group-data-[enabled=yes]:text-brand-threads");
 @source inline("group-data-[enabled=yes]:text-brand-threads-inverse");
-
 @source inline("bg-brand-bluesky");
 @source inline("data-[enabled=yes]:bg-brand-bluesky");
 @source inline("data-[enabled=yes]:text-brand-bluesky");
@@ -69,7 +57,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-bluesky");
 @source inline("group-data-[enabled=yes]:text-brand-bluesky");
 @source inline("group-data-[enabled=yes]:text-brand-bluesky-inverse");
-
 @source inline("bg-brand-tiktok");
 @source inline("data-[enabled=yes]:bg-brand-tiktok");
 @source inline("data-[enabled=yes]:text-brand-tiktok");
@@ -77,7 +64,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-tiktok");
 @source inline("group-data-[enabled=yes]:text-brand-tiktok");
 @source inline("group-data-[enabled=yes]:text-brand-tiktok-inverse");
-
 @source inline("bg-brand-twitter");
 @source inline("data-[enabled=yes]:bg-brand-twitter");
 @source inline("data-[enabled=yes]:text-brand-twitter");
@@ -85,7 +71,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-twitter");
 @source inline("group-data-[enabled=yes]:text-brand-twitter");
 @source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
-
 @source inline("bg-brand-farcaster");
 @source inline("data-[enabled=yes]:bg-brand-farcaster");
 @source inline("data-[enabled=yes]:text-brand-farcaster");
@@ -93,7 +78,6 @@
 @source inline("group-data-[enabled=yes]:bg-brand-farcaster");
 @source inline("group-data-[enabled=yes]:text-brand-farcaster");
 @source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
-
 @source inline("bg-brand-lens");
 @source inline("data-[enabled=yes]:bg-brand-lens");
 @source inline("data-[enabled=yes]:text-brand-lens");
