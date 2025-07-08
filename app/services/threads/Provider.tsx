@@ -234,11 +234,13 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     refreshTokensIfNeeded();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authorization.accessToken, isAuthorized]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     initAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authorization.accessToken, isAuthorized]);
 
   const providerValues = useMemo(
