@@ -1,5 +1,6 @@
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
+import "@neynar/react/dist/style.css";
 
 import type { Metadata } from "next";
 // eslint-disable-next-line camelcase
