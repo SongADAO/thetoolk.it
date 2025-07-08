@@ -54,6 +54,22 @@ export default tseslint.config(
   eslintConfigPrettier,
 
   {
+    ignores: [
+      ".git/**",
+      ".next/**",
+      "node_modules/**",
+      "dist/**",
+      "dist-ssr/**",
+      "package-lock.json",
+      "eslint.config.mjs",
+      "postcss.config.mjs",
+      "next.config.ts",
+      "vite-env.d.ts",
+      "next-env.d.ts",
+      "public/fonts/**",
+    ],
+  },
+  {
     plugins: {
       "simple-import-sort": simpleImportSort,
       prettier: prettier,
@@ -68,16 +84,6 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    ignores: [
-      "/.git/",
-      "/node_modules/",
-      "/dist/",
-      "/dist-ssr/",
-      "/package-lock.json",
-      "vite-env.d.ts",
-      "next-env.d.ts",
-      "/public/fonts",
-    ],
     rules: {
       "func-style": ["error", "declaration", { allowArrowFunctions: true }],
       "multiline-comment-style": ["error", "separate-lines"],
