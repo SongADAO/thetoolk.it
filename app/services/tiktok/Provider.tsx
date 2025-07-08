@@ -76,12 +76,6 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
-  function authorize() {
-    const authUrl = getAuthorizationUrl(credentials, getRedirectUri());
-
-    window.location.href = authUrl;
-  }
-
   async function exchangeCode(
     code: string,
   ): Promise<OauthAuthorization | null> {
@@ -148,6 +142,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
   }
 
   // Get valid access token (refresh if needed)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function getValidAccessToken(): Promise<string> {
     if (hasTokenExpired(authorization.accessTokenExpiresAt)) {
       console.log("Token expired or about to expire, refreshing...");
@@ -167,15 +162,8 @@ export function TiktokProvider({ children }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
-  async function initAccounts(): Promise<ServiceAccount[]> {
+  async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
     try {
-      if (!isAuthorized) {
-        setAccounts([]);
-
-        return [];
-      }
-
-      const accessToken = await getValidAccessToken();
       const newAccounts = await getAccounts(accessToken);
 
       setAccounts(newAccounts);
@@ -194,6 +182,12 @@ export function TiktokProvider({ children }: Readonly<Props>) {
     }
   }
 
+  function authorize() {
+    const authUrl = getAuthorizationUrl(credentials, getRedirectUri());
+
+    window.location.href = authUrl;
+  }
+
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
       const code = searchParams.get("code");
@@ -202,7 +196,10 @@ export function TiktokProvider({ children }: Readonly<Props>) {
       console.log("state", state);
 
       if (code && state && shouldHandleAuthRedirect(code, state)) {
-        await exchangeCode(code);
+        const newAuthorization = await exchangeCode(code);
+        if (newAuthorization) {
+          await initAccounts(newAuthorization.accessToken);
+        }
 
         // window.location.href = "/";
       }
@@ -241,12 +238,6 @@ export function TiktokProvider({ children }: Readonly<Props>) {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     refreshTokensIfNeeded();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.accessToken, isAuthorized]);
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    initAccounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authorization.accessToken, isAuthorized]);
 

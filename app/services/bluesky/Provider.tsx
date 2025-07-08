@@ -133,6 +133,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   }
 
   // Get valid access token (refresh if needed)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function getValidAccessToken(): Promise<string> {
     if (hasTokenExpired(authorization.accessTokenExpiresAt)) {
       console.log("Token expired or about to expire, refreshing...");
@@ -152,19 +153,8 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
-  async function authorize() {
-    return await exchangeCode();
-  }
-
-  async function initAccounts(): Promise<ServiceAccount[]> {
+  async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
     try {
-      if (!isAuthorized) {
-        setAccounts([]);
-
-        return [];
-      }
-
-      const accessToken = await getValidAccessToken();
       const newAccounts = await getAccounts(
         credentials.serviceUrl,
         credentials.username,
@@ -184,6 +174,13 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       setAccounts([]);
 
       return [];
+    }
+  }
+
+  async function authorize() {
+    const newAuthorization = await exchangeCode();
+    if (newAuthorization) {
+      await initAccounts(newAuthorization.accessToken);
     }
   }
 
@@ -227,12 +224,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     refreshTokensIfNeeded();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.accessToken, isAuthorized]);
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    initAccounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authorization.accessToken, isAuthorized]);
 
