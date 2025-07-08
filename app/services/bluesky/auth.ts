@@ -54,7 +54,7 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
 
 function formatTokens(tokens: BlueskyTokenResponse) {
   // Tokens have a 60-day lifespan
-  const expiresIn = 5184000000;
+  const expiresIn = 60 * 24 * 60 * 60;
 
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + expiresIn);

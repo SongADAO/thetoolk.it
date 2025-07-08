@@ -76,7 +76,7 @@ function shouldHandleAuthRedirect(code: string | null, state: string | null) {
 
 function formatTokens(tokens: FacebookTokenResponse) {
   // Tokens have a 60-day lifespan
-  const expiresIn = 5184000000;
+  const expiresIn = 60 * 24 * 60 * 60;
 
   // Calculate expiry time
   const expiryTime = new Date(Date.now() + expiresIn);
@@ -188,8 +188,8 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
   // So instead of getting a new authorization, we just query a basic API to trigger
   // a refresh and then update the expiration time of the existing tokens.
 
-  // Calculate expiry time
-  const expiresIn = 5184000000;
+  // Calculate expiry time (60 days)
+  const expiresIn = 60 * 24 * 60 * 60;
   const refreshExpiryTime = new Date(Date.now() + expiresIn);
 
   return {
