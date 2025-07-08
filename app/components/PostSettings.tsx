@@ -6,6 +6,7 @@ import { FacebookContext } from "@/app/services/facebook/Context";
 import { InstagramContext } from "@/app/services/instagram/Context";
 import { ThreadsContext } from "@/app/services/threads/Context";
 import { TiktokContext } from "@/app/services/tiktok/Context";
+import { TwitterContext } from "@/app/services/twitter/Context";
 import { YoutubeContext } from "@/app/services/youtube/Context";
 
 export function PostSettings() {
@@ -16,6 +17,7 @@ export function PostSettings() {
     { context: ThreadsContext, id: "ThreadsContext" },
     { context: BlueskyContext, id: "BlueskyContext" },
     { context: TiktokContext, id: "TiktokContext" },
+    { context: TwitterContext, id: "TwitterContext" },
   ];
 
   return (

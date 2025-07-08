@@ -5,6 +5,7 @@ import { InstagramProvider } from "@/app/services/instagram/Provider";
 import { S3Provider } from "@/app/services/s3/S3Provider";
 import { ThreadsProvider } from "@/app/services/threads/Provider";
 import { TiktokProvider } from "@/app/services/tiktok/Provider";
+import { TwitterProvider } from "@/app/services/twitter/Provider";
 import { YoutubeProvider } from "@/app/services/youtube/Provider";
 
 export function Post() {
@@ -16,7 +17,9 @@ export function Post() {
             <ThreadsProvider>
               <BlueskyProvider>
                 <TiktokProvider>
-                  <PostSettings />
+                  <TwitterProvider>
+                    <PostSettings />
+                  </TwitterProvider>
                 </TiktokProvider>
               </BlueskyProvider>
             </ThreadsProvider>
