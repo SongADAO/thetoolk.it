@@ -1,7 +1,7 @@
 import { PostProviders } from "@/app/components/PostProviders";
-import { PostSettings } from "@/app/components/PostSettings";
+import { PostRedirectHandlers } from "@/app/components/PostRedirectHandlers";
+import { SettingsMenu } from "@/app/components/SettingsMenu";
 import { StorageProviders } from "@/app/components/StorageProviders";
-import { StorageSettings } from "@/app/components/StorageSettings";
 
 export default function Home() {
   return (
@@ -10,11 +10,12 @@ export default function Home() {
         <div>
           <header>TheToolk.it</header>
           <main>
-            <StorageSettings />
-            <PostSettings />
+            <SettingsMenu />
           </main>
           <footer>TheToolk.it</footer>
         </div>
+
+        <PostRedirectHandlers />
       </StorageProviders>
     </PostProviders>
   );
