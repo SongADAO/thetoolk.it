@@ -1,3 +1,4 @@
+import { djb2Hash } from "@/app/lib/hash";
 import {
   generateCodeChallenge,
   generateCodeVerifier,
@@ -42,7 +43,7 @@ function needsTokenRefresh(tokenExpiry: string | null): boolean {
 // -----------------------------------------------------------------------------
 
 function getCredentialsId(credentials: OauthCredentials): string {
-  return JSON.stringify(credentials);
+  return djb2Hash(JSON.stringify(credentials));
 }
 
 function hasCompleteCredentials(credentials: OauthCredentials): boolean {

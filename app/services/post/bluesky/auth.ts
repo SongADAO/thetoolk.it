@@ -1,3 +1,4 @@
+import { djb2Hash } from "@/app/lib/hash";
 import { hasExpired } from "@/app/services/post/helpers";
 import type {
   BlueskyCredentials,
@@ -25,7 +26,7 @@ function needsTokenRefresh(tokenExpiry: string | null): boolean {
 // -----------------------------------------------------------------------------
 
 function getCredentialsId(credentials: BlueskyCredentials): string {
-  return JSON.stringify(credentials);
+  return djb2Hash(JSON.stringify(credentials));
 }
 
 function hasCompleteCredentials(credentials: BlueskyCredentials): boolean {

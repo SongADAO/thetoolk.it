@@ -1,3 +1,4 @@
+import { djb2Hash } from "@/app/lib/hash";
 import { hasExpired } from "@/app/services/post/helpers";
 import type {
   OauthAuthorization,
@@ -15,7 +16,7 @@ function hasTokenExpired(tokenExpiry: string | null): boolean {
 // -----------------------------------------------------------------------------
 
 function getCredentialsId(credentials: OauthCredentials): string {
-  return JSON.stringify(credentials);
+  return djb2Hash(JSON.stringify(credentials));
 }
 
 function hasCompleteCredentials(credentials: OauthCredentials): boolean {

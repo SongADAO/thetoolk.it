@@ -1,9 +1,10 @@
+import { djb2Hash } from "@/app/lib/hash";
 import type { PinataCredentials } from "@/app/services/storage/types";
 
 // -----------------------------------------------------------------------------
 
 function getCredentialsId(credentials: PinataCredentials): string {
-  return JSON.stringify(credentials);
+  return djb2Hash(JSON.stringify(credentials));
 }
 
 function hasCompleteCredentials(credentials: PinataCredentials): boolean {
