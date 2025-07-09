@@ -1,13 +1,19 @@
-import { Post } from "@/app/components/Post";
+import { PostProviders } from "@/app/components/PostProviders";
+import { PostSettings } from "@/app/components/PostSettings";
+import { StorageProviders } from "@/app/components/StorageProviders";
 
 export default function Home() {
   return (
-    <div>
-      <header>TheToolk.it</header>
-      <main>
-        <Post />
-      </main>
-      <footer>TheToolk.it</footer>
-    </div>
+    <PostProviders>
+      <StorageProviders>
+        <div>
+          <header>TheToolk.it</header>
+          <main>
+            <PostSettings />
+          </main>
+          <footer>TheToolk.it</footer>
+        </div>
+      </StorageProviders>
+    </PostProviders>
   );
 }
