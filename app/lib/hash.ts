@@ -20,10 +20,8 @@ function djb2Hash(str: string): string {
   return (hash >>> 0).toString(16);
 }
 
-function objectIdHash(credentials: object): string {
-  const entries = Object.entries(credentials).sort(([a], [b]) =>
-    a.localeCompare(b),
-  );
+function objectIdHash(data: object): string {
+  const entries = Object.entries(data).sort(([a], [b]) => a.localeCompare(b));
 
   const str = entries.map(([key, value]) => `${key}:${String(value)}`).join("");
 
