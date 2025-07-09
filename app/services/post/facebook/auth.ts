@@ -75,7 +75,7 @@ function shouldHandleAuthRedirect(
   code: string | null,
   state: string | null,
 ): boolean {
-  return code && state?.includes(OAUTH_STATE);
+  return Boolean(code && state?.includes(OAUTH_STATE));
 }
 
 function formatTokens(tokens: FacebookTokenResponse): OauthAuthorization {

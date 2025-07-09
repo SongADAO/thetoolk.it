@@ -75,7 +75,7 @@ function shouldHandleAuthRedirect(
   code: string | null,
   scope: string | null,
 ): boolean {
-  return code && scope?.includes(OAUTH_SCOPE_DOMAIN);
+  return Boolean(code && scope?.includes(OAUTH_SCOPE_DOMAIN));
 }
 
 function formatTokens(tokens: GoogleTokenResponse): OauthAuthorization {
