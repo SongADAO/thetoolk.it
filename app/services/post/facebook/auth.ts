@@ -17,7 +17,7 @@ interface FacebookPage {
 
 // -----------------------------------------------------------------------------
 
-const SCOPES = [
+const SCOPES: string[] = [
   "pages_manage_posts",
   "pages_read_engagement",
   "pages_show_list",
@@ -207,7 +207,7 @@ async function refreshAccessToken(
 
 // -----------------------------------------------------------------------------
 
-async function getFacebookPages(token: string) {
+async function getFacebookPages(token: string): Promise<FacebookPage[]> {
   console.log("Getting Facebook pages...");
 
   const params = new URLSearchParams({

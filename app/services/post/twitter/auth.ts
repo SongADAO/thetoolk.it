@@ -17,7 +17,7 @@ interface TwitterTokenResponse {
 
 // -----------------------------------------------------------------------------
 
-const SCOPES = [
+const SCOPES: string[] = [
   "tweet.read",
   "tweet.write",
   "users.read",

@@ -17,7 +17,7 @@ interface FacebookPage {
 
 // -----------------------------------------------------------------------------
 
-const SCOPES = [
+const SCOPES: string[] = [
   "business_management",
   "instagram_basic",
   "instagram_content_publish",
@@ -209,7 +209,7 @@ async function refreshAccessToken(
 
 // -----------------------------------------------------------------------------
 
-async function getFacebookPages(token: string) {
+async function getFacebookPages(token: string): Promise<FacebookPage[]> {
   console.log("Getting Facebook pages...");
 
   const params = new URLSearchParams({

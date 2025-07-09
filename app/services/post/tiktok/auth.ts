@@ -17,7 +17,7 @@ interface TiktokTokenResponse {
 
 // -----------------------------------------------------------------------------
 
-const SCOPES = ["user.info.basic", "video.upload", "video.publish"];
+const SCOPES: string[] = ["user.info.basic", "video.upload", "video.publish"];
 
 const OAUTH_STATE = "tiktok_auth";
 

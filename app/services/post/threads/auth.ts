@@ -12,7 +12,7 @@ interface ThreadsTokenResponse {
 
 // -----------------------------------------------------------------------------
 
-const SCOPES = ["threads_basic", "threads_content_publish"];
+const SCOPES: string[] = ["threads_basic", "threads_content_publish"];
 
 const OAUTH_STATE = "threads_auth";
 

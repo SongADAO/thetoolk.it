@@ -16,7 +16,7 @@ interface GoogleTokenResponse {
 
 // -----------------------------------------------------------------------------
 
-const SCOPES = [
+const SCOPES: string[] = [
   "https://www.googleapis.com/auth/youtube.readonly",
   "https://www.googleapis.com/auth/youtube.upload",
 ];
@@ -70,7 +70,10 @@ function getRedirectUri(): string {
   return baseUrl;
 }
 
-function shouldHandleAuthRedirect(code: string | null, scope: string | null) {
+function shouldHandleAuthRedirect(
+  code: string | null,
+  scope: string | null,
+): boolean {
   return code && scope?.includes(OAUTH_SCOPE_DOMAIN);
 }
 
