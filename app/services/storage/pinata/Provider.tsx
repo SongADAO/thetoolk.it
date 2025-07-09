@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { FaAws } from "react-icons/fa6";
+import { GiPinata } from "react-icons/gi";
 import { useLocalStorage } from "usehooks-ts";
 
 import type {
@@ -21,13 +21,13 @@ import {
   needsTokenRefresh,
   refreshAccessToken,
   shouldHandleAuthRedirect,
-} from "@/app/services/storage/amazons3/auth";
-import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
+} from "@/app/services/storage/pinata/auth";
+import { PinataContext } from "@/app/services/storage/pinata/Context";
 import {
-  type AmazonS3Credentials,
-  defaultAmazonS3Credentials,
   defaultOauthAuthorization,
+  defaultPinataCredentials,
   type OauthAuthorization,
+  type PinataCredentials,
   type ServiceAccount,
 } from "@/app/services/storage/types";
 
@@ -35,35 +35,35 @@ interface Props {
   children: ReactNode;
 }
 
-export function AmazonS3Provider({ children }: Readonly<Props>) {
-  const label = "AmazonS3";
+export function PinataProvider({ children }: Readonly<Props>) {
+  const label = "Pinata";
 
-  const brandColor = "amazons3";
+  const brandColor = "pinata";
 
-  const icon = <FaAws className="size-6" />;
+  const icon = <GiPinata className="size-6" />;
 
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
-    "thetoolkit-amazons3-enabled",
+    "thetoolkit-pinata-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<AmazonS3Credentials>(
-    "thetoolkit-amazons3-credentials",
-    defaultAmazonS3Credentials,
+  const [credentials, setCredentials] = useLocalStorage<PinataCredentials>(
+    "thetoolkit-pinata-credentials",
+    defaultPinataCredentials,
     { initializeWithValue: true },
   );
 
   const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
-    "thetoolkit-amazons3-authorization",
+    "thetoolkit-pinata-authorization",
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
 
   const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
-    "thetoolkit-amazons3-accounts",
+    "thetoolkit-pinata-accounts",
     [],
     { initializeWithValue: true },
   );
@@ -171,7 +171,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
       const errMessage = err instanceof Error ? err.message : "Unknown error";
 
-      setError(`Failed to get amazons3 accounts: ${errMessage}`);
+      setError(`Failed to get pinata accounts: ${errMessage}`);
 
       setAccounts([]);
 
@@ -207,40 +207,33 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const fields: ServiceFormField[] = [
     {
-      label: "Access Key ID",
-      name: "accessKeyId",
-      placeholder: "Access Key ID",
+      label: "API Key",
+      name: "apiKey",
+      placeholder: "API Key",
     },
     {
-      label: "Secret Access Key",
-      name: "secretAccessKey",
-      placeholder: "Secret Access Key",
+      label: "API Secret",
+      name: "apiSecret",
+      placeholder: "API Secret",
     },
     {
-      label: "Region",
-      name: "region",
-      placeholder: "us-east-1",
-    },
-    {
-      label: "Bucket",
-      name: "bucket",
-      placeholder: "thetoolkit",
+      label: "JWT (secret access token)",
+      name: "jwt",
+      placeholder: "JWT (secret access token)",
     },
   ];
 
   const initial: ServiceFormState = {
-    accessKeyId: credentials.accessKeyId,
-    bucket: credentials.bucket,
-    region: credentials.region,
-    secretAccessKey: credentials.secretAccessKey,
+    apiKey: credentials.apiKey,
+    apiSecret: credentials.apiSecret,
+    jwt: credentials.jwt,
   };
 
   function saveData(formState: ServiceFormState): ServiceFormState {
     setCredentials({
-      accessKeyId: formState.accessKeyId,
-      bucket: formState.bucket,
-      region: formState.region,
-      secretAccessKey: formState.secretAccessKey,
+      apiKey: formState.apiKey,
+      apiSecret: formState.apiSecret,
+      jwt: formState.jwt,
     });
 
     return formState;
@@ -289,8 +282,8 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   );
 
   return (
-    <AmazonS3Context.Provider value={providerValues}>
+    <PinataContext.Provider value={providerValues}>
       {children}
-    </AmazonS3Context.Provider>
+    </PinataContext.Provider>
   );
 }

@@ -2,6 +2,12 @@
 @plugin "@tailwindcss/forms";
 
 @theme {
+  /* Storage */
+  --color-brand-amazons3: #ed6d2d;
+  --color-brand-amazons3-inverse: #fff;
+  --color-brand-pinata: #6a58f6;
+  --color-brand-pinata-inverse: #fff;
+  /* Post */
   --color-brand-youtube: #ea333d;
   --color-brand-youtube-inverse: #fff;
   --color-brand-facebook: #2c64f6;
@@ -22,6 +28,22 @@
   --color-brand-lens-inverse: #fff;
 }
 
+/* Storage */
+@source inline("bg-brand-amazons3");
+@source inline("data-[enabled=yes]:bg-brand-amazons3");
+@source inline("data-[enabled=yes]:text-brand-amazons3");
+@source inline("data-[enabled=yes]:text-brand-amazons3-inverse");
+@source inline("group-data-[enabled=yes]:bg-brand-amazons3");
+@source inline("group-data-[enabled=yes]:text-brand-amazons3");
+@source inline("group-data-[enabled=yes]:text-brand-amazons3-inverse");
+@source inline("bg-brand-pinata");
+@source inline("data-[enabled=yes]:bg-brand-pinata");
+@source inline("data-[enabled=yes]:text-brand-pinata");
+@source inline("data-[enabled=yes]:text-brand-pinata-inverse");
+@source inline("group-data-[enabled=yes]:bg-brand-pinata");
+@source inline("group-data-[enabled=yes]:text-brand-pinata");
+@source inline("group-data-[enabled=yes]:text-brand-pinata-inverse");
+/* Post */
 @source inline("bg-brand-youtube");
 @source inline("data-[enabled=yes]:bg-brand-youtube");
 @source inline("data-[enabled=yes]:text-brand-youtube");

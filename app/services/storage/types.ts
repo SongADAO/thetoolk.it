@@ -18,6 +18,12 @@ interface AmazonS3Credentials {
   secretAccessKey: string;
 }
 
+interface PinataCredentials {
+  apiKey: string;
+  apiSecret: string;
+  jwt: string;
+}
+
 const defaultOauthAuthorization: OauthAuthorization = {
   accessToken: "",
   accessTokenExpiresAt: "",
@@ -32,10 +38,18 @@ const defaultAmazonS3Credentials: AmazonS3Credentials = {
   secretAccessKey: "",
 };
 
+const defaultPinataCredentials: PinataCredentials = {
+  apiKey: "",
+  apiSecret: "",
+  jwt: "",
+};
+
 export {
   type AmazonS3Credentials,
   defaultAmazonS3Credentials,
   defaultOauthAuthorization,
+  defaultPinataCredentials,
   type OauthAuthorization,
+  type PinataCredentials,
   type ServiceAccount,
 };

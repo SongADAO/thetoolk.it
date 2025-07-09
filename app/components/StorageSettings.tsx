@@ -2,9 +2,13 @@
 
 import { PostServiceSettings } from "@/app/components/PostServiceSettings";
 import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
+import { PinataContext } from "@/app/services/storage/pinata/Context";
 
 export function StorageSettings() {
-  const contexts = [{ context: AmazonS3Context, id: "AmazonS3Context" }];
+  const contexts = [
+    { context: AmazonS3Context, id: "AmazonS3Context" },
+    { context: PinataContext, id: "PinataContext" },
+  ];
 
   return (
     <div className="bg-gray-100 p-8">
