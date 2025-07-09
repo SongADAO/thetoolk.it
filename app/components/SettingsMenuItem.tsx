@@ -1,6 +1,6 @@
 "use client";
 
-import { DropdownMenu } from "radix-ui";
+import { DropdownMenu, ScrollArea } from "radix-ui";
 import { ReactNode } from "react";
 
 interface Props {
@@ -29,7 +29,21 @@ function SettingsMenuItem({ label, icon, children }: Readonly<Props>) {
           onPointerDownOutside={(e) => e.preventDefault()}
           sideOffset={5}
         >
-          {children}
+          <ScrollArea.Root
+            className="h-[600px] w-[300px] overflow-hidden"
+            type="auto"
+          >
+            <ScrollArea.Viewport className="size-full rounded">
+              {children}
+            </ScrollArea.Viewport>
+            <ScrollArea.Scrollbar
+              className="flex touch-none bg-[#f00] p-0.5 transition-colors duration-[160ms] ease-out select-none hover:bg-[#800] data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-col data-[orientation=vertical]:w-2.5"
+              orientation="vertical"
+            >
+              <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-[#0f0] before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2" />
+            </ScrollArea.Scrollbar>
+            <ScrollArea.Corner className="bg-blackA5" />
+          </ScrollArea.Root>
           <DropdownMenu.Arrow className="fill-white" />
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
