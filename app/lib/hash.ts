@@ -16,9 +16,28 @@ function djb2Hash(str: string): string {
     hash = (hash << 5) + hash + str.charCodeAt(i);
   }
 
-  // Convert to hex
   // eslint-disable-next-line no-bitwise
   return (hash >>> 0).toString(16);
 }
 
-export { djb2Hash, sha256Hash };
+function objectIdHash(credentials: object): string {
+  let hash = 5381;
+
+  // Use Object.entries() to avoid indexing issues
+  const entries = Object.entries(credentials).sort(([a], [b]) =>
+    a.localeCompare(b),
+  );
+
+  for (const [key, value] of entries) {
+    const str = `${key}:${String(value)}`;
+    for (let i = 0; i < str.length; i++) {
+      // eslint-disable-next-line no-bitwise
+      hash = (hash << 5) + hash + str.charCodeAt(i);
+    }
+  }
+
+  // eslint-disable-next-line no-bitwise
+  return (hash >>> 0).toString(16);
+}
+
+export { djb2Hash, objectIdHash, sha256Hash };

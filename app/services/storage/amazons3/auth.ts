@@ -1,10 +1,10 @@
-import { djb2Hash } from "@/app/lib/hash";
+import { objectIdHash } from "@/app/lib/hash";
 import type { AmazonS3Credentials } from "@/app/services/storage/types";
 
 // -----------------------------------------------------------------------------
 
 function getCredentialsId(credentials: AmazonS3Credentials): string {
-  return djb2Hash(JSON.stringify(credentials));
+  return objectIdHash(credentials);
 }
 
 function hasCompleteCredentials(credentials: AmazonS3Credentials): boolean {

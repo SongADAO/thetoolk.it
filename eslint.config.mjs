@@ -91,7 +91,7 @@ export default tseslint.config(
       camelcase: ["error", { properties: "never" }],
       "id-length": [
         "error",
-        { exceptions: ["$", "e", "i", "j", "k", "o", "x", "y"] },
+        { exceptions: ["$", "a", "b", "e", "i", "j", "k", "o", "x", "y"] },
       ],
 
       // Unwanted
