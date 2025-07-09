@@ -7,10 +7,10 @@ import { StorageSettings } from "@/app/components/StorageSettings";
 function SettingsMenu() {
   return (
     <div className="flex gap-4">
-      <SettingsMenuItem icon={<FaServer />} label="Storage">
+      <SettingsMenuItem icon={<FaServer />} label="Storage Settings">
         <StorageSettings />
       </SettingsMenuItem>
-      <SettingsMenuItem icon={<FaUsersGear />} label="Post">
+      <SettingsMenuItem icon={<FaUsersGear />} label="Post Settings">
         <PostSettings />
       </SettingsMenuItem>
     </div>
