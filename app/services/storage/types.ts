@@ -11,15 +11,11 @@ interface OauthAuthorization {
   refreshTokenExpiresAt: string;
 }
 
-interface OauthCredentials {
-  clientId: string;
-  clientSecret: string;
-}
-
-interface BlueskyCredentials {
-  appPassword: string;
-  serviceUrl: string;
-  username: string;
+interface AmazonS3Credentials {
+  accessKeyId: string;
+  bucket: string;
+  region: string;
+  secretAccessKey: string;
 }
 
 const defaultOauthAuthorization: OauthAuthorization = {
@@ -29,23 +25,17 @@ const defaultOauthAuthorization: OauthAuthorization = {
   refreshTokenExpiresAt: "",
 };
 
-const defaultOauthCredentials: OauthCredentials = {
-  clientId: "",
-  clientSecret: "",
-};
-
-const defaultBlueskyCredentials: BlueskyCredentials = {
-  appPassword: "",
-  serviceUrl: "",
-  username: "",
+const defaultAmazonS3Credentials: AmazonS3Credentials = {
+  accessKeyId: "",
+  bucket: "",
+  region: "",
+  secretAccessKey: "",
 };
 
 export {
-  type BlueskyCredentials,
-  defaultBlueskyCredentials,
+  type AmazonS3Credentials,
+  defaultAmazonS3Credentials,
   defaultOauthAuthorization,
-  defaultOauthCredentials,
   type OauthAuthorization,
-  type OauthCredentials,
   type ServiceAccount,
 };

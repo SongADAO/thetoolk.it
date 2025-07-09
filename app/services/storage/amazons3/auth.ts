@@ -23,7 +23,7 @@ const SCOPES = [
   "pages_show_list",
 ];
 
-const OAUTH_STATE = "amazon-s3_auth";
+const OAUTH_STATE = "amazons3_auth";
 
 // -----------------------------------------------------------------------------
 
@@ -103,7 +103,7 @@ function getAuthorizationUrl(
     state: OAUTH_STATE,
   });
 
-  return `https://www.amazon-s3.com/v23.0/dialog/oauth?${params.toString()}`;
+  return `https://www.amazons3.com/v23.0/dialog/oauth?${params.toString()}`;
 }
 
 // Exchange authorization code for access token
@@ -113,7 +113,7 @@ async function exchangeCodeForTokens(
   redirectUri: string,
 ) {
   const response = await fetch(
-    "https://graph.amazon-s3.com/v23.0/oauth/access_token",
+    "https://graph.amazons3.com/v23.0/oauth/access_token",
     {
       body: new URLSearchParams({
         client_id: credentials.clientId,
@@ -147,7 +147,7 @@ async function exchangeCodeForTokens(
   });
 
   const longLivedTokenResponse = await fetch(
-    `https://graph.amazon-s3.com/v23.0/oauth/access_token?${longLivedParams.toString()}`,
+    `https://graph.amazons3.com/v23.0/oauth/access_token?${longLivedParams.toString()}`,
   );
 
   if (!longLivedTokenResponse.ok) {
@@ -174,7 +174,7 @@ async function refreshAccessToken(authorization: OauthAuthorization) {
   });
 
   const response = await fetch(
-    `https://graph.amazon-s3.com/v23.0/me/accounts?${params.toString()}`,
+    `https://graph.amazons3.com/v23.0/me/accounts?${params.toString()}`,
   );
 
   if (!response.ok) {
@@ -210,7 +210,7 @@ async function getAmazonS3Pages(token: string) {
   });
 
   const pagesResponse = await fetch(
-    `https://graph.amazon-s3.com/v23.0/me/accounts?${params.toString()}`,
+    `https://graph.amazons3.com/v23.0/me/accounts?${params.toString()}`,
   );
 
   if (!pagesResponse.ok) {
@@ -247,7 +247,7 @@ async function getUserInfoFromPage(
 
   // Test access to the AmazonS3 account
   const testResponse = await fetch(
-    `https://graph.amazon-s3.com/v23.0/${page.id}?${params.toString()}`,
+    `https://graph.amazons3.com/v23.0/${page.id}?${params.toString()}`,
   );
 
   if (!testResponse.ok) {

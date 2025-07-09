@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { AmazonS3Provider } from "@/app/services/storage/amazon-s3/Provider";
+import { AmazonS3Provider } from "@/app/services/storage/amazons3/Provider";
 
 interface Props {
   children: ReactNode;

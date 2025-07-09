@@ -1,7 +1,7 @@
 "use client";
 
 import { PostServiceSettings } from "@/app/components/PostServiceSettings";
-import { AmazonS3Context } from "@/app/services/storage/amazon-s3/Context";
+import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
 
 export function StorageSettings() {
   const contexts = [{ context: AmazonS3Context, id: "AmazonS3Context" }];

@@ -21,13 +21,13 @@ import {
   needsTokenRefresh,
   refreshAccessToken,
   shouldHandleAuthRedirect,
-} from "@/app/services/storage/amazon-s3/auth";
-import { AmazonS3Context } from "@/app/services/storage/amazon-s3/Context";
+} from "@/app/services/storage/amazons3/auth";
+import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
 import {
+  type AmazonS3Credentials,
+  defaultAmazonS3Credentials,
   defaultOauthAuthorization,
-  defaultOauthCredentials,
   type OauthAuthorization,
-  type OauthCredentials,
   type ServiceAccount,
 } from "@/app/services/storage/types";
 
@@ -38,32 +38,32 @@ interface Props {
 export function AmazonS3Provider({ children }: Readonly<Props>) {
   const label = "AmazonS3";
 
-  const brandColor = "amazon-s3";
+  const brandColor = "amazons3";
 
   const icon = <SiAmazons3 className="size-6" />;
 
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
-    "thetoolkit-amazon-s3-enabled",
+    "thetoolkit-amazons3-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
-    "thetoolkit-amazon-s3-credentials",
-    defaultOauthCredentials,
+  const [credentials, setCredentials] = useLocalStorage<AmazonS3Credentials>(
+    "thetoolkit-amazons3-credentials",
+    defaultAmazonS3Credentials,
     { initializeWithValue: true },
   );
 
   const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
-    "thetoolkit-amazon-s3-authorization",
+    "thetoolkit-amazons3-authorization",
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
 
   const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
-    "thetoolkit-amazon-s3-accounts",
+    "thetoolkit-amazons3-accounts",
     [],
     { initializeWithValue: true },
   );
@@ -171,7 +171,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
       const errMessage = err instanceof Error ? err.message : "Unknown error";
 
-      setError(`Failed to get amazon-s3 accounts: ${errMessage}`);
+      setError(`Failed to get amazons3 accounts: ${errMessage}`);
 
       setAccounts([]);
 
@@ -207,26 +207,40 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const fields: ServiceFormField[] = [
     {
-      label: "App ID",
-      name: "clientId",
-      placeholder: "App ID",
+      label: "Access Key ID",
+      name: "accessKeyId",
+      placeholder: "Access Key ID",
     },
     {
-      label: "App Secret",
-      name: "clientSecret",
-      placeholder: "App Secret",
+      label: "Secret Access Key",
+      name: "secretAccessKey",
+      placeholder: "Secret Access Key",
+    },
+    {
+      label: "Region",
+      name: "region",
+      placeholder: "us-east-1",
+    },
+    {
+      label: "Bucket",
+      name: "bucket",
+      placeholder: "thetoolkit",
     },
   ];
 
   const initial: ServiceFormState = {
-    clientId: credentials.clientId,
-    clientSecret: credentials.clientSecret,
+    accessKeyId: credentials.accessKeyId,
+    bucket: credentials.bucket,
+    region: credentials.region,
+    secretAccessKey: credentials.secretAccessKey,
   };
 
   function saveData(formState: ServiceFormState): ServiceFormState {
     setCredentials({
-      clientId: formState.clientId,
-      clientSecret: formState.clientSecret,
+      accessKeyId: formState.accessKeyId,
+      bucket: formState.bucket,
+      region: formState.region,
+      secretAccessKey: formState.secretAccessKey,
     });
 
     return formState;
