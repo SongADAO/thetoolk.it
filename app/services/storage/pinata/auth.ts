@@ -2,11 +2,11 @@ import type { PinataCredentials } from "@/app/services/storage/types";
 
 // -----------------------------------------------------------------------------
 
-function getCredentialsId(credentials: PinataCredentials) {
+function getCredentialsId(credentials: PinataCredentials): string {
   return JSON.stringify(credentials);
 }
 
-function hasCompleteCredentials(credentials: PinataCredentials) {
+function hasCompleteCredentials(credentials: PinataCredentials): boolean {
   return (
     credentials.apiKey !== "" &&
     credentials.apiSecret !== "" &&

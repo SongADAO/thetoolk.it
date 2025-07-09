@@ -12,23 +12,23 @@ interface BlueskyTokenResponse {
 
 // -----------------------------------------------------------------------------
 
-function hasTokenExpired(tokenExpiry: string | null) {
+function hasTokenExpired(tokenExpiry: string | null): boolean {
   // 5 minutes buffer
   return hasExpired(tokenExpiry, 5 * 60);
 }
 
-function needsTokenRefresh(tokenExpiry: string | null) {
+function needsTokenRefresh(tokenExpiry: string | null): boolean {
   // 30 day buffer
   return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
 }
 
 // -----------------------------------------------------------------------------
 
-function getCredentialsId(credentials: BlueskyCredentials) {
+function getCredentialsId(credentials: BlueskyCredentials): string {
   return JSON.stringify(credentials);
 }
 
-function hasCompleteCredentials(credentials: BlueskyCredentials) {
+function hasCompleteCredentials(credentials: BlueskyCredentials): boolean {
   return (
     credentials.appPassword !== "" &&
     credentials.serviceUrl !== "" &&
@@ -36,7 +36,7 @@ function hasCompleteCredentials(credentials: BlueskyCredentials) {
   );
 }
 
-function hasCompleteAuthorization(authorization: OauthAuthorization) {
+function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
     authorization.accessToken !== "" &&
     authorization.accessTokenExpiresAt !== "" &&
@@ -46,13 +46,13 @@ function hasCompleteAuthorization(authorization: OauthAuthorization) {
   );
 }
 
-function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
   return authorization.refreshTokenExpiresAt;
 }
 
 // -----------------------------------------------------------------------------
 
-function formatTokens(tokens: BlueskyTokenResponse) {
+function formatTokens(tokens: BlueskyTokenResponse): OauthAuthorization {
   // Tokens have a 60-day lifespan
   const expiresIn = 60 * 24 * 60 * 60 * 1000;
 
@@ -67,7 +67,9 @@ function formatTokens(tokens: BlueskyTokenResponse) {
   };
 }
 
-async function exchangeCodeForTokens(credentials: BlueskyCredentials) {
+async function exchangeCodeForTokens(
+  credentials: BlueskyCredentials,
+): Promise<OauthAuthorization> {
   console.log("Starting Bluesky authentication...");
 
   const response = await fetch(
@@ -101,7 +103,7 @@ async function exchangeCodeForTokens(credentials: BlueskyCredentials) {
 async function refreshAccessToken(
   credentials: BlueskyCredentials,
   authorization: OauthAuthorization,
-) {
+): Promise<OauthAuthorization> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }

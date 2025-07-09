@@ -25,12 +25,12 @@ const OAUTH_SCOPE_DOMAIN = "https://www.googleapis.com";
 
 // -----------------------------------------------------------------------------
 
-function hasTokenExpired(tokenExpiry: string | null) {
+function hasTokenExpired(tokenExpiry: string | null): boolean {
   // 5 minutes buffer
   return hasExpired(tokenExpiry, 5 * 60);
 }
 
-function needsTokenRefresh(tokenExpiry: string | null) {
+function needsTokenRefresh(tokenExpiry: string | null): boolean {
   // // 30 day buffer
   // return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
   // 5 day buffer
@@ -39,15 +39,15 @@ function needsTokenRefresh(tokenExpiry: string | null) {
 
 // -----------------------------------------------------------------------------
 
-function getCredentialsId(credentials: OauthCredentials) {
+function getCredentialsId(credentials: OauthCredentials): string {
   return JSON.stringify(credentials);
 }
 
-function hasCompleteCredentials(credentials: OauthCredentials) {
+function hasCompleteCredentials(credentials: OauthCredentials): boolean {
   return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
 
-function hasCompleteAuthorization(authorization: OauthAuthorization) {
+function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
     authorization.accessToken !== "" &&
     authorization.accessTokenExpiresAt !== "" &&
@@ -57,13 +57,13 @@ function hasCompleteAuthorization(authorization: OauthAuthorization) {
   );
 }
 
-function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
   return authorization.refreshTokenExpiresAt;
 }
 
 // -----------------------------------------------------------------------------
 
-function getRedirectUri() {
+function getRedirectUri(): string {
   const url = new URL(window.location.href);
   const baseUrl = url.origin + url.pathname;
 
@@ -74,7 +74,7 @@ function shouldHandleAuthRedirect(code: string | null, scope: string | null) {
   return code && scope?.includes(OAUTH_SCOPE_DOMAIN);
 }
 
-function formatTokens(tokens: GoogleTokenResponse) {
+function formatTokens(tokens: GoogleTokenResponse): OauthAuthorization {
   const expiresIn = tokens.expires_in * 1000;
   const refreshExpiresIn = tokens.refresh_token_expires_in * 1000;
 
@@ -93,7 +93,7 @@ function formatTokens(tokens: GoogleTokenResponse) {
 function getAuthorizationUrl(
   credentials: OauthCredentials,
   redirectUri: string,
-) {
+): string {
   const params = new URLSearchParams({
     access_type: "offline",
     client_id: credentials.clientId,
@@ -111,7 +111,7 @@ async function exchangeCodeForTokens(
   code: string,
   credentials: OauthCredentials,
   redirectUri: string,
-) {
+): Promise<OauthAuthorization> {
   const response = await fetch("https://oauth2.googleapis.com/token", {
     body: new URLSearchParams({
       client_id: credentials.clientId,
@@ -143,7 +143,7 @@ async function exchangeCodeForTokens(
 async function refreshAccessToken(
   credentials: OauthCredentials,
   authorization: OauthAuthorization,
-) {
+): Promise<OauthAuthorization> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }

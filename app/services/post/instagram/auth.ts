@@ -29,27 +29,27 @@ const OAUTH_STATE = "instagram_auth";
 
 // -----------------------------------------------------------------------------
 
-function hasTokenExpired(tokenExpiry: string | null) {
+function hasTokenExpired(tokenExpiry: string | null): boolean {
   // 5 minutes buffer
   return hasExpired(tokenExpiry, 5 * 60);
 }
 
-function needsTokenRefresh(tokenExpiry: string | null) {
+function needsTokenRefresh(tokenExpiry: string | null): boolean {
   // 30 day buffer
   return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
 }
 
 // -----------------------------------------------------------------------------
 
-function getCredentialsId(credentials: OauthCredentials) {
+function getCredentialsId(credentials: OauthCredentials): string {
   return JSON.stringify(credentials);
 }
 
-function hasCompleteCredentials(credentials: OauthCredentials) {
+function hasCompleteCredentials(credentials: OauthCredentials): boolean {
   return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
 
-function hasCompleteAuthorization(authorization: OauthAuthorization) {
+function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
     authorization.accessToken !== "" &&
     authorization.accessTokenExpiresAt !== "" &&
@@ -59,24 +59,27 @@ function hasCompleteAuthorization(authorization: OauthAuthorization) {
   );
 }
 
-function getAuthorizationExpiresAt(authorization: OauthAuthorization) {
+function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
   return authorization.refreshTokenExpiresAt;
 }
 
 // -----------------------------------------------------------------------------
 
-function getRedirectUri() {
+function getRedirectUri(): string {
   const url = new URL(window.location.href);
   const baseUrl = url.origin + url.pathname;
 
   return baseUrl;
 }
 
-function shouldHandleAuthRedirect(code: string | null, state: string | null) {
+function shouldHandleAuthRedirect(
+  code: string | null,
+  state: string | null,
+): boolean {
   return code && state?.includes(OAUTH_STATE);
 }
 
-function formatTokens(tokens: FacebookTokenResponse) {
+function formatTokens(tokens: FacebookTokenResponse): OauthAuthorization {
   // Tokens have a 60-day lifespan
   const expiresIn = 60 * 24 * 60 * 60 * 1000;
 
@@ -96,7 +99,7 @@ function formatTokens(tokens: FacebookTokenResponse) {
 function getAuthorizationUrl(
   credentials: OauthCredentials,
   redirectUri: string,
-) {
+): string {
   const params = new URLSearchParams({
     client_id: credentials.clientId,
     redirect_uri: redirectUri,
@@ -113,7 +116,7 @@ async function exchangeCodeForTokens(
   code: string,
   credentials: OauthCredentials,
   redirectUri: string,
-) {
+): Promise<OauthAuthorization> {
   const response = await fetch(
     "https://graph.facebook.com/v23.0/oauth/access_token",
     {
@@ -166,7 +169,9 @@ async function exchangeCodeForTokens(
 }
 
 // Refresh tokens are automatically refreshed by Facebook when any API is called.
-async function refreshAccessToken(authorization: OauthAuthorization) {
+async function refreshAccessToken(
+  authorization: OauthAuthorization,
+): Promise<OauthAuthorization> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
