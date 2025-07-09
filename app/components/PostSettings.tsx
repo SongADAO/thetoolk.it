@@ -1,14 +1,14 @@
 "use client";
 
 import { PostServiceSettings } from "@/app/components/PostServiceSettings";
-import { BlueskyContext } from "@/app/services/bluesky/Context";
-import { FacebookContext } from "@/app/services/facebook/Context";
-import { InstagramContext } from "@/app/services/instagram/Context";
-import { NeynarContext } from "@/app/services/neynar/Context";
-import { ThreadsContext } from "@/app/services/threads/Context";
-import { TiktokContext } from "@/app/services/tiktok/Context";
-import { TwitterContext } from "@/app/services/twitter/Context";
-import { YoutubeContext } from "@/app/services/youtube/Context";
+import { BlueskyContext } from "@/app/services/post/bluesky/Context";
+import { FacebookContext } from "@/app/services/post/facebook/Context";
+import { InstagramContext } from "@/app/services/post/instagram/Context";
+import { NeynarContext } from "@/app/services/post/neynar/Context";
+import { ThreadsContext } from "@/app/services/post/threads/Context";
+import { TiktokContext } from "@/app/services/post/tiktok/Context";
+import { TwitterContext } from "@/app/services/post/twitter/Context";
+import { YoutubeContext } from "@/app/services/post/youtube/Context";
 
 export function PostSettings() {
   const contexts = [

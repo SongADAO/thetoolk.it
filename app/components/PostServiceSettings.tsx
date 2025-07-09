@@ -4,7 +4,7 @@ import { ServiceAuthorizeWithContext } from "@/app/components/service/ServiceAut
 import { ServiceFormWithContext } from "@/app/components/service/ServiceFormWithContext";
 import { ServiceRedirectHandlerWithContext } from "@/app/components/service/ServiceRedirectHandlerWithContext";
 import { ServiceSwitchWithContext } from "@/app/components/service/ServiceSwitchWithContext";
-import type { ServiceContextType } from "@/app/services/ServiceContext";
+import type { ServiceContextType } from "@/app/services/post/ServiceContext";
 
 interface Props {
   readonly context: Context<ServiceContextType>;

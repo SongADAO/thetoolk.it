@@ -1,7 +1,7 @@
 import { NeynarAuthButton } from "@neynar/react";
 import { ReactNode } from "react";
 
-import type { ServiceAccount } from "@/app/services/types";
+import type { ServiceAccount } from "@/app/services/post/types";
 
 interface Props {
   accounts: ServiceAccount[];
