@@ -1,6 +1,6 @@
 "use client";
 
-import { PostServiceSettings } from "@/app/components/PostServiceSettings";
+import { StorageServiceSettings } from "@/app/components/StorageServiceSettings";
 import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
 import { PinataContext } from "@/app/services/storage/pinata/Context";
 
@@ -15,7 +15,7 @@ export function StorageSettings() {
       <div className="flex flex-col gap-8">
         {contexts.map((context) => (
           <div className="flex flex-col gap-1" key={context.id}>
-            <PostServiceSettings context={context.context} />
+            <StorageServiceSettings context={context.context} />
           </div>
         ))}
       </div>
