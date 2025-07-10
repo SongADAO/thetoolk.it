@@ -1,4 +1,5 @@
 "use client";
+
 import { Suspense } from "react";
 
 import { ServiceRedirectHandlerWithContext } from "@/app/components/service/ServiceRedirectHandlerWithContext";

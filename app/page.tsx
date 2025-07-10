@@ -1,4 +1,5 @@
 import { PostForm } from "@/app/components/PostForm";
+import { PostProgress } from "@/app/components/PostProgress";
 import { PostProviders } from "@/app/components/PostProviders";
 import { PostRedirectHandlers } from "@/app/components/PostRedirectHandlers";
 import { SettingsMenu } from "@/app/components/SettingsMenu";
@@ -13,6 +14,7 @@ export default function Home() {
           <main>
             <SettingsMenu />
             <PostForm />
+            <PostProgress />
           </main>
           <footer>TheToolk.it</footer>
         </div>

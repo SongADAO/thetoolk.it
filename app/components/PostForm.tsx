@@ -23,14 +23,7 @@ function fromFormData(formData: FormData): FormState {
 }
 
 function PostForm() {
-  const {
-    accounts: threadsAccounts,
-    post: threadsPost,
-    postStatus,
-    isPosting,
-    postProgress,
-    postError,
-  } = use(ThreadsContext);
+  const { accounts: threadsAccounts, post: threadsPost } = use(ThreadsContext);
 
   async function saveForm(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -39,14 +32,12 @@ function PostForm() {
   ) {
     const newFormState = fromFormData(formData);
 
-    const userId = threadsAccounts[0]?.id;
-
     const videoUrl =
       "https://thetoolkit-test.s3.us-east-1.amazonaws.com/threads-videos/1750885143834-insta.mp4";
 
     await threadsPost({
       text: newFormState.text,
-      userId,
+      userId: threadsAccounts[0]?.id,
       videoUrl,
     });
 
@@ -119,17 +110,6 @@ function PostForm() {
         {isPending ? <ButtonSpinner /> : null}
         Post
       </Form.Submit>
-
-      {postError ? (
-        <div className="mt-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
-          {postError}
-        </div>
-      ) : null}
-      {postStatus && !isPosting && postProgress === 100 ? (
-        <div className="mt-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700">
-          {postStatus}
-        </div>
-      ) : null}
     </Form.Root>
   );
 }
