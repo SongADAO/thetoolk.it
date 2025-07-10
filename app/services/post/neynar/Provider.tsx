@@ -79,7 +79,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
   //   return null;
   // }
 
-  // async function refreshTokensIfNeeded(): Promise<OauthAuthorization | null> {
+  // async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
   //   return null;
   // }
 
@@ -128,8 +128,9 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   // useEffect(() => {
   //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   refreshTokensIfNeeded();
-  // }, [authorization.accessToken, isAuthorized]);
+  //   renewRefreshTokenIfNeeded();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [authorization.refreshTokenExpiresAt]);
 
   const providerValues = useMemo(
     () => ({

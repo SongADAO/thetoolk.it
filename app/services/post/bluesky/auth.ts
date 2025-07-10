@@ -13,14 +13,34 @@ interface BlueskyTokenResponse {
 
 // -----------------------------------------------------------------------------
 
-function hasTokenExpired(tokenExpiry: string | null): boolean {
-  // 5 minutes buffer
-  return hasExpired(tokenExpiry, 5 * 60);
+// 5 minutes
+const ACCESS_TOKEN_BUFFER_SECONDS = 5 * 60;
+
+// 30 days
+const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
+
+// -----------------------------------------------------------------------------
+
+function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
+  if (!authorization.accessToken || !authorization.accessTokenExpiresAt) {
+    return false;
+  }
+
+  return hasExpired(
+    authorization.accessTokenExpiresAt,
+    ACCESS_TOKEN_BUFFER_SECONDS,
+  );
 }
 
-function needsTokenRefresh(tokenExpiry: string | null): boolean {
-  // 30 day buffer
-  return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
+function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
+  if (!authorization.refreshToken || !authorization.refreshTokenExpiresAt) {
+    return false;
+  }
+
+  return hasExpired(
+    authorization.refreshTokenExpiresAt,
+    REFRESH_TOKEN_BUFFER_SECONDS,
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -43,7 +63,7 @@ function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
     authorization.accessTokenExpiresAt !== "" &&
     authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+    !needsAccessTokenRenewal(authorization)
   );
 }
 
@@ -161,7 +181,7 @@ export {
   getCredentialsId,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  hasTokenExpired,
-  needsTokenRefresh,
+  needsAccessTokenRenewal,
+  needsRefreshTokenRenewal,
   refreshAccessToken,
 };

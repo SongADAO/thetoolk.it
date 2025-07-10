@@ -15,8 +15,8 @@ import {
   getCredentialsId,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  hasTokenExpired,
-  needsTokenRefresh,
+  needsAccessTokenRenewal,
+  needsRefreshTokenRenewal,
   refreshAccessToken,
 } from "@/app/services/post/bluesky/auth";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
@@ -120,15 +120,12 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokensIfNeeded(): Promise<OauthAuthorization | null> {
-    if (
-      isAuthorized &&
-      needsTokenRefresh(authorization.refreshTokenExpiresAt)
-    ) {
+  async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
+    if (needsRefreshTokenRenewal(authorization)) {
       console.log(
-        "Bluesky: Refresh token will expire within 30 days, refreshing...",
+        `${label}: Refresh token will expire within 30 days, refreshing...`,
       );
-      // return await refreshTokens();
+      return await refreshTokens();
     }
 
     return null;
@@ -137,7 +134,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   // Get valid access token (refresh if needed)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function getValidAccessToken(): Promise<string> {
-    if (hasTokenExpired(authorization.accessTokenExpiresAt)) {
+    if (needsAccessTokenRenewal(authorization)) {
       console.log("Token expired or about to expire, refreshing...");
       const newAuthorization = await refreshTokens();
 
@@ -225,9 +222,9 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    refreshTokensIfNeeded();
+    renewRefreshTokenIfNeeded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.accessToken, isAuthorized]);
+  }, [authorization.refreshTokenExpiresAt]);
 
   const providerValues = useMemo(
     () => ({

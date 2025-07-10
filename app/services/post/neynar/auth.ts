@@ -1,17 +1,9 @@
 import { objectIdHash } from "@/app/lib/hash";
-import { hasExpired } from "@/app/services/post/helpers";
 import type {
   OauthAuthorization,
   OauthCredentials,
   ServiceAccount,
 } from "@/app/services/post/types";
-
-// -----------------------------------------------------------------------------
-
-function hasTokenExpired(tokenExpiry: string | null): boolean {
-  // 5 minutes buffer
-  return hasExpired(tokenExpiry, 5 * 60);
-}
 
 // -----------------------------------------------------------------------------
 
@@ -29,8 +21,7 @@ function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
     authorization.accessToken !== "" &&
     authorization.accessTokenExpiresAt !== "" &&
     authorization.refreshToken !== "" &&
-    authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+    authorization.refreshTokenExpiresAt !== ""
   );
 }
 

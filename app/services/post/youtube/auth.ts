@@ -24,18 +24,40 @@ const SCOPES: string[] = [
 
 const OAUTH_SCOPE_DOMAIN = "https://www.googleapis.com";
 
+// 5 minutes
+const ACCESS_TOKEN_BUFFER_SECONDS = 5 * 60;
+
+// 100 years
+const REFRESH_TOKEN_BUFFER_SECONDS = 100 * 365 * 24 * 60 * 60;
+
+// 5 days
+// const REFRESH_TOKEN_BUFFER_SECONDS = 5 * 24 * 60 * 60;
+
+// 30 days
+// const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
+
 // -----------------------------------------------------------------------------
 
-function hasTokenExpired(tokenExpiry: string | null): boolean {
-  // 5 minutes buffer
-  return hasExpired(tokenExpiry, 5 * 60);
+function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
+  if (!authorization.accessToken || !authorization.accessTokenExpiresAt) {
+    return false;
+  }
+
+  return hasExpired(
+    authorization.accessTokenExpiresAt,
+    ACCESS_TOKEN_BUFFER_SECONDS,
+  );
 }
 
-function needsTokenRefresh(tokenExpiry: string | null): boolean {
-  // // 30 day buffer
-  // return hasExpired(tokenExpiry, 30 * 24 * 60 * 60);
-  // 5 day buffer
-  return hasExpired(tokenExpiry, 5 * 24 * 60 * 60);
+function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
+  if (!authorization.refreshToken || !authorization.refreshTokenExpiresAt) {
+    return false;
+  }
+
+  return hasExpired(
+    authorization.refreshTokenExpiresAt,
+    REFRESH_TOKEN_BUFFER_SECONDS,
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -54,7 +76,7 @@ function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
     authorization.accessTokenExpiresAt !== "" &&
     authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
-    !hasTokenExpired(authorization.refreshTokenExpiresAt)
+    !needsAccessTokenRenewal(authorization)
   );
 }
 
@@ -173,11 +195,12 @@ async function refreshAccessToken(
   }
 
   const tokens = await response.json();
-  console.log(tokens);
 
   // The refresh token doesn't change, but is also not in the returned data,
   // so we copy over the existing one.
-  tokens.refresh_token = authorization.refreshToken;
+  if (typeof tokens.refresh_token === "undefined") {
+    tokens.refresh_token = authorization.refreshToken;
+  }
 
   return formatTokens(tokens);
 }
@@ -250,8 +273,8 @@ export {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  hasTokenExpired,
-  needsTokenRefresh,
+  needsAccessTokenRenewal,
+  needsRefreshTokenRenewal,
   refreshAccessToken,
   shouldHandleAuthRedirect,
 };

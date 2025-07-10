@@ -17,8 +17,8 @@ import {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  hasTokenExpired,
-  needsTokenRefresh,
+  needsAccessTokenRenewal,
+  needsRefreshTokenRenewal,
   refreshAccessToken,
   shouldHandleAuthRedirect,
 } from "@/app/services/post/facebook/auth";
@@ -126,10 +126,10 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokensIfNeeded(): Promise<OauthAuthorization | null> {
+  async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
     if (
       isAuthorized &&
-      needsTokenRefresh(authorization.refreshTokenExpiresAt)
+      needsRefreshTokenRenewal(authorization.refreshTokenExpiresAt)
     ) {
       console.log(
         "Facebook: Refresh token will expire within 30 days, refreshing...",
@@ -143,7 +143,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
   // Get valid access token (refresh if needed)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function getValidAccessToken(): Promise<string> {
-    if (hasTokenExpired(authorization.accessTokenExpiresAt)) {
+    if (needsAccessTokenRenewal(authorization)) {
       console.log("Token expired or about to expire, refreshing...");
       const newAuthorization = await refreshTokens();
 
@@ -236,9 +236,9 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    refreshTokensIfNeeded();
+    renewRefreshTokenIfNeeded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.accessToken, isAuthorized]);
+  }, [authorization.refreshTokenExpiresAt]);
 
   const providerValues = useMemo(
     () => ({
