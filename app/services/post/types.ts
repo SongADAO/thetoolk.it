@@ -4,6 +4,12 @@ interface ServiceAccount {
   username: string;
 }
 
+interface PostProps {
+  text: string;
+  userId: string;
+  videoUrl: string;
+}
+
 interface OauthAuthorization {
   accessToken: string;
   accessTokenExpiresAt: string;
@@ -47,5 +53,6 @@ export {
   defaultOauthCredentials,
   type OauthAuthorization,
   type OauthCredentials,
+  type PostProps,
   type ServiceAccount,
 };

@@ -4,7 +4,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import type { ServiceAccount } from "@/app/services/post/types";
+import type { PostProps, ServiceAccount } from "@/app/services/post/types";
 
 interface ServiceContextType {
   accounts: ServiceAccount[];
@@ -20,12 +20,17 @@ interface ServiceContextType {
   isAuthorized: boolean;
   isComplete: boolean;
   isEnabled: boolean;
+  isPosting: boolean;
   label: string;
+  post: (props: PostProps) => Promise<string | null>;
+  postError: string;
+  postProgress: number;
+  postStatus: string;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 const serviceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
@@ -40,10 +45,15 @@ const serviceContextDefault = {
   isAuthorized: false,
   isComplete: false,
   isEnabled: false,
+  isPosting: false,
   label: "",
+  post: async (props: PostProps) => null,
+  postError: "",
+  postProgress: 0,
+  postStatus: "",
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
 };
-/* eslint-enable @typescript-eslint/no-unused-vars */
+/* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 
 export { serviceContextDefault, type ServiceContextType };
