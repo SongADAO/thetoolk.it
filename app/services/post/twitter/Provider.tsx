@@ -134,8 +134,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       isAuthorized &&
       needsTokenRefresh(authorization.refreshTokenExpiresAt)
     ) {
-      console.log("Refresh token will expire within 30 days, refreshing...");
-      return await refreshTokens();
+      console.log(
+        "Twitter: Refresh token will expire within 30 days, refreshing...",
+      );
+      // return await refreshTokens();
     }
 
     return null;

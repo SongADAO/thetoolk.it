@@ -131,8 +131,10 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       isAuthorized &&
       needsTokenRefresh(authorization.refreshTokenExpiresAt)
     ) {
-      console.log("Refresh token will expire within 30 days, refreshing...");
-      return await refreshTokens();
+      console.log(
+        "Facebook: Refresh token will expire within 30 days, refreshing...",
+      );
+      // return await refreshTokens();
     }
 
     return null;

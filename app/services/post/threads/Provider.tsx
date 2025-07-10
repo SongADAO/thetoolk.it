@@ -131,8 +131,10 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
       isAuthorized &&
       needsTokenRefresh(authorization.refreshTokenExpiresAt)
     ) {
-      console.log("Refresh token will expire within 30 days, refreshing...");
-      return await refreshTokens();
+      console.log(
+        "Threads: Refresh token will expire within 30 days, refreshing...",
+      );
+      // return await refreshTokens();
     }
 
     return null;

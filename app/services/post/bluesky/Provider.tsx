@@ -125,8 +125,10 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       isAuthorized &&
       needsTokenRefresh(authorization.refreshTokenExpiresAt)
     ) {
-      console.log("Refresh token will expire within 30 days, refreshing...");
-      return await refreshTokens();
+      console.log(
+        "Bluesky: Refresh token will expire within 30 days, refreshing...",
+      );
+      // return await refreshTokens();
     }
 
     return null;
