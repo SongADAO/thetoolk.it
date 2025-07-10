@@ -27,8 +27,8 @@ const OAUTH_SCOPE_DOMAIN = "https://www.googleapis.com";
 // 5 minutes
 const ACCESS_TOKEN_BUFFER_SECONDS = 5 * 60;
 
-// 100 years
-const REFRESH_TOKEN_BUFFER_SECONDS = 100 * 365 * 24 * 60 * 60;
+// Never expires
+const REFRESH_TOKEN_BUFFER_SECONDS = -1 * 100 * 365 * 24 * 60 * 60;
 
 // 5 days
 // const REFRESH_TOKEN_BUFFER_SECONDS = 5 * 24 * 60 * 60;
