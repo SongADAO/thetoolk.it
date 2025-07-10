@@ -286,6 +286,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-pinata-inverse");
 /* Post */
 @source inline("bg-brand-youtube");
+@source inline("text-brand-youtube-inverse");
 @source inline("data-[enabled=yes]:bg-brand-youtube");
 @source inline("data-[enabled=yes]:text-brand-youtube");
 @source inline("data-[enabled=yes]:text-brand-youtube-inverse");
@@ -293,6 +294,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-youtube");
 @source inline("group-data-[enabled=yes]:text-brand-youtube-inverse");
 @source inline("bg-brand-facebook");
+@source inline("text-brand-facebook-inverse");
 @source inline("data-[enabled=yes]:bg-brand-facebook");
 @source inline("data-[enabled=yes]:text-brand-facebook");
 @source inline("data-[enabled=yes]:text-brand-facebook-inverse");
@@ -300,6 +302,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-facebook");
 @source inline("group-data-[enabled=yes]:text-brand-facebook-inverse");
 @source inline("bg-brand-instagram");
+@source inline("text-brand-instagram-inverse");
 @source inline("data-[enabled=yes]:bg-brand-instagram");
 @source inline("data-[enabled=yes]:text-brand-instagram");
 @source inline("data-[enabled=yes]:text-brand-instagram-inverse");
@@ -307,6 +310,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-instagram");
 @source inline("group-data-[enabled=yes]:text-brand-instagram-inverse");
 @source inline("bg-brand-threads");
+@source inline("text-brand-threads-inverse");
 @source inline("data-[enabled=yes]:bg-brand-threads");
 @source inline("data-[enabled=yes]:text-brand-threads");
 @source inline("data-[enabled=yes]:text-brand-threads-inverse");
@@ -314,6 +318,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-threads");
 @source inline("group-data-[enabled=yes]:text-brand-threads-inverse");
 @source inline("bg-brand-bluesky");
+@source inline("text-brand-bluesky-inverse");
 @source inline("data-[enabled=yes]:bg-brand-bluesky");
 @source inline("data-[enabled=yes]:text-brand-bluesky");
 @source inline("data-[enabled=yes]:text-brand-bluesky-inverse");
@@ -321,6 +326,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-bluesky");
 @source inline("group-data-[enabled=yes]:text-brand-bluesky-inverse");
 @source inline("bg-brand-tiktok");
+@source inline("text-brand-tiktok-inverse");
 @source inline("data-[enabled=yes]:bg-brand-tiktok");
 @source inline("data-[enabled=yes]:text-brand-tiktok");
 @source inline("data-[enabled=yes]:text-brand-tiktok-inverse");
@@ -328,6 +334,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-tiktok");
 @source inline("group-data-[enabled=yes]:text-brand-tiktok-inverse");
 @source inline("bg-brand-twitter");
+@source inline("text-brand-twitter-inverse");
 @source inline("data-[enabled=yes]:bg-brand-twitter");
 @source inline("data-[enabled=yes]:text-brand-twitter");
 @source inline("data-[enabled=yes]:text-brand-twitter-inverse");
@@ -335,6 +342,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-twitter");
 @source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
 @source inline("bg-brand-farcaster");
+@source inline("text-brand-farcaster-inverse");
 @source inline("data-[enabled=yes]:bg-brand-farcaster");
 @source inline("data-[enabled=yes]:text-brand-farcaster");
 @source inline("data-[enabled=yes]:text-brand-farcaster-inverse");
@@ -342,6 +350,7 @@
 @source inline("group-data-[enabled=yes]:text-brand-farcaster");
 @source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
 @source inline("bg-brand-lens");
+@source inline("text-brand-lens-inverse");
 @source inline("data-[enabled=yes]:bg-brand-lens");
 @source inline("data-[enabled=yes]:text-brand-lens");
 @source inline("data-[enabled=yes]:text-brand-lens-inverse");

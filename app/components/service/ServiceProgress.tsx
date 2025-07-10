@@ -24,9 +24,9 @@ function ServiceProgress({
   // }
 
   return (
-    <div>
+    <div className="mt-2">
       <div
-        className={`group flex gap-2 rounded bg-gray-300 px-4 py-2 data-[enabled=yes]:text-brand-${brandColor}-inverse data-[enabled=yes]:bg-brand-${brandColor}`}
+        className={`group flex gap-2 rounded px-4 py-2 text-brand-${brandColor}-inverse bg-brand-${brandColor}`}
       >
         {icon} {label}
       </div>
