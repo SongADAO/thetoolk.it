@@ -194,6 +194,11 @@ async function createPost({
   videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   try {
+    setIsPosting(true);
+    setPostError("");
+    setPostProgress(0);
+    setPostStatus("");
+
     // Step 2: Create media container (30-50% progress)
     const creationId = await createMediaContainer({
       accessToken,
@@ -219,7 +224,7 @@ async function createPost({
 
       const progress = 50 + (attempts / maxAttempts) * 30;
       setPostProgress(Math.round(progress));
-      setPostStatus(`Processing video... (${attempts}/${maxAttempts})`);
+      setPostStatus(`Submitting post... (${attempts}/${maxAttempts})`);
 
       console.log(`Attempt ${attempts}: Status = ${status}`);
     }
@@ -260,7 +265,5 @@ async function createPost({
 
   return null;
 }
-
-// const videoUrl = "https://thetoolkit-test.s3.us-east-1.amazonaws.com/threads-videos/1750885143834-insta.mp4";
 
 export { createPost };

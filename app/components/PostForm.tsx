@@ -1,33 +1,54 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { useActionState } from "react";
+import { use, useActionState } from "react";
 
 import { ButtonSpinner } from "@/app/components/ButtonSpinner";
+import { ThreadsContext } from "@/app/services/post/threads/Context";
 
 interface FormState {
-  message: string;
+  text: string;
 }
 
 function fromInitial(): FormState {
   return {
-    message: "",
+    text: "This is a test.",
   };
 }
 
 function fromFormData(formData: FormData): FormState {
   return {
-    message: String(formData.get("message")),
+    text: String(formData.get("text")),
   };
 }
 
 function PostForm() {
-  function saveForm(
+  const {
+    accounts: threadsAccounts,
+    post: threadsPost,
+    postStatus,
+    isPosting,
+    postProgress,
+    postError,
+  } = use(ThreadsContext);
+
+  async function saveForm(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     previousState: FormState,
     formData: FormData,
   ) {
     const newFormState = fromFormData(formData);
+
+    const userId = threadsAccounts[0]?.id;
+
+    const videoUrl =
+      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/threads-videos/1750885143834-insta.mp4";
+
+    await threadsPost({
+      text: newFormState.text,
+      userId,
+      videoUrl,
+    });
 
     return newFormState;
   }
@@ -66,16 +87,16 @@ function PostForm() {
 
       <Form.Field
         className="mb-4 flex flex-col"
-        key="message"
-        name="message"
-        // serverInvalid={hasError('message)}
+        key="text"
+        name="text"
+        // serverInvalid={hasError('text)}
       >
         <Form.Label>Message</Form.Label>
         <Form.Control
           asChild
           autoComplete="off"
           className="rounded text-black"
-          defaultValue={state.message}
+          defaultValue={state.text}
           disabled={isPending}
           placeholder="Message"
           required
@@ -85,7 +106,7 @@ function PostForm() {
         </Form.Control>
         <div>
           <Form.Message match="valueMissing">Missing message.</Form.Message>
-          {/* {getErrors('message').map((error) => (
+          {/* {getErrors('text').map((error) => (
             <Form.Message key={error}>{error}</Form.Message>
           ))} */}
         </div>
@@ -98,6 +119,17 @@ function PostForm() {
         {isPending ? <ButtonSpinner /> : null}
         Post
       </Form.Submit>
+
+      {postError ? (
+        <div className="mt-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+          {postError}
+        </div>
+      ) : null}
+      {postStatus && !isPosting && postProgress === 100 ? (
+        <div className="mt-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700">
+          {postStatus}
+        </div>
+      ) : null}
     </Form.Root>
   );
 }
