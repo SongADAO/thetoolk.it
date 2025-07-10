@@ -131,9 +131,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
     if (needsRefreshTokenRenewal(authorization)) {
-      console.log(
-        `${label}: Refresh token will expire within 30 days, refreshing...`,
-      );
+      console.log(`${label}: Refresh token will expire soon, refreshing...`);
       return await refreshTokens();
     }
 

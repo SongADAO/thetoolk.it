@@ -127,14 +127,9 @@ export function FacebookProvider({ children }: Readonly<Props>) {
   }
 
   async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
-    if (
-      isAuthorized &&
-      needsRefreshTokenRenewal(authorization.refreshTokenExpiresAt)
-    ) {
-      console.log(
-        "Facebook: Refresh token will expire within 30 days, refreshing...",
-      );
-      // return await refreshTokens();
+    if (needsRefreshTokenRenewal(authorization)) {
+      console.log(`${label}: Refresh token will expire soon, refreshing...`);
+      return await refreshTokens();
     }
 
     return null;
