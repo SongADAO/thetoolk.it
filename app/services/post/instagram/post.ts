@@ -19,7 +19,7 @@ async function createMediaContainer({
       body: new URLSearchParams({
         access_token: accessToken,
         caption: text,
-        media_type: "VIDEO",
+        media_type: "REELS",
         video_url: videoUrl,
       }),
       headers: {
@@ -105,7 +105,7 @@ async function checkMediaStatus({
   const result = await response.json();
   console.log("Media status check:", result);
 
-  return result.status;
+  return result.status_code;
 }
 
 // Publish media to Instagram
