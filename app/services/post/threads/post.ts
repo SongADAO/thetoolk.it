@@ -192,7 +192,11 @@ async function createPost({
     const maxAttempts = 30;
 
     while (status === "IN_PROGRESS" && attempts < maxAttempts) {
-      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      // Wait for retry delay.
+      await new Promise((resolve) => {
+        setTimeout(resolve, retryDelay);
+      });
+
       status = await checkMediaStatus({ accessToken, creationId });
       attempts++;
 
