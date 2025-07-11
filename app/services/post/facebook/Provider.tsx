@@ -10,6 +10,7 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
+  getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -221,7 +222,10 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     }
 
     return await createPost({
-      accessToken: await getValidAccessToken(),
+      accessToken: await getAccountAccessToken(
+        await getValidAccessToken(),
+        userId,
+      ),
       setIsPosting,
       setPostError,
       setPostProgress,
