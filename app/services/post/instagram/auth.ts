@@ -337,10 +337,25 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
   return accounts;
 }
 
+async function getAccountAccessToken(
+  token: string,
+  accountId: string,
+): Promise<string> {
+  const accounts = await getAccounts(token);
+  const userAccounts = accounts.filter((page) => page.id === accountId);
+
+  if (userAccounts.length !== 1) {
+    throw new Error("Could not get page access token");
+  }
+
+  return userAccounts[0].accessToken;
+}
+
 // -----------------------------------------------------------------------------
 
 export {
   exchangeCodeForTokens,
+  getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,

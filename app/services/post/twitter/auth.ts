@@ -235,7 +235,7 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log("Twitter user info:", userInfo);
 
   return {
-    accessToken: token,
+    accessToken: "",
     id: userInfo.data.id,
     username: userInfo.data.username,
   };

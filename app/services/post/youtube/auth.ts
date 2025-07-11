@@ -241,7 +241,7 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log("YouTube user info:", channel);
 
   return {
-    accessToken: token,
+    accessToken: "",
     id: channel.id,
     username: channel.snippet.title,
   };

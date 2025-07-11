@@ -164,7 +164,7 @@ async function getAccounts(
   const accounts = [];
 
   accounts.push({
-    accessToken: token,
+    accessToken: "",
     id: serviceUrl,
     username,
   });

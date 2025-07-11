@@ -225,7 +225,7 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log("Threads user info:", userInfo);
 
   return {
-    accessToken: token,
+    accessToken: "",
     id: userInfo.id,
     username: userInfo.username,
   };
