@@ -158,8 +158,10 @@ interface CreatePostProps {
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
+  title: string;
   text: string;
   userId: string;
+  video: File | null;
   videoUrl: string;
 }
 async function createPost({

@@ -5,8 +5,10 @@ interface ServiceAccount {
 }
 
 interface PostProps {
+  title: string;
   text: string;
   userId: string;
+  video: File | null;
   videoUrl: string;
 }
 
