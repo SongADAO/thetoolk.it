@@ -13,23 +13,22 @@ async function createMediaContainer({
 }: Readonly<CreateMediaContainerProps>): Promise<string> {
   console.log("Creating Threads media container");
 
-  const endpoint = `https://graph.threads.net/v1.0/${userId}/threads`;
-
-  const params = {
-    access_token: accessToken,
-    media_type: "VIDEO",
-    text,
-    // reply_control: replyControl,
-    video_url: videoUrl,
-  };
-
-  const response = await fetch(endpoint, {
-    body: new URLSearchParams(params),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+  const response = await fetch(
+    `https://graph.threads.net/v1.0/${userId}/threads`,
+    {
+      body: new URLSearchParams({
+        access_token: accessToken,
+        media_type: "VIDEO",
+        text,
+        // reply_control: replyControl,
+        video_url: videoUrl,
+      }),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
     },
-    method: "POST",
-  });
+  );
 
   const responseText = await response.text();
   console.log("Media container response:", responseText);
@@ -73,15 +72,22 @@ async function checkMediaStatus({
   accessToken,
   creationId,
 }: Readonly<CheckMediaStatusProps>): Promise<string> {
+  const params = new URLSearchParams({
+    access_token: accessToken,
+    fields: "status",
+  });
+
   const response = await fetch(
-    `https://graph.threads.net/v1.0/${creationId}?fields=status&access_token=${accessToken}`,
+    `https://graph.threads.net/v1.0/${creationId}?${params.toString()}`,
   );
 
   if (!response.ok) {
     const errorText = await response.text();
     console.error("Status check error:", errorText);
 
-    throw new Error(`Failed to check media status: HTTP ${response.status}`);
+    throw new Error(
+      `Failed to check media status: HTTP ${response.status} - ${errorText}`,
+    );
   }
 
   const result = await response.json();
