@@ -30,11 +30,9 @@ async function createMediaContainer({
     },
   );
 
-  const responseText = await response.text();
-  console.log("Media container response:", responseText);
-
   if (!response.ok) {
     const errorData = await response.json();
+    console.error("Threads create media container error response:", errorData);
 
     const errorCode = errorData.error?.code;
     const errorMessage = errorData.error?.message ?? "Unknown error";
@@ -121,11 +119,9 @@ async function publishMedia({
     },
   );
 
-  const responseText = await response.text();
-  console.log("Publish response:", responseText);
-
   if (!response.ok) {
     const errorData = await response.json();
+    console.error("Threads publish error response:", errorData);
 
     const errorCode = errorData.error?.code;
     const errorMessage = errorData.error?.message ?? "Unknown error";

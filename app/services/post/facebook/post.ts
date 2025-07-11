@@ -3,7 +3,7 @@ interface UploadVideoProps {
   text: string;
   title: string;
   userId: string;
-  videoUrl: string;
+  video: File;
 }
 async function uploadVideo({
   accessToken,
@@ -30,11 +30,9 @@ async function uploadVideo({
     },
   );
 
-  const responseText = await response.text();
-  console.log("Facebook upload response:", responseText);
-
   if (!response.ok) {
     const errorData = await response.json();
+    console.error("Facebook upload error response:", errorData);
 
     const errorCode = errorData.error?.code;
     const errorMessage = errorData.error?.message ?? "Unknown error";
@@ -93,6 +91,8 @@ async function createPost({
   userId,
   video,
 }: Readonly<CreatePostProps>): Promise<string | null> {
+  let progressInterval = null;
+
   try {
     setIsPosting(true);
     setPostError("");
@@ -103,27 +103,29 @@ async function createPost({
 
     // Simulate progress updates during upload
     let progress = 0;
-    const progressInterval = setInterval(() => {
+    progressInterval = setInterval(() => {
       progress = progress < 90 ? progress + 5 : progress;
       setPostProgress(progress);
     }, 5000);
 
     // Upload video directly to Facebook
-    const videoId = await uploadVideo({
-      accessToken,
-      text,
-      title,
-      userId,
-      video,
-    });
-
-    // Clear progress interval
-    clearInterval(progressInterval);
+    let postId = "";
+    if (video) {
+      postId = await uploadVideo({
+        accessToken,
+        text,
+        title,
+        userId,
+        video,
+      });
+    } else {
+      // TODO: None video post.
+    }
 
     setPostProgress(100);
-    setPostStatus(`✅ Successfully posted to Facebook! Video ID: ${videoId}`);
+    setPostStatus(`✅ Successfully posted to Facebook! Post ID: ${postId}`);
 
-    return videoId;
+    return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
 
@@ -132,6 +134,10 @@ async function createPost({
     setPostStatus("❌ Post failed");
   } finally {
     setIsPosting(false);
+    // Clear progress interval
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
   }
 
   return null;

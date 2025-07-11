@@ -23,7 +23,7 @@ import {
   shouldHandleAuthRedirect,
 } from "@/app/services/post/facebook/auth";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
-import { createPost } from "@/app/services/post/threads/post";
+import { createPost } from "@/app/services/post/facebook/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
