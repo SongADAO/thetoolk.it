@@ -193,10 +193,12 @@ async function createPost({
 
     while (status === "IN_PROGRESS" && attempts < maxAttempts) {
       // Wait for retry delay.
+      // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
       await new Promise((resolve) => {
         setTimeout(resolve, retryDelay);
       });
 
+      // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
       status = await checkMediaStatus({ accessToken, creationId });
       attempts++;
 
