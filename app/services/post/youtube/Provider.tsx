@@ -8,11 +8,13 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
+import { createPost } from "@/app/services/post/threads/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   type OauthAuthorization,
   type OauthCredentials,
+  type PostProps,
   type ServiceAccount,
 } from "@/app/services/post/types";
 import {
@@ -139,7 +141,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
   }
 
   // Get valid access token (refresh if needed)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   async function getValidAccessToken(): Promise<string> {
     if (needsAccessTokenRenewal(authorization)) {
       console.log("Token expired or about to expire, refreshing...");
@@ -205,6 +207,32 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     }
   }
 
+  const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [postError, setPostError] = useState<string>("");
+  const [postProgress, setPostProgress] = useState<number>(0);
+  const [postStatus, setPostStatus] = useState<string>("");
+
+  async function post({
+    text,
+    userId,
+    videoUrl,
+  }: Readonly<PostProps>): Promise<string | null> {
+    if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
+      return null;
+    }
+
+    return await createPost({
+      accessToken: await getValidAccessToken(),
+      setIsPosting,
+      setPostError,
+      setPostProgress,
+      setPostStatus,
+      text,
+      userId,
+      videoUrl,
+    });
+  }
+
   const fields: ServiceFormField[] = [
     {
       label: "Client ID",
@@ -253,7 +281,12 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       isAuthorized,
       isComplete,
       isEnabled,
+      isPosting,
       label,
+      post,
+      postError,
+      postProgress,
+      postStatus,
       saveData,
       setIsEnabled,
     }),
@@ -262,15 +295,19 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       accounts,
       authorization,
       brandColor,
-      credentialsId,
       credentials,
+      credentialsId,
       error,
       icon,
       initial,
       isAuthorized,
       isComplete,
       isEnabled,
+      isPosting,
       label,
+      postError,
+      postProgress,
+      postStatus,
     ],
   );
 
