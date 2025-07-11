@@ -5,6 +5,7 @@ import { use, useActionState, useRef, useState } from "react";
 
 import { ButtonSpinner } from "@/app/components/ButtonSpinner";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
+import { InstagramContext } from "@/app/services/post/instagram/Context";
 import { ThreadsContext } from "@/app/services/post/threads/Context";
 
 interface FormState {
@@ -31,6 +32,9 @@ function PostForm() {
 
   const { accounts: facebookAccounts, post: facebookPost } =
     use(FacebookContext);
+
+  const { accounts: instagramAccounts, post: instagramPost } =
+    use(InstagramContext);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -60,10 +64,18 @@ function PostForm() {
     //   videoUrl,
     // });
 
-    await facebookPost({
+    // await facebookPost({
+    //   text: newFormState.text,
+    //   title: newFormState.title,
+    //   userId: facebookAccounts[0]?.id,
+    //   video: selectedFile,
+    //   videoUrl,
+    // });
+
+    await instagramPost({
       text: newFormState.text,
       title: newFormState.title,
-      userId: facebookAccounts[0]?.id,
+      userId: instagramAccounts[0]?.id,
       video: selectedFile,
       videoUrl,
     });

@@ -10,6 +10,7 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import {
   exchangeCodeForTokens,
+  getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -23,7 +24,7 @@ import {
   shouldHandleAuthRedirect,
 } from "@/app/services/post/instagram/auth";
 import { InstagramContext } from "@/app/services/post/instagram/Context";
-import { createPost } from "@/app/services/post/threads/post";
+import { createPost } from "@/app/services/post/instagram/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
@@ -221,7 +222,10 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     }
 
     return await createPost({
-      accessToken: await getValidAccessToken(),
+      accessToken: await getAccountAccessToken(
+        await getValidAccessToken(),
+        userId,
+      ),
       setIsPosting,
       setPostError,
       setPostProgress,
