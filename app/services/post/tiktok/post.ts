@@ -18,7 +18,9 @@ async function uploadVideo({
         disable_comment: false,
         disable_duet: false,
         disable_stitch: false,
-        privacy_level: "PUBLIC_TO_EVERYONE",
+        // TODO: tiktok can only post to private accounts in sandbox
+        // privacy_level: "PUBLIC_TO_EVERYONE",
+        privacy_level: "SELF_ONLY",
         title,
         video_cover_timestamp_ms: 1000,
       },
