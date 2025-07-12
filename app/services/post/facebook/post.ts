@@ -99,18 +99,18 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    setPostStatus("Uploading video to Facebook...");
-
-    // Simulate progress updates during upload
-    let progress = 0;
-    progressInterval = setInterval(() => {
-      progress = progress < 90 ? progress + 5 : progress;
-      setPostProgress(progress);
-    }, 2000);
-
     // Upload video directly to Facebook
     let postId = "";
     if (video) {
+      setPostStatus("Uploading video to Facebook...");
+
+      // Simulate progress updates during upload
+      let progress = 0;
+      progressInterval = setInterval(() => {
+        progress = progress < 90 ? progress + 5 : progress;
+        setPostProgress(progress);
+      }, 2000);
+
       postId = await uploadVideo({
         accessToken,
         text,
@@ -119,7 +119,7 @@ async function createPost({
         video,
       });
     } else {
-      // TODO: None video post.
+      // TODO: Text only post.
     }
 
     setPostProgress(100);

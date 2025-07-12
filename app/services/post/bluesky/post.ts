@@ -127,23 +127,19 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("Starting upload...");
-
-    // Step 1: Upload video blob (0-70% progress)
-    setPostProgress(10);
-
-    // Simulate progress during upload
-    let progress = 0;
-    progressInterval = setInterval(() => {
-      progress = progress < 90 ? progress + 5 : progress;
-      setPostProgress(progress);
-    }, 2000);
-
-    let postId = null;
+    let postId = "";
     if (video) {
+      // Step 1: Upload video blob (0-70% progress)
+      setPostProgress(10);
+      setPostStatus("Starting upload...");
+
+      // Simulate progress during upload
+      let progress = 0;
+      progressInterval = setInterval(() => {
+        progress = progress < 90 ? progress + 5 : progress;
+        setPostProgress(progress);
+      }, 2000);
+
       const videoBlob = await uploadVideoBlob({
         accessToken,
         credentials,
@@ -165,6 +161,8 @@ async function createPost({
         username,
         videoBlob,
       });
+    } else {
+      // TODO: Text only post.
     }
 
     setPostProgress(100);

@@ -176,69 +176,77 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    // Step 2: Create media container (30-50% progress)
-    const creationId = await createMediaContainer({
-      accessToken,
-      text,
-      userId,
-      videoUrl,
-    });
+    let postId = "";
+    if (videoUrl) {
+      setPostProgress(20);
+      setPostStatus("Creating media container...");
 
-    setPostProgress(50);
-    setPostStatus("Waiting for Threads to process video...");
-
-    // Step 3: Wait for processing (50-80% progress)
-    let status = "IN_PROGRESS";
-    let attempts = 0;
-    // retry every 10 seconds
-    const retryDelay = 10 * 1000;
-    // 5 minutes max
-    const maxAttempts = 30;
-
-    while (status === "IN_PROGRESS" && attempts < maxAttempts) {
-      // Wait for retry delay.
-      // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
-      await new Promise((resolve) => {
-        setTimeout(resolve, retryDelay);
+      // Step 2: Create media container (30-50% progress)
+      const creationId = await createMediaContainer({
+        accessToken,
+        text,
+        userId,
+        videoUrl,
       });
 
-      // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
-      status = await checkMediaStatus({ accessToken, creationId });
-      attempts++;
+      setPostProgress(30);
+      setPostStatus("Waiting for Threads to process video...");
 
-      const progress = 50 + (attempts / maxAttempts) * 30;
-      setPostProgress(Math.round(progress));
-      setPostStatus(`Submitting post... (${attempts}/${maxAttempts})`);
+      // Step 3: Wait for processing (50-80% progress)
+      let status = "IN_PROGRESS";
+      let attempts = 0;
+      // retry every 10 seconds
+      const retryDelay = 10 * 1000;
+      // 5 minutes max
+      const maxAttempts = 30;
 
-      console.log(`Attempt ${attempts}: Status = ${status}`);
+      while (status === "IN_PROGRESS" && attempts < maxAttempts) {
+        // Wait for retry delay.
+        // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
+        await new Promise((resolve) => {
+          setTimeout(resolve, retryDelay);
+        });
+
+        // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
+        status = await checkMediaStatus({ accessToken, creationId });
+        attempts++;
+
+        const progress = 30 + (attempts / maxAttempts) * 30;
+        setPostProgress(Math.round(progress));
+        setPostStatus(`Submitting post... (${attempts}/${maxAttempts})`);
+
+        console.log(`Attempt ${attempts}: Status = ${status}`);
+      }
+
+      if (status === "ERROR") {
+        throw new Error(
+          "Threads rejected the video. Please check that your video meets all format requirements.",
+        );
+      }
+
+      if (status === "IN_PROGRESS") {
+        throw new Error(
+          "Video processing timed out. This may indicate the video file doesn't meet Threads' requirements.",
+        );
+      }
+
+      if (status !== "FINISHED") {
+        throw new Error(`Video processing failed with status: ${status}`);
+      }
+
+      setPostProgress(85);
+      setPostStatus("Publishing to Threads...");
+
+      // Step 4: Publish the media (80-100% progress)
+      postId = await publishMedia({ accessToken, creationId, userId });
+    } else {
+      // TODO: Text only post.
     }
-
-    if (status === "ERROR") {
-      throw new Error(
-        "Threads rejected the video. Please check that your video meets all format requirements.",
-      );
-    }
-
-    if (status === "IN_PROGRESS") {
-      throw new Error(
-        "Video processing timed out. This may indicate the video file doesn't meet Threads' requirements.",
-      );
-    }
-
-    if (status !== "FINISHED") {
-      throw new Error(`Video processing failed with status: ${status}`);
-    }
-
-    setPostProgress(85);
-    setPostStatus("Publishing to Threads...");
-
-    // Step 4: Publish the media (80-100% progress)
-    const mediaId = await publishMedia({ accessToken, creationId, userId });
 
     setPostProgress(100);
-    setPostStatus(`✅ Successfully posted to Threads! Media ID: ${mediaId}`);
+    setPostStatus(`✅ Successfully posted to Threads! Post ID: ${postId}`);
 
-    return mediaId;
+    return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
 

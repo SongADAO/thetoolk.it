@@ -185,6 +185,8 @@ async function createPost({
     // Prepare metadata
     const metadata = {
       snippet: {
+        // TODO: Youtube category ID selection
+        // 22 = People & Blogs
         categoryId: "22",
         description: text,
         tags: ""
@@ -218,6 +220,8 @@ async function createPost({
         uploadUrl,
         video,
       });
+    } else {
+      // TODO: Text only post.
     }
 
     setPostProgress(100);
