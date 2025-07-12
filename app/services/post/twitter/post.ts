@@ -172,7 +172,7 @@ async function publishPost({
   text,
 }: Readonly<PublishPostProps>): Promise<string> {
   const response = await fetch("/api/twitter/2/posts", {
-    body: JSON.stringify({ media_ids: mediaIds, text }),
+    body: JSON.stringify({ media: { media_ids: mediaIds }, text }),
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
@@ -242,6 +242,8 @@ async function createPost({
         mediaIds: [mediaId],
         text,
       });
+    } else {
+      // TODO: Text only post.
     }
 
     setPostProgress(100);
