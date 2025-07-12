@@ -50,7 +50,7 @@ async function createCast({
 
   const result = await response.json();
 
-  return result.castHash;
+  return result.cast.hash;
 }
 
 // Create a post
@@ -83,10 +83,10 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    const postId = "";
+    let postId = "";
     if (videoPlaylistUrl) {
       setPostStatus("Publishing cast …");
-      await createCast({
+      postId = await createCast({
         clientSecret: credentials.clientSecret,
         text,
         userId,
