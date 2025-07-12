@@ -140,25 +140,14 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     return null;
   }
 
-  // Get valid access token (refresh if needed)
-
   async function getValidAccessToken(): Promise<string> {
-    if (needsAccessTokenRenewal(authorization)) {
-      console.log("Token expired or about to expire, refreshing...");
-      const newAuthorization = await refreshTokens();
+    const newAuthorization = await refreshTokens();
 
-      if (!newAuthorization) {
-        throw new Error("Failed to refresh token");
-      }
-
-      return newAuthorization.accessToken;
+    if (!newAuthorization) {
+      throw new Error("Failed to refresh token");
     }
 
-    if (!authorization.accessToken) {
-      throw new Error("No access token available. Please authorize first.");
-    }
-
-    return authorization.accessToken;
+    return newAuthorization.accessToken;
   }
 
   async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {

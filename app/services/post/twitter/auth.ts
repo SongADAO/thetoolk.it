@@ -70,11 +70,9 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
-    authorization.accessToken !== "" &&
-    authorization.accessTokenExpiresAt !== "" &&
     authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
-    !needsAccessTokenRenewal(authorization)
+    !needsRefreshTokenRenewal(authorization)
   );
 }
 

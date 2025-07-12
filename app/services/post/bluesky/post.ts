@@ -156,9 +156,6 @@ async function createPost({
     // Step 1: Upload video blob (0-70% progress)
     setPostProgress(10);
 
-    console.log(accessToken);
-    return "0";
-
     // Simulate progress during upload
     let progress = 0;
     progressInterval = setInterval(() => {
