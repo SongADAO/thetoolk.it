@@ -34,7 +34,7 @@ interface Props {
 export function NeynarProvider({ children }: Readonly<Props>) {
   const label = "Farcaster";
 
-  const brandColor = "neynar";
+  const brandColor = "farcaster";
 
   const icon = <SiFarcaster className="size-6" />;
 

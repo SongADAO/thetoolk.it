@@ -348,7 +348,7 @@
 @source inline("data-[enabled=yes]:text-brand-farcaster-inverse");
 @source inline("group-data-[enabled=yes]:bg-brand-farcaster");
 @source inline("group-data-[enabled=yes]:text-brand-farcaster");
-@source inline("group-data-[enabled=yes]:text-brand-twitter-inverse");
+@source inline("group-data-[enabled=yes]:text-brand-farcaster-inverse");
 @source inline("bg-brand-lens");
 @source inline("text-brand-lens-inverse");
 @source inline("data-[enabled=yes]:bg-brand-lens");
