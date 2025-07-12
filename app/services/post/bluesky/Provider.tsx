@@ -15,7 +15,6 @@ import {
   getCredentialsId,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
 } from "@/app/services/post/bluesky/auth";
@@ -134,8 +133,8 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   async function getValidAccessToken(): Promise<string> {
     const newAuthorization = await refreshTokens();
 
-    if (!newAuthorization) {
-      throw new Error("Failed to refresh token");
+    if (!newAuthorization?.accessToken) {
+      throw new Error("Failed to get valid access token");
     }
 
     return newAuthorization.accessToken;

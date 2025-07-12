@@ -18,7 +18,6 @@ import {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
   shouldHandleAuthRedirect,
@@ -143,8 +142,8 @@ export function TwitterProvider({ children }: Readonly<Props>) {
   async function getValidAccessToken(): Promise<string> {
     const newAuthorization = await refreshTokens();
 
-    if (!newAuthorization) {
-      throw new Error("Failed to refresh token");
+    if (!newAuthorization?.accessToken) {
+      throw new Error("Failed to get valid access token");
     }
 
     return newAuthorization.accessToken;
