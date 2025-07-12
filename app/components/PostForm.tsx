@@ -33,23 +33,16 @@ function fromFormData(formData: FormData): FormState {
 }
 
 function PostForm() {
-  const { accounts: threadsAccounts, post: threadsPost } = use(ThreadsContext);
-
+  const { accounts: blueskyAccounts, post: blueskyPost } = use(BlueskyContext);
   const { accounts: facebookAccounts, post: facebookPost } =
     use(FacebookContext);
-
   const { accounts: instagramAccounts, post: instagramPost } =
     use(InstagramContext);
-
-  const { accounts: blueskyAccounts, post: blueskyPost } = use(BlueskyContext);
-
-  const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
-
   const { accounts: neynarAccounts, post: neynarPost } = use(NeynarContext);
-
+  const { accounts: threadsAccounts, post: threadsPost } = use(ThreadsContext);
   const { accounts: tiktokAccounts, post: tiktokPost } = use(TiktokContext);
-
   const { accounts: twitterAccounts, post: twitterPost } = use(TwitterContext);
+  const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -76,11 +69,11 @@ function PostForm() {
     const videoThumbnailUrl =
       "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
-    await threadsPost({
+    await blueskyPost({
       text: newFormState.text,
       title: newFormState.title,
-      userId: threadsAccounts[0]?.id,
-      username: threadsAccounts[0]?.username,
+      userId: blueskyAccounts[0]?.id,
+      username: blueskyAccounts[0]?.username,
       video: selectedFile,
       videoPlaylistUrl,
       videoThumbnailUrl,
@@ -109,33 +102,22 @@ function PostForm() {
       videoUrl,
     });
 
-    await blueskyPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: blueskyAccounts[0]?.id,
-      username: blueskyAccounts[0]?.username,
-      video: selectedFile,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
-    await youtubePost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: youtubeAccounts[0]?.id,
-      username: youtubeAccounts[0]?.username,
-      video: selectedFile,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
     await neynarPost({
       text: newFormState.text,
       title: newFormState.title,
       userId: neynarAccounts[0]?.id,
       username: neynarAccounts[0]?.username,
+      video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
+      videoUrl,
+    });
+
+    await threadsPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: threadsAccounts[0]?.id,
+      username: threadsAccounts[0]?.username,
       video: selectedFile,
       videoPlaylistUrl,
       videoThumbnailUrl,
@@ -158,6 +140,17 @@ function PostForm() {
       title: newFormState.title,
       userId: twitterAccounts[0]?.id,
       username: twitterAccounts[0]?.username,
+      video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
+      videoUrl,
+    });
+
+    await youtubePost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: youtubeAccounts[0]?.id,
+      username: youtubeAccounts[0]?.username,
       video: selectedFile,
       videoPlaylistUrl,
       videoThumbnailUrl,
