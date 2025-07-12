@@ -26,15 +26,6 @@ async function uploadVideoBlob({
   );
 
   if (!response.ok) {
-    // if (response.status === 401) {
-    //   // Try to refresh session
-    //   const refreshed = await refreshSession();
-    //   if (refreshed) {
-    //     // Retry upload with new token
-    //     return uploadVideoBlob(file);
-    //   }
-    // }
-
     const errorData = await response.json();
     throw new Error(
       `Failed to upload video: ${errorData.message ?? response.statusText}`,
@@ -50,7 +41,6 @@ async function uploadVideoBlob({
 interface CreateRecordProps {
   accessToken: string;
   credentials: BlueskyCredentials;
-  // session: string;
   text: string;
   title: string;
   username: string;
@@ -59,7 +49,6 @@ interface CreateRecordProps {
 async function createRecord({
   accessToken,
   credentials,
-  // session,
   text,
   title,
   username,
@@ -82,7 +71,6 @@ async function createRecord({
       body: JSON.stringify({
         collection: "app.bsky.feed.post",
         record: postRecord,
-        // repo: session.did,
         repo: username,
       }),
       headers: {
@@ -94,15 +82,6 @@ async function createRecord({
   );
 
   if (!response.ok) {
-    // if (response.status === 401) {
-    //   // Try to refresh session
-    //   const refreshed = await refreshSession();
-    //   if (refreshed) {
-    //     // Retry post creation with new token
-    //     return createBlueskyPost(videoBlob);
-    //   }
-    // }
-
     const errorData = await response.json().catch(() => ({}));
     throw new Error(
       `Failed to create post: ${errorData.message ?? response.statusText}`,
