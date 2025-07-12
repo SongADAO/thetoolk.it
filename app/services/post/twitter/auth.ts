@@ -100,11 +100,10 @@ function shouldHandleAuthRedirect(
 
 function formatTokens(tokens: TwitterTokenResponse): OauthAuthorization {
   const expiresIn = tokens.expires_in * 1000;
+  const expiryTime = new Date(Date.now() + expiresIn);
+
   // Refresh Tokens have a 6-month lifespan.
   const refreshExpiresIn = 180 * 24 * 60 * 60 * 1000;
-
-  // Calculate expiry time
-  const expiryTime = new Date(Date.now() + expiresIn);
   const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {

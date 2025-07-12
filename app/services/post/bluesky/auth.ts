@@ -74,17 +74,19 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 // -----------------------------------------------------------------------------
 
 function formatTokens(tokens: BlueskyTokenResponse): OauthAuthorization {
-  // Tokens have a 60-day lifespan
-  const expiresIn = 60 * 24 * 60 * 60 * 1000;
-
-  // Calculate expiry time
+  // Tokens have a 10 minutes lifespan (TODO: verify expiration)
+  const expiresIn = 10 * 60 * 60 * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
+
+  // Refresh tokens have a 60-day lifespan
+  const refreshExpiresIn = 60 * 24 * 60 * 60 * 1000;
+  const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {
     accessToken: tokens.accessJwt,
     accessTokenExpiresAt: expiryTime.toISOString(),
     refreshToken: tokens.refreshJwt,
-    refreshTokenExpiresAt: expiryTime.toISOString(),
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
 

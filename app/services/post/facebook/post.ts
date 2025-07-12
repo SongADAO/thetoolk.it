@@ -106,7 +106,7 @@ async function createPost({
     progressInterval = setInterval(() => {
       progress = progress < 90 ? progress + 5 : progress;
       setPostProgress(progress);
-    }, 5000);
+    }, 2000);
 
     // Upload video directly to Facebook
     let postId = "";

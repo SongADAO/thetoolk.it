@@ -8,6 +8,7 @@ interface PostProps {
   title: string;
   text: string;
   userId: string;
+  username: string;
   video: File | null;
   videoUrl: string;
 }

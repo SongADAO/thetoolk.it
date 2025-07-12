@@ -102,10 +102,9 @@ function shouldHandleAuthRedirect(
 
 function formatTokens(tokens: GoogleTokenResponse): OauthAuthorization {
   const expiresIn = tokens.expires_in * 1000;
-  const refreshExpiresIn = tokens.refresh_token_expires_in * 1000;
-
-  // Calculate expiry time
   const expiryTime = new Date(Date.now() + expiresIn);
+
+  const refreshExpiresIn = tokens.refresh_token_expires_in * 1000;
   const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {

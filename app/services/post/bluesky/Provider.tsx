@@ -20,7 +20,7 @@ import {
   refreshAccessToken,
 } from "@/app/services/post/bluesky/auth";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
-import { createPost } from "@/app/services/post/threads/post";
+import { createPost } from "@/app/services/post/bluesky/post";
 import {
   type BlueskyCredentials,
   defaultBlueskyCredentials,
@@ -194,9 +194,8 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   async function post({
     title,
     text,
-    userId,
+    username,
     video,
-    videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
@@ -204,15 +203,15 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
     return await createPost({
       accessToken: await getValidAccessToken(),
+      credentials,
       setIsPosting,
       setPostError,
       setPostProgress,
       setPostStatus,
       text,
       title,
-      userId,
+      username,
       video,
-      videoUrl,
     });
   }
 

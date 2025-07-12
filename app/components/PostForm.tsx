@@ -4,6 +4,7 @@ import { Form } from "radix-ui";
 import { use, useActionState, useRef, useState } from "react";
 
 import { ButtonSpinner } from "@/app/components/ButtonSpinner";
+import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
 import { InstagramContext } from "@/app/services/post/instagram/Context";
 import { ThreadsContext } from "@/app/services/post/threads/Context";
@@ -36,6 +37,8 @@ function PostForm() {
   const { accounts: instagramAccounts, post: instagramPost } =
     use(InstagramContext);
 
+  const { accounts: blueskyAccounts, post: blueskyPost } = use(BlueskyContext);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -60,6 +63,7 @@ function PostForm() {
     //   text: newFormState.text,
     //   title: newFormState.title,
     //   userId: threadsAccounts[0]?.id,
+    //   username: threadsAccounts[0]?.username,
     //   video: selectedFile,
     //   videoUrl,
     // });
@@ -68,14 +72,25 @@ function PostForm() {
     //   text: newFormState.text,
     //   title: newFormState.title,
     //   userId: facebookAccounts[0]?.id,
+    //   username: facebookAccounts[0]?.username,
     //   video: selectedFile,
     //   videoUrl,
     // });
 
-    await instagramPost({
+    // await instagramPost({
+    //   text: newFormState.text,
+    //   title: newFormState.title,
+    //   userId: instagramAccounts[0]?.id,
+    //   username: instagramAccounts[0]?.username,
+    //   video: selectedFile,
+    //   videoUrl,
+    // });
+
+    await blueskyPost({
       text: newFormState.text,
       title: newFormState.title,
-      userId: instagramAccounts[0]?.id,
+      userId: blueskyAccounts[0]?.id,
+      username: blueskyAccounts[0]?.username,
       video: selectedFile,
       videoUrl,
     });
