@@ -73,28 +73,6 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
-  // async function exchangeCode(): Promise<OauthAuthorization | null> {
-  //   return null;
-  // }
-
-  // async function refreshTokens(): Promise<OauthAuthorization | null> {
-  //   return null;
-  // }
-
-  // async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
-  //   return null;
-  // }
-
-  // Get valid access token (refresh if needed)
-
-  // async function getValidAccessToken(): Promise<string> {
-  //   return "";
-  // }
-
-  // async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
-  //   return [];
-  // }
-
   async function authorize() {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

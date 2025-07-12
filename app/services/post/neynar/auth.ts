@@ -12,14 +12,11 @@ function getCredentialsId(credentials: OauthCredentials): string {
 }
 
 function hasCompleteCredentials(credentials: OauthCredentials): boolean {
-  // return credentials.clientId !== "" && credentials.clientSecret !== "";
-  return credentials.clientId !== "";
+  return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
-    authorization.accessToken !== "" &&
-    authorization.accessTokenExpiresAt !== "" &&
     authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== ""
   );
