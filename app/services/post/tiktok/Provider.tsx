@@ -22,6 +22,7 @@ import {
   shouldHandleAuthRedirect,
 } from "@/app/services/post/tiktok/auth";
 import { TiktokContext } from "@/app/services/post/tiktok/Context";
+import { createPost } from "@/app/services/post/tiktok/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,

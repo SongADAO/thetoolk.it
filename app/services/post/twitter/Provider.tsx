@@ -8,7 +8,6 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import { createPost } from "@/app/services/post/threads/post";
 import {
   exchangeCodeForTokens,
   getAccounts,
@@ -23,6 +22,7 @@ import {
   shouldHandleAuthRedirect,
 } from "@/app/services/post/twitter/auth";
 import { TwitterContext } from "@/app/services/post/twitter/Context";
+import { createPost } from "@/app/services/post/twitter/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,

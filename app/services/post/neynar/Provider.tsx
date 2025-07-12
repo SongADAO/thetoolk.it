@@ -17,7 +17,7 @@ import {
   hasCompleteCredentials,
 } from "@/app/services/post/neynar/auth";
 import { NeynarContext } from "@/app/services/post/neynar/Context";
-import { createPost } from "@/app/services/post/threads/post";
+import { createPost } from "@/app/services/post/neynar/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
