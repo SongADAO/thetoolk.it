@@ -11,21 +11,25 @@ async function uploadVideo({
   videoUrl,
 }: Readonly<UploadVideoProps>) {
   // Single API call with both video source and post data
-  const response = await fetch("/api/tiktok/publish", {
+  const response = await fetch("/api/tiktok/v2/post/publish/video/init/", {
     body: JSON.stringify({
-      accessToken,
-      postData: {
-        allowComments: true,
-        allowDuet: true,
-        allowStitch: true,
+      post_info: {
         description: text,
-        privacy: "PUBLIC_TO_EVERYONE",
+        disable_comment: false,
+        disable_duet: false,
+        disable_stitch: false,
+        privacy_level: "PUBLIC_TO_EVERYONE",
         title,
+        video_cover_timestamp_ms: 1000,
       },
-      videoUrl,
+      source_info: {
+        source: "PULL_FROM_URL",
+        video_url: videoUrl,
+      },
     }),
     headers: {
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json; charset=UTF-8",
     },
     method: "POST",
   });
@@ -33,7 +37,7 @@ async function uploadVideo({
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(
-      `Video publish failed: ${errorData.error?.message ?? response.statusText}`,
+      `Video publish failed: ${errorData?.details?.error?.code ?? 0} - ${errorData?.details?.error?.message ?? response.statusText}`,
     );
   }
 

@@ -162,16 +162,18 @@ async function refreshAccessToken(
     throw new Error("No refresh token available");
   }
 
-  const params = new URLSearchParams({
-    client_key: credentials.clientId,
-    client_secret: credentials.clientSecret,
-    grant_type: "refresh_token",
-    refresh_token: authorization.refreshToken,
+  const response = await fetch("https://open.tiktokapis.com/v2/oauth/token/", {
+    body: new URLSearchParams({
+      client_key: credentials.clientId,
+      client_secret: credentials.clientSecret,
+      grant_type: "refresh_token",
+      refresh_token: authorization.refreshToken,
+    }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    method: "POST",
   });
-
-  const response = await fetch(
-    `https://open.tiktokapis.com/v2/oauth/token/?${params.toString()}`,
-  );
 
   if (!response.ok) {
     const errorData = await response.json();
