@@ -109,15 +109,15 @@ export function NeynarProvider({ children }: Readonly<Props>) {
     title,
     text,
     userId,
-    video,
-    videoUrl,
+    videoPlaylistUrl,
+    videoThumbnailUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
     }
 
     return await createPost({
-      accessToken: await getValidAccessToken(),
+      credentials,
       setIsPosting,
       setPostError,
       setPostProgress,
@@ -125,8 +125,8 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       text,
       title,
       userId,
-      video,
-      videoUrl,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
     });
   }
 
@@ -136,23 +136,22 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       name: "clientId",
       placeholder: "Client ID",
     },
-    // {
-    //   label: "Client Secret",
-    //   name: "clientSecret",
-    //   placeholder: "Client Secret",
-    // },
+    {
+      label: "API Key",
+      name: "clientSecret",
+      placeholder: "API Key",
+    },
   ];
 
   const initial: ServiceFormState = {
     clientId: credentials.clientId,
-    // clientSecret: credentials.clientSecret,
+    clientSecret: credentials.clientSecret,
   };
 
   function saveData(formState: ServiceFormState): ServiceFormState {
     setCredentials({
       clientId: formState.clientId,
-      // clientSecret: formState.clientSecret,
-      clientSecret: "",
+      clientSecret: formState.clientSecret,
     });
 
     return formState;

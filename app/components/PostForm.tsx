@@ -71,12 +71,19 @@ function PostForm() {
     const videoUrl =
       "https://thetoolkit-test.s3.us-east-1.amazonaws.com/threads-videos/1750885143834-insta.mp4";
 
+    const videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
+
+    const videoThumbnailUrl =
+      "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
+
     await threadsPost({
       text: newFormState.text,
       title: newFormState.title,
       userId: threadsAccounts[0]?.id,
       username: threadsAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 
@@ -86,6 +93,8 @@ function PostForm() {
       userId: facebookAccounts[0]?.id,
       username: facebookAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 
@@ -95,6 +104,8 @@ function PostForm() {
       userId: instagramAccounts[0]?.id,
       username: instagramAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 
@@ -104,6 +115,8 @@ function PostForm() {
       userId: blueskyAccounts[0]?.id,
       username: blueskyAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 
@@ -113,6 +126,8 @@ function PostForm() {
       userId: youtubeAccounts[0]?.id,
       username: youtubeAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 
@@ -122,6 +137,8 @@ function PostForm() {
       userId: neynarAccounts[0]?.id,
       username: neynarAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 
@@ -131,6 +148,8 @@ function PostForm() {
       userId: tiktokAccounts[0]?.id,
       username: tiktokAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 
@@ -140,6 +159,8 @@ function PostForm() {
       userId: twitterAccounts[0]?.id,
       username: twitterAccounts[0]?.username,
       video: selectedFile,
+      videoPlaylistUrl,
+      videoThumbnailUrl,
       videoUrl,
     });
 

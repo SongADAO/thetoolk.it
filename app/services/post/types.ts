@@ -11,6 +11,8 @@ interface PostProps {
   username: string;
   video: File | null;
   videoUrl: string;
+  videoPlaylistUrl: string;
+  videoThumbnailUrl: string;
 }
 
 interface OauthAuthorization {
