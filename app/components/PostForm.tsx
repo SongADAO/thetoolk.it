@@ -8,6 +8,7 @@ import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
 import { InstagramContext } from "@/app/services/post/instagram/Context";
 import { ThreadsContext } from "@/app/services/post/threads/Context";
+import { YoutubeContext } from "@/app/services/post/youtube/Context";
 
 interface FormState {
   text: string;
@@ -38,6 +39,8 @@ function PostForm() {
     use(InstagramContext);
 
   const { accounts: blueskyAccounts, post: blueskyPost } = use(BlueskyContext);
+
+  const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -86,11 +89,20 @@ function PostForm() {
     //   videoUrl,
     // });
 
-    await blueskyPost({
+    // await blueskyPost({
+    //   text: newFormState.text,
+    //   title: newFormState.title,
+    //   userId: blueskyAccounts[0]?.id,
+    //   username: blueskyAccounts[0]?.username,
+    //   video: selectedFile,
+    //   videoUrl,
+    // });
+
+    await youtubePost({
       text: newFormState.text,
       title: newFormState.title,
-      userId: blueskyAccounts[0]?.id,
-      username: blueskyAccounts[0]?.username,
+      userId: youtubeAccounts[0]?.id,
+      username: youtubeAccounts[0]?.username,
       video: selectedFile,
       videoUrl,
     });

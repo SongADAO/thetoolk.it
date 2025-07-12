@@ -8,7 +8,6 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import { createPost } from "@/app/services/post/threads/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
@@ -31,6 +30,7 @@ import {
   shouldHandleAuthRedirect,
 } from "@/app/services/post/youtube/auth";
 import { YoutubeContext } from "@/app/services/post/youtube/Context";
+import { createPost } from "@/app/services/post/youtube/post";
 
 interface Props {
   children: ReactNode;
