@@ -7,7 +7,10 @@ import { ButtonSpinner } from "@/app/components/ButtonSpinner";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
 import { InstagramContext } from "@/app/services/post/instagram/Context";
+import { NeynarContext } from "@/app/services/post/neynar/Context";
 import { ThreadsContext } from "@/app/services/post/threads/Context";
+import { TiktokContext } from "@/app/services/post/tiktok/Context";
+import { TwitterContext } from "@/app/services/post/twitter/Context";
 import { YoutubeContext } from "@/app/services/post/youtube/Context";
 
 interface FormState {
@@ -42,6 +45,12 @@ function PostForm() {
 
   const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
 
+  const { accounts: neynarAccounts, post: neynarPost } = use(NeynarContext);
+
+  const { accounts: tiktokAccounts, post: tiktokPost } = use(TiktokContext);
+
+  const { accounts: twitterAccounts, post: twitterPost } = use(TwitterContext);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -62,47 +71,74 @@ function PostForm() {
     const videoUrl =
       "https://thetoolkit-test.s3.us-east-1.amazonaws.com/threads-videos/1750885143834-insta.mp4";
 
-    // await threadsPost({
-    //   text: newFormState.text,
-    //   title: newFormState.title,
-    //   userId: threadsAccounts[0]?.id,
-    //   username: threadsAccounts[0]?.username,
-    //   video: selectedFile,
-    //   videoUrl,
-    // });
+    await threadsPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: threadsAccounts[0]?.id,
+      username: threadsAccounts[0]?.username,
+      video: selectedFile,
+      videoUrl,
+    });
 
-    // await facebookPost({
-    //   text: newFormState.text,
-    //   title: newFormState.title,
-    //   userId: facebookAccounts[0]?.id,
-    //   username: facebookAccounts[0]?.username,
-    //   video: selectedFile,
-    //   videoUrl,
-    // });
+    await facebookPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: facebookAccounts[0]?.id,
+      username: facebookAccounts[0]?.username,
+      video: selectedFile,
+      videoUrl,
+    });
 
-    // await instagramPost({
-    //   text: newFormState.text,
-    //   title: newFormState.title,
-    //   userId: instagramAccounts[0]?.id,
-    //   username: instagramAccounts[0]?.username,
-    //   video: selectedFile,
-    //   videoUrl,
-    // });
+    await instagramPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: instagramAccounts[0]?.id,
+      username: instagramAccounts[0]?.username,
+      video: selectedFile,
+      videoUrl,
+    });
 
-    // await blueskyPost({
-    //   text: newFormState.text,
-    //   title: newFormState.title,
-    //   userId: blueskyAccounts[0]?.id,
-    //   username: blueskyAccounts[0]?.username,
-    //   video: selectedFile,
-    //   videoUrl,
-    // });
+    await blueskyPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: blueskyAccounts[0]?.id,
+      username: blueskyAccounts[0]?.username,
+      video: selectedFile,
+      videoUrl,
+    });
 
     await youtubePost({
       text: newFormState.text,
       title: newFormState.title,
       userId: youtubeAccounts[0]?.id,
       username: youtubeAccounts[0]?.username,
+      video: selectedFile,
+      videoUrl,
+    });
+
+    await neynarPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: neynarAccounts[0]?.id,
+      username: neynarAccounts[0]?.username,
+      video: selectedFile,
+      videoUrl,
+    });
+
+    await tiktokPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: tiktokAccounts[0]?.id,
+      username: tiktokAccounts[0]?.username,
+      video: selectedFile,
+      videoUrl,
+    });
+
+    await twitterPost({
+      text: newFormState.text,
+      title: newFormState.title,
+      userId: twitterAccounts[0]?.id,
+      username: twitterAccounts[0]?.username,
       video: selectedFile,
       videoUrl,
     });
