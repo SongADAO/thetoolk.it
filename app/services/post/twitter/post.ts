@@ -37,8 +37,8 @@ async function uploadVideo({
   setPostStatus("Uploading video chunks...");
 
   // Step 2: APPEND - Upload the file in chunks
-  // 1MB chunks
-  const chunkSize = 1024 * 1024;
+  // 4MB chunks
+  const chunkSize = 4 * 1024 * 1024;
   const totalChunks = Math.ceil(video.size / chunkSize);
 
   for (let segmentIndex = 0; segmentIndex < totalChunks; segmentIndex++) {
