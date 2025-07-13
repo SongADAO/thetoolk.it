@@ -7,6 +7,7 @@
   --color-brand-amazons3-inverse: #fff;
   --color-brand-pinata: #6a58f6;
   --color-brand-pinata-inverse: #fff;
+
   /* Post */
   --color-brand-youtube: #ea333d;
   --color-brand-youtube-inverse: #fff;
@@ -284,6 +285,7 @@
 @source inline("group-data-[enabled=yes]:bg-brand-pinata");
 @source inline("group-data-[enabled=yes]:text-brand-pinata");
 @source inline("group-data-[enabled=yes]:text-brand-pinata-inverse");
+
 /* Post */
 @source inline("bg-brand-youtube");
 @source inline("text-brand-youtube-inverse");

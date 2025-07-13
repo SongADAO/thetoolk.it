@@ -1,8 +1,4 @@
-import {
-  ListObjectsV2Command,
-  PutObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 import type { AmazonS3Credentials } from "@/app/services/storage/types";
 

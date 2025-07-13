@@ -47,12 +47,12 @@ function PostForm() {
   const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
 
   const {
-    storeJson: pinataStoreJson,
+    // storeJson: pinataStoreJson,
     // storeFile: pinataStoreFile,
     storeVideo: pinataStoreVideo,
   } = use(PinataContext);
   const {
-    storeJson: amazonS3StoreJson,
+    // storeJson: amazonS3StoreJson,
     // storeFile: amazonS3StoreFile,
     storeVideo: amazonS3StoreVideo,
   } = use(AmazonS3Context);
@@ -86,8 +86,8 @@ function PostForm() {
     // console.log(jsonResult);
 
     if (selectedFile) {
-      // const pinataVideoResult = await pinataStoreVideo(selectedFile);
-      // console.log(pinataVideoResult);
+      const pinataVideoResult = await pinataStoreVideo(selectedFile);
+      console.log(pinataVideoResult);
 
       const s3VideoResult = await amazonS3StoreVideo(selectedFile);
       console.log(s3VideoResult);

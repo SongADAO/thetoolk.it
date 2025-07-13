@@ -18,7 +18,6 @@ import {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
   shouldHandleAuthRedirect,
