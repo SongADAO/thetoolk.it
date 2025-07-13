@@ -32,11 +32,11 @@ async function createCast({
     text,
   };
 
-  const response = await fetch("/api/neynar/cast", {
+  const response = await fetch("https://api.neynar.com/v2/farcaster/cast", {
     body: JSON.stringify(params),
     headers: {
-      Authorization: clientSecret,
       "Content-Type": "application/json",
+      "x-api-key": clientSecret,
     },
     method: "POST",
   });
