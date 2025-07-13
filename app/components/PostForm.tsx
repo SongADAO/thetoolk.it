@@ -51,7 +51,6 @@ function PostForm() {
     // storeFile: pinataStoreFile,
     storeVideo: pinataStoreVideo,
   } = use(PinataContext);
-
   const {
     storeJson: amazonS3StoreJson,
     // storeFile: amazonS3StoreFile,
