@@ -85,13 +85,13 @@ function PostForm() {
     // const jsonResult = await pinataStoreJson({ test: "test" });
     // console.log(jsonResult);
 
-    // if (selectedFile) {
-    //   const pinataVideoResult = await pinataStoreVideo(selectedFile);
-    //   console.log(pinataVideoResult);
+    if (selectedFile) {
+      const pinataVideoResult = await pinataStoreVideo(selectedFile);
+      console.log(pinataVideoResult);
 
-    //   const s3VideoResult = await amazonS3StoreVideo(selectedFile);
-    //   console.log(s3VideoResult);
-    // }
+      const s3VideoResult = await amazonS3StoreVideo(selectedFile);
+      console.log(s3VideoResult);
+    }
 
     await blueskyPost({
       text: newFormState.text,
