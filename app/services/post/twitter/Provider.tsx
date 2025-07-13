@@ -201,11 +201,8 @@ export function TwitterProvider({ children }: Readonly<Props>) {
   const [postStatus, setPostStatus] = useState<string>("");
 
   async function post({
-    title,
     text,
-    userId,
     video,
-    videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
@@ -218,10 +215,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       setPostProgress,
       setPostStatus,
       text,
-      title,
-      userId,
       video,
-      videoUrl,
     });
   }
 
