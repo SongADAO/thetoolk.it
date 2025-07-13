@@ -3,28 +3,28 @@ interface UploadVideoProps {
   text: string;
   title: string;
   userId: string;
-  video: File;
+  videoUrl: string;
 }
+
 async function uploadVideo({
   accessToken,
   text,
   title,
   userId,
-  video,
+  videoUrl,
 }: Readonly<UploadVideoProps>) {
-  // Create FormData for direct upload
-  const formData = new FormData();
-  formData.append("source", video);
-  formData.append("title", title || video.name);
-  formData.append("description", text);
-  formData.append("privacy", JSON.stringify({ value: "EVERYONE" }));
-
   const response = await fetch(
     `https://graph-video.facebook.com/v23.0/${userId}/videos`,
     {
-      body: formData,
+      body: new URLSearchParams({
+        access_token: accessToken,
+        description: text,
+        file_url: videoUrl,
+        privacy: JSON.stringify({ value: "EVERYONE" }),
+        title,
+      }),
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       method: "POST",
     },
@@ -42,7 +42,7 @@ async function uploadVideo({
       errorMessage.includes("format")
     ) {
       throw new Error(
-        `Video format issue: ${errorMessage}. Make sure your video is in a supported format.`,
+        `Video format issue: ${errorMessage}. Make sure your video URL is accessible and in a supported format.`,
       );
     }
 
@@ -77,9 +77,9 @@ interface CreatePostProps {
   title: string;
   text: string;
   userId: string;
-  video: File | null;
   videoUrl: string;
 }
+
 async function createPost({
   accessToken,
   setIsPosting,
@@ -89,7 +89,7 @@ async function createPost({
   text,
   title,
   userId,
-  video,
+  videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 
@@ -99,9 +99,9 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    // Upload video directly to Facebook
+    // Upload video directly to Facebook using URL
     let postId = "";
-    if (video) {
+    if (videoUrl) {
       setPostStatus("Uploading video to Facebook...");
 
       // Simulate progress updates during upload
@@ -116,7 +116,7 @@ async function createPost({
         text,
         title,
         userId,
-        video,
+        videoUrl,
       });
     } else {
       // TODO: Text only post.
