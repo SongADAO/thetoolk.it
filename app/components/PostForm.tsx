@@ -12,6 +12,7 @@ import { ThreadsContext } from "@/app/services/post/threads/Context";
 import { TiktokContext } from "@/app/services/post/tiktok/Context";
 import { TwitterContext } from "@/app/services/post/twitter/Context";
 import { YoutubeContext } from "@/app/services/post/youtube/Context";
+import { PinataContext } from "@/app/services/storage/pinata/Context";
 
 interface FormState {
   text: string;
@@ -44,6 +45,12 @@ function PostForm() {
   const { accounts: twitterAccounts, post: twitterPost } = use(TwitterContext);
   const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
 
+  const {
+    storeJson: pinataStoreJson,
+    storeFile: pinataStoreFile,
+    storeVideo: pinataStoreVideo,
+  } = use(PinataContext);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -68,6 +75,14 @@ function PostForm() {
 
     const videoThumbnailUrl =
       "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
+
+    const jsonResult = await pinataStoreJson({ test: "test" });
+    console.log(jsonResult);
+
+    if (selectedFile) {
+      const videoResult = await pinataStoreVideo(selectedFile);
+      console.log(videoResult);
+    }
 
     await blueskyPost({
       text: newFormState.text,

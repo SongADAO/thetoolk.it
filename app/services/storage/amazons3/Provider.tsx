@@ -14,6 +14,11 @@ import {
 } from "@/app/services/storage/amazons3/auth";
 import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
 import {
+  uploadFile,
+  uploadJson,
+  uploadVideo,
+} from "@/app/services/storage/amazons3/store";
+import {
   type AmazonS3Credentials,
   defaultAmazonS3Credentials,
 } from "@/app/services/storage/types";
@@ -89,6 +94,18 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     return formState;
   }
 
+  async function storeFile(file: File): Promise<string> {
+    return await uploadFile(credentials, file);
+  }
+
+  async function storeJson(data: object): Promise<string> {
+    return await uploadJson(credentials, data);
+  }
+
+  async function storeVideo(video: File): Promise<string> {
+    return await uploadVideo(credentials, video);
+  }
+
   const providerValues = useMemo(
     () => ({
       brandColor,
@@ -102,6 +119,9 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       label,
       saveData,
       setIsEnabled,
+      storeFile,
+      storeJson,
+      storeVideo,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

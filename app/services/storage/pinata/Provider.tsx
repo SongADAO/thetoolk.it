@@ -14,6 +14,11 @@ import {
 } from "@/app/services/storage/pinata/auth";
 import { PinataContext } from "@/app/services/storage/pinata/Context";
 import {
+  uploadFile,
+  uploadJson,
+  uploadVideo,
+} from "@/app/services/storage/pinata/store";
+import {
   defaultPinataCredentials,
   type PinataCredentials,
 } from "@/app/services/storage/types";
@@ -82,6 +87,18 @@ export function PinataProvider({ children }: Readonly<Props>) {
     return formState;
   }
 
+  async function storeFile(file: File): Promise<string> {
+    return await uploadFile(credentials, file);
+  }
+
+  async function storeJson(data: object): Promise<string> {
+    return await uploadJson(credentials, data);
+  }
+
+  async function storeVideo(video: File): Promise<string> {
+    return await uploadVideo(credentials, video);
+  }
+
   const providerValues = useMemo(
     () => ({
       brandColor,
@@ -95,6 +112,9 @@ export function PinataProvider({ children }: Readonly<Props>) {
       label,
       saveData,
       setIsEnabled,
+      storeFile,
+      storeJson,
+      storeVideo,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

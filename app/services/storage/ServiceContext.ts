@@ -17,9 +17,12 @@ interface ServiceContextType {
   label: string;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
+  storeFile: (file: File) => Promise<string>;
+  storeJson: (data: object) => Promise<string>;
+  storeVideo: (video: File) => Promise<string>;
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 const serviceContextDefault = {
   brandColor: "",
   credentialsId: "",
@@ -32,7 +35,10 @@ const serviceContextDefault = {
   label: "",
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
+  storeFile: async (file: File) => "",
+  storeJson: async (data: object) => "",
+  storeVideo: async (video: File) => "",
 };
-/* eslint-enable @typescript-eslint/no-unused-vars */
+/* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 
 export { serviceContextDefault, type ServiceContextType };
