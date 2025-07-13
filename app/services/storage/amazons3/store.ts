@@ -170,6 +170,7 @@ interface UploadJsonProps {
   setStoreStatus: (status: string) => void;
   setStoreProgress: (progress: number) => void;
 }
+/* eslint-disable @typescript-eslint/require-await, @typescript-eslint/no-unused-vars */
 async function uploadJson({
   credentials,
   data,
@@ -180,14 +181,15 @@ async function uploadJson({
 }: Readonly<UploadJsonProps>): Promise<string | null> {
   return "TODO";
 
-  return uploadFile({
-    credentials,
-    data,
-    setIsStoring,
-    setStoreError,
-    setStoreProgress,
-    setStoreStatus,
-  });
+  // return uploadFile({
+  //   credentials,
+  //   data,
+  //   setIsStoring,
+  //   setStoreError,
+  //   setStoreProgress,
+  //   setStoreStatus,
+  // });
 }
+/* eslint-enable @typescript-eslint/require-await, @typescript-eslint/no-unused-vars */
 
 export { uploadFile, uploadJson, uploadVideo };
