@@ -57,8 +57,8 @@ async function uploadFileInChunks({
   uploadUrl,
   video,
 }: Readonly<UploadFileInChunks>): Promise<string> {
-  // Chunk size for resumable uploads (256KB recommended)
-  const CHUNK_SIZE = 256 * 1024;
+  // 4MB chunks
+  const CHUNK_SIZE = 1024 * 1024 * 4;
 
   let uploadedBytes = 0;
   const totalBytes = video.size;
