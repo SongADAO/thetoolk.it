@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 
 import type { AmazonS3Credentials } from "@/app/services/storage/types";
 
@@ -29,7 +33,7 @@ async function uploadFile({
     // Generate unique filename
     const timestamp = Date.now();
     const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/gu, "_");
-    const filename = `instagram-videos/${timestamp}-${sanitizedFileName}`;
+    const filename = `thetoolkit/${timestamp}-${sanitizedFileName}`;
 
     // Convert file to ArrayBuffer for browser compatibility
     setStoreStatus("Buffering file...");
