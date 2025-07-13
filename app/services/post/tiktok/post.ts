@@ -57,8 +57,6 @@ interface CreatePostProps {
   setPostStatus: (status: string) => void;
   title: string;
   text: string;
-  userId: string;
-  video: File | null;
   videoUrl: string;
 }
 async function createPost({
