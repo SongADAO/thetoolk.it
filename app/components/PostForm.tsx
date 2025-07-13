@@ -12,6 +12,7 @@ import { ThreadsContext } from "@/app/services/post/threads/Context";
 import { TiktokContext } from "@/app/services/post/tiktok/Context";
 import { TwitterContext } from "@/app/services/post/twitter/Context";
 import { YoutubeContext } from "@/app/services/post/youtube/Context";
+import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
 import { PinataContext } from "@/app/services/storage/pinata/Context";
 
 interface FormState {
@@ -47,9 +48,15 @@ function PostForm() {
 
   const {
     storeJson: pinataStoreJson,
-    storeFile: pinataStoreFile,
+    // storeFile: pinataStoreFile,
     storeVideo: pinataStoreVideo,
   } = use(PinataContext);
+
+  const {
+    storeJson: amazonS3StoreJson,
+    // storeFile: amazonS3StoreFile,
+    storeVideo: amazonS3StoreVideo,
+  } = use(AmazonS3Context);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -76,12 +83,15 @@ function PostForm() {
     const videoThumbnailUrl =
       "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
-    const jsonResult = await pinataStoreJson({ test: "test" });
-    console.log(jsonResult);
+    // const jsonResult = await pinataStoreJson({ test: "test" });
+    // console.log(jsonResult);
 
     if (selectedFile) {
-      const videoResult = await pinataStoreVideo(selectedFile);
-      console.log(videoResult);
+      // const pinataVideoResult = await pinataStoreVideo(selectedFile);
+      // console.log(pinataVideoResult);
+
+      const s3VideoResult = await amazonS3StoreVideo(selectedFile);
+      console.log(s3VideoResult);
     }
 
     await blueskyPost({

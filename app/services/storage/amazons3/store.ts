@@ -66,18 +66,15 @@ async function uploadFile({
         region: credentials.region,
       });
 
-      // Upload parameters - use Uint8Array instead of File object
-      const uploadParams = {
+      // Create the upload command
+      const command = new PutObjectCommand({
         Body: uint8Array,
         Bucket: credentials.bucket,
         ContentLength: file.size,
         ContentType: file.type,
         Key: filename,
         // Note: ACL removed - use bucket policy for public access instead
-      };
-
-      // Create the upload command
-      const command = new PutObjectCommand(uploadParams);
+      });
 
       // Execute the upload
       response = await s3Client.send(command);
