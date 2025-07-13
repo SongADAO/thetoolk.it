@@ -155,7 +155,6 @@ interface CreatePostProps {
   setPostStatus: (status: string) => void;
   text: string;
   title: string;
-  username: string;
   video: File | null;
 }
 async function createPost({
@@ -174,12 +173,8 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("Starting upload...");
-
     // Step 1: Upload video blob (0-70% progress)
+    setPostStatus("Starting upload...");
     setPostProgress(10);
 
     // Prepare metadata

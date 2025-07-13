@@ -19,6 +19,7 @@
     "node": "^22.0.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.844.0",
     "@bprogress/next": "^3.2.12",
     "@neynar/nodejs-sdk": "^3.21.0",
     "@neynar/react": "^1.2.5",

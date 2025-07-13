@@ -14,12 +14,16 @@ interface ServiceContextType {
   initial: ServiceFormState;
   isComplete: boolean;
   isEnabled: boolean;
+  isStoring: boolean;
   label: string;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
-  storeFile: (file: File) => Promise<string>;
-  storeJson: (data: object) => Promise<string>;
-  storeVideo: (video: File) => Promise<string>;
+  storeError: string;
+  storeFile: (file: File) => Promise<string | null>;
+  storeJson: (data: object) => Promise<string | null>;
+  storeProgress: number;
+  storeStatus: string;
+  storeVideo: (video: File) => Promise<string | null>;
 }
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
@@ -32,12 +36,16 @@ const serviceContextDefault = {
   initial: {},
   isComplete: false,
   isEnabled: false,
+  isStoring: false,
   label: "",
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
-  storeFile: async (file: File) => "",
-  storeJson: async (data: object) => "",
-  storeVideo: async (video: File) => "",
+  storeError: "",
+  storeFile: async (file: File) => null,
+  storeJson: async (data: object) => null,
+  storeProgress: 0,
+  storeStatus: "",
+  storeVideo: async (video: File) => null,
 };
 /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 

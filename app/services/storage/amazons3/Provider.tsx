@@ -94,16 +94,42 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     return formState;
   }
 
-  async function storeFile(file: File): Promise<string> {
-    return await uploadFile(credentials, file);
+  const [isStoring, setIsStoring] = useState<boolean>(false);
+  const [storeError, setStoreError] = useState<string>("");
+  const [storeProgress, setStoreProgress] = useState<number>(0);
+  const [storeStatus, setStoreStatus] = useState<string>("");
+
+  async function storeFile(file: File): Promise<string | null> {
+    return await uploadFile({
+      credentials,
+      file,
+      setIsStoring,
+      setStoreError,
+      setStoreProgress,
+      setStoreStatus,
+    });
   }
 
-  async function storeJson(data: object): Promise<string> {
-    return await uploadJson(credentials, data);
+  async function storeJson(data: object): Promise<string | null> {
+    return await uploadJson({
+      credentials,
+      data,
+      setIsStoring,
+      setStoreError,
+      setStoreProgress,
+      setStoreStatus,
+    });
   }
 
-  async function storeVideo(video: File): Promise<string> {
-    return await uploadVideo(credentials, video);
+  async function storeVideo(file: File): Promise<string | null> {
+    return await uploadVideo({
+      credentials,
+      file,
+      setIsStoring,
+      setStoreError,
+      setStoreProgress,
+      setStoreStatus,
+    });
   }
 
   const providerValues = useMemo(
@@ -116,24 +142,32 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       initial,
       isComplete,
       isEnabled,
+      isStoring,
       label,
       saveData,
       setIsEnabled,
+      storeError,
       storeFile,
       storeJson,
+      storeProgress,
+      storeStatus,
       storeVideo,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       brandColor,
-      credentialsId,
       credentials,
+      credentialsId,
       error,
       icon,
       initial,
       isComplete,
       isEnabled,
+      isStoring,
       label,
+      storeError,
+      storeProgress,
+      storeStatus,
     ],
   );
 
