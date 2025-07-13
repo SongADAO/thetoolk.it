@@ -75,7 +75,7 @@ function PostForm() {
     console.log(selectedFile);
 
     const videoUrl =
-      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/threads-videos/1750885143834-insta.mp4";
+      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
 
     const videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
 
