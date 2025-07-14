@@ -1,4 +1,5 @@
 "use client";
+
 import { NeynarAuthButton } from "@neynar/react";
 import { Checkbox, Collapsible } from "radix-ui";
 import { ReactNode, useEffect, useState } from "react";
