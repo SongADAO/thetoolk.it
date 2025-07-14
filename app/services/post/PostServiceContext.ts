@@ -42,7 +42,7 @@ const postServiceContextDefault = {
   fields: [],
   handleAuthRedirect: async () => {},
   hasAuthorizationStep: false,
-  icon: undefined,
+  icon: null,
   initial: {},
   isAuthorized: false,
   isComplete: false,

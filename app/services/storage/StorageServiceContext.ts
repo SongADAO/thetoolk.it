@@ -42,7 +42,7 @@ const storageServiceContextDefault = {
   error: "",
   fields: [],
   hasAuthorizationStep: false,
-  icon: undefined,
+  icon: null,
   initial: {},
   isAuthorized: false,
   isComplete: false,
