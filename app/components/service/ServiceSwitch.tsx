@@ -1,5 +1,5 @@
 "use client";
-
+import { NeynarAuthButton } from "@neynar/react";
 import { Checkbox, Collapsible } from "radix-ui";
 import { ReactNode, useEffect, useState } from "react";
 import { FaCheck, FaGear } from "react-icons/fa6";
@@ -114,21 +114,35 @@ function ServiceSwitch({
               ) : null}
             </div>
           ) : null}
+
           <div className="flex-1">
-            <button
-              className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor}`}
-              data-authorized={isAuthorized}
-              onClick={authorize}
-              type="button"
-            >
-              <div>
-                <div className="flex items-center justify-center gap-2">
-                  {isAuthorized && accounts.length > 0
-                    ? "Reauthorize"
-                    : "Authorize"}
+            {label === "Farcaster" ? (
+              <NeynarAuthButton
+                label="Authorize"
+                style={{
+                  borderRadius: "0.25rem",
+                  boxShadow: "none",
+                  fontWeight: "400",
+                  padding: "0.75rem 0.25rem",
+                  width: "100%",
+                }}
+              />
+            ) : (
+              <button
+                className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor}`}
+                data-authorized={isAuthorized}
+                onClick={authorize}
+                type="button"
+              >
+                <div>
+                  <div className="flex items-center justify-center gap-2">
+                    {isAuthorized && accounts.length > 0
+                      ? "Reauthorize"
+                      : "Authorize"}
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            )}
           </div>
         </div>
       ) : null}
