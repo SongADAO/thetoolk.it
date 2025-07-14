@@ -23,7 +23,7 @@ export function PostSettings() {
   ];
 
   return (
-    <div className="">
+    <div>
       <div className="flex flex-col gap-2">
         {contexts.map((context) => (
           <div className="flex flex-col gap-1" key={context.id}>
