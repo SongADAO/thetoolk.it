@@ -89,7 +89,7 @@ function ServiceSwitch({
         </Collapsible.Trigger>
       </div>
 
-      <Collapsible.Content className="data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown overflow-hidden">
+      <Collapsible.Content className="overflow-hidden">
         <div className="m-2 mt-0 rounded bg-[#fff2] p-2">{form}</div>
       </Collapsible.Content>
 

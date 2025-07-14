@@ -198,10 +198,11 @@ function PostForm() {
           name="video"
           // serverInvalid={hasError('video)}
         >
-          <Form.Label>Title</Form.Label>
+          <Form.Label>Video</Form.Label>
           <Form.Control
+            accept="video/mp4"
             autoComplete="off"
-            className="rounded text-black"
+            className="rounded border-1 bg-gray-500 p-2 text-white"
             disabled={isPending}
             onChange={handleFileChange}
             placeholder="Title"
@@ -239,9 +240,9 @@ function PostForm() {
           />
           <div>
             <Form.Message match="valueMissing">Missing title.</Form.Message>
-            {/* {getErrors('title').map((error) => (
-            <Form.Message key={error}>{error}</Form.Message>
-          ))} */}
+            {/* {getErrors("title").map((error) => (
+              <Form.Message key={error}>{error}</Form.Message>
+            ))} */}
           </div>
         </Form.Field>
 
@@ -266,9 +267,9 @@ function PostForm() {
           </Form.Control>
           <div>
             <Form.Message match="valueMissing">Missing message.</Form.Message>
-            {/* {getErrors('text').map((error) => (
-            <Form.Message key={error}>{error}</Form.Message>
-          ))} */}
+            {/* {getErrors("text").map((error) => (
+              <Form.Message key={error}>{error}</Form.Message>
+            ))} */}
           </div>
         </Form.Field>
 

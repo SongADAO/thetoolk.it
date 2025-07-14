@@ -10,13 +10,23 @@ export default function Home() {
     <PostProviders>
       <StorageProviders>
         <div>
-          <header>TheToolk.it</header>
+          <header>
+            <div className="flex items-center justify-between bg-gray-200 p-2">
+              TheToolk.it
+              <SettingsMenu />
+            </div>
+          </header>
           <main>
-            <SettingsMenu />
-            <PostForm />
-            <PostProgress />
+            <div className="p-2">
+              <PostForm />
+              <PostProgress />
+            </div>
           </main>
-          <footer>TheToolk.it</footer>
+          <footer>
+            <div className="flex items-center justify-center gap-2 bg-gray-200 p-2">
+              <span>TheToolk.it</span> <span>&copy;2025</span>
+            </div>
+          </footer>
         </div>
 
         <PostRedirectHandlers />
