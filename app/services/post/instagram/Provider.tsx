@@ -44,6 +44,8 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
   const icon = <FaInstagram className="size-6" />;
 
+  const hasAuthorizationStep = true;
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
@@ -265,6 +267,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthorizationStep,
       icon,
       initial,
       isAuthorized,
@@ -293,6 +296,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isPosting,
+      hasAuthorizationStep,
       label,
       postError,
       postProgress,

@@ -43,6 +43,8 @@ export function TwitterProvider({ children }: Readonly<Props>) {
 
   const icon = <FaTwitter className="size-6" />;
 
+  const hasAuthorizationStep = true;
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
@@ -262,6 +264,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthorizationStep,
       icon,
       initial,
       isAuthorized,
@@ -290,6 +293,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isPosting,
+      hasAuthorizationStep,
       label,
       postError,
       postProgress,

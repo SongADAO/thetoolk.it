@@ -44,6 +44,8 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
   const icon = <FaFacebook className="size-6" />;
 
+  const hasAuthorizationStep = true;
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
@@ -267,6 +269,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthorizationStep,
       icon,
       initial,
       isAuthorized,
@@ -295,6 +298,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isPosting,
+      hasAuthorizationStep,
       label,
       postError,
       postProgress,

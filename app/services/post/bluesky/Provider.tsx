@@ -40,6 +40,8 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const icon = <FaBluesky className="size-6" />;
 
+  const hasAuthorizationStep = true;
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
@@ -253,6 +255,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthorizationStep,
       icon,
       initial,
       isAuthorized,
@@ -281,6 +284,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isPosting,
+      hasAuthorizationStep,
       label,
       postError,
       postProgress,

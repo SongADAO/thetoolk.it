@@ -43,6 +43,8 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
 
   const icon = <FaThreads className="size-6" />;
 
+  const hasAuthorizationStep = true;
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
@@ -261,6 +263,7 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthorizationStep,
       icon,
       initial,
       isAuthorized,
@@ -289,6 +292,7 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isPosting,
+      hasAuthorizationStep,
       label,
       postError,
       postProgress,

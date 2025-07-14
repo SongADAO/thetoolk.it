@@ -38,6 +38,8 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   const icon = <SiFarcaster className="size-6" />;
 
+  const hasAuthorizationStep = true;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
@@ -151,6 +153,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthorizationStep,
       icon,
       initial,
       isAuthorized,
@@ -179,6 +182,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isPosting,
+      hasAuthorizationStep,
       label,
       postError,
       postProgress,
