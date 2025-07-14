@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 interface Props {
   brandColor: string;
   icon: ReactNode;
+  isEnabled: boolean;
   isPosting: boolean;
   label: string;
   postError: string;
@@ -13,12 +14,17 @@ interface Props {
 function ServiceProgress({
   brandColor,
   icon,
+  isEnabled,
   isPosting,
   label,
   postError,
   postProgress,
   postStatus,
 }: Readonly<Props>) {
+  if (!isEnabled) {
+    return null;
+  }
+
   // if (!isPosting && !postStatus && !postError) {
   //   return null;
   // }

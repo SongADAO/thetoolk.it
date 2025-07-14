@@ -18,6 +18,7 @@ export function ServiceProgressWithContext<T extends ServiceProgressProps>({
   const props: ServiceProgressProps = {
     brandColor: contextValue.brandColor,
     icon: contextValue.icon,
+    isEnabled: contextValue.isEnabled,
     isPosting: contextValue.isPosting,
     label: contextValue.label,
     postError: contextValue.postError,
