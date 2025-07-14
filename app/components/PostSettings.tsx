@@ -23,8 +23,8 @@ export function PostSettings() {
   ];
 
   return (
-    <div className="bg-gray-100 p-8">
-      <div className="flex flex-col gap-8">
+    <div className="">
+      <div className="flex flex-col gap-2">
         {contexts.map((context) => (
           <div className="flex flex-col gap-1" key={context.id}>
             <PostServiceSettings context={context.context} />

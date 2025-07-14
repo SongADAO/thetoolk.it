@@ -41,15 +41,17 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
     <Form.Root action={formAction}>
       {fields.map((field) => (
         <Form.Field
-          className="mb-4 flex flex-col"
+          className="mb-2 flex flex-col"
           key={field.name}
           name={field.name}
           // serverInvalid={hasError(field.name)}
         >
-          <Form.Label>{field.label}</Form.Label>
+          <Form.Label className="block w-auto rounded-t bg-[#fff] px-2 py-1 text-sm text-black">
+            {field.label}
+          </Form.Label>
           <Form.Control
             autoComplete="off"
-            className="rounded text-black"
+            className="rounded-b border-0 p-2 text-black"
             defaultValue={state[field.name]}
             disabled={isPending}
             placeholder={field.placeholder}
@@ -69,7 +71,7 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
       ))}
 
       <Form.Submit
-        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-gray-900"
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-[#000] px-2 py-3 text-white hover:bg-gray-900"
         disabled={isPending}
       >
         {isPending ? <ButtonSpinner /> : null}
