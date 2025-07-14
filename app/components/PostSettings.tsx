@@ -12,14 +12,14 @@ import { YoutubeContext } from "@/app/services/post/youtube/Context";
 
 export function PostSettings() {
   const contexts = [
-    { context: YoutubeContext, id: "YoutubeContext" },
-    { context: InstagramContext, id: "InstagramContext" },
-    { context: FacebookContext, id: "FacebookContext" },
-    { context: ThreadsContext, id: "ThreadsContext" },
     { context: BlueskyContext, id: "BlueskyContext" },
+    { context: FacebookContext, id: "FacebookContext" },
+    { context: InstagramContext, id: "InstagramContext" },
+    { context: NeynarContext, id: "NeynarContext" },
+    { context: ThreadsContext, id: "ThreadsContext" },
     { context: TiktokContext, id: "TiktokContext" },
     { context: TwitterContext, id: "TwitterContext" },
-    { context: NeynarContext, id: "NeynarContext" },
+    { context: YoutubeContext, id: "YoutubeContext" },
   ];
 
   return (
