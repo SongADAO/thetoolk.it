@@ -19,10 +19,14 @@ export function ServiceSwitchWithContext<T extends ServiceSwitchContextProps>({
   const contextValue = use(context);
 
   const props: ServiceSwitchProps = {
+    accounts: contextValue.accounts,
+    authorizationExpiresAt: contextValue.authorizationExpiresAt,
+    authorize: contextValue.authorize,
     brandColor: contextValue.brandColor,
     credentialsId: contextValue.credentialsId,
     form,
     icon: contextValue.icon,
+    isAuthorized: contextValue.isAuthorized,
     isComplete: contextValue.isComplete,
     isEnabled: contextValue.isEnabled,
     label: contextValue.label,

@@ -35,26 +35,41 @@ function ServiceAuthorize({
   return (
     <div>
       <button
-        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-[#080] px-2 py-2 text-white data-[authorized]:bg-gray-500"
+        className="w-full cursor-pointer gap-2 rounded bg-[#080] px-2 py-2 text-white hover:bg-black data-[authorized]:bg-gray-500 data-[authorized]:hover:bg-black"
         data-authorized={isAuthorized}
         onClick={authorize}
         type="button"
       >
-        {isAuthorized ? "Reauthorize" : "Authorize"} {icon} {label}
+        <div>
+          <div className="flex items-center justify-center gap-2">
+            {isAuthorized ? "Reauthorize" : "Authorize"} {icon} {label}
+          </div>
+          {isAuthorized && authorizationExpiresAt ? (
+            <>
+              {accounts.map((account) => (
+                <div className="text-center text-sm" key={account.id}>
+                  {account.username}{" "}
+                  <span className="text-sm">
+                    - expires{" "}
+                    {new Date(authorizationExpiresAt).toLocaleString("en", {
+                      day: "numeric",
+                      month: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+              ))}
+            </>
+          ) : null}
+        </div>
       </button>
 
-      {isAuthorized && authorizationExpiresAt ? (
+      {/* {isAuthorized && authorizationExpiresAt ? (
         <div className="text-center text-sm">
           Authorization Expires:{" "}
           {new Date(authorizationExpiresAt).toLocaleString()}
         </div>
-      ) : null}
-
-      {accounts.map((account) => (
-        <div className="text-center text-sm" key={account.id}>
-          {account.id} - {account.username}
-        </div>
-      ))}
+      ) : null} */}
     </div>
   );
 }
