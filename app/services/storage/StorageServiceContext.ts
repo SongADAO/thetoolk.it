@@ -17,6 +17,7 @@ interface StorageServiceContextType {
   hasAuthorizationStep: boolean;
   icon: ReactNode | undefined;
   initial: ServiceFormState;
+  isAuthorized: boolean;
   isComplete: boolean;
   isEnabled: boolean;
   isStoring: boolean;
@@ -43,6 +44,7 @@ const storageServiceContextDefault = {
   hasAuthorizationStep: false,
   icon: undefined,
   initial: {},
+  isAuthorized: false,
   isComplete: false,
   isEnabled: false,
   isStoring: false,
