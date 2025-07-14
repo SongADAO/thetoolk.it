@@ -6,7 +6,7 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import type { ServiceAccount } from "@/app/services/storage/types";
 
-interface ServiceContextType {
+interface StorageServiceContextType {
   accounts: ServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
@@ -32,7 +32,7 @@ interface ServiceContextType {
 }
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
-const serviceContextDefault = {
+const storageServiceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
   authorize: () => {},
@@ -58,4 +58,4 @@ const serviceContextDefault = {
 };
 /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 
-export { serviceContextDefault, type ServiceContextType };
+export { storageServiceContextDefault, type StorageServiceContextType };

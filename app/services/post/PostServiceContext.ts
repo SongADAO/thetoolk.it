@@ -6,7 +6,7 @@ import type {
 } from "@/app/components/service/ServiceForm";
 import type { PostProps, ServiceAccount } from "@/app/services/post/types";
 
-interface ServiceContextType {
+interface PostServiceContextType {
   accounts: ServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
@@ -32,7 +32,7 @@ interface ServiceContextType {
 }
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
-const serviceContextDefault = {
+const postServiceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
   authorize: () => {},
@@ -58,4 +58,4 @@ const serviceContextDefault = {
 };
 /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 
-export { serviceContextDefault, type ServiceContextType };
+export { postServiceContextDefault, type PostServiceContextType };

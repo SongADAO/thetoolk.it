@@ -1,12 +1,12 @@
 import { createContext } from "react";
 
 import {
-  serviceContextDefault,
-  type ServiceContextType,
-} from "@/app/services/post/ServiceContext";
+  postServiceContextDefault,
+  type PostServiceContextType,
+} from "@/app/services/post/PostServiceContext";
 
-const FacebookContext = createContext<ServiceContextType>(
-  serviceContextDefault,
+const FacebookContext = createContext<PostServiceContextType>(
+  postServiceContextDefault,
 );
 
 export { FacebookContext };

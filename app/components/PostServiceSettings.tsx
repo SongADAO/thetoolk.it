@@ -2,10 +2,10 @@ import { Context } from "react";
 
 import { ServiceFormWithContext } from "@/app/components/service/ServiceFormWithContext";
 import { ServiceSwitchWithContext } from "@/app/components/service/ServiceSwitchWithContext";
-import type { ServiceContextType } from "@/app/services/post/ServiceContext";
+import type { PostServiceContextType } from "@/app/services/post/PostServiceContext";
 
 interface Props {
-  readonly context: Context<ServiceContextType>;
+  readonly context: Context<PostServiceContextType>;
 }
 
 export function PostServiceSettings({ context }: Props) {

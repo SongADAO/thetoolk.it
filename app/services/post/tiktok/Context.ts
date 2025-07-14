@@ -1,10 +1,12 @@
 import { createContext } from "react";
 
 import {
-  serviceContextDefault,
-  type ServiceContextType,
-} from "@/app/services/post/ServiceContext";
+  postServiceContextDefault,
+  type PostServiceContextType,
+} from "@/app/services/post/PostServiceContext";
 
-const TiktokContext = createContext<ServiceContextType>(serviceContextDefault);
+const TiktokContext = createContext<PostServiceContextType>(
+  postServiceContextDefault,
+);
 
 export { TiktokContext };

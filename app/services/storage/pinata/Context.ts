@@ -1,10 +1,12 @@
 import { createContext } from "react";
 
 import {
-  serviceContextDefault,
-  type ServiceContextType,
-} from "@/app/services/storage/ServiceContext";
+  storageServiceContextDefault,
+  type StorageServiceContextType,
+} from "@/app/services/storage/StorageServiceContext";
 
-const PinataContext = createContext<ServiceContextType>(serviceContextDefault);
+const PinataContext = createContext<StorageServiceContextType>(
+  storageServiceContextDefault,
+);
 
 export { PinataContext };

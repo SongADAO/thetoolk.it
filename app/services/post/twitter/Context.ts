@@ -1,10 +1,12 @@
 import { createContext } from "react";
 
 import {
-  serviceContextDefault,
-  type ServiceContextType,
-} from "@/app/services/post/ServiceContext";
+  postServiceContextDefault,
+  type PostServiceContextType,
+} from "@/app/services/post/PostServiceContext";
 
-const TwitterContext = createContext<ServiceContextType>(serviceContextDefault);
+const TwitterContext = createContext<PostServiceContextType>(
+  postServiceContextDefault,
+);
 
 export { TwitterContext };

@@ -1,10 +1,12 @@
 import { createContext } from "react";
 
 import {
-  serviceContextDefault,
-  type ServiceContextType,
-} from "@/app/services/post/ServiceContext";
+  postServiceContextDefault,
+  type PostServiceContextType,
+} from "@/app/services/post/PostServiceContext";
 
-const BlueskyContext = createContext<ServiceContextType>(serviceContextDefault);
+const BlueskyContext = createContext<PostServiceContextType>(
+  postServiceContextDefault,
+);
 
 export { BlueskyContext };

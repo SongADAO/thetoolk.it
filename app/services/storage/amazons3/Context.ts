@@ -1,12 +1,12 @@
 import { createContext } from "react";
 
 import {
-  serviceContextDefault,
-  type ServiceContextType,
-} from "@/app/services/storage/ServiceContext";
+  storageServiceContextDefault,
+  type StorageServiceContextType,
+} from "@/app/services/storage/StorageServiceContext";
 
-const AmazonS3Context = createContext<ServiceContextType>(
-  serviceContextDefault,
+const AmazonS3Context = createContext<StorageServiceContextType>(
+  storageServiceContextDefault,
 );
 
 export { AmazonS3Context };

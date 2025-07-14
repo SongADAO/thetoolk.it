@@ -2,10 +2,10 @@ import { Context } from "react";
 
 import { ServiceFormWithContext } from "@/app/components/service/ServiceFormWithContext";
 import { ServiceSwitchWithContext } from "@/app/components/service/ServiceSwitchWithContext";
-import type { ServiceContextType } from "@/app/services/storage/ServiceContext";
+import type { StorageServiceContextType } from "@/app/services/storage/StorageServiceContext";
 
 interface Props {
-  readonly context: Context<ServiceContextType>;
+  readonly context: Context<StorageServiceContextType>;
 }
 
 export function StorageServiceSettings({ context }: Props) {
