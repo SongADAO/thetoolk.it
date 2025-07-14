@@ -15,7 +15,7 @@ interface StorageServiceContextType {
   error: string;
   fields: ServiceFormField[];
   hasAuthorizationStep: boolean;
-  icon: ReactNode | undefined;
+  icon: ReactNode;
   initial: ServiceFormState;
   isAuthorized: boolean;
   isComplete: boolean;

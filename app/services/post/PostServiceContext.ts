@@ -16,7 +16,7 @@ interface PostServiceContextType {
   fields: ServiceFormField[];
   handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
   hasAuthorizationStep: boolean;
-  icon: ReactNode | undefined;
+  icon: ReactNode;
   initial: ServiceFormState;
   isAuthorized: boolean;
   isComplete: boolean;
