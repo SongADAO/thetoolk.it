@@ -1,9 +1,8 @@
 "use client";
 
-import { CheckIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import { Checkbox, Collapsible } from "radix-ui";
 import { ReactNode, useEffect, useState } from "react";
-import { FaGear } from "react-icons/fa6";
+import { FaCheck, FaGear } from "react-icons/fa6";
 
 import type { ServiceAccount } from "@/app/services/post/types";
 
@@ -70,7 +69,7 @@ function ServiceSwitch({
           <Checkbox.Indicator
             className={`group-data-[enabled=yes]:text-brand-${brandColor} text-black`}
           >
-            <CheckIcon className="size-8" />
+            <FaCheck className="size-6" />
           </Checkbox.Indicator>
         </Checkbox.Root>
 

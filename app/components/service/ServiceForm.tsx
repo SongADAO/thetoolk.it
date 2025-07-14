@@ -75,7 +75,7 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
         disabled={isPending}
       >
         {isPending ? <ButtonSpinner /> : null}
-        Save
+        Save API Settings
       </Form.Submit>
     </Form.Root>
   );
