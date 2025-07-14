@@ -271,13 +271,9 @@
 }
 
 /* Force Brand Color Styles in CSS Output */
-@source inline("bg-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
-@source inline("data-[enabled=yes]:bg-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
-@source inline("data-[enabled=yes]:text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
-@source inline("data-[enabled=yes]:text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}-inverse");
-@source inline("group-data-[enabled=yes]:bg-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
-@source inline("group-data-[enabled=yes]:text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
-@source inline("group-data-[enabled=yes]:text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}-inverse");
+@source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}bg-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
+@source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
+@source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}-inverse");
 
 /* :root {
   --background: #ffffff;
