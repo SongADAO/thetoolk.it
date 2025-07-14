@@ -30,6 +30,7 @@ export function ServiceSwitchWithContext<T extends ServiceSwitchContextProps>({
     isComplete: contextValue.isComplete,
     isEnabled: contextValue.isEnabled,
     label: contextValue.label,
+    hasAuthorizationStep: contextValue.hasAuthorizationStep,
     setIsEnabled: contextValue.setIsEnabled,
   };
 

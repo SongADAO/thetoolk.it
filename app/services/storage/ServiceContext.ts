@@ -4,12 +4,17 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
+import type { ServiceAccount } from "@/app/services/storage/types";
 
 interface ServiceContextType {
+  accounts: ServiceAccount[];
+  authorizationExpiresAt: string;
+  authorize: () => void;
   brandColor: string;
   credentialsId: string;
   error: string;
   fields: ServiceFormField[];
+  hasAuthorizationStep: boolean;
   icon: ReactNode | undefined;
   initial: ServiceFormState;
   isComplete: boolean;
@@ -28,10 +33,14 @@ interface ServiceContextType {
 
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 const serviceContextDefault = {
+  accounts: [],
+  authorizationExpiresAt: "",
+  authorize: () => {},
   brandColor: "",
   credentialsId: "",
   error: "",
   fields: [],
+  hasAuthorizationStep: false,
   icon: undefined,
   initial: {},
   isComplete: false,

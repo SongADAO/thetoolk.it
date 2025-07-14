@@ -15,6 +15,7 @@ interface ServiceContextType {
   error: string;
   fields: ServiceFormField[];
   handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
+  hasAuthorizationStep: boolean;
   icon: ReactNode | undefined;
   initial: ServiceFormState;
   isAuthorized: boolean;
@@ -40,6 +41,7 @@ const serviceContextDefault = {
   error: "",
   fields: [],
   handleAuthRedirect: async () => {},
+  hasAuthorizationStep: false,
   icon: undefined,
   initial: {},
   isAuthorized: false,

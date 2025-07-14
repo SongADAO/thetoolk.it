@@ -21,6 +21,7 @@ import {
 import {
   type AmazonS3Credentials,
   defaultAmazonS3Credentials,
+  type ServiceAccount,
 } from "@/app/services/storage/types";
 
 interface Props {
@@ -52,6 +53,18 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   const credentialsId = getCredentialsId(credentials);
 
   const isComplete = hasCompleteCredentials(credentials);
+
+  const hasAuthorizationStep = false;
+
+  const isAuthorized = isComplete;
+
+  const authorizationExpiresAt = "0";
+
+  const accounts: ServiceAccount[] = [];
+
+  function authorize() {
+    // No auth needed.
+  }
 
   const fields: ServiceFormField[] = [
     {
@@ -134,12 +147,17 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const providerValues = useMemo(
     () => ({
+      accounts,
+      authorizationExpiresAt,
+      authorize,
       brandColor,
       credentialsId,
       error,
       fields,
+      hasAuthorizationStep,
       icon,
       initial,
+      isAuthorized,
       isComplete,
       isEnabled,
       isStoring,
@@ -155,12 +173,17 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      accounts,
+      authorizationExpiresAt,
+      authorize,
       brandColor,
       credentials,
       credentialsId,
       error,
+      hasAuthorizationStep,
       icon,
       initial,
+      isAuthorized,
       isComplete,
       isEnabled,
       isStoring,

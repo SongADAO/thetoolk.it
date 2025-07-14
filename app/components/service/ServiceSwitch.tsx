@@ -18,6 +18,7 @@ interface Props {
   isComplete: boolean;
   isEnabled: boolean;
   label: string;
+  hasAuthorizationStep: boolean;
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
@@ -33,6 +34,7 @@ function ServiceSwitch({
   isComplete,
   isEnabled,
   label,
+  hasAuthorizationStep,
   setIsEnabled,
 }: Readonly<Props>) {
   const startOpen = !isComplete && isEnabled;
@@ -91,7 +93,7 @@ function ServiceSwitch({
         <div className="m-2 mt-0 rounded bg-[#fff2] p-2">{form}</div>
       </Collapsible.Content>
 
-      {isComplete ? (
+      {hasAuthorizationStep && isComplete ? (
         <div className="flex items-center justify-between gap-2 bg-[#fff2] p-2">
           {isAuthorized && accounts.length > 0 ? (
             <div className="flex-1">
