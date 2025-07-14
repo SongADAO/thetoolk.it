@@ -25,12 +25,12 @@ export function ServiceSwitchWithContext<T extends ServiceSwitchContextProps>({
     brandColor: contextValue.brandColor,
     credentialsId: contextValue.credentialsId,
     form,
+    hasAuthorizationStep: contextValue.hasAuthorizationStep,
     icon: contextValue.icon,
     isAuthorized: contextValue.isAuthorized,
     isComplete: contextValue.isComplete,
     isEnabled: contextValue.isEnabled,
     label: contextValue.label,
-    hasAuthorizationStep: contextValue.hasAuthorizationStep,
     setIsEnabled: contextValue.setIsEnabled,
   };
 
