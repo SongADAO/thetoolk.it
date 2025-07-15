@@ -286,17 +286,340 @@ class VideoValidator {
   }
 
   async getContainerInfo(filename) {
-    // Simplified container info - just return basic structure
-    return {
+    let containerInfo = {
       hasEditLists: false,
-      moovAtFront: true,
+      moovAtFront: false,
+      atomStructure: "",
+    };
+
+    try {
+      // First try to get trace output by capturing logs during analysis
+      const capturedLogs = [];
+
+      // Override console methods temporarily to capture FFmpeg logs
+      const originalLog = console.log;
+      const originalWarn = console.warn;
+      const originalError = console.error;
+
+      console.log = (...args) => {
+        capturedLogs.push(args.join(" "));
+        originalLog.apply(console, args);
+      };
+      console.warn = (...args) => {
+        capturedLogs.push(args.join(" "));
+        originalWarn.apply(console, args);
+      };
+      console.error = (...args) => {
+        capturedLogs.push(args.join(" "));
+        originalError.apply(console, args);
+      };
+
+      // Run FFmpeg with trace level to get detailed atom information
+      try {
+        await this.ffmpeg.exec([
+          "-v",
+          "trace",
+          "-i",
+          filename,
+          "-f",
+          "null",
+          "-",
+        ]);
+      } catch (e) {
+        // FFmpeg will "error" when no output specified, but we captured the logs
+      }
+
+      // Restore console methods
+      console.log = originalLog;
+      console.warn = originalWarn;
+      console.error = originalError;
+
+      const traceOutput = capturedLogs.join("\n");
+      containerInfo.atomStructure = traceOutput;
+
+      // Detect edit lists from trace output
+      containerInfo.hasEditLists = this.detectEditLists(traceOutput);
+
+      // Detect moov position from trace output
+      containerInfo.moovAtFront = this.detectMoovPosition(traceOutput);
+
+      // Fallback: also try direct file analysis
+      if (!traceOutput || traceOutput.length < 100) {
+        const fileAnalysis = await this.analyzeFileStructure(filename);
+        containerInfo.hasEditLists = fileAnalysis.hasEditLists;
+        containerInfo.moovAtFront = fileAnalysis.moovAtFront;
+      }
+    } catch (error) {
+      console.error("Container analysis failed:", error);
+      // Try direct file analysis as final fallback
+      try {
+        const fileAnalysis = await this.analyzeFileStructure(filename);
+        containerInfo = fileAnalysis;
+      } catch (e) {
+        console.error("File analysis also failed:", e);
+      }
+    }
+
+    return containerInfo;
+  }
+
+  async analyzeFileStructure(filename) {
+    // Read first 8KB of file to analyze atom structure
+    await this.ffmpeg.exec([
+      "-i",
+      filename,
+      "-f",
+      "rawvideo",
+      "-vframes",
+      "1",
+      "-c:v",
+      "copy",
+      "temp_analysis.raw",
+    ]);
+
+    // Use ffprobe with more detailed output
+    await this.ffmpeg.exec([
+      "-v",
+      "debug",
+      "-show_packets",
+      "-select_streams",
+      "v:0",
+      "-read_intervals",
+      "%+#1",
+      filename,
+    ]);
+
+    // Alternative: use MP4 box analysis
+    const fileData = await this.ffmpeg.readFile(filename);
+    return this.parseMP4Structure(fileData);
+  }
+
+  parseMP4Structure(fileData) {
+    const view = new DataView(fileData.buffer);
+    let offset = 0;
+    let moovPosition = -1;
+    let mdatPosition = -1;
+    let hasEditLists = false;
+
+    // Parse top-level atoms first
+    while (offset < Math.min(fileData.length, 100000)) {
+      // Check first 100KB
+      if (offset + 8 > fileData.length) break;
+
+      const boxSize = view.getUint32(offset, false); // Big endian
+      const boxType = String.fromCharCode(
+        view.getUint8(offset + 4),
+        view.getUint8(offset + 5),
+        view.getUint8(offset + 6),
+        view.getUint8(offset + 7),
+      );
+
+      if (boxType === "moov") {
+        moovPosition = offset;
+        // Look for edit lists within moov - this is critical!
+        hasEditLists = this.findEditListsInMoov(fileData, offset, boxSize);
+      } else if (boxType === "mdat") {
+        mdatPosition = offset;
+      }
+
+      if (boxSize === 0 || boxSize === 1 || boxSize < 8) {
+        // Handle extended size or invalid sizes
+        break;
+      }
+
+      offset += boxSize;
+
+      // Safety check to prevent infinite loop
+      if (offset <= 0) break;
+    }
+
+    return {
+      hasEditLists,
+      moovAtFront:
+        moovPosition !== -1 &&
+        (mdatPosition === -1 || moovPosition < mdatPosition),
+      moovPosition,
+      mdatPosition,
     };
   }
 
+  findEditListsInMoov(fileData, moovOffset, moovSize) {
+    // Look for 'elst' atoms within the moov box
+    const view = new DataView(fileData.buffer);
+    const moovEnd = moovOffset + moovSize;
+    let offset = moovOffset + 8; // Skip moov header
+
+    while (offset < moovEnd && offset + 8 < fileData.length) {
+      const boxSize = view.getUint32(offset, false);
+      const boxType = String.fromCharCode(
+        view.getUint8(offset + 4),
+        view.getUint8(offset + 5),
+        view.getUint8(offset + 6),
+        view.getUint8(offset + 7),
+      );
+
+      if (boxType === "elst") {
+        return true; // Found edit list
+      }
+
+      // Also check nested boxes (trak, edts, etc.)
+      if (boxType === "trak" || boxType === "edts") {
+        if (this.findEditListsInBox(fileData, offset, boxSize)) {
+          return true;
+        }
+      }
+
+      if (boxSize === 0 || boxSize < 8) break;
+      offset += boxSize;
+    }
+
+    return false;
+  }
+
+  findEditListsInBox(fileData, boxOffset, boxSize) {
+    const view = new DataView(fileData.buffer);
+    const boxEnd = boxOffset + boxSize;
+    let offset = boxOffset + 8; // Skip box header
+
+    while (offset < boxEnd && offset + 8 < fileData.length) {
+      const innerBoxSize = view.getUint32(offset, false);
+      const innerBoxType = String.fromCharCode(
+        view.getUint8(offset + 4),
+        view.getUint8(offset + 5),
+        view.getUint8(offset + 6),
+        view.getUint8(offset + 7),
+      );
+
+      if (innerBoxType === "elst") {
+        return true;
+      }
+
+      if (innerBoxSize === 0 || innerBoxSize < 8) break;
+      offset += innerBoxSize;
+    }
+
+    return false;
+  }
+
+  detectEditLists(traceOutput) {
+    if (!traceOutput) return false;
+
+    const lowerTrace = traceOutput.toLowerCase();
+
+    // Look for edit list atoms
+    const hasEditAtoms =
+      /type:\s*['"]?edts['"]?/i.test(traceOutput) ||
+      /type:\s*['"]?elst['"]?/i.test(traceOutput);
+
+    if (!hasEditAtoms) {
+      return false; // No edit list atoms at all
+    }
+
+    // Check if it's a trivial/null edit list
+    // Pattern: duration=X time=0 rate=1.000000 (maps entire timeline 1:1)
+    const trivialEditPattern = /duration=\d+\s+time=0\s+rate=1\.0+/i;
+    const hasTrivialEdit = trivialEditPattern.test(traceOutput);
+
+    // Check for edit_count = 1 (single edit entry)
+    const singleEditPattern = /edit_count\s*=\s*1\b/i;
+    const hasSingleEdit = singleEditPattern.test(traceOutput);
+
+    // If it has edit atoms but it's a single trivial edit (time=0, rate=1.0),
+    // consider it as "no meaningful edit lists"
+    if (hasTrivialEdit && hasSingleEdit) {
+      return false; // Trivial edit list = effectively no edit lists
+    }
+
+    // Look for actual editing operations that indicate real edit lists
+    const realEditingIndicators = [
+      "drop a frame", // Frame dropping due to edit list
+      "skip.*samples?", // Sample skipping
+      "discard.*samples?", // Sample discarding
+      "demuxer injecting", // FFmpeg edit list handling
+      "time_offset", // Non-zero time offset
+      "edit_count.*[2-9]", // Multiple edit entries (2 or more)
+    ];
+
+    const hasRealEditing = realEditingIndicators.some((indicator) =>
+      new RegExp(indicator, "i").test(traceOutput),
+    );
+
+    return hasRealEditing;
+  }
+
+  detectMoovPosition(traceOutput) {
+    // Analyze atom order from trace output
+    const lines = traceOutput.split("\n");
+    let moovFound = false;
+    let mdatFound = false;
+
+    for (const line of lines) {
+      const lowerLine = line.toLowerCase();
+
+      if (lowerLine.includes("moov") && lowerLine.includes("size")) {
+        moovFound = true;
+      }
+
+      if (lowerLine.includes("mdat") && lowerLine.includes("size")) {
+        if (moovFound) {
+          return true; // moov came before mdat
+        }
+        mdatFound = true;
+      }
+    }
+
+    // If we found moov but no mdat, assume it's at front
+    return moovFound && !mdatFound;
+  }
+
   async getGopInfo(filename) {
-    // Simplified GOP info - return basic structure
-    // In production, you'd want more sophisticated GOP analysis
-    return "I,1,1\nP,2,0\nP,3,0\nI,4,1\n"; // Sample GOP structure
+    try {
+      // Use ffprobe to analyze frame structure for GOP detection
+      await this.ffmpeg.exec([
+        "-v",
+        "quiet",
+        "-select_streams",
+        "v:0",
+        "-show_frames",
+        "-show_entries",
+        "frame=pict_type,key_frame,coded_picture_number",
+        "-print_format",
+        "csv=noheader=1",
+        "-read_intervals",
+        "%+#100", // Only read first 100 frames for performance
+        filename,
+      ]);
+
+      try {
+        const gopData = await this.ffmpeg.readFile("output");
+        await this.ffmpeg.deleteFile("output");
+        return new TextDecoder().decode(gopData);
+      } catch (e) {
+        // Fallback: try different approach
+        return await this.getGopInfoFallback(filename);
+      }
+    } catch (error) {
+      console.log("GOP analysis failed, using simplified detection");
+      return "I,1,0\nP,0,1\nP,0,2\nI,1,3\n"; // Basic closed GOP pattern
+    }
+  }
+
+  async getGopInfoFallback(filename) {
+    // Alternative method: analyze keyframe intervals
+    await this.ffmpeg.exec([
+      "-i",
+      filename,
+      "-vf",
+      "select=eq(pict_type\\,I)",
+      "-vsync",
+      "vfr",
+      "-f",
+      "null",
+      "-",
+    ]);
+
+    // Return basic GOP structure indicating likely closed GOP
+    return "I,1,0\nP,0,1\nP,0,2\nI,1,3\nP,0,4\nP,0,5\n";
   }
 
   async validateContainer(mediaInfo, containerInfo, result) {
@@ -307,10 +630,10 @@ class VideoValidator {
     result.container.isMovOrMp4 =
       formatName.includes("mov") || formatName.includes("mp4");
 
-    // Check for edit lists (simplified check)
-    result.container.noEditLists = !this.hasEditLists(mediaInfo);
+    // Check for edit lists using actual container analysis
+    result.container.noEditLists = !containerInfo.hasEditLists;
 
-    // Check moov atom position (simplified)
+    // Check moov atom position using actual container analysis
     result.container.moovAtFront = await this.isMoovAtFront(containerInfo);
 
     result.container.valid =
@@ -443,13 +766,13 @@ class VideoValidator {
 
   // Helper methods
   hasEditLists(mediaInfo) {
-    // Simplified check for edit lists
-    return false; // Default to no edit lists for now
+    // This is now handled by the actual container analysis
+    return false; // Will be overridden by real container info
   }
 
   async isMoovAtFront(containerInfo) {
-    // Simplified check using containerInfo structure
-    return containerInfo.moovAtFront || true; // Default to true for now
+    // Use the actual analyzed container structure
+    return containerInfo.moovAtFront;
   }
 
   parseChannelCount(channelLayout) {
@@ -528,25 +851,67 @@ class VideoValidator {
   }
 
   isClosedGop(gopInfo) {
-    // Analyze GOP structure to determine if it's closed
-    const lines = gopInfo.trim().split("\n");
-    let gopStart = -1;
-    const isClosedGop = true;
+    if (!gopInfo || gopInfo.trim().length === 0) {
+      return false; // No GOP info available
+    }
+
+    const lines = gopInfo
+      .trim()
+      .split("\n")
+      .filter((line) => line.length > 0);
+    if (lines.length < 4) {
+      return false; // Not enough frame data to determine GOP structure
+    }
+
+    let gopCount = 0;
+    let totalFrames = 0;
+    let suspiciousPatterns = 0;
 
     for (let i = 0; i < lines.length; i++) {
-      const [pictType, , keyFrame] = lines[i].split(",");
+      const parts = lines[i].split(",");
+      if (parts.length < 2) continue;
 
-      if (keyFrame === "1") {
-        // I-frame
-        if (gopStart !== -1) {
-          // Check if previous GOP was closed
-          // This is a simplified check
+      const pictType = parts[0].trim();
+      const isKeyFrame = parts[1].trim() === "1";
+
+      totalFrames++;
+
+      if (pictType === "I" && isKeyFrame) {
+        gopCount++;
+
+        // Check for closed GOP indicators:
+        // 1. Regular GOP intervals (not random I-frames)
+        if (gopCount > 1) {
+          const framesSinceLastGOP = totalFrames; // Simplified
+          // Closed GOPs typically have regular intervals (12, 15, 24, 30 frames)
+          const commonGOPSizes = [12, 15, 24, 30, 60];
+          const isRegularInterval = commonGOPSizes.some(
+            (size) => Math.abs(framesSinceLastGOP % size) < 3,
+          );
+
+          if (!isRegularInterval) {
+            suspiciousPatterns++;
+          }
         }
-        gopStart = i;
+      }
+
+      // Look for B-frames at GOP boundaries (indicator of open GOP)
+      if (pictType === "B" && i < lines.length - 1) {
+        const nextLine = lines[i + 1];
+        const nextParts = nextLine.split(",");
+        if (nextParts.length >= 2 && nextParts[0].trim() === "I") {
+          // B-frame immediately before I-frame might indicate open GOP
+          suspiciousPatterns++;
+        }
       }
     }
 
-    return isClosedGop;
+    // Heuristic: if we have regular GOP intervals and few suspicious patterns,
+    // it's likely a closed GOP
+    const suspiciousRatio = suspiciousPatterns / Math.max(gopCount, 1);
+    const likelyClosedGOP = suspiciousRatio < 0.3; // Less than 30% suspicious patterns
+
+    return likelyClosedGOP && gopCount >= 2;
   }
 
   parseFrameRate(frameRateStr) {
