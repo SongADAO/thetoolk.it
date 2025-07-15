@@ -1,9 +1,11 @@
-/* eslint-disable no-useless-catch */
-// First install dependencies:
-// npm install mp4-muxer @remotion/media-parser
+// First install the dependency:
+// npm install @remotion/webcodecs
 
-import { parseMedia } from "@remotion/media-parser";
-import { ArrayBufferTarget, Muxer } from "mp4-muxer";
+import {
+  canReencodeAudioTrack,
+  canReencodeVideoTrack,
+  convertMedia,
+} from "@remotion/webcodecs";
 
 interface ConversionOptions {
   audioBitrate?: string;
@@ -19,7 +21,7 @@ class VideoConverter {
   private isLoaded = false;
 
   public constructor() {
-    // WebCodecs is built into the browser, no initialization needed
+    // No initialization needed for @remotion/webcodecs
   }
 
   // Check if WebCodecs is supported
@@ -38,7 +40,7 @@ class VideoConverter {
       throw new Error("WebCodecs API not supported in this browser");
     }
 
-    // WebCodecs is ready immediately
+    // @remotion/webcodecs is ready immediately
     onProgress?.(100);
     this.isLoaded = true;
   }
@@ -69,7 +71,7 @@ class VideoConverter {
       );
     }
 
-    // Calculate target bitrates
+    // Calculate target bitrates (using your existing logic)
     const targetSizeMB = maxFileSizeMB * 0.95;
     const audioBitrateKbps =
       parseInt(audioBitrate.replace(/[^0-9]/g, ""), 10) || 128;
@@ -79,162 +81,168 @@ class VideoConverter {
       audioBitrateKbps,
     );
 
-    let processedFrames = 0;
-    let totalFrames = Math.ceil(duration * targetFps);
-
     try {
-      // Parse input media
-      const arrayBuffer = await inputFile.arrayBuffer();
-      const parseResult = await parseMedia({
-        src: new Uint8Array(arrayBuffer),
-        fields: {
-          tracks: true,
-          durationInSeconds: true,
-          dimensions: true,
-        },
+      console.log(
+        `🚀 Converting with WebCodecs - Target bitrate: ${videoBitrateKbps}kbps`,
+      );
+
+      // Check if the tracks can be re-encoded
+      const videoReencodeSupport = await canReencodeVideoTrack({
+        container: "mp4",
+        videoCodec: "h264",
       });
 
-      if (!parseResult.tracks) {
-        throw new Error("No tracks found in input video");
-      }
-
-      const videoTrack = parseResult.tracks.find((t) => t.type === "video");
-      const audioTrack = parseResult.tracks.find((t) => t.type === "audio");
-
-      if (!videoTrack) {
-        throw new Error("No video track found in input");
-      }
-
-      // Update total frames based on actual video
-      if (parseResult.durationInSeconds) {
-        totalFrames = Math.ceil(parseResult.durationInSeconds * targetFps);
-      }
-
-      // Set up MP4 muxer
-      const muxer = new Muxer({
-        target: new ArrayBufferTarget(),
-        video: {
-          codec: "avc",
-          width: Math.min(videoTrack.dimensions?.width || 1920, maxWidth),
-          height: this.calculateScaledHeight(
-            videoTrack.dimensions?.width || 1920,
-            videoTrack.dimensions?.height || 1080,
-            maxWidth,
-          ),
-        },
-        audio: audioTrack
-          ? {
-              codec: "aac",
-              sampleRate: audioSampleRate,
-              numberOfChannels: 2,
-            }
-          : undefined,
-        fastStart: "in-memory", // Equivalent to -movflags +faststart
+      const audioReencodeSupport = await canReencodeAudioTrack({
+        audioCodec: "aac",
+        container: "mp4",
       });
 
-      // Set up video encoder
-      const videoEncoder = new VideoEncoder({
-        output: (chunk, metadata) => {
-          muxer.addVideoChunk(chunk, metadata);
-          processedFrames++;
-
-          const progress = Math.min(95, (processedFrames / totalFrames) * 100);
-          onProgress?.(Math.round(progress));
-        },
-        error: (error) => {
-          throw new Error(`Video encoding error: ${error.message}`);
-        },
-      });
-
-      // Configure video encoder (approximating your FFmpeg settings)
-      const videoConfig: VideoEncoderConfig = {
-        codec: this.getH264CodecString(crf), // H.264 with profile/level
-        width: Math.min(videoTrack.dimensions?.width || 1920, maxWidth),
-        height: this.calculateScaledHeight(
-          videoTrack.dimensions?.width || 1920,
-          videoTrack.dimensions?.height || 1080,
-          maxWidth,
-        ),
-        bitrate: videoBitrateKbps * 1000, // Convert to bits per second
-        framerate: targetFps,
-        bitrateMode: "variable", // Similar to your CRF + maxrate approach
-      };
-
-      const isVideoConfigSupported =
-        await VideoEncoder.isConfigSupported(videoConfig);
-      if (!isVideoConfigSupported.supported) {
+      if (!videoReencodeSupport.supported) {
         throw new Error(
-          `Video encoder configuration not supported: ${isVideoConfigSupported.error}`,
+          `Video re-encoding not supported: ${videoReencodeSupport.reason}`,
         );
       }
 
-      videoEncoder.configure(videoConfig);
+      if (!audioReencodeSupport.supported) {
+        throw new Error(
+          `Audio re-encoding not supported: ${audioReencodeSupport.reason}`,
+        );
+      }
 
-      // Set up audio encoder (if audio track exists)
-      let audioEncoder: AudioEncoder | undefined;
-      if (audioTrack) {
-        audioEncoder = new AudioEncoder({
-          output: (chunk, metadata) => {
-            muxer.addAudioChunk(chunk, metadata);
-          },
-          error: (error) => {
-            throw new Error(`Audio encoding error: ${error.message}`);
-          },
-        });
+      // Convert using @remotion/webcodecs
+      const result = await convertMedia({
+        src: inputFile,
+        to: "mp4",
 
-        const audioConfig: AudioEncoderConfig = {
-          codec: "mp4a.40.2", // AAC-LC
-          sampleRate: audioSampleRate,
-          numberOfChannels: 2,
-          bitrate: audioBitrateKbps * 1000,
-        };
+        // Video transformation
+        onVideoTrack: ({ track }) => {
+          console.log("📹 Video track info:", {
+            codedHeight: track.codedHeight,
+            codedWidth: track.codedWidth,
+            displayAspectHeight: track.displayAspectHeight,
+            displayAspectWidth: track.displayAspectWidth,
+            rotation: track.rotation,
+            trackId: track.trackId,
+          });
 
-        const isAudioConfigSupported =
-          await AudioEncoder.isConfigSupported(audioConfig);
-        if (!isAudioConfigSupported.supported) {
-          throw new Error(
-            `Audio encoder configuration not supported: ${isAudioConfigSupported.error}`,
+          // Get dimensions with proper fallbacks
+          const originalWidth =
+            track.displayAspectWidth ?? track.codedWidth ?? 1920;
+          const originalHeight =
+            track.displayAspectHeight ?? track.codedHeight ?? 1080;
+
+          if (!originalWidth || !originalHeight) {
+            console.warn(
+              "⚠️ Could not determine video dimensions, using defaults",
+            );
+            return {
+              codec: "h264",
+              bitrate: videoBitrateKbps * 1000,
+              width: Math.min(1920, maxWidth),
+              height: 1080,
+              fps: targetFps,
+            };
+          }
+
+          // Calculate scaled dimensions
+          const { width, height } = this.calculateScaledDimensions(
+            originalWidth,
+            originalHeight,
+            maxWidth,
           );
-        }
 
-        audioEncoder.configure(audioConfig);
-      }
+          console.log(
+            `📐 Scaling ${originalWidth}x${originalHeight} → ${width}x${height}`,
+          );
 
-      // Decode and re-encode video
-      await this.processVideoTrack(
-        arrayBuffer,
-        videoTrack,
-        videoEncoder,
-        videoConfig,
-        targetFps,
-      );
+          // // Map CRF to quality-based settings
+          // ...(crf <= 18
+          //   ? {
+          //       codec: "avc1.640028", // High profile
+          //       bitrateMode: "variable" as const,
+          //     }
+          //   : crf <= 23
+          //     ? {
+          //         codec: "avc1.42E01E", // Baseline profile
+          //         bitrateMode: "variable" as const,
+          //       }
+          //     : {
+          //         codec: "avc1.42001E", // Baseline profile, lower quality
+          //         bitrateMode: "constant" as const,
+          //       }),
 
-      // Decode and re-encode audio (if exists)
-      if (audioTrack && audioEncoder) {
-        await this.processAudioTrack(arrayBuffer, audioTrack, audioEncoder);
-      }
+          return {
+            // Convert to bits per second
+            bitrate: videoBitrateKbps * 1000,
+            codec: "h264",
+            // H.264 specific settings (approximating your FFmpeg settings)
+            encoderConfig: {
+              bitrateMode: "variable",
+              // Baseline profile
+              codec: "avc1.42E01E",
+            },
+            fps: targetFps,
+            height,
+            width,
+          };
+        },
 
-      // Flush encoders
-      await videoEncoder.flush();
-      if (audioEncoder) {
-        await audioEncoder.flush();
-      }
+        // Audio transformation
+        onAudioTrack: ({ track }) => {
+          console.log("🎵 Audio track info:", {
+            numberOfChannels: track.numberOfChannels,
+            sampleRate: track.sampleRate,
+            trackId: track.trackId,
+          });
 
-      // Finalize muxer
-      muxer.finalize();
+          return {
+            bitrate: audioBitrateKbps * 1000,
+            codec: "aac",
+            numberOfChannels: Math.min(track.numberOfChannels ?? 2, 2), // Stereo max
+            sampleRate: audioSampleRate,
+          };
+        },
 
-      const outputBuffer = muxer.target.buffer;
+        // Progress tracking
+        onProgress: ({ progress }) => {
+          // @remotion/webcodecs gives progress as 0-1, convert to 0-100
+          const percentage = Math.round(progress * 100);
+          onProgress?.(percentage);
+        },
+
+        // Container settings (equivalent to your FFmpeg flags)
+        container: "mp4",
+
+        // This approximates -movflags +faststart
+        // @remotion/webcodecs handles this automatically for web-optimized MP4s
+      });
+
+      const outputBuffer = await result.arrayBuffer();
       const sizeMB = outputBuffer.byteLength / (1024 * 1024);
 
       console.log(
-        `Final size: ${sizeMB.toFixed(2)}MB (limit ${maxFileSizeMB}MB)`,
+        `✅ Conversion complete! Final size: ${sizeMB.toFixed(2)}MB (limit ${maxFileSizeMB}MB)`,
       );
 
-      onProgress?.(100);
+      // Check if we exceeded the size limit
+      if (sizeMB > maxFileSizeMB) {
+        console.warn(
+          `⚠️ Output size (${sizeMB.toFixed(2)}MB) exceeds limit (${maxFileSizeMB}MB)`,
+        );
+        // You could implement a retry with lower bitrate here if needed
+      }
 
       return new Uint8Array(outputBuffer);
     } catch (error) {
-      throw error;
+      // Provide helpful error messages
+      if (error.message?.includes("not supported")) {
+        throw new Error(
+          `WebCodecs conversion failed: ${error.message}. ` +
+            "Your browser or video format may not be supported. Consider using FFmpeg WASM as fallback.",
+        );
+      }
+
+      throw new Error(`Video conversion failed: ${error.message}`);
     }
   }
 
@@ -252,153 +260,23 @@ class VideoConverter {
     URL.revokeObjectURL(url);
   }
 
-  // Process video track: decode frames, scale if needed, and re-encode
-  private async processVideoTrack(
-    arrayBuffer: ArrayBuffer,
-    videoTrack: any,
-    encoder: VideoEncoder,
-    config: VideoEncoderConfig,
-    targetFps: number,
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      let frameCount = 0;
-      const startTime = 0;
-      const frameDuration = 1000000 / targetFps; // microseconds per frame
-
-      const decoder = new VideoDecoder({
-        output: async (frame) => {
-          try {
-            // Scale frame if needed
-            const scaledFrame = await this.scaleVideoFrame(
-              frame,
-              config.width,
-              config.height,
-            );
-
-            // Set consistent timestamp for target fps
-            const timestamp = startTime + frameCount * frameDuration;
-            const newFrame = new VideoFrame(scaledFrame, { timestamp });
-
-            // Encode frame
-            const keyFrame = frameCount % (targetFps * 2) === 0; // Keyframe every 2 seconds
-            encoder.encode(newFrame, { keyFrame });
-
-            frameCount++;
-
-            // Clean up frames
-            frame.close();
-            scaledFrame.close();
-            newFrame.close();
-          } catch (error) {
-            reject(error);
-          }
-        },
-        error: reject,
-      });
-
-      // Configure decoder (this would need the actual codec config from the track)
-      decoder.configure({
-        codec: videoTrack.codecWithoutConfig, // You'd get this from media parser
-        description: videoTrack.description, // Codec-specific data
-      });
-
-      // Parse and feed chunks to decoder (simplified - you'd use media-parser samples)
-      // This is a simplified example - real implementation would parse samples properly
-      const chunk = new EncodedVideoChunk({
-        type: "key",
-        timestamp: 0,
-        data: new Uint8Array(arrayBuffer), // This would be actual video samples
-      });
-
-      decoder.decode(chunk);
-      decoder.flush().then(resolve).catch(reject);
-    });
-  }
-
-  // Process audio track
-  private async processAudioTrack(
-    arrayBuffer: ArrayBuffer,
-    audioTrack: any,
-    encoder: AudioEncoder,
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const decoder = new AudioDecoder({
-        output: (audioData) => {
-          // Re-encode audio with target settings
-          encoder.encode(audioData);
-          audioData.close();
-        },
-        error: reject,
-      });
-
-      decoder.configure({
-        codec: audioTrack.codecWithoutConfig,
-        description: audioTrack.description,
-      });
-
-      // Simplified - real implementation would parse audio samples
-      const chunk = new EncodedAudioChunk({
-        type: "key",
-        timestamp: 0,
-        data: new Uint8Array(arrayBuffer),
-      });
-
-      decoder.decode(chunk);
-      decoder.flush().then(resolve).catch(reject);
-    });
-  }
-
-  // Scale video frame using Canvas (equivalent to FFmpeg scale filter)
-  private async scaleVideoFrame(
-    frame: VideoFrame,
-    targetWidth: number,
-    targetHeight: number,
-  ): Promise<VideoFrame> {
-    if (
-      frame.displayWidth === targetWidth &&
-      frame.displayHeight === targetHeight
-    ) {
-      return frame; // No scaling needed
-    }
-
-    const canvas = new OffscreenCanvas(targetWidth, targetHeight);
-    const ctx = canvas.getContext("2d")!;
-
-    // Draw and scale frame
-    ctx.drawImage(frame, 0, 0, targetWidth, targetHeight);
-
-    // Create new VideoFrame from scaled canvas
-    return new VideoFrame(canvas, {
-      timestamp: frame.timestamp,
-    });
-  }
-
-  // Calculate scaled height maintaining aspect ratio
-  private calculateScaledHeight(
+  // Calculate scaled dimensions maintaining aspect ratio
+  private calculateScaledDimensions(
     originalWidth: number,
     originalHeight: number,
     maxWidth: number,
-  ): number {
+  ): { width: number; height: number } {
     if (originalWidth <= maxWidth) {
-      return originalHeight;
+      return { width: originalWidth, height: originalHeight };
     }
 
     const aspectRatio = originalHeight / originalWidth;
     const scaledHeight = Math.round(maxWidth * aspectRatio);
 
-    // Ensure even height for YUV420
-    return scaledHeight % 2 === 0 ? scaledHeight : scaledHeight - 1;
-  }
-
-  // Generate H.264 codec string (approximating your profile/level settings)
-  private getH264CodecString(crf: number): string {
-    // Map CRF to different profiles (simplified)
-    if (crf <= 18) {
-      return "avc1.640028"; // High profile, level 4.0
-    } else if (crf <= 23) {
-      return "avc1.42E01E"; // Baseline profile, level 3.0
-    }
-    return "avc1.42001E"; // Baseline profile, level 3.0, lower quality
+    return {
+      width: maxWidth,
+      height: scaledHeight % 2 === 0 ? scaledHeight : scaledHeight - 1, // Ensure even height for YUV420
+    };
   }
 
   // Your existing bitrate calculation (unchanged)

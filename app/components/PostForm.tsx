@@ -105,10 +105,6 @@ function PostForm() {
 
   // Convert video file to optimized format
   async function convertVideo(file: File): Promise<File> {
-    if (!videoConverter) {
-      throw new Error("Video converter not initialized");
-    }
-
     setIsConverting(true);
     setConversionProgress(0);
 
@@ -117,7 +113,7 @@ function PostForm() {
 
       const converter = new VideoConverter();
       await converter.initialize();
-      const convertedData = await videoConverter.convertVideo(file, {
+      const convertedData = await converter.convertVideo(file, {
         audioBitrate: "128k",
         audioSampleRate: 48000,
         crf: 23,
@@ -138,7 +134,7 @@ function PostForm() {
         `Conversion complete! Original: ${(file.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedFile.size / 1024 / 1024).toFixed(2)}MB`,
       );
 
-      videoConverter.downloadFile(convertedFile);
+      converter.downloadFile(convertedFile);
 
       return convertedFile;
     } catch (error) {
@@ -168,7 +164,7 @@ function PostForm() {
     let fileToUpload = selectedFile;
 
     // Convert video if file is selected and converter is ready
-    if (selectedFile && videoConverter) {
+    if (selectedFile) {
       try {
         console.log("Converting video before upload...");
         fileToUpload = await convertVideo(selectedFile);
