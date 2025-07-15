@@ -11,7 +11,7 @@ import {
   getVideoDuration,
 } from "@/app/lib/video";
 // Import the VideoConverter class
-import { VideoConverter } from "@/app/lib/video-converter"; // Adjust path as needed
+import { VideoConverter } from "@/app/lib/video-converter";
 import { validateVideoFile } from "@/app/lib/video-validator";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
@@ -197,7 +197,7 @@ function PostForm() {
       }
     }
 
-    return;
+    return newFormState;
 
     if (fileToUpload) {
       const pinataVideoResult = await pinataStoreVideo(fileToUpload);

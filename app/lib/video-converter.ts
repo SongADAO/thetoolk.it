@@ -25,7 +25,8 @@ class VideoConverter {
   ): Promise<void> {
     if (this.isLoaded) return;
 
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd";
+    // const baseURL = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/umd";
 
     // Load FFmpeg with progress tracking
     this.ffmpeg.on("log", ({ message }) => {
@@ -93,6 +94,9 @@ class VideoConverter {
       );
 
       const ffmpegArgs = [
+        // "-thread",
+        // "4",
+
         "-i",
         inputFileName,
         "-r",
@@ -102,11 +106,13 @@ class VideoConverter {
         "-c:v",
         "libx264",
         "-preset",
-        "medium",
+        "ultrafast",
         // Variable bitrate with maximum file size constraints
         // ---------------------------------------------------------------------
-        "-crf",
-        crf.toString(),
+        // "-crf",
+        // crf.toString(),
+        "-b:v",
+        `${targetBitrate}k`,
         "-maxrate",
         `${targetBitrate}k`,
         "-bufsize",
@@ -127,10 +133,10 @@ class VideoConverter {
         "high",
         "-level",
         "4.0",
-        "-vf",
         // Scale to max 1920 width, maintain aspect ratio, ensure even height
         // ---------------------------------------------------------------------
-        `scale='min(${maxWidth},iw)':-2`,
+        // "-vf",
+        // `scale='min(${maxWidth},iw)':-2`,
         // AAC audio, 128kbps, 48kHz, stereo
         // ---------------------------------------------------------------------
         "-c:a",
