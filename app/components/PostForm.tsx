@@ -4,6 +4,11 @@ import { Form } from "radix-ui";
 import { use, useActionState, useRef, useState } from "react";
 
 import { ButtonSpinner } from "@/app/components/ButtonSpinner";
+import {
+  formatFileDuration,
+  formatFileSize,
+  getVideoDuration,
+} from "@/app/lib/video";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
 import { InstagramContext } from "@/app/services/post/instagram/Context";
@@ -59,10 +64,25 @@ function PostForm() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
+  const [videoFileSize, setVideoFileSize] = useState<number>(0);
+  const [videoDuration, setVideoDuration] = useState<number>(0);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
+
+    if (file) {
+      setVideoPreviewUrl(URL.createObjectURL(file));
+      setVideoFileSize(file.size);
+      getVideoDuration({ file, setVideoDuration });
+
+      return;
+    }
+
+    setVideoPreviewUrl("");
+    setVideoFileSize(0);
+    setVideoDuration(0);
   };
 
   async function saveForm(previousState: FormState, formData: FormData) {
@@ -219,6 +239,21 @@ function PostForm() {
           </div>
         </Form.Field>
       </Form.Root>
+      {videoPreviewUrl ? (
+        <div className="mb-4 flex flex-col gap-2">
+          <div>
+            <video
+              className="max-w-full rounded border border-gray-300"
+              controls
+              src={videoPreviewUrl}
+            />
+          </div>
+          <div className="flex items-center justify-between gap-2 text-sm">
+            <div>Size: {formatFileSize(videoFileSize)}</div>
+            <div>Duration: {formatFileDuration(videoDuration)}</div>
+          </div>
+        </div>
+      ) : null}
 
       <Form.Root action={formAction}>
         <Form.Field
