@@ -11,7 +11,8 @@ import {
   getVideoDuration,
 } from "@/app/lib/video";
 // Import the VideoConverter class
-import { VideoConverter } from "@/app/lib/video-converter";
+// import { VideoConverter } from "@/app/lib/video-converter-ffmpeg";
+import { VideoConverter } from "@/app/lib/video-converter-webcodecs";
 import { validateVideoFile } from "@/app/lib/video-validator";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
@@ -77,29 +78,8 @@ function PostForm() {
   const [videoConverter, setVideoConverter] = useState<VideoConverter | null>(
     null,
   );
-  const [isConverterLoading, setIsConverterLoading] = useState(false);
   const [conversionProgress, setConversionProgress] = useState(0);
   const [isConverting, setIsConverting] = useState(false);
-
-  // Initialize video converter
-  useEffect(() => {
-    const initConverter = async () => {
-      setIsConverterLoading(true);
-      try {
-        const converter = new VideoConverter();
-        await converter.initialize((progress) => {
-          console.log(`FFmpeg loading: ${progress}%`);
-        });
-        setVideoConverter(converter);
-      } catch (error) {
-        console.error("Failed to initialize video converter:", error);
-      } finally {
-        setIsConverterLoading(false);
-      }
-    };
-
-    initConverter();
-  }, []);
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
@@ -135,6 +115,8 @@ function PostForm() {
     try {
       console.log("Starting video conversion...");
 
+      const converter = new VideoConverter();
+      await converter.initialize();
       const convertedData = await videoConverter.convertVideo(file, {
         audioBitrate: "128k",
         audioSampleRate: 48000,
@@ -305,7 +287,7 @@ function PostForm() {
   );
 
   // Check if we should disable the form
-  const isFormDisabled = isPending || isConverterLoading || isConverting;
+  const isFormDisabled = isPending || isConverting;
 
   return (
     <div>
@@ -329,13 +311,6 @@ function PostForm() {
           </div>
         </Form.Field>
       </Form.Root>
-
-      {/* Converter Status */}
-      {isConverterLoading ? (
-        <div className="mb-4 rounded bg-blue-100 p-3 text-blue-800">
-          Loading video converter...
-        </div>
-      ) : null}
 
       {isConverting ? (
         <div className="mb-4 rounded bg-yellow-100 p-3 text-yellow-800">
