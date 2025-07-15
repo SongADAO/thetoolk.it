@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { use, useActionState, useRef, useState } from "react";
+import { use, useActionState, useEffect, useRef, useState } from "react";
 
 import { ButtonSpinner } from "@/app/components/ButtonSpinner";
 import {
@@ -10,6 +10,8 @@ import {
   // getVideoCodecInfo,
   getVideoDuration,
 } from "@/app/lib/video";
+// Import the VideoConverter class
+import { VideoConverter } from "@/app/lib/video-converter"; // Adjust path as needed
 import { validateVideoFile } from "@/app/lib/video-validator";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
@@ -71,6 +73,34 @@ function PostForm() {
   const [videoDuration, setVideoDuration] = useState<number>(0);
   const [videoCodecInfo, setVideoCodecInfo] = useState<string>("");
 
+  // Video conversion state
+  const [videoConverter, setVideoConverter] = useState<VideoConverter | null>(
+    null,
+  );
+  const [isConverterLoading, setIsConverterLoading] = useState(false);
+  const [conversionProgress, setConversionProgress] = useState(0);
+  const [isConverting, setIsConverting] = useState(false);
+
+  // Initialize video converter
+  useEffect(() => {
+    const initConverter = async () => {
+      setIsConverterLoading(true);
+      try {
+        const converter = new VideoConverter();
+        await converter.initialize((progress) => {
+          console.log(`FFmpeg loading: ${progress}%`);
+        });
+        setVideoConverter(converter);
+      } catch (error) {
+        console.error("Failed to initialize video converter:", error);
+      } finally {
+        setIsConverterLoading(false);
+      }
+    };
+
+    initConverter();
+  }, []);
+
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
@@ -93,13 +123,53 @@ function PostForm() {
     setVideoCodecInfo("");
   }
 
+  // Convert video file to optimized format
+  async function convertVideo(file: File): Promise<File> {
+    if (!videoConverter) {
+      throw new Error("Video converter not initialized");
+    }
+
+    setIsConverting(true);
+    setConversionProgress(0);
+
+    try {
+      console.log("Starting video conversion...");
+
+      const convertedData = await videoConverter.convertVideo(file, {
+        audioBitrate: "128k",
+        audioSampleRate: 48000,
+        duration: videoDuration,
+        maxFileSizeMB: 300,
+        maxWidth: 1920,
+        targetFps: 30,
+      });
+
+      // Convert Uint8Array back to File object
+      const convertedFile = new File(
+        [convertedData],
+        `converted_${file.name}`,
+        { type: "video/mp4" },
+      );
+
+      console.log(
+        `Conversion complete! Original: ${(file.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedFile.size / 1024 / 1024).toFixed(2)}MB`,
+      );
+
+      return convertedFile;
+    } catch (error) {
+      console.error("Video conversion failed:", error);
+      throw error;
+    } finally {
+      setIsConverting(false);
+      setConversionProgress(0);
+    }
+  }
+
   async function saveForm(previousState: FormState, formData: FormData) {
     const newFormState = fromFormData(formData);
 
     console.log(previousState);
-
     console.log(newFormState);
-
     console.log(selectedFile);
 
     const videoUrl =
@@ -110,23 +180,35 @@ function PostForm() {
     const videoThumbnailUrl =
       "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
-    // const jsonResult = await pinataStoreJson({ test: "test" });
-    // console.log(jsonResult);
+    let fileToUpload = selectedFile;
 
-    if (selectedFile) {
-      const pinataVideoResult = await pinataStoreVideo(selectedFile);
+    // Convert video if file is selected and converter is ready
+    if (selectedFile && videoConverter) {
+      try {
+        console.log("Converting video before upload...");
+        fileToUpload = await convertVideo(selectedFile);
+      } catch (error) {
+        console.error("Video conversion failed, using original file:", error);
+        // Fallback to original file if conversion fails
+        fileToUpload = selectedFile;
+      }
+    }
+
+    if (fileToUpload) {
+      const pinataVideoResult = await pinataStoreVideo(fileToUpload);
       console.log(pinataVideoResult);
 
-      const s3VideoResult = await amazonS3StoreVideo(selectedFile);
+      const s3VideoResult = await amazonS3StoreVideo(fileToUpload);
       console.log(s3VideoResult);
     }
 
+    // Use the converted file for all posting services
     await blueskyPost({
       text: newFormState.text,
       title: newFormState.title,
       userId: blueskyAccounts[0]?.id,
       username: blueskyAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -137,7 +219,7 @@ function PostForm() {
       title: newFormState.title,
       userId: facebookAccounts[0]?.id,
       username: facebookAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -148,7 +230,7 @@ function PostForm() {
       title: newFormState.title,
       userId: instagramAccounts[0]?.id,
       username: instagramAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -159,7 +241,7 @@ function PostForm() {
       title: newFormState.title,
       userId: neynarAccounts[0]?.id,
       username: neynarAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -170,7 +252,7 @@ function PostForm() {
       title: newFormState.title,
       userId: threadsAccounts[0]?.id,
       username: threadsAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -181,7 +263,7 @@ function PostForm() {
       title: newFormState.title,
       userId: tiktokAccounts[0]?.id,
       username: tiktokAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -192,7 +274,7 @@ function PostForm() {
       title: newFormState.title,
       userId: twitterAccounts[0]?.id,
       username: twitterAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -203,7 +285,7 @@ function PostForm() {
       title: newFormState.title,
       userId: youtubeAccounts[0]?.id,
       username: youtubeAccounts[0]?.username,
-      video: selectedFile,
+      video: fileToUpload,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -217,21 +299,19 @@ function PostForm() {
     fromInitial(),
   );
 
+  // Check if we should disable the form
+  const isFormDisabled = isPending || isConverterLoading || isConverting;
+
   return (
     <div>
       <Form.Root>
-        <Form.Field
-          className="mb-4 flex flex-col"
-          key="video"
-          name="video"
-          // serverInvalid={hasError('video)}
-        >
+        <Form.Field className="mb-4 flex flex-col" key="video" name="video">
           <Form.Label>Video</Form.Label>
           <Form.Control
             accept="video/mp4"
             autoComplete="off"
             className="rounded border-1 bg-gray-500 p-2 text-white"
-            disabled={isPending}
+            disabled={isFormDisabled}
             onChange={handleFileChange}
             placeholder="Title"
             ref={fileInputRef}
@@ -241,12 +321,37 @@ function PostForm() {
           />
           <div>
             <Form.Message match="valueMissing">Missing video.</Form.Message>
-            {/* {getErrors("video").map((error) => (
-              <Form.Message key={error}>{error}</Form.Message>
-            ))} */}
           </div>
         </Form.Field>
       </Form.Root>
+
+      {/* Converter Status */}
+      {isConverterLoading ? (
+        <div className="mb-4 rounded bg-blue-100 p-3 text-blue-800">
+          Loading video converter...
+        </div>
+      ) : null}
+
+      {isConverting ? (
+        <div className="mb-4 rounded bg-yellow-100 p-3 text-yellow-800">
+          <div className="flex items-center gap-2">
+            <ButtonSpinner />
+            Converting video for optimal quality and size...
+          </div>
+          {conversionProgress > 0 && (
+            <div className="mt-2">
+              <div className="h-2 w-full rounded bg-yellow-200">
+                <div
+                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
+                  style={{ width: `${conversionProgress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-sm">{conversionProgress}% complete</div>
+            </div>
+          )}
+        </div>
+      ) : null}
+
       {videoPreviewUrl ? (
         <div className="mb-4 flex flex-col gap-2">
           <div>
@@ -263,22 +368,22 @@ function PostForm() {
           <div className="flex items-center justify-between gap-2 text-sm">
             <div>Codec: {videoCodecInfo}</div>
           </div>
+          {selectedFile && videoConverter ? (
+            <div className="text-sm text-gray-600">
+              Video will be optimized to under 300MB with H.264/AAC encoding
+            </div>
+          ) : null}
         </div>
       ) : null}
 
       <Form.Root action={formAction}>
-        <Form.Field
-          className="mb-4 flex flex-col"
-          key="title"
-          name="title"
-          // serverInvalid={hasError('title)}
-        >
+        <Form.Field className="mb-4 flex flex-col" key="title" name="title">
           <Form.Label>Title</Form.Label>
           <Form.Control
             autoComplete="off"
             className="rounded text-black"
             defaultValue={state.title}
-            disabled={isPending}
+            disabled={isFormDisabled}
             placeholder="Title"
             required
             title="Title"
@@ -286,25 +391,17 @@ function PostForm() {
           />
           <div>
             <Form.Message match="valueMissing">Missing title.</Form.Message>
-            {/* {getErrors("title").map((error) => (
-              <Form.Message key={error}>{error}</Form.Message>
-            ))} */}
           </div>
         </Form.Field>
 
-        <Form.Field
-          className="mb-4 flex flex-col"
-          key="text"
-          name="text"
-          // serverInvalid={hasError('text)}
-        >
+        <Form.Field className="mb-4 flex flex-col" key="text" name="text">
           <Form.Label>Message</Form.Label>
           <Form.Control
             asChild
             autoComplete="off"
             className="rounded text-black"
             defaultValue={state.text}
-            disabled={isPending}
+            disabled={isFormDisabled}
             placeholder="Message"
             required
             title="Message"
@@ -313,18 +410,19 @@ function PostForm() {
           </Form.Control>
           <div>
             <Form.Message match="valueMissing">Missing message.</Form.Message>
-            {/* {getErrors("text").map((error) => (
-              <Form.Message key={error}>{error}</Form.Message>
-            ))} */}
           </div>
         </Form.Field>
 
         <Form.Submit
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-gray-900"
-          disabled={isPending}
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={isFormDisabled}
         >
-          {isPending ? <ButtonSpinner /> : null}
-          Post
+          {isFormDisabled ? <ButtonSpinner /> : null}
+          {isConverting
+            ? "Converting Video..."
+            : isPending
+              ? "Posting..."
+              : "Post"}
         </Form.Submit>
       </Form.Root>
     </div>

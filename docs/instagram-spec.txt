@@ -1,0 +1,12 @@
+Container: MP4 (MPEG-4 Part 14), no edit lists, moov atom at the front of the file.
+Audio codec: AAC, 48khz sample rate maximum, 2 channels (stereo).
+Video codec: H264, progressive scan, closed GOP, 4:2:0 chroma subsampling.
+Picture size:
+Maximum columns (horizontal pixels): 1920
+Required aspect ratio is between 0.01:1 and 10:1 but we recommend 9:16 to avoid cropping or blank space.
+Video bitrate: VBR, 25Mbps maximum
+Audio bitrate: 128kbps
+
+
+Duration: 15 mins maximum, 3 seconds minimum
+File size: 300MB maximum
