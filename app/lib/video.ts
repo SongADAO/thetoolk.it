@@ -1,3 +1,36 @@
+import mediaInfoFactory from "mediainfo.js";
+
+async function getVideoCodecInfo(file: File): Promise<string> {
+  const MediaInfo = await mediaInfoFactory();
+
+  const result = await MediaInfo.analyzeData(
+    () => file.size,
+    async (chunkSize, offset) =>
+      new Promise((resolve) => {
+        const reader = new FileReader();
+        const slice = file.slice(offset, offset + chunkSize);
+        reader.onload = (e) =>
+          resolve(new Uint8Array(e.target?.result as ArrayBuffer));
+        reader.readAsArrayBuffer(slice);
+      }),
+  );
+
+  return (
+    result.media?.track
+      ?.map((track) => {
+        if (track["@type"] === "Video") {
+          return `Video: ${track.Format}${track.CodecID ? ` (${track.CodecID})` : ""}`;
+        }
+        if (track["@type"] === "Audio") {
+          return `Audio: ${track.Format}${track.CodecID ? ` (${track.CodecID})` : ""}`;
+        }
+        return null;
+      })
+      .filter(Boolean)
+      .join(" | ") || "Unknown codec"
+  );
+}
+
 function formatFileSize(sizeInBytes: number) {
   const kb = sizeInBytes / 1024;
   const mb = kb / 1024;
@@ -38,4 +71,9 @@ function getVideoDuration({
   videoElement.src = URL.createObjectURL(file);
 }
 
-export { formatFileDuration, formatFileSize, getVideoDuration };
+export {
+  formatFileDuration,
+  formatFileSize,
+  getVideoCodecInfo,
+  getVideoDuration,
+};

@@ -7,6 +7,7 @@ import { ButtonSpinner } from "@/app/components/ButtonSpinner";
 import {
   formatFileDuration,
   formatFileSize,
+  getVideoCodecInfo,
   getVideoDuration,
 } from "@/app/lib/video";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
@@ -67,8 +68,9 @@ function PostForm() {
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
   const [videoDuration, setVideoDuration] = useState<number>(0);
+  const [videoCodecInfo, setVideoCodecInfo] = useState<string>("");
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
 
@@ -76,6 +78,7 @@ function PostForm() {
       setVideoPreviewUrl(URL.createObjectURL(file));
       setVideoFileSize(file.size);
       getVideoDuration({ file, setVideoDuration });
+      setVideoCodecInfo(await getVideoCodecInfo(file));
 
       return;
     }
@@ -83,7 +86,8 @@ function PostForm() {
     setVideoPreviewUrl("");
     setVideoFileSize(0);
     setVideoDuration(0);
-  };
+    setVideoCodecInfo("");
+  }
 
   async function saveForm(previousState: FormState, formData: FormData) {
     const newFormState = fromFormData(formData);
@@ -251,6 +255,9 @@ function PostForm() {
           <div className="flex items-center justify-between gap-2 text-sm">
             <div>Size: {formatFileSize(videoFileSize)}</div>
             <div>Duration: {formatFileDuration(videoDuration)}</div>
+          </div>
+          <div className="flex items-center justify-between gap-2 text-sm">
+            <div>Codec: {videoCodecInfo}</div>
           </div>
         </div>
       ) : null}
