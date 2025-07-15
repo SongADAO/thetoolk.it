@@ -18,6 +18,7 @@ async function getVideoCodecInfo(file: File): Promise<string> {
   return (
     result.media?.track
       .map((track) => {
+        console.log(track);
         if (track["@type"] === "Video") {
           return `Video: ${track.Format}${track.CodecID ? ` (${track.CodecID})` : ""}`;
         }

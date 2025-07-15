@@ -7,9 +7,10 @@ import { ButtonSpinner } from "@/app/components/ButtonSpinner";
 import {
   formatFileDuration,
   formatFileSize,
-  getVideoCodecInfo,
+  // getVideoCodecInfo,
   getVideoDuration,
 } from "@/app/lib/video";
+import { validateVideoFile } from "@/app/lib/video-validator";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
 import { InstagramContext } from "@/app/services/post/instagram/Context";
@@ -78,7 +79,10 @@ function PostForm() {
       setVideoPreviewUrl(URL.createObjectURL(file));
       setVideoFileSize(file.size);
       getVideoDuration({ file, setVideoDuration });
-      setVideoCodecInfo(await getVideoCodecInfo(file));
+      // setVideoCodecInfo(await getVideoCodecInfo(file));
+
+      const result = await validateVideoFile(file);
+      console.log("Video validation:", result);
 
       return;
     }
