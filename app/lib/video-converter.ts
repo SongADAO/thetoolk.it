@@ -4,6 +4,7 @@ import { fetchFile, toBlobURL } from "@ffmpeg/util";
 interface ConversionOptions {
   audioBitrate?: string;
   audioSampleRate?: number;
+  crf?: number;
   duration?: number;
   maxFileSizeMB?: number;
   maxWidth?: number;
@@ -49,7 +50,6 @@ class VideoConverter {
   }
 
   // Main conversion function
-
   public async convertVideo(
     inputFile: File,
     options: ConversionOptions = {},
@@ -65,24 +65,17 @@ class VideoConverter {
       maxWidth = 1920,
       audioBitrate = "128k",
       audioSampleRate = 48000,
+      crf = 23,
     } = options;
-
-    // Adaptive CRF search parameters
-    const maxCrf = 23; // highest CRF we will allow (lowest quality / smallest size)
-    const minCrf = 18; // lowest CRF we’ll try (higher quality / bigger size)
 
     const inputFileName = "input.mp4";
     const outputFileName = "output.mp4";
-    const firstPassOutput = "firstpass.mp4"; // temp file to satisfy ffmpeg's first pass
 
     try {
-      // Write input file to FFmpeg FS only once
+      // Write input file once into FFmpeg's FS
       await this.ffmpeg.writeFile(inputFileName, await fetchFile(inputFile));
 
-      // -- 1️⃣  Get or derive duration ----------------------------------------------------
-      const duration =
-        options.duration ??
-        0; /* You can parse real duration via ffprobe if desired */
+      const duration = options.duration ?? 0;
 
       if (!duration) {
         throw new Error(
@@ -90,127 +83,116 @@ class VideoConverter {
         );
       }
 
-      // Pre‑calculate target video bitrate (kbps) once, based on max file size
+      // Leave 5% head‑room
+      const targetSizeMB = maxFileSizeMB * 0.95;
+
       const targetBitrate = this.calculateTargetBitrate(
         duration,
-        maxFileSizeMB,
-        parseInt(audioBitrate.replace(/[^0-9]/g, "")) || 128,
+        targetSizeMB,
+        parseInt(audioBitrate.replace(/[^0-9]/gu, ""), 10) || 128,
       );
 
-      // We'll iterate CRF values from high (23) down toward minCrf until size ≤ limit
-      for (let crf = maxCrf; crf >= minCrf; crf--) {
-        const passLogFile = "ffmpeg2pass";
+      const ffmpegArgs = [
+        "-i",
+        inputFileName,
+        "-r",
+        targetFps.toString(),
+        // H.264 video codec
+        // ---------------------------------------------------------------------
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        // Variable bitrate with maximum file size constraints
+        // ---------------------------------------------------------------------
+        "-crf",
+        crf.toString(),
+        "-maxrate",
+        `${targetBitrate}k`,
+        "-bufsize",
+        `${targetBitrate * 2}k`,
+        // Closed GOP structure (assuming 30fps, adjust GOP size based on your framerate)
+        // ---------------------------------------------------------------------
+        // "-g",
+        // "60",
+        // "-keyint_min",
+        // "60",
+        // "-sc_threshold",
+        // "0",
+        // 4:2:0 chroma subsampling
+        // ---------------------------------------------------------------------
+        "-pix_fmt",
+        "yuv420p",
+        "-profile:v",
+        "high",
+        "-level",
+        "4.0",
+        "-vf",
+        // Scale to max 1920 width, maintain aspect ratio, ensure even height
+        // ---------------------------------------------------------------------
+        `scale='min(${maxWidth},iw)':-2`,
+        // AAC audio, 128kbps, 48kHz, stereo
+        // ---------------------------------------------------------------------
+        "-c:a",
+        "aac",
+        "-b:a",
+        audioBitrate,
+        "-ar",
+        audioSampleRate.toString(),
+        "-ac",
+        "2",
+        // Moves moov atom to front for web streaming
+        // ---------------------------------------------------------------------
+        "-movflags",
+        "+faststart",
+        // Helps avoid edit lists
+        // ---------------------------------------------------------------------
+        "-avoid_negative_ts",
+        "make_zero",
+        // Overwrite output file
+        // ---------------------------------------------------------------------
+        "-y",
+        // Output
+        // ---------------------------------------------------------------------
+        outputFileName,
+      ];
 
-        // Optional: emit progress reset for each CRF attempt
-        if (onProgress) onProgress(0);
+      // Set up simple progress proxy
+      // let lastReported = 0;
+      // this.ffmpeg.setProgress(({ time }) => {
+      //   if (!onProgress) return;
+      //   // time is in seconds
+      //   const percent = duration ? Math.min(100, (time / duration) * 100) : 0;
+      //   if (percent - lastReported >= 1) {
+      //     lastReported = percent;
+      //     onProgress(percent);
+      //   }
+      // });
 
-        // ------------------ First pass (analysis only) -------------------------
-        const firstPassArgs = [
-          "-y",
-          "-i",
-          inputFileName,
-          "-r",
-          targetFps.toString(),
-          "-c:v",
-          "libx264",
-          "-b:v",
-          `${targetBitrate}k`,
-          "-pass",
-          "1",
-          "-passlogfile",
-          passLogFile,
-          "-vf",
-          `scale='min(${maxWidth},iw)':-2`,
-          "-an",
-          "-f",
-          "mp4",
-          firstPassOutput,
-        ];
+      await this.ffmpeg.exec(ffmpegArgs);
 
-        await this.ffmpeg.exec(firstPassArgs);
+      const outputData = await this.ffmpeg.readFile(outputFileName);
+      const sizeMB = (outputData as Uint8Array).length / (1024 * 1024);
 
-        // ------------------ Second pass (actual encode) -----------------------
-        const secondPassArgs = [
-          "-y",
-          "-i",
-          inputFileName,
-          "-r",
-          targetFps.toString(),
-          "-c:v",
-          "libx264",
-          "-b:v",
-          `${targetBitrate}k`,
-          "-pass",
-          "2",
-          "-passlogfile",
-          passLogFile,
-          "-crf",
-          crf.toString(),
-          "-pix_fmt",
-          "yuv420p",
-          "-profile:v",
-          "high",
-          "-level",
-          "4.0",
-          "-vf",
-          `scale='min(${maxWidth},iw)':-2`,
-          "-c:a",
-          "aac",
-          "-b:a",
-          audioBitrate,
-          "-ar",
-          audioSampleRate.toString(),
-          "-ac",
-          "2",
-          "-movflags",
-          "+faststart",
-          "-avoid_negative_ts",
-          "make_zero",
-          "-y",
-          outputFileName,
-        ];
-
-        await this.ffmpeg.exec(secondPassArgs);
-
-        // ------------------ Check size ----------------------------------------
-        const outputData = await this.ffmpeg.readFile(outputFileName);
-        const sizeMB = (outputData as Uint8Array).length / (1024 * 1024);
-
-        console.log(
-          `CRF ${crf} produced ${sizeMB.toFixed(2)} MB (limit ${maxFileSizeMB} MB)`,
-        );
-
-        // Clean up pass log files & first‑pass file regardless of success
-        const maybeDelete = async (name: string) => {
-          try {
-            await this.ffmpeg.deleteFile(name);
-          } catch (e) {
-            /* ignore */
-          }
-        };
-        await maybeDelete(firstPassOutput);
-        await maybeDelete(`${passLogFile}-0.log`);
-        await maybeDelete(`${passLogFile}-0.log.mbtree`);
-
-        if (sizeMB <= maxFileSizeMB) {
-          // Success!
-          await this.ffmpeg.deleteFile(inputFileName);
-          // Don't delete output; we'll read/return it
-          return new Uint8Array(outputData as ArrayBuffer);
-        }
-
-        // Too big → delete output and try a lower CRF (higher quality/size)
-        await maybeDelete(outputFileName);
-      }
-
-      throw new Error(
-        `Unable to encode video under ${maxFileSizeMB} MB even at CRF ${minCrf}.`,
+      console.log(
+        `Final size: ${sizeMB.toFixed(2)}MB (limit ${maxFileSizeMB}MB)`,
       );
+
+      // Clean up
+      await this.ffmpeg.deleteFile(inputFileName);
+
+      return new Uint8Array(outputData as ArrayBuffer);
     } catch (error) {
-      console.error("Conversion failed:", error);
-      throw new Error(`Video conversion failed: ${error}`);
+      throw error;
+    } finally {
+      try {
+        await this.ffmpeg.deleteFile(outputFileName);
+      } catch {
+        /* ignore */
+      }
     }
   }
+
   // Utility function to download the converted file
   public downloadFile(
     data: Uint8Array,

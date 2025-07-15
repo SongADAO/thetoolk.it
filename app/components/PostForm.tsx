@@ -138,6 +138,7 @@ function PostForm() {
       const convertedData = await videoConverter.convertVideo(file, {
         audioBitrate: "128k",
         audioSampleRate: 48000,
+        crf: 23,
         duration: videoDuration,
         maxFileSizeMB: 300,
         maxWidth: 1920,
@@ -154,6 +155,8 @@ function PostForm() {
       console.log(
         `Conversion complete! Original: ${(file.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedFile.size / 1024 / 1024).toFixed(2)}MB`,
       );
+
+      videoConverter.downloadFile(convertedFile);
 
       return convertedFile;
     } catch (error) {
@@ -193,6 +196,8 @@ function PostForm() {
         fileToUpload = selectedFile;
       }
     }
+
+    return;
 
     if (fileToUpload) {
       const pinataVideoResult = await pinataStoreVideo(fileToUpload);
