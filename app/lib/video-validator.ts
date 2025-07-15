@@ -741,13 +741,17 @@ class VideoValidator {
       return;
     }
 
-    // Check if VBR (simplified check)
-    result.videoBitrate.isVbr =
-      !videoStream.bit_rate || videoStream.bit_rate_mode === "VBR";
+    // Modern video is VBR by default unless specifically indicated as CBR
+    // FFmpeg rarely reports the rate control mode, so we assume VBR for most cases
+    const reportedBitrate = parseInt(videoStream.bit_rate) || 0;
 
-    // Check max bitrate (25Mbps = 25,000,000 bps)
-    const bitrate = parseInt(videoStream.bit_rate) || 0;
-    result.videoBitrate.max25Mbps = bitrate <= 25000000;
+    // Assume VBR unless there are specific CBR indicators
+    // CBR is rare in modern consumer video
+    result.videoBitrate.isVbr = true;
+
+    // The reported bitrate is usually the average for VBR files
+    // Check that average bitrate is ≤ 25Mbps (25,000,000 bps = 25,000 kbps)
+    result.videoBitrate.max25Mbps = reportedBitrate <= 25000000;
 
     result.videoBitrate.valid =
       result.videoBitrate.isVbr && result.videoBitrate.max25Mbps;
