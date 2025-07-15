@@ -266,27 +266,18 @@ class VideoValidator {
 
     // Parse audio stream
     const audioMatch = output.match(
-      /Stream #0:(\d+)[^:]*: Audio: ([^,\(]+)(?:\s*\([^)]*\))?[^,]*,\s*(\d+) Hz[^,]*,\s*(\w+)[^,]*,\s*([^,]+)/,
+      /Stream #0:(\d+)[^:]*: Audio: ([^,\(]+)(?:\s*\([^)]*\))?[^,]*,\s*(\d+) Hz[^,]*,\s*([^,\s]+)[^,]*,\s*[^,]*,\s*(\d+) kb\/s/,
     );
     if (audioMatch) {
+      const channelLayout = audioMatch[4].trim();
       const audioStream = {
         codec_type: "audio",
         codec_name: audioMatch[2].trim(),
         sample_rate: audioMatch[3],
-        channels:
-          audioMatch[4] === "stereo" ? 2 : audioMatch[4] === "mono" ? 1 : 2,
-        bit_rate: "0",
+        channels: this.parseChannelCount(channelLayout),
+        channel_layout: channelLayout,
+        bit_rate: (parseInt(audioMatch[5]) * 1000).toString(),
       };
-
-      // Parse audio bitrate
-      const audioBitrateMatch = output.match(
-        /Audio: [^,]+, [^,]+, [^,]+, (\d+) kb\/s/,
-      );
-      if (audioBitrateMatch) {
-        audioStream.bit_rate = (
-          parseInt(audioBitrateMatch[1]) * 1000
-        ).toString();
-      }
 
       mediaInfo.streams.push(audioStream);
     }
@@ -342,7 +333,7 @@ class VideoValidator {
     const sampleRate = parseInt(audioStream.sample_rate);
     result.audio.sampleRate48khzOrLess = sampleRate <= 48000;
 
-    // Check channels (1 or 2)
+    // Check channels (1 or 2 only)
     result.audio.monoOrStereo =
       audioStream.channels === 1 || audioStream.channels === 2;
 
@@ -459,6 +450,50 @@ class VideoValidator {
   async isMoovAtFront(containerInfo) {
     // Simplified check using containerInfo structure
     return containerInfo.moovAtFront || true; // Default to true for now
+  }
+
+  parseChannelCount(channelLayout) {
+    // Convert FFmpeg channel layout strings to channel counts
+    const channelMappings = {
+      mono: 1,
+      stereo: 2,
+      "2.1": 3,
+      "3.0": 3,
+      "3.1": 4,
+      "4.0": 4,
+      "4.1": 5,
+      "5.0": 5,
+      "5.1": 6,
+      "6.0": 6,
+      "6.1": 7,
+      "7.0": 7,
+      "7.1": 8,
+      "7.1(wide)": 8,
+      "7.1(wide-side)": 8,
+    };
+
+    // Handle direct channel count (e.g., "1 channels", "2 channels")
+    const directCountMatch = channelLayout.match(/^(\d+)(?:\s+channels?)?$/);
+    if (directCountMatch) {
+      return parseInt(directCountMatch[1]);
+    }
+
+    // Handle standard layout names
+    const layout = channelLayout.toLowerCase();
+    if (channelMappings[layout]) {
+      return channelMappings[layout];
+    }
+
+    // Handle complex layouts like "5.1(side)" - extract the base number
+    const complexMatch = channelLayout.match(/^(\d+)\.(\d+)/);
+    if (complexMatch) {
+      const main = parseInt(complexMatch[1]);
+      const lfe = parseInt(complexMatch[2]);
+      return main + lfe;
+    }
+
+    console.warn(`Unknown channel layout: ${channelLayout}, defaulting to 2`);
+    return 2; // Default fallback
   }
 
   is420ChromaSubsampling(pixFmt) {
