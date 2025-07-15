@@ -17,7 +17,7 @@ async function getVideoCodecInfo(file: File): Promise<string> {
 
   return (
     result.media?.track
-      ?.map((track) => {
+      .map((track) => {
         if (track["@type"] === "Video") {
           return `Video: ${track.Format}${track.CodecID ? ` (${track.CodecID})` : ""}`;
         }
@@ -27,7 +27,7 @@ async function getVideoCodecInfo(file: File): Promise<string> {
         return null;
       })
       .filter(Boolean)
-      .join(" | ") || "Unknown codec"
+      .join(" | ") ?? "Unknown codec"
   );
 }
 
