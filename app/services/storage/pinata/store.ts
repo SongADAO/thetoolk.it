@@ -172,8 +172,11 @@ async function uploadHLSFolder({
     // Create a folder structure for upload
     const files: File[] = [];
 
+    // Add master manifest file (this is what Farcaster will reference)
+    files.push(hlsFiles.masterManifest);
+
     // Add manifest file
-    files.push(hlsFiles.manifest);
+    files.push(hlsFiles.streamManifest);
 
     // Add thumbnail
     files.push(hlsFiles.thumbnail);
@@ -182,7 +185,8 @@ async function uploadHLSFolder({
     files.push(...hlsFiles.segments);
 
     console.log(`Uploading HLS folder with ${files.length} files:`, {
-      manifest: hlsFiles.manifest.name,
+      masterManifest: hlsFiles.masterManifest.name,
+      streamManifest: hlsFiles.streamManifest.name,
       thumbnail: hlsFiles.thumbnail.name,
       segments: hlsFiles.segments.length,
     });
@@ -203,7 +207,7 @@ async function uploadHLSFolder({
     // const baseUrl = `https://${this.pinata.config.pinataGateway}/ipfs/${uploadResult.cid}`;
     // const baseUrl = `ipfs://${uploadResult.cid}`;
     const baseUrl = `https://ipfs.io/ipfs/${uploadResult.cid}`;
-    const playlistUrl = `${baseUrl}/${hlsFiles.manifest.name}`;
+    const playlistUrl = `${baseUrl}/${hlsFiles.masterManifest.name}`;
     const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
 
     return {
