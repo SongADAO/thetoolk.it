@@ -35,7 +35,6 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const icon = <FaAws className="size-6" />;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
