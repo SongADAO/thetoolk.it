@@ -283,31 +283,6 @@ function PostForm() {
     console.log(videoPlaylistUrl);
     console.log(videoThumbnailUrl);
 
-    // const videoThumbnailUrl = "";
-
-    // const videoPlaylist = "asdfa";
-
-    // let videoPlaylistUrl = "";
-    // if (videoPlaylist) {
-    //   const s3Result = await amazonS3StoreFile(videoPlaylist);
-    //   if (s3Result) {
-    //     videoPlaylistUrl = s3Result;
-    //   }
-
-    //   const pinataResult = await pinataStoreFile(videoPlaylist);
-    //   if (pinataResult) {
-    //     videoPlaylistUrl = pinataResult;
-    //   }
-
-    //   if (!videoPlaylistUrl) {
-    //     setStorageError("Failed to upload video playlist to storage.");
-
-    //     return newFormState;
-    //   }
-    // }
-
-    // return newFormState;
-
     // const videoUrl =
     //   // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
     //   // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/example.mp4";
