@@ -18,7 +18,7 @@ import {
 // Import the VideoConverter class
 // import { VideoConverter } from "@/app/lib/video-converter-ffmpeg";
 import { VideoConverter } from "@/app/lib/video-converter-webcodecs";
-import { validateVideoFile } from "@/app/lib/video-validator";
+// import { validateVideoFile } from "@/app/lib/video-validator";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
 import { InstagramContext } from "@/app/services/post/instagram/Context";
@@ -104,9 +104,9 @@ function PostForm() {
       getVideoDuration({ file, setVideoDuration });
       // setVideoCodecInfo(await getVideoCodecInfo(file));
 
-      console.log("check video info");
-      const result = await validateVideoFile(file);
-      console.log("Video validation:", result);
+      // console.log("check video info");
+      // const result = await validateVideoFile(file);
+      // console.log("Video validation:", result);
 
       return;
     }
@@ -502,11 +502,7 @@ function PostForm() {
           disabled={isFormDisabled}
         >
           {isFormDisabled ? <Spinner /> : null}
-          {isConverting
-            ? "Converting Video..."
-            : isPending
-              ? "Posting..."
-              : "Post"}
+          {isFormDisabled ? "Posting..." : "Post"}
         </Form.Submit>
       </Form.Root>
     </div>
