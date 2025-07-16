@@ -320,9 +320,11 @@ export class VideoConverter {
               }
             : undefined,
         onProgress: ({ overallProgress }) => {
-          console.log(
-            `WebCodecs conversion progress: ${Math.round(overallProgress * 100)}%`,
-          );
+          if (overallProgress) {
+            console.log(
+              `WebCodecs conversion progress: ${Math.round(overallProgress * 100)}%`,
+            );
+          }
         },
         onVideoTrack: async ({ track, defaultVideoCodec, canCopyTrack }) => {
           // if (
