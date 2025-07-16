@@ -27,14 +27,33 @@ export function ServiceRedirectHandlerWithContext<
     handleAuthRedirect(searchParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
-  console.log("isHandlingAuth", isHandlingAuth);
+
   if (!isHandlingAuth) {
     return null;
   }
 
-  if (!hasCompletedAuth) {
-    return <p>Authorizing {label}</p>;
-  }
+  return (
+    <div className="flex h-screen w-full items-center justify-center">
+      <div className="text-center">
+        <p>{label} Authorization</p>
 
-  return <p>{label} Authorization Complete</p>;
+        {hasCompletedAuth ? (
+          <>
+            <p>Authorization Complete</p>
+            <div>
+              <button
+                className="mt-4 cursor-pointer rounded bg-gray-500 px-4 py-2 text-white"
+                onClick={() => window.close()}
+                type="button"
+              >
+                Return to TheToolk.it
+              </button>
+            </div>
+          </>
+        ) : (
+          <p>Authorizing...</p>
+        )}
+      </div>
+    </div>
+  );
 }

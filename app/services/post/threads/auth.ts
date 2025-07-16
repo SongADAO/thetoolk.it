@@ -73,9 +73,8 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 
 function getRedirectUri(): string {
   const url = new URL(window.location.href);
-  const baseUrl = url.origin + url.pathname;
 
-  return baseUrl;
+  return `${url.origin}/authorize`;
 }
 
 function shouldHandleAuthRedirect(
