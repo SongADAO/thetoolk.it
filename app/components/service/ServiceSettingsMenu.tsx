@@ -25,7 +25,7 @@ function ServiceSettingsMenu({ label, icon, children }: Readonly<Props>) {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="w-[360px] rounded-md bg-gray-600 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slide-up-and-fade data-[side=left]:animate-slide-right-and-fade data-[side=right]:animate-slide-left-and-fade data-[side=top]:animate-slide-down-and-fade"
+          className="w-[360px] rounded-md bg-gray-600 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slide-up-and-fade data-[side=left]:animate-slide-right-and-fade data-[side=right]:animate-slide-left-and-fade data-[side=top]:animate-slide-down-and-fade lg:w-[720px]"
           onPointerDownOutside={(e) => e.preventDefault()}
           sideOffset={5}
         >

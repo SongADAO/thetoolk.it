@@ -13,7 +13,7 @@ export default function Home() {
       <header>
         <div className="flex items-center justify-between bg-gray-200 p-2">
           <h1>TheToolk.it</h1>
-          <div className="flex gap-4">
+          <div className="flex gap-4 md:hidden">
             <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
               <StorageSettings />
             </ServiceSettingsMenu>
@@ -24,42 +24,63 @@ export default function Home() {
         </div>
       </header>
       <main>
-        <div className="grid gap-8 p-2 lg:grid-cols-2 lg:gap-16">
-          <div className="lg:order-1">
-            <section className="mb-4">
+        <div className="grid gap-8 p-2 lg:grid-cols-2 lg:gap-8 2xl:grid-cols-3">
+          <div className="hidden pt-4 2xl:order-2 2xl:block">
+            <div className="flex flex-col gap-8">
+              <section>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3>Storage Service Settings</h3>
+                </div>
+                <StorageSettings />
+              </section>
+
+              <section>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3>Posting Service Settings</h3>
+                </div>
+                <PostSettings />
+              </section>
+            </div>
+          </div>
+
+          <div className="lg:order-0 2xl:order-0">
+            <section>
+              {/* <h2 className="mb-4 text-2xl">Create a Post</h2> */}
               <PostForm />
             </section>
           </div>
-          <div className="pt-4 lg:order-0">
-            <section className="mb-8">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h3 className="mb-1">Active Storage Services</h3>
-                <div className="hidden lg:block">
-                  <ServiceSettingsMenu
-                    icon={<FaServer />}
-                    label="Storage Settings"
-                  >
-                    <StorageSettings />
-                  </ServiceSettingsMenu>
-                </div>
-              </div>
-              <StoreProgress />
-            </section>
 
-            <section className="mb-8">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h3 className="mb-1">Active Posting Services</h3>
-                <div className="hidden lg:block">
-                  <ServiceSettingsMenu
-                    icon={<FaUsersGear />}
-                    label="Post Settings"
-                  >
-                    <PostSettings />
-                  </ServiceSettingsMenu>
+          <div className="pt-4 lg:order-1 2xl:order-1">
+            <div className="flex flex-col gap-8">
+              <section>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3>Active Storage Services</h3>
+                  <div className="hidden lg:block 2xl:hidden">
+                    <ServiceSettingsMenu
+                      icon={<FaServer />}
+                      label="Storage Settings"
+                    >
+                      <StorageSettings />
+                    </ServiceSettingsMenu>
+                  </div>
                 </div>
-              </div>
-              <PostProgress />
-            </section>
+                <StoreProgress />
+              </section>
+              <section>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3>Active Posting Services</h3>
+                  <div className="hidden lg:block 2xl:hidden">
+                    <ServiceSettingsMenu
+                      icon={<FaUsersGear />}
+                      label="Post Settings"
+                    >
+                      <PostSettings />
+                    </ServiceSettingsMenu>
+                  </div>
+                </div>
+                <PostProgress />
+              </section>
+            </div>
           </div>
         </div>
       </main>

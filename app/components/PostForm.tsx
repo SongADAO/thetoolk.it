@@ -292,7 +292,7 @@ function PostForm() {
     <div>
       <Form.Root>
         <Form.Field className="mb-4 flex flex-col" key="video" name="video">
-          <Form.Label>Video</Form.Label>
+          <Form.Label className="mb-2">Video</Form.Label>
           <Form.Control
             accept="video/mp4"
             autoComplete="off"
@@ -357,7 +357,7 @@ function PostForm() {
 
       <Form.Root action={formAction}>
         <Form.Field className="mb-4 flex flex-col" key="title" name="title">
-          <Form.Label>Title</Form.Label>
+          <Form.Label className="mb-2">Title</Form.Label>
           <Form.Control
             autoComplete="off"
             className="rounded text-black"
@@ -374,7 +374,7 @@ function PostForm() {
         </Form.Field>
 
         <Form.Field className="mb-4 flex flex-col" key="text" name="text">
-          <Form.Label>Message</Form.Label>
+          <Form.Label className="mb-2">Message</Form.Label>
           <Form.Control
             asChild
             autoComplete="off"

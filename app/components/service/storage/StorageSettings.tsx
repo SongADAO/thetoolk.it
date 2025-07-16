@@ -6,7 +6,7 @@ import { StorageServiceSettings } from "@/app/components/service/storage/Storage
 export function StorageSettings() {
   return (
     <div>
-      <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
         {STORAGE_CONTEXTS.map((context) => (
           <div className="flex flex-col gap-1" key={context.id}>
             <StorageServiceSettings context={context.context} />
