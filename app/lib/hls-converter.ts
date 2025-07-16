@@ -8,7 +8,6 @@ export interface HLSFiles {
 }
 
 export interface HLSUploadResult {
-  folderHash: string;
   playlistUrl: string;
   thumbnailUrl: string;
 }

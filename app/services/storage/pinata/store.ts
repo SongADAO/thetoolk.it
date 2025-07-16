@@ -206,11 +206,11 @@ async function uploadHLSFolder({
     return {
       playlistUrl,
       thumbnailUrl,
-      folderHash: uploadResult.cid,
     };
-  } catch (error) {
-    console.error("Failed to upload HLS folder to Pinata:", error);
-    throw new Error(`HLS upload failed: ${error}`);
+  } catch (err: unknown) {
+    const errMessage = err instanceof Error ? err.message : "HLS Upload failed";
+    console.error("Failed to upload HLS folder to Pinata:", errMessage);
+    throw new Error(`HLS upload failed: ${errMessage}`);
   }
 }
 

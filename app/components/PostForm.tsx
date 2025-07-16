@@ -4,7 +4,11 @@ import { Form } from "radix-ui";
 import { use, useActionState, useEffect, useRef, useState } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
-import { HLSConverter } from "@/app/lib/hls-converter";
+import {
+  HLSConverter,
+  type HLSFiles,
+  type HLSUploadResult,
+} from "@/app/lib/hls-converter";
 import {
   formatFileDuration,
   formatFileSize,
@@ -85,7 +89,8 @@ function PostForm() {
   const [isConverting, setIsConverting] = useState(false);
 
   const [hlsConversionProgress, setHlsConversionProgress] = useState(0);
-  const [isConvertingHLS, setIsConvertingHLS] = useState(false);
+  const [hlsConversionError, setHlsConversionError] = useState("");
+  const [isHLSConverting, setIsHLSConverting] = useState(false);
 
   const [storageError, setStorageError] = useState("");
 
@@ -113,16 +118,18 @@ function PostForm() {
   }
 
   // Convert video file to optimized format
-  async function convertVideo(file: File): Promise<File> {
-    setIsConverting(true);
-    setConversionProgress(0);
-
+  async function convertVideo(video: File): Promise<File> {
     try {
-      console.log("Starting video conversion...");
+      setIsConverting(true);
+      setConversionProgress(0);
 
+      console.log("Initializing Video converter...");
       const converter = new VideoConverter();
       await converter.initialize();
-      const convertedData = await converter.convertVideo(file, {
+      setConversionProgress(20);
+
+      console.log("Starting video conversion...");
+      const convertedData = await converter.convertVideo(video, {
         audioBitrate: 128000,
         audioSampleRate: 48000,
         crf: 23,
@@ -131,21 +138,23 @@ function PostForm() {
         maxWidth: 1920,
         targetFps: 30,
       });
+      setHlsConversionProgress(80);
 
       // Convert Uint8Array back to File object
-      const convertedFile = new File(
+      const convertedVideo = new File(
         [convertedData],
-        `converted_${file.name}`,
+        `converted_${video.name}`,
         { type: "video/mp4" },
       );
 
       console.log(
-        `Conversion complete! Original: ${(file.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedFile.size / 1024 / 1024).toFixed(2)}MB`,
+        `Conversion complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedVideo.size / 1024 / 1024).toFixed(2)}MB`,
       );
+      setHlsConversionProgress(100);
 
-      converter.downloadFile(convertedFile);
+      // converter.downloadFile(convertedVideo);
 
-      return convertedFile;
+      return convertedVideo;
     } catch (error) {
       console.error("Video conversion failed:", error);
       setConversionError("Failed to convert video.");
@@ -156,6 +165,35 @@ function PostForm() {
     }
   }
 
+  async function convertHLSVideo(video: File): Promise<HLSFiles> {
+    try {
+      setIsHLSConverting(true);
+      setHlsConversionProgress(0);
+
+      console.log("Initializing HLS converter...");
+      const hlsConverter = new HLSConverter();
+      await hlsConverter.initialize();
+      setHlsConversionProgress(20);
+
+      // Convert to HLS (try copy first, fallback to encoding if needed)
+      console.log("Converting video to HLS format...");
+      const hlsFiles = await hlsConverter.convertToHLS(video);
+      setHlsConversionProgress(80);
+
+      console.log("HLS conversion successful");
+      setHlsConversionProgress(100);
+
+      return hlsFiles;
+    } catch (error) {
+      console.error("HLS conversion/upload failed:", error);
+      setHlsConversionError("Failed to convert video to HLS format.");
+      throw error;
+    } finally {
+      setIsHLSConverting(false);
+      setHlsConversionProgress(0);
+    }
+  }
+
   async function saveForm(previousState: FormState, formData: FormData) {
     const newFormState = fromFormData(formData);
 
@@ -163,87 +201,84 @@ function PostForm() {
     // console.log(newFormState);
     // console.log(selectedFile);
 
+    // const video = selectedFile;
+
     // Convert video if file is selected.
-    // let video: File | null = null;
-    // if (selectedFile) {
-    //   try {
-    //     console.log("Converting video before upload...");
-    //     video = await convertVideo(selectedFile);
-    //   } catch (error) {
-    //     return newFormState;
-    //   }
-    // }
-    const video = selectedFile;
+    // -------------------------------------------------------------------------
+    let video: File | null = null;
+    if (selectedFile) {
+      try {
+        console.log("Converting video before upload...");
+        video = await convertVideo(selectedFile);
+      } catch (error) {
+        return newFormState;
+      }
+    }
+    // -------------------------------------------------------------------------
 
-    // // Upload video to storage.
-    // let videoUrl = "";
-    // if (video) {
-    //   const s3VideoResult = await amazonS3StoreVideo(video);
-    //   if (s3VideoResult) {
-    //     videoUrl = s3VideoResult;
-    //   }
-
-    //   const pinataVideoResult = await pinataStoreVideo(video);
-    //   if (pinataVideoResult) {
-    //     videoUrl = pinataVideoResult;
-    //   }
-
-    //   if (!videoUrl) {
-    //     setStorageError("Failed to upload video to storage.");
-
-    //     return newFormState;
-    //   }
-    // }
-
-    let videoPlaylistUrl = "";
-    let videoThumbnailUrl = "";
-
+    // Make HLS Streamable video
+    // -------------------------------------------------------------------------
+    let hlsFiles: HLSFiles | null = null;
     if (video) {
       try {
-        setIsConvertingHLS(true);
-        setHlsConversionProgress(0);
+        console.log("Converting HLS video before upload...");
+        hlsFiles = await convertHLSVideo(video);
+      } catch (error) {
+        return newFormState;
+      }
+    }
+    // -------------------------------------------------------------------------
 
-        console.log("Converting video to HLS format...");
-        const hlsConverter = new HLSConverter();
-        await hlsConverter.initialize();
+    // Upload video to storage.
+    // -------------------------------------------------------------------------
+    let videoUrl = "";
+    if (video) {
+      const s3VideoResult = await amazonS3StoreVideo(video);
+      if (s3VideoResult) {
+        videoUrl = s3VideoResult;
+      }
 
-        // Convert to HLS (try copy first, fallback to encoding if needed)
-        const hlsFiles = await hlsConverter.convertToHLS(video);
-        console.log("HLS conversion successful with copy method");
+      const pinataVideoResult = await pinataStoreVideo(video);
+      if (pinataVideoResult) {
+        videoUrl = pinataVideoResult;
+      }
 
-        setHlsConversionProgress(50);
+      if (!videoUrl) {
+        setStorageError("Failed to upload video to storage.");
 
+        return newFormState;
+      }
+    }
+    // -------------------------------------------------------------------------
+
+    // Upload HLS Streamable video to storage.
+    // -------------------------------------------------------------------------
+    let hlsUploadResult: HLSUploadResult | null = null;
+    if (hlsFiles) {
+      try {
         // Upload HLS files to Pinata
         console.log("Uploading HLS files to Pinata...");
-        const uploadResult = await pinataStoreHLSFolder(
+        hlsUploadResult = await pinataStoreHLSFolder(
           hlsFiles,
-          `video-${Date.now()}`,
+          `hls-video-${Date.now()}`,
         );
 
-        if (uploadResult === null) {
+        if (hlsUploadResult === null) {
           console.error("Failed to upload HLS files to Pinata");
           throw new Error("Failed to upload HLS files to Pinata");
         }
 
-        videoPlaylistUrl = uploadResult.playlistUrl;
-        videoThumbnailUrl = uploadResult.thumbnailUrl;
-
-        setHlsConversionProgress(100);
-
-        console.log("HLS upload successful:", {
-          playlistUrl: videoPlaylistUrl,
-          thumbnailUrl: videoThumbnailUrl,
-          folderHash: uploadResult.folderHash,
-        });
+        console.log("HLS upload successful:", hlsUploadResult);
       } catch (error) {
-        console.error("HLS conversion/upload failed:", error);
-        setConversionError("Failed to convert video to HLS format.");
+        console.error("HLS upload failed:", error);
+        setStorageError("Failed to upload HLS files to storage.");
+
         return newFormState;
-      } finally {
-        setIsConvertingHLS(false);
-        setHlsConversionProgress(0);
       }
     }
+    const videoPlaylistUrl = hlsUploadResult?.playlistUrl ?? "";
+    const videoThumbnailUrl = hlsUploadResult?.thumbnailUrl ?? "";
+    // -------------------------------------------------------------------------
 
     // const videoThumbnailUrl = "";
 
@@ -268,7 +303,7 @@ function PostForm() {
     //   }
     // }
 
-    return newFormState;
+    // return newFormState;
 
     // const videoUrl =
     //   // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
