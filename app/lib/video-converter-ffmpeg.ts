@@ -25,9 +25,6 @@ class VideoConverter {
   ): Promise<void> {
     if (this.isLoaded) return;
 
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd";
-    // const baseURL = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/umd";
-
     // Load FFmpeg with progress tracking
     this.ffmpeg.on("log", ({ message }) => {
       console.log(message);
@@ -39,13 +36,7 @@ class VideoConverter {
       });
     }
 
-    await this.ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(
-        `${baseURL}/ffmpeg-core.wasm`,
-        "application/wasm",
-      ),
-    });
+    await this.ffmpeg.load();
 
     this.isLoaded = true;
   }
@@ -178,7 +169,10 @@ class VideoConverter {
       await this.ffmpeg.exec(ffmpegArgs);
 
       const outputData = await this.ffmpeg.readFile(outputFileName);
-      const sizeMB = (outputData as Uint8Array).length / (1024 * 1024);
+      if (typeof outputData === "string") {
+        throw new Error("Expected binary output but received string");
+      }
+      const sizeMB = outputData.length / (1024 * 1024);
 
       console.log(
         `Final size: ${sizeMB.toFixed(2)}MB (limit ${maxFileSizeMB}MB)`,
@@ -187,7 +181,7 @@ class VideoConverter {
       // Clean up
       await this.ffmpeg.deleteFile(inputFileName);
 
-      return new Uint8Array(outputData as ArrayBuffer);
+      return outputData;
     } catch (error) {
       console.error("Error converting video:", error);
       throw error;
