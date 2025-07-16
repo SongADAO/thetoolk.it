@@ -189,6 +189,7 @@ class VideoConverter {
 
       return new Uint8Array(outputData as ArrayBuffer);
     } catch (error) {
+      console.error("Error converting video:", error);
       throw error;
     } finally {
       try {
