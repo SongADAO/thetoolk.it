@@ -37,9 +37,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <PostProviders>
-            <StorageProviders>{children}</StorageProviders>
-          </PostProviders>
+          <StorageProviders>
+            <PostProviders>{children}</PostProviders>
+          </StorageProviders>
         </Providers>
       </body>
     </html>
