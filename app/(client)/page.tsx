@@ -70,7 +70,7 @@ export default function Home() {
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <h3>Storage Service Settings</h3>
                 </div>
-                {/* <StorageSettings /> */}
+                <StorageSettings />
               </section>
               <section className="rounded bg-gray-100 p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
