@@ -11,7 +11,8 @@ function hasCompleteCredentials(credentials: PinataCredentials): boolean {
   return (
     credentials.apiKey !== "" &&
     credentials.apiSecret !== "" &&
-    credentials.jwt !== ""
+    credentials.jwt !== "" &&
+    credentials.gateway !== ""
   );
 }
 

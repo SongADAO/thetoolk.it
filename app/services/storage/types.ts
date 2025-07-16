@@ -22,6 +22,7 @@ interface PinataCredentials {
   apiKey: string;
   apiSecret: string;
   jwt: string;
+  gateway: string;
 }
 
 const defaultOauthAuthorization: OauthAuthorization = {
@@ -42,6 +43,7 @@ const defaultPinataCredentials: PinataCredentials = {
   apiKey: "",
   apiSecret: "",
   jwt: "",
+  gateway: "",
 };
 
 export {

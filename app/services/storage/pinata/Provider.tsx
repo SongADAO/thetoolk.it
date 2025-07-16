@@ -83,12 +83,18 @@ export function PinataProvider({ children }: Readonly<Props>) {
       name: "jwt",
       placeholder: "JWT (secret access token)",
     },
+    {
+      label: "Gateway",
+      name: "gateway",
+      placeholder: "xxx-xxx-xxx-nnn.mypinata.cloud",
+    },
   ];
 
   const initial: ServiceFormState = {
     apiKey: credentials.apiKey,
     apiSecret: credentials.apiSecret,
     jwt: credentials.jwt,
+    gateway: credentials.gateway,
   };
 
   function saveData(formState: ServiceFormState): ServiceFormState {
@@ -96,6 +102,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
       apiKey: formState.apiKey,
       apiSecret: formState.apiSecret,
       jwt: formState.jwt,
+      gateway: formState.gateway,
     });
 
     return formState;
