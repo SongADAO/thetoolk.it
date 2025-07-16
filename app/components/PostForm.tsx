@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { use, useActionState, useEffect, useRef, useState } from "react";
+import { use, useActionState, useRef, useState } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
 import {
