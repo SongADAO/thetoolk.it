@@ -1,4 +1,7 @@
 import { ReactNode } from "react";
+import { FaCheck, FaCircleExclamation } from "react-icons/fa6";
+
+import { ButtonSpinner } from "@/app/components/ButtonSpinner";
 
 interface Props {
   brandColor: string;
@@ -29,43 +32,59 @@ function ServiceProgress({
   //   return null;
   // }
 
+  // postProgress = 24;
+  // isPosting = true;
+  // postStatus =
+  //   "asdf asdf asd fas dfa asdf asdf asd fas dfa asdf asdf asd fas dfa ";
+  // "asdf asdf asd fas dfa asdf as dfa ";
+
+  // postProgress = 100;
+  // isPosting = false;
+
+  // postError = "asdfgasdfasfa";
+  // isPosting = false;
+
+  const showProgress = !postError;
+
   return (
     <div className="mt-2">
       <div
-        className={`group flex gap-2 rounded px-4 py-2 text-brand-${brandColor}-inverse bg-brand-${brandColor}`}
+        className={`group relative rounded text-brand-${brandColor}-inverse bg-[#6c7281] contain-paint data-[has-error=true]:bg-red-800`}
+        data-has-error={postError ? "true" : "false"}
       >
-        {icon} {label}
-      </div>
-
-      {postError ? (
-        <div className="mt-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
-          {postError}
-        </div>
-      ) : null}
-
-      {isPosting ? (
-        <div className="mt-6 space-y-3">
-          <div className="h-2 w-full rounded-full bg-gray-200">
-            <div
-              className="h-2 rounded-full bg-blue-600 transition-all duration-300"
-              style={{ width: `${postProgress}%` }}
-            />
-          </div>
-          <p className="text-center text-sm text-gray-600">{postStatus}</p>
-          {/* <button
-            className="w-full rounded bg-red-600 py-2 text-white hover:bg-red-700"
-            onClick={cancelPost}
+        {showProgress ? (
+          <div
+            className={`absolute z-10 h-full w-[0] bg-brand-${brandColor}`}
+            style={{ width: `${postProgress}%` }}
           >
-            Cancel Upload
-          </button> */}
-        </div>
-      ) : null}
+            &nbsp;
+          </div>
+        ) : null}
 
-      {postStatus && !isPosting && postProgress === 100 ? (
-        <div className="mt-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700">
-          {postStatus}
+        <div className="relative z-20 flex items-center justify-between gap-2 p-2">
+          <div>{icon}</div>
+
+          <div className="flex-1 text-left text-xs leading-[1]">
+            {postError ? <p>{postError}</p> : null}
+
+            {!postError && postStatus ? <p>{postStatus}</p> : null}
+
+            {!postError && !postStatus ? <p>{label}</p> : null}
+          </div>
+
+          <div>
+            {isPosting ? <ButtonSpinner /> : null}
+
+            {!isPosting && postError ? (
+              <FaCircleExclamation className="size-6" />
+            ) : null}
+
+            {!isPosting && !postError && postStatus ? (
+              <FaCheck className="size-4" />
+            ) : null}
+          </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
