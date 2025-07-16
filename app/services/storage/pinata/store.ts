@@ -53,7 +53,8 @@ async function uploadFile({
     // Clear the progress interval
     clearInterval(progressInterval);
 
-    const contentUri = `ipfs://${upload.cid}`;
+    // const contentUri = `ipfs://${upload.cid}`;
+    const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
 
     return contentUri;
   } catch (err: unknown) {
@@ -128,7 +129,8 @@ async function uploadJson({
     // Pin metadata JSON to Pinata
     const upload = await pinata.upload.public.json(data);
 
-    const contentUri = `ipfs://${upload.cid}`;
+    // const contentUri = `ipfs://${upload.cid}`;
+    const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
 
     return contentUri;
   } catch (err: unknown) {
@@ -199,7 +201,8 @@ async function uploadHLSFolder({
 
     // Construct URLs
     // const baseUrl = `https://${this.pinata.config.pinataGateway}/ipfs/${uploadResult.cid}`;
-    const baseUrl = `ipfs://${uploadResult.cid}`;
+    // const baseUrl = `ipfs://${uploadResult.cid}`;
+    const baseUrl = `https://ipfs.io/ipfs/${uploadResult.cid}`;
     const playlistUrl = `${baseUrl}/${hlsFiles.manifest.name}`;
     const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
 

@@ -280,6 +280,9 @@ function PostForm() {
     const videoThumbnailUrl = hlsUploadResult?.thumbnailUrl ?? "";
     // -------------------------------------------------------------------------
 
+    console.log(videoPlaylistUrl);
+    console.log(videoThumbnailUrl);
+
     // const videoThumbnailUrl = "";
 
     // const videoPlaylist = "asdfa";
