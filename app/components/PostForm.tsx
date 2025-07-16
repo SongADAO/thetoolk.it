@@ -385,7 +385,7 @@ function PostForm() {
             required
             title="Message"
           >
-            <textarea rows={8} />
+            <textarea rows={6} />
           </Form.Control>
           <div>
             <Form.Message match="valueMissing">Missing message.</Form.Message>
