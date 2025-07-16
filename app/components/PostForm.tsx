@@ -164,21 +164,21 @@ function PostForm() {
     const videoThumbnailUrl =
       "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
-    const fileToUpload = selectedFile;
+    let fileToUpload = selectedFile;
 
-    // // Convert video if file is selected and converter is ready
-    // if (selectedFile) {
-    //   try {
-    //     console.log("Converting video before upload...");
-    //     fileToUpload = await convertVideo(selectedFile);
-    //   } catch (error) {
-    //     console.error("Video conversion failed, using original file:", error);
-    //     // Fallback to original file if conversion fails
-    //     fileToUpload = selectedFile;
-    //   }
-    // }
+    // Convert video if file is selected and converter is ready
+    if (selectedFile) {
+      try {
+        console.log("Converting video before upload...");
+        fileToUpload = await convertVideo(selectedFile);
+      } catch (error) {
+        console.error("Video conversion failed, using original file:", error);
+        // Fallback to original file if conversion fails
+        fileToUpload = selectedFile;
+      }
+    }
 
-    // return newFormState;
+    return newFormState;
 
     // if (fileToUpload) {
     //   const pinataVideoResult = await pinataStoreVideo(fileToUpload);

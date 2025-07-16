@@ -1,5 +1,5 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { toBlobURL } from "@ffmpeg/util";
+// import { toBlobURL } from "@ffmpeg/util";
 import { parseMedia } from "@remotion/media-parser";
 import { convertMedia } from "@remotion/webcodecs";
 
@@ -27,14 +27,15 @@ export class FFmpegAudioPreprocessor {
     console.log("Initializing FFmpeg...");
 
     // Load FFmpeg wasm files
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
-    await this.ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(
-        `${baseURL}/ffmpeg-core.wasm`,
-        "application/wasm",
-      ),
-    });
+    await this.ffmpeg.load();
+    // const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+    // await this.ffmpeg.load({
+    //   coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
+    //   wasmURL: await toBlobURL(
+    //     `${baseURL}/ffmpeg-core.wasm`,
+    //     "application/wasm",
+    //   ),
+    // });
 
     this.initialized = true;
     console.log("FFmpeg initialized");
