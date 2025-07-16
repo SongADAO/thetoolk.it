@@ -24,7 +24,7 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <div className="grid gap-4 p-4 lg:grid-cols-2 2xl:grid-cols-3">
+        <div className="grid gap-4 p-4 lg:grid-cols-2 2xl:grid-cols-[1fr_1fr_620px]">
           <div>
             <section className="rounded bg-gray-100 p-4">
               <PostForm />
@@ -70,7 +70,7 @@ export default function Home() {
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <h3>Storage Service Settings</h3>
                 </div>
-                <StorageSettings />
+                {/* <StorageSettings /> */}
               </section>
               <section className="rounded bg-gray-100 p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
