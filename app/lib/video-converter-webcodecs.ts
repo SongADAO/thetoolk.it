@@ -96,9 +96,11 @@ export class FFmpegAudioPreprocessor {
         `Audio converted to 16-bit PCM: ${(audioBlob.size / 1024).toFixed(2)}KB`,
       );
       return audioFile;
-    } catch (error) {
-      console.error("FFmpeg audio conversion error:", error);
-      throw new Error(`Audio conversion failed: ${error.message}`);
+    } catch (err: unknown) {
+      const errMessage =
+        err instanceof Error ? err.message : "Audio conversion failed";
+      console.error("FFmpeg audio conversion error:", err);
+      throw new Error(`Audio conversion failed: ${errMessage}`);
     }
   }
 
@@ -144,9 +146,11 @@ export class FFmpegAudioPreprocessor {
         `Video extracted: ${(videoBlob.size / (1024 * 1024)).toFixed(2)}MB`,
       );
       return videoFile;
-    } catch (error) {
-      console.error("FFmpeg video extraction error:", error);
-      throw new Error(`Video extraction failed: ${error.message}`);
+    } catch (err: unknown) {
+      const errMessage =
+        err instanceof Error ? err.message : "Extract video failed";
+      console.error("FFmpeg video extraction error:", err);
+      throw new Error(`Video extraction failed: ${errMessage}`);
     }
   }
 
@@ -204,9 +208,11 @@ export class FFmpegAudioPreprocessor {
         `Combined file: ${(combinedBlob.size / (1024 * 1024)).toFixed(2)}MB`,
       );
       return combinedFile;
-    } catch (error) {
-      console.error("FFmpeg combine error:", error);
-      throw new Error(`Combining failed: ${error.message}`);
+    } catch (err: unknown) {
+      const errMessage =
+        err instanceof Error ? err.message : "combine Audio Video failed";
+      console.error("FFmpeg combine error:", err);
+      throw new Error(`Combining failed: ${errMessage}`);
     }
   }
 }
@@ -361,12 +367,14 @@ export class VideoConverter {
       await result.remove();
 
       return new Uint8Array(arrayBuffer);
-    } catch (error) {
+    } catch (err: unknown) {
+      const errMessage =
+        err instanceof Error ? err.message : "Convert video failed";
       console.error(
         "WebCodecs conversion after FFmpeg preprocessing failed:",
-        error,
+        err,
       );
-      throw new Error(`Video conversion failed: ${error.message}`);
+      throw new Error(`Video conversion failed: ${errMessage}`);
     }
   }
 
