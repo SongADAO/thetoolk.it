@@ -3,6 +3,7 @@ import { PostProgress } from "@/app/components/service/post/PostProgress";
 import { PostProviders } from "@/app/components/service/post/PostProviders";
 import { PostRedirectHandlers } from "@/app/components/service/post/PostRedirectHandlers";
 import { StorageProviders } from "@/app/components/service/storage/StorageProviders";
+import { StoreProgress } from "@/app/components/service/storage/StoreProgress";
 import { SettingsMenu } from "@/app/components/SettingsMenu";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
           <main>
             <div className="p-2">
               <PostForm />
+              <StoreProgress />
               <PostProgress />
             </div>
           </main>

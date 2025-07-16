@@ -14,7 +14,7 @@ interface Props {
   postStatus: string;
 }
 
-function ServiceProgress({
+function ServicePostProgress({
   brandColor,
   icon,
   isEnabled,
@@ -89,4 +89,4 @@ function ServiceProgress({
   );
 }
 
-export { ServiceProgress };
+export { ServicePostProgress };

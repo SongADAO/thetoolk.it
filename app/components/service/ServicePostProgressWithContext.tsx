@@ -2,20 +2,20 @@
 
 import { ComponentProps, Context, use } from "react";
 
-import { ServiceProgress } from "@/app/components/service/ServiceProgress";
+import { ServicePostProgress } from "@/app/components/service/ServicePostProgress";
 
-type ServiceProgressProps = ComponentProps<typeof ServiceProgress>;
+type ServicePostProgressProps = ComponentProps<typeof ServicePostProgress>;
 
-interface Props<T extends ServiceProgressProps> {
+interface Props<T extends ServicePostProgressProps> {
   readonly context: Context<T>;
 }
 
-export function ServiceProgressWithContext<T extends ServiceProgressProps>({
-  context,
-}: Props<T>) {
+export function ServicePostProgressWithContext<
+  T extends ServicePostProgressProps,
+>({ context }: Props<T>) {
   const contextValue = use(context);
 
-  const props: ServiceProgressProps = {
+  const props: ServicePostProgressProps = {
     brandColor: contextValue.brandColor,
     icon: contextValue.icon,
     isEnabled: contextValue.isEnabled,
@@ -26,5 +26,5 @@ export function ServiceProgressWithContext<T extends ServiceProgressProps>({
     postStatus: contextValue.postStatus,
   };
 
-  return <ServiceProgress {...props} />;
+  return <ServicePostProgress {...props} />;
 }
