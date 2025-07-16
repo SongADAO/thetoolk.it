@@ -15,7 +15,6 @@ import {
   // getVideoCodecInfo,
   getVideoDuration,
 } from "@/app/lib/video";
-// Import the VideoConverter class
 // import { VideoConverter } from "@/app/lib/video-converter-ffmpeg";
 import { VideoConverter } from "@/app/lib/video-converter-webcodecs";
 // import { validateVideoFile } from "@/app/lib/video-validator";
