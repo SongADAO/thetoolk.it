@@ -9,13 +9,13 @@ interface Props {
   children: ReactNode;
 }
 
-function SettingsMenuItem({ label, icon, children }: Readonly<Props>) {
+function ServiceSettingsMenu({ label, icon, children }: Readonly<Props>) {
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
         <button
           aria-label={label}
-          className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-white px-4 py-2 text-black outline-none hover:bg-gray-300"
+          className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
           title={label}
           type="button"
         >
@@ -51,4 +51,4 @@ function SettingsMenuItem({ label, icon, children }: Readonly<Props>) {
   );
 }
 
-export { SettingsMenuItem };
+export { ServiceSettingsMenu };
