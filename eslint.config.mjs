@@ -58,6 +58,7 @@ export default tseslint.config(
       ".git/**",
       ".next/**",
       "node_modules/**",
+      "_disabled/**",
       "dist/**",
       "dist-ssr/**",
       "package-lock.json",
