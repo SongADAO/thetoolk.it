@@ -304,6 +304,24 @@ export class VideoConverter {
       );
       console.log(`Target bitrate: ${targetBitrate} kbps`);
 
+      // Calculate scale factor instead of explicit dimensions
+      const resizeOperation = (() => {
+        if (targetWidth === originalWidth && targetHeight === originalHeight) {
+          return undefined;
+        }
+
+        // Calculate scale factor based on the dimension that was limited
+        const scaleX = targetWidth / originalWidth;
+        const scaleY = targetHeight / originalHeight;
+        // Use the smaller scale factor to ensure both dimensions fit within limits
+        const scaleFactor = Math.min(scaleX, scaleY);
+
+        return {
+          mode: "scale" as const,
+          scale: scaleFactor,
+        };
+      })();
+
       const result = await convertMedia({
         src: videoWithProcessedAudio,
         container: "mp4",
@@ -311,14 +329,7 @@ export class VideoConverter {
         audioCodec: "aac",
         // expectedDurationInSeconds: options.duration,
         // expectedFrameRate: Math.min(originalFps, options.targetFps),
-        resize:
-          targetWidth !== originalWidth || targetHeight !== originalHeight
-            ? {
-                mode: "scale",
-                width: targetWidth,
-                height: targetHeight,
-              }
-            : undefined,
+        resize: resizeOperation,
         onProgress: ({ overallProgress }) => {
           if (overallProgress) {
             console.log(
