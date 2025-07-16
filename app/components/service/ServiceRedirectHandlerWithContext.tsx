@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Context, use, useEffect } from "react";
+import { Context, ReactNode, use, useEffect } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
 
@@ -10,6 +10,7 @@ interface ServiceRedirectHandlerProps {
   readonly hasCompletedAuth: boolean;
   readonly isHandlingAuth: boolean;
   readonly label: string;
+  readonly icon: ReactNode;
 }
 
 interface Props<T extends ServiceRedirectHandlerProps> {

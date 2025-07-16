@@ -2,7 +2,7 @@
 
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as React from "react";
+import { ReactNode } from "react";
 import { WagmiProvider } from "wagmi";
 
 import { config } from "@/app/config/wagmi";
@@ -11,11 +11,11 @@ import { config } from "@/app/config/wagmi";
 
 const queryClient = new QueryClient();
 
-export function Providers({
-  children,
-}: {
-  readonly children: React.ReactNode;
-}) {
+interface Props {
+  children: ReactNode;
+}
+
+export function Providers({ children }: Readonly<Props>) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
