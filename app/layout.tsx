@@ -6,7 +6,9 @@ import type { Metadata } from "next";
 // eslint-disable-next-line camelcase
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { Providers } from "./providers";
+import { PostProviders } from "@/app/components/service/post/PostProviders";
+import { StorageProviders } from "@/app/components/service/storage/StorageProviders";
+import { Providers } from "@/app/providers";
 
 // eslint-disable-next-line new-cap
 const geistSans = Geist({
@@ -35,7 +37,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <PostProviders>
+            <StorageProviders>{children}</StorageProviders>
+          </PostProviders>
+        </Providers>
       </body>
     </html>
   );

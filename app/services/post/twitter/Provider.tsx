@@ -174,7 +174,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
   async function authorize() {
     const authUrl = await getAuthorizationUrl(credentials, getRedirectUri());
 
-    window.location.href = authUrl;
+    // Open a new tab with a specific URL
+    window.open(authUrl, "_blank");
+
+    // window.location.href = authUrl;
   }
 
   async function handleAuthRedirect(searchParams: URLSearchParams) {
