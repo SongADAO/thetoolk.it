@@ -58,12 +58,12 @@ function PostForm() {
 
   const {
     // storeJson: pinataStoreJson,
-    // storeFile: pinataStoreFile,
+    storeFile: pinataStoreFile,
     storeVideo: pinataStoreVideo,
   } = use(PinataContext);
   const {
     // storeJson: amazonS3StoreJson,
-    // storeFile: amazonS3StoreFile,
+    storeFile: amazonS3StoreFile,
     storeVideo: amazonS3StoreVideo,
   } = use(AmazonS3Context);
 
@@ -79,7 +79,10 @@ function PostForm() {
     null,
   );
   const [conversionProgress, setConversionProgress] = useState(0);
+  const [conversionError, setConversionError] = useState("");
   const [isConverting, setIsConverting] = useState(false);
+
+  const [storageError, setStorageError] = useState("");
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
@@ -140,6 +143,7 @@ function PostForm() {
       return convertedFile;
     } catch (error) {
       console.error("Video conversion failed:", error);
+      setConversionError("Failed to convert video.");
       throw error;
     } finally {
       setIsConverting(false);
@@ -150,43 +154,75 @@ function PostForm() {
   async function saveForm(previousState: FormState, formData: FormData) {
     const newFormState = fromFormData(formData);
 
-    console.log(previousState);
-    console.log(newFormState);
-    console.log(selectedFile);
+    // console.log(previousState);
+    // console.log(newFormState);
+    // console.log(selectedFile);
 
-    const videoUrl =
-      // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
-      // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/example.mp4";
-      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
-
-    const videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
-
-    const videoThumbnailUrl =
-      "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
-
-    let fileToUpload = selectedFile;
-
-    // Convert video if file is selected and converter is ready
+    // Convert video if file is selected.
+    let video: File | null = null;
     if (selectedFile) {
       try {
         console.log("Converting video before upload...");
-        fileToUpload = await convertVideo(selectedFile);
+        video = await convertVideo(selectedFile);
       } catch (error) {
-        console.error("Video conversion failed, using original file:", error);
-        // Fallback to original file if conversion fails
-        fileToUpload = selectedFile;
+        return newFormState;
+      }
+    }
+
+    // Upload video to storage.
+    let videoUrl = "";
+    if (video) {
+      const s3VideoResult = await amazonS3StoreVideo(video);
+      if (s3VideoResult) {
+        videoUrl = s3VideoResult;
+      }
+
+      const pinataVideoResult = await pinataStoreVideo(video);
+      if (pinataVideoResult) {
+        videoUrl = pinataVideoResult;
+      }
+
+      if (!videoUrl) {
+        setStorageError("Failed to upload video to storage.");
+
+        return newFormState;
+      }
+    }
+
+    const videoThumbnailUrl = "";
+
+    const videoPlaylist = "asdfa";
+
+    let videoPlaylistUrl = "";
+    if (videoPlaylist) {
+      const s3Result = await amazonS3StoreFile(videoPlaylist);
+      if (s3Result) {
+        videoPlaylistUrl = s3Result;
+      }
+
+      const pinataResult = await pinataStoreFile(videoPlaylist);
+      if (pinataResult) {
+        videoPlaylistUrl = pinataResult;
+      }
+
+      if (!videoPlaylistUrl) {
+        setStorageError("Failed to upload video playlist to storage.");
+
+        return newFormState;
       }
     }
 
     return newFormState;
 
-    // if (fileToUpload) {
-    //   const pinataVideoResult = await pinataStoreVideo(fileToUpload);
-    //   console.log(pinataVideoResult);
+    // const videoUrl =
+    //   // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
+    //   // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/example.mp4";
+    //   "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
 
-    //   const s3VideoResult = await amazonS3StoreVideo(fileToUpload);
-    //   console.log(s3VideoResult);
-    // }
+    // const videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
+
+    // const videoThumbnailUrl =
+    //   "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
     // Use the converted file for all posting services
     await blueskyPost({
@@ -194,7 +230,7 @@ function PostForm() {
       title: newFormState.title,
       userId: blueskyAccounts[0]?.id,
       username: blueskyAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -205,7 +241,7 @@ function PostForm() {
       title: newFormState.title,
       userId: facebookAccounts[0]?.id,
       username: facebookAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -216,7 +252,7 @@ function PostForm() {
       title: newFormState.title,
       userId: instagramAccounts[0]?.id,
       username: instagramAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -227,7 +263,7 @@ function PostForm() {
       title: newFormState.title,
       userId: neynarAccounts[0]?.id,
       username: neynarAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -238,7 +274,7 @@ function PostForm() {
       title: newFormState.title,
       userId: threadsAccounts[0]?.id,
       username: threadsAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -249,7 +285,7 @@ function PostForm() {
       title: newFormState.title,
       userId: tiktokAccounts[0]?.id,
       username: tiktokAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -260,7 +296,7 @@ function PostForm() {
       title: newFormState.title,
       userId: twitterAccounts[0]?.id,
       username: twitterAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
@@ -271,7 +307,7 @@ function PostForm() {
       title: newFormState.title,
       userId: youtubeAccounts[0]?.id,
       username: youtubeAccounts[0]?.username,
-      video: fileToUpload,
+      video,
       videoPlaylistUrl,
       videoThumbnailUrl,
       videoUrl,
