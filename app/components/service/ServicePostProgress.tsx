@@ -46,43 +46,46 @@ function ServicePostProgress({
 
   const showProgress = !postError;
 
+  const hasError = Boolean(postError);
+
+  const isComplete = !postError && postStatus && postProgress === 100;
+
   return (
-    <div>
-      <div
-        className={`group relative rounded text-brand-${brandColor}-inverse bg-[#6c7281] contain-paint data-[has-error=true]:bg-red-800`}
-        data-has-error={postError ? "true" : "false"}
-      >
-        {showProgress ? (
-          <div
-            className={`absolute z-10 h-full w-[0] bg-brand-${brandColor}`}
-            style={{ width: `${postProgress}%` }}
-          >
-            &nbsp;
-          </div>
-        ) : null}
+    <div
+      className={`group relative rounded text-brand-${brandColor}-inverse order-1 bg-[#6c7281] contain-paint data-[has-error=true]:order-0 data-[has-error=true]:bg-red-800 data-[is-complete=true]:order-2 data-[is-complete=true]:bg-green-800`}
+      data-has-error={hasError ? "true" : "false"}
+      data-is-complete={isComplete ? "true" : "false"}
+    >
+      {showProgress ? (
+        <div
+          className={`absolute z-10 h-full w-[0] bg-brand-${brandColor}`}
+          style={{ width: `${postProgress}%` }}
+        >
+          &nbsp;
+        </div>
+      ) : null}
 
-        <div className="relative z-20 flex items-center justify-between gap-2 p-2">
-          <div>{icon}</div>
+      <div className="relative z-20 flex items-center justify-between gap-2 p-2">
+        <div>{icon}</div>
 
-          <div className="flex-1 text-left text-xs leading-[1]">
-            {postError ? <p>{postError}</p> : null}
+        <div className="flex-1 text-left text-xs leading-[1]">
+          {postError ? <p>{postError}</p> : null}
 
-            {!postError && postStatus ? <p>{postStatus}</p> : null}
+          {!postError && postStatus ? <p>{postStatus}</p> : null}
 
-            {!postError && !postStatus ? <p>{label}</p> : null}
-          </div>
+          {!postError && !postStatus ? <p>{label}</p> : null}
+        </div>
 
-          <div>
-            {isPosting ? <Spinner /> : null}
+        <div>
+          {isPosting ? <Spinner /> : null}
 
-            {!isPosting && postError ? (
-              <FaCircleExclamation className="size-6" />
-            ) : null}
+          {!isPosting && postError ? (
+            <FaCircleExclamation className="size-6" />
+          ) : null}
 
-            {!isPosting && !postError && postStatus ? (
-              <FaCheck className="size-4" />
-            ) : null}
-          </div>
+          {!isPosting && !postError && postStatus && postProgress === 100 ? (
+            <FaCheck className="size-4" />
+          ) : null}
         </div>
       </div>
     </div>
