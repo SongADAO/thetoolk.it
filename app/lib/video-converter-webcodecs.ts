@@ -4,7 +4,7 @@ import { parseMedia } from "@remotion/media-parser";
 import { convertMedia } from "@remotion/webcodecs";
 
 export interface ConversionOptions {
-  audioBitrate: string;
+  audioBitrate: number;
   audioSampleRate: number;
   crf: number;
   duration: number;
@@ -73,7 +73,8 @@ export class FFmpegAudioPreprocessor {
         "-ac",
         "2", // Stereo
         "-ar",
-        "44100", // 44.1kHz sample rate
+        // "44100", // 44.1kHz sample rate
+        "48000", // 48kHz sample rate
         outputFileName,
       ]);
 
@@ -287,6 +288,15 @@ export class VideoConverter {
 
       console.log(`Target dimensions: ${targetWidth}x${targetHeight}`);
 
+      const targetSizeMB = options.maxFileSizeMB * 0.95;
+
+      const targetBitrate = this.calculateTargetBitrate(
+        options.duration,
+        targetSizeMB,
+        options.audioBitrate,
+      );
+      console.log(`Target bitrate: ${targetBitrate} kbps`);
+
       const result = await convertMedia({
         src: videoWithProcessedAudio,
         container: "mp4",
@@ -302,46 +312,44 @@ export class VideoConverter {
                 height: targetHeight,
               }
             : undefined,
-
         onProgress: ({ overallProgress }) => {
           console.log(
             `WebCodecs conversion progress: ${Math.round(overallProgress * 100)}%`,
           );
         },
-
         onVideoTrack: async ({ track, defaultVideoCodec, canCopyTrack }) => {
-          if (
-            canCopyTrack &&
-            targetWidth === originalWidth &&
-            targetHeight === originalHeight &&
-            originalFps <= options.targetFps
-          ) {
-            console.log("Copying video track");
-            return { type: "copy" };
-          }
+          // if (
+          //   canCopyTrack &&
+          //   targetWidth === originalWidth &&
+          //   targetHeight === originalHeight &&
+          //   originalFps <= options.targetFps
+          // ) {
+          //   console.log("Copying video track");
+          //   return { type: "copy" };
+          // }
 
           console.log("Re-encoding video track");
           return {
             type: "reencode",
             videoCodec: "h264",
-            crf: options.crf,
+            // crf: options.crf,
+            // bitrate: targetBitrate,
           };
         },
-
         onAudioTrack: async ({ track, defaultAudioCodec, canCopyTrack }) => {
-          if (!track) return { type: "drop" };
+          // if (!track) return { type: "drop" };
 
-          // Audio should now be compatible 16-bit PCM/AAC
-          if (canCopyTrack && defaultAudioCodec === "aac") {
-            console.log("Copying preprocessed audio track");
-            return { type: "copy" };
-          }
+          // // Audio should now be compatible 16-bit PCM/AAC
+          // if (canCopyTrack && defaultAudioCodec === "aac") {
+          //   console.log("Copying preprocessed audio track");
+          //   return { type: "copy" };
+          // }
 
           console.log("Re-encoding preprocessed audio to AAC");
           return {
             type: "reencode",
             audioCodec: "aac",
-            bitrate: this.parseAudioBitrate(options.audioBitrate),
+            bitrate: options.audioBitrate,
             sampleRate: options.audioSampleRate,
           };
         },
@@ -359,19 +367,6 @@ export class VideoConverter {
       );
       throw new Error(`Video conversion failed: ${error.message}`);
     }
-  }
-
-  private parseAudioBitrate(bitrateString: string): number {
-    const match = /^(\d+)k?$/i.exec(bitrateString);
-    if (!match) {
-      throw new Error(`Invalid audio bitrate format: ${bitrateString}`);
-    }
-
-    const value = parseInt(match[1], 10);
-    const bitrate = bitrateString.toLowerCase().includes("k")
-      ? value * 1000
-      : value;
-    return Math.max(64000, Math.min(320000, bitrate));
   }
 
   downloadFile(file: File): void {
@@ -393,5 +388,20 @@ export class VideoConverter {
   ): File {
     const blob = new Blob([data], { type: "video/mp4" });
     return new File([blob], filename, { type: "video/mp4" });
+  }
+
+  // Calculate target video bitrate to stay under file size limit
+  private calculateTargetBitrate(
+    durationSeconds: number,
+    maxFileSizeMB: number,
+    audioBitrateKbps = 128000,
+  ): number {
+    const maxFileSizeBits = maxFileSizeMB * 8 * 1024 * 1024;
+    const audioBits = audioBitrateKbps * durationSeconds;
+    const videoBits = maxFileSizeBits - audioBits;
+    const videoBitrateKbps = Math.floor(videoBits / durationSeconds / 1000);
+
+    // Ensure minimum quality and maximum limits
+    return Math.max(500, Math.min(videoBitrateKbps, 25000));
   }
 }

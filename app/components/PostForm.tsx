@@ -91,6 +91,7 @@ function PostForm() {
       getVideoDuration({ file, setVideoDuration });
       // setVideoCodecInfo(await getVideoCodecInfo(file));
 
+      console.log("check video info");
       const result = await validateVideoFile(file);
       console.log("Video validation:", result);
 
@@ -114,11 +115,11 @@ function PostForm() {
       const converter = new VideoConverter();
       await converter.initialize();
       const convertedData = await converter.convertVideo(file, {
-        audioBitrate: "128k",
+        audioBitrate: 128000,
         audioSampleRate: 48000,
         crf: 23,
         duration: videoDuration,
-        maxFileSizeMB: 300,
+        maxFileSizeMB: 20,
         maxWidth: 1920,
         targetFps: 30,
       });
@@ -154,36 +155,38 @@ function PostForm() {
     console.log(selectedFile);
 
     const videoUrl =
-      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
+      // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
+      // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/example.mp4";
+      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example.mp4";
 
     const videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
 
     const videoThumbnailUrl =
       "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
-    let fileToUpload = selectedFile;
+    const fileToUpload = selectedFile;
 
-    // Convert video if file is selected and converter is ready
-    if (selectedFile) {
-      try {
-        console.log("Converting video before upload...");
-        fileToUpload = await convertVideo(selectedFile);
-      } catch (error) {
-        console.error("Video conversion failed, using original file:", error);
-        // Fallback to original file if conversion fails
-        fileToUpload = selectedFile;
-      }
-    }
+    // // Convert video if file is selected and converter is ready
+    // if (selectedFile) {
+    //   try {
+    //     console.log("Converting video before upload...");
+    //     fileToUpload = await convertVideo(selectedFile);
+    //   } catch (error) {
+    //     console.error("Video conversion failed, using original file:", error);
+    //     // Fallback to original file if conversion fails
+    //     fileToUpload = selectedFile;
+    //   }
+    // }
 
-    return newFormState;
+    // return newFormState;
 
-    if (fileToUpload) {
-      const pinataVideoResult = await pinataStoreVideo(fileToUpload);
-      console.log(pinataVideoResult);
+    // if (fileToUpload) {
+    //   const pinataVideoResult = await pinataStoreVideo(fileToUpload);
+    //   console.log(pinataVideoResult);
 
-      const s3VideoResult = await amazonS3StoreVideo(fileToUpload);
-      console.log(s3VideoResult);
-    }
+    //   const s3VideoResult = await amazonS3StoreVideo(fileToUpload);
+    //   console.log(s3VideoResult);
+    // }
 
     // Use the converted file for all posting services
     await blueskyPost({
