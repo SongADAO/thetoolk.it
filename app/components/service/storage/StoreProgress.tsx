@@ -7,9 +7,10 @@ export function StoreProgress() {
   return (
     <div className="grid grid-cols-2 gap-2">
       {STORAGE_CONTEXTS.map((context) => (
-        <div key={context.id}>
-          <ServiceStoreProgressWithContext context={context.context} />
-        </div>
+        <ServiceStoreProgressWithContext
+          context={context.context}
+          key={context.id}
+        />
       ))}
     </div>
   );

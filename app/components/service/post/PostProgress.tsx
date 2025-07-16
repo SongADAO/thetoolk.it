@@ -7,9 +7,10 @@ export function PostProgress() {
   return (
     <div className="grid grid-cols-2 gap-2">
       {POST_CONTEXTS.map((context) => (
-        <div key={context.id}>
-          <ServicePostProgressWithContext context={context.context} />
-        </div>
+        <ServicePostProgressWithContext
+          context={context.context}
+          key={context.id}
+        />
       ))}
     </div>
   );

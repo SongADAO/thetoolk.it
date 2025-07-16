@@ -18,20 +18,23 @@ export default function Home() {
             </div>
           </header>
           <main>
-            <div className="p-2">
-              <section className="mb-4">
-                <PostForm />
-              </section>
+            <div className="grid gap-8 p-2 lg:grid-cols-2">
+              <div className="lg:order-1">
+                <section className="mb-4">
+                  <PostForm />
+                </section>
+              </div>
+              <div className="lg:order-0">
+                <section className="mb-4">
+                  <h3 className="mb-1">Active Storage Services</h3>
+                  <StoreProgress />
+                </section>
 
-              <section className="mb-4">
-                <h3 className="mb-1 text-sm">Active Storage Services</h3>
-                <StoreProgress />
-              </section>
-
-              <section className="mb-4">
-                <h3 className="mb-1 text-sm">Active Posting Services</h3>
-                <PostProgress />
-              </section>
+                <section className="mb-4">
+                  <h3 className="mb-1">Active Posting Services</h3>
+                  <PostProgress />
+                </section>
+              </div>
             </div>
           </main>
           <footer>
