@@ -3,6 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { Context, use, useEffect } from "react";
 
+import { Spinner } from "@/app/components/Spinner";
+
 interface ServiceRedirectHandlerProps {
   readonly handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
   readonly hasCompletedAuth: boolean;
@@ -17,7 +19,7 @@ interface Props<T extends ServiceRedirectHandlerProps> {
 export function ServiceRedirectHandlerWithContext<
   T extends ServiceRedirectHandlerProps,
 >({ context }: Props<T>) {
-  const { handleAuthRedirect, isHandlingAuth, hasCompletedAuth, label } =
+  const { handleAuthRedirect, isHandlingAuth, hasCompletedAuth, label, icon } =
     use(context);
 
   const searchParams = useSearchParams();
@@ -35,12 +37,14 @@ export function ServiceRedirectHandlerWithContext<
   return (
     <div className="flex h-screen w-full items-center justify-center">
       <div className="text-center">
-        <p>{label} Authorization</p>
+        <h1 className="mb-8 flex flex-col items-center justify-center gap-2 text-xl">
+          {icon} {label}
+        </h1>
 
         {hasCompletedAuth ? (
           <>
-            <p>Authorization Complete</p>
-            <div>
+            <p className="">Authorization Complete</p>
+            <div className="flex items-center justify-center">
               <button
                 className="mt-4 cursor-pointer rounded bg-gray-500 px-4 py-2 text-white"
                 onClick={() => window.close()}
@@ -51,7 +55,12 @@ export function ServiceRedirectHandlerWithContext<
             </div>
           </>
         ) : (
-          <p>Authorizing...</p>
+          <>
+            <p className="mb-6">Authorizing TheToolk.it</p>
+            <div className="flex items-center justify-center">
+              <Spinner color="black" size="8" />
+            </div>
+          </>
         )}
       </div>
     </div>

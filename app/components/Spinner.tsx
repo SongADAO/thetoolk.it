@@ -11,7 +11,7 @@ function Spinner({
 }: Readonly<Props>) {
   return (
     <svg
-      className="data-[color=primary]:text-body size-5 animate-spin text-white data-[opacity=25]:opacity-25 data-[size=20px]:size-[20px] data-[size=4]:size-4 data-[size=8]:size-8 motion-reduce:hidden"
+      className="data-[color=primary]:text-body size-5 animate-spin text-white data-[color=black]:text-black data-[opacity=25]:opacity-25 data-[size=20px]:size-[20px] data-[size=4]:size-4 data-[size=8]:size-8 motion-reduce:hidden"
       data-color={color}
       data-opacity={opacity}
       data-size={size}

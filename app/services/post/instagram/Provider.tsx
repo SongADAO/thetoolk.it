@@ -171,11 +171,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
   function authorize() {
     const authUrl = getAuthorizationUrl(credentials, getRedirectUri());
-
-    // Open a new tab with a specific URL
     window.open(authUrl, "_blank");
-
-    // window.location.href = authUrl;
   }
 
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
