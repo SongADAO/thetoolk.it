@@ -28,7 +28,6 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 
 // -----------------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
 async function getAccounts(token: string): Promise<ServiceAccount[]> {
   return [];
 }
