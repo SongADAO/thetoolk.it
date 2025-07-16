@@ -420,6 +420,8 @@ export default tseslint.config(
       "@typescript-eslint/explicit-member-accessibility": "off",
       "@typescript-eslint/class-methods-use-this": "off",
       "@typescript-eslint/member-ordering": "off",
+      "max-classes-per-file": "off",
+      "no-inline-comments": "off",
       "@typescript-eslint/max-params": "off",
       // "@typescript-eslint/no-unnecessary-condition": "off",
     },

@@ -114,7 +114,7 @@ function PostForm() {
       const converter = new VideoConverter();
       await converter.initialize();
       const convertedData = await converter.convertVideo(file, {
-        audioBitrate: 128000,
+        audioBitrate: "128k",
         audioSampleRate: 48000,
         crf: 23,
         duration: videoDuration,
