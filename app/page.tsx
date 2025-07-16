@@ -19,9 +19,19 @@ export default function Home() {
           </header>
           <main>
             <div className="p-2">
-              <PostForm />
-              <StoreProgress />
-              <PostProgress />
+              <section className="mb-4">
+                <PostForm />
+              </section>
+
+              <section className="mb-4">
+                <h3 className="mb-1 text-sm">Active Storage Services</h3>
+                <StoreProgress />
+              </section>
+
+              <section className="mb-4">
+                <h3 className="mb-1 text-sm">Active Posting Services</h3>
+                <PostProgress />
+              </section>
             </div>
           </main>
           <footer>

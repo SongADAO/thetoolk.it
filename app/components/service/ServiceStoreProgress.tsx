@@ -47,7 +47,7 @@ function ServiceStoreProgress({
   const showProgress = !storeError;
 
   return (
-    <div className="mt-2">
+    <div>
       <div
         className={`group relative rounded text-brand-${brandColor}-inverse bg-[#6c7281] contain-paint data-[has-error=true]:bg-red-800`}
         data-has-error={storeError ? "true" : "false"}

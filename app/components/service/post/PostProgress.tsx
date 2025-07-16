@@ -5,7 +5,7 @@ import { ServicePostProgressWithContext } from "@/app/components/service/Service
 
 export function PostProgress() {
   return (
-    <div>
+    <div className="grid grid-cols-2 gap-2">
       {POST_CONTEXTS.map((context) => (
         <div key={context.id}>
           <ServicePostProgressWithContext context={context.context} />
