@@ -4,6 +4,7 @@ import { Form } from "radix-ui";
 import { use, useActionState, useEffect, useRef, useState } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
+import { HLSConverter } from "@/app/lib/hls-converter";
 import {
   formatFileDuration,
   formatFileSize,
@@ -60,6 +61,7 @@ function PostForm() {
     // storeJson: pinataStoreJson,
     storeFile: pinataStoreFile,
     storeVideo: pinataStoreVideo,
+    storeHLSFolder: pinataStoreHLSFolder,
   } = use(PinataContext);
   const {
     // storeJson: amazonS3StoreJson,
@@ -81,6 +83,9 @@ function PostForm() {
   const [conversionProgress, setConversionProgress] = useState(0);
   const [conversionError, setConversionError] = useState("");
   const [isConverting, setIsConverting] = useState(false);
+
+  const [hlsConversionProgress, setHlsConversionProgress] = useState(0);
+  const [isConvertingHLS, setIsConvertingHLS] = useState(false);
 
   const [storageError, setStorageError] = useState("");
 
@@ -159,58 +164,109 @@ function PostForm() {
     // console.log(selectedFile);
 
     // Convert video if file is selected.
-    let video: File | null = null;
-    if (selectedFile) {
-      try {
-        console.log("Converting video before upload...");
-        video = await convertVideo(selectedFile);
-      } catch (error) {
-        return newFormState;
-      }
-    }
+    // let video: File | null = null;
+    // if (selectedFile) {
+    //   try {
+    //     console.log("Converting video before upload...");
+    //     video = await convertVideo(selectedFile);
+    //   } catch (error) {
+    //     return newFormState;
+    //   }
+    // }
+    const video = selectedFile;
 
-    // Upload video to storage.
-    let videoUrl = "";
-    if (video) {
-      const s3VideoResult = await amazonS3StoreVideo(video);
-      if (s3VideoResult) {
-        videoUrl = s3VideoResult;
-      }
+    // // Upload video to storage.
+    // let videoUrl = "";
+    // if (video) {
+    //   const s3VideoResult = await amazonS3StoreVideo(video);
+    //   if (s3VideoResult) {
+    //     videoUrl = s3VideoResult;
+    //   }
 
-      const pinataVideoResult = await pinataStoreVideo(video);
-      if (pinataVideoResult) {
-        videoUrl = pinataVideoResult;
-      }
+    //   const pinataVideoResult = await pinataStoreVideo(video);
+    //   if (pinataVideoResult) {
+    //     videoUrl = pinataVideoResult;
+    //   }
 
-      if (!videoUrl) {
-        setStorageError("Failed to upload video to storage.");
+    //   if (!videoUrl) {
+    //     setStorageError("Failed to upload video to storage.");
 
-        return newFormState;
-      }
-    }
-
-    const videoThumbnailUrl = "";
-
-    const videoPlaylist = "asdfa";
+    //     return newFormState;
+    //   }
+    // }
 
     let videoPlaylistUrl = "";
-    if (videoPlaylist) {
-      const s3Result = await amazonS3StoreFile(videoPlaylist);
-      if (s3Result) {
-        videoPlaylistUrl = s3Result;
-      }
+    let videoThumbnailUrl = "";
 
-      const pinataResult = await pinataStoreFile(videoPlaylist);
-      if (pinataResult) {
-        videoPlaylistUrl = pinataResult;
-      }
+    if (video) {
+      try {
+        setIsConvertingHLS(true);
+        setHlsConversionProgress(0);
 
-      if (!videoPlaylistUrl) {
-        setStorageError("Failed to upload video playlist to storage.");
+        console.log("Converting video to HLS format...");
+        const hlsConverter = new HLSConverter();
+        await hlsConverter.initialize();
 
+        // Convert to HLS (try copy first, fallback to encoding if needed)
+        const hlsFiles = await hlsConverter.convertToHLS(video);
+        console.log("HLS conversion successful with copy method");
+
+        setHlsConversionProgress(50);
+
+        // Upload HLS files to Pinata
+        console.log("Uploading HLS files to Pinata...");
+        const uploadResult = await pinataStoreHLSFolder(
+          hlsFiles,
+          `video-${Date.now()}`,
+        );
+
+        if (uploadResult === null) {
+          console.error("Failed to upload HLS files to Pinata");
+          throw new Error("Failed to upload HLS files to Pinata");
+        }
+
+        videoPlaylistUrl = uploadResult.playlistUrl;
+        videoThumbnailUrl = uploadResult.thumbnailUrl;
+
+        setHlsConversionProgress(100);
+
+        console.log("HLS upload successful:", {
+          playlistUrl: videoPlaylistUrl,
+          thumbnailUrl: videoThumbnailUrl,
+          folderHash: uploadResult.folderHash,
+        });
+      } catch (error) {
+        console.error("HLS conversion/upload failed:", error);
+        setConversionError("Failed to convert video to HLS format.");
         return newFormState;
+      } finally {
+        setIsConvertingHLS(false);
+        setHlsConversionProgress(0);
       }
     }
+
+    // const videoThumbnailUrl = "";
+
+    // const videoPlaylist = "asdfa";
+
+    // let videoPlaylistUrl = "";
+    // if (videoPlaylist) {
+    //   const s3Result = await amazonS3StoreFile(videoPlaylist);
+    //   if (s3Result) {
+    //     videoPlaylistUrl = s3Result;
+    //   }
+
+    //   const pinataResult = await pinataStoreFile(videoPlaylist);
+    //   if (pinataResult) {
+    //     videoPlaylistUrl = pinataResult;
+    //   }
+
+    //   if (!videoPlaylistUrl) {
+    //     setStorageError("Failed to upload video playlist to storage.");
+
+    //     return newFormState;
+    //   }
+    // }
 
     return newFormState;
 

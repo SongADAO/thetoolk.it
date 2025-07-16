@@ -8,6 +8,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
+import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
 import {
   getCredentialsId,
   hasCompleteCredentials,
@@ -15,6 +16,7 @@ import {
 import { PinataContext } from "@/app/services/storage/pinata/Context";
 import {
   uploadFile,
+  uploadHLSFolder,
   uploadJson,
   uploadVideo,
 } from "@/app/services/storage/pinata/store";
@@ -149,6 +151,25 @@ export function PinataProvider({ children }: Readonly<Props>) {
     });
   }
 
+  async function storeHLSFolder(
+    hlsFiles: HLSFiles,
+    folderName?: string,
+  ): Promise<HLSUploadResult | null> {
+    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+      return null;
+    }
+
+    return await uploadHLSFolder({
+      credentials,
+      hlsFiles,
+      folderName,
+      setIsStoring,
+      setStoreError,
+      setStoreProgress,
+      setStoreStatus,
+    });
+  }
+
   const providerValues = useMemo(
     () => ({
       accounts,
@@ -170,6 +191,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
       setIsEnabled,
       storeError,
       storeFile,
+      storeHLSFolder,
       storeJson,
       storeProgress,
       storeStatus,

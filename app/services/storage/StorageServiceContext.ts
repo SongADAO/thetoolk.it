@@ -4,6 +4,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
+import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
 import type { ServiceAccount } from "@/app/services/storage/types";
 
 interface StorageServiceContextType {
@@ -26,13 +27,16 @@ interface StorageServiceContextType {
   setIsEnabled: (isEnabled: boolean) => void;
   storeError: string;
   storeFile: (file: File) => Promise<string | null>;
+  storeHLSFolder: (
+    hlsFiles: HLSFiles,
+    folderName?: string,
+  ) => Promise<HLSUploadResult | null>;
   storeJson: (data: object) => Promise<string | null>;
   storeProgress: number;
   storeStatus: string;
   storeVideo: (video: File) => Promise<string | null>;
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 const storageServiceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
@@ -53,11 +57,11 @@ const storageServiceContextDefault = {
   setIsEnabled: (isEnabled: boolean) => {},
   storeError: "",
   storeFile: async (file: File) => null,
+  storeHLSFolder: async (hlsFiles: HLSFiles, folderName?: string) => null,
   storeJson: async (data: object) => null,
   storeProgress: 0,
   storeStatus: "",
   storeVideo: async (video: File) => null,
 };
-/* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 
 export { storageServiceContextDefault, type StorageServiceContextType };

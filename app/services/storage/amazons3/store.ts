@@ -1,5 +1,6 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
+import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
 import type { AmazonS3Credentials } from "@/app/services/storage/types";
 
 interface UploadFileProps {
@@ -170,7 +171,7 @@ interface UploadJsonProps {
   setStoreStatus: (status: string) => void;
   setStoreProgress: (progress: number) => void;
 }
-/* eslint-disable @typescript-eslint/require-await, @typescript-eslint/no-unused-vars */
+
 async function uploadJson({
   credentials,
   data,
@@ -190,6 +191,78 @@ async function uploadJson({
   //   setStoreStatus,
   // });
 }
-/* eslint-enable @typescript-eslint/require-await, @typescript-eslint/no-unused-vars */
 
-export { uploadFile, uploadJson, uploadVideo };
+interface UploadHLSFolderProps {
+  credentials: AmazonS3Credentials;
+  folderName?: string;
+  hlsFiles: HLSFiles;
+  setIsStoring: (isStoring: boolean) => void;
+  setStoreError: (error: string) => void;
+  setStoreProgress: (progress: number) => void;
+  setStoreStatus: (status: string) => void;
+}
+
+async function uploadHLSFolder({
+  credentials,
+  folderName,
+  hlsFiles,
+  setIsStoring,
+  setStoreError,
+  setStoreProgress,
+  setStoreStatus,
+}: Readonly<UploadHLSFolderProps>): Promise<HLSUploadResult> {
+  throw new Error(`Not implemented`);
+
+  // try {
+  //   const pinata = new PinataSDK({
+  //     pinataJwt: credentials.jwt,
+  //   });
+
+  //   // Create a folder structure for upload
+  //   const files: File[] = [];
+
+  //   // Add manifest file
+  //   files.push(hlsFiles.manifest);
+
+  //   // Add thumbnail
+  //   files.push(hlsFiles.thumbnail);
+
+  //   // Add all segment files
+  //   files.push(...hlsFiles.segments);
+
+  //   console.log(`Uploading HLS folder with ${files.length} files:`, {
+  //     manifest: hlsFiles.manifest.name,
+  //     thumbnail: hlsFiles.thumbnail.name,
+  //     segments: hlsFiles.segments.length,
+  //   });
+
+  //   // Upload folder to Pinata using the new SDK
+  //   const uploadResult = await pinata.upload.public
+  //     .fileArray(files)
+  //     .name(folderName ?? `hls-video-${Date.now()}`)
+  //     .keyvalues({
+  //       type: "hls-video",
+  //       files: files.length.toString(),
+  //       segments: hlsFiles.segments.length.toString(),
+  //     });
+
+  //   console.log("HLS folder uploaded successfully:", uploadResult);
+
+  //   // Construct URLs
+  //   // const baseUrl = `https://${this.pinata.config.pinataGateway}/ipfs/${uploadResult.cid}`;
+  //   const baseUrl = `ipfs://${uploadResult.cid}`;
+  //   const playlistUrl = `${baseUrl}/${hlsFiles.manifest.name}`;
+  //   const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
+
+  //   return {
+  //     playlistUrl,
+  //     thumbnailUrl,
+  //     folderHash: uploadResult.cid,
+  //   };
+  // } catch (error) {
+  //   console.error("Failed to upload HLS folder to Pinata:", error);
+  //   throw new Error(`HLS upload failed: ${error}`);
+  // }
+}
+
+export { uploadFile, uploadHLSFolder, uploadJson, uploadVideo };
