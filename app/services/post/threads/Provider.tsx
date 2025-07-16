@@ -177,6 +177,9 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
     // window.location.href = authUrl;
   }
 
+  const [isHandlingAuth, setIsHandlingAuth] = useState(false);
+  const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
+
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
       const code = searchParams.get("code");
@@ -185,12 +188,14 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
       console.log("state", state);
 
       if (code && state && shouldHandleAuthRedirect(code, state)) {
+        setIsHandlingAuth(true);
+
         const newAuthorization = await exchangeCode(code);
         if (newAuthorization) {
           await initAccounts(newAuthorization.accessToken);
         }
 
-        // window.location.href = "/";
+        setHasCompletedAuth(true);
       }
     } catch (err) {
       console.error(err);
@@ -267,11 +272,13 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
       fields,
       handleAuthRedirect,
       hasAuthorizationStep,
+      hasCompletedAuth,
       icon,
       initial,
       isAuthorized,
       isComplete,
       isEnabled,
+      isHandlingAuth,
       isPosting,
       label,
       post,
@@ -289,13 +296,15 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
       credentials,
       credentialsId,
       error,
+      hasAuthorizationStep,
+      hasCompletedAuth,
       icon,
       initial,
       isAuthorized,
       isComplete,
       isEnabled,
+      isHandlingAuth,
       isPosting,
-      hasAuthorizationStep,
       label,
       postError,
       postProgress,

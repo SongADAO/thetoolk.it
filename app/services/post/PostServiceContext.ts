@@ -16,11 +16,13 @@ interface PostServiceContextType {
   fields: ServiceFormField[];
   handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
   hasAuthorizationStep: boolean;
+  hasCompletedAuth: boolean;
   icon: ReactNode;
   initial: ServiceFormState;
   isAuthorized: boolean;
   isComplete: boolean;
   isEnabled: boolean;
+  isHandlingAuth: boolean;
   isPosting: boolean;
   label: string;
   post: (props: PostProps) => Promise<string | null>;
@@ -31,7 +33,6 @@ interface PostServiceContextType {
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 const postServiceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
@@ -42,11 +43,13 @@ const postServiceContextDefault = {
   fields: [],
   handleAuthRedirect: async () => {},
   hasAuthorizationStep: false,
+  hasCompletedAuth: false,
   icon: null,
   initial: {},
   isAuthorized: false,
   isComplete: false,
   isEnabled: false,
+  isHandlingAuth: false,
   isPosting: false,
   label: "",
   post: async (props: PostProps) => null,
@@ -56,6 +59,5 @@ const postServiceContextDefault = {
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
 };
-/* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 
 export { postServiceContextDefault, type PostServiceContextType };

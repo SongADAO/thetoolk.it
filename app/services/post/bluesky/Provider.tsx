@@ -173,7 +173,9 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isHandlingAuth, setIsHandlingAuth] = useState(false);
+  const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
+
   async function handleAuthRedirect(searchParams: URLSearchParams) {}
 
   const [isPosting, setIsPosting] = useState<boolean>(false);
@@ -256,11 +258,13 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       fields,
       handleAuthRedirect,
       hasAuthorizationStep,
+      hasCompletedAuth,
       icon,
       initial,
       isAuthorized,
       isComplete,
       isEnabled,
+      isHandlingAuth,
       isPosting,
       label,
       post,
@@ -278,13 +282,15 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       credentials,
       credentialsId,
       error,
+      hasAuthorizationStep,
+      hasCompletedAuth,
       icon,
       initial,
       isAuthorized,
       isComplete,
       isEnabled,
+      isHandlingAuth,
       isPosting,
-      hasAuthorizationStep,
       label,
       postError,
       postProgress,

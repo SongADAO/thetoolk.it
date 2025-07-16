@@ -5,6 +5,9 @@ import { Context, use, useEffect } from "react";
 
 interface ServiceRedirectHandlerProps {
   readonly handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
+  readonly hasCompletedAuth: boolean;
+  readonly isHandlingAuth: boolean;
+  readonly label: string;
 }
 
 interface Props<T extends ServiceRedirectHandlerProps> {
@@ -14,15 +17,24 @@ interface Props<T extends ServiceRedirectHandlerProps> {
 export function ServiceRedirectHandlerWithContext<
   T extends ServiceRedirectHandlerProps,
 >({ context }: Props<T>) {
-  const contextValue = use(context);
+  const { handleAuthRedirect, isHandlingAuth, hasCompletedAuth, label } =
+    use(context);
 
   const searchParams = useSearchParams();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    contextValue.handleAuthRedirect(searchParams);
+    handleAuthRedirect(searchParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
+  console.log("isHandlingAuth", isHandlingAuth);
+  if (!isHandlingAuth) {
+    return null;
+  }
 
-  return null;
+  if (!hasCompletedAuth) {
+    return <p>Authorizing {label}</p>;
+  }
+
+  return <p>{label} Authorization Complete</p>;
 }
