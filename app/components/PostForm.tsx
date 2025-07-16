@@ -296,7 +296,7 @@ function PostForm() {
           <Form.Control
             accept="video/mp4"
             autoComplete="off"
-            className="rounded border-1 bg-gray-500 p-2 text-white"
+            className="w-full rounded border-1 bg-gray-500 p-2 text-white"
             disabled={isFormDisabled}
             onChange={handleFileChange}
             placeholder="Title"
@@ -360,7 +360,7 @@ function PostForm() {
           <Form.Label className="mb-2">Title</Form.Label>
           <Form.Control
             autoComplete="off"
-            className="rounded text-black"
+            className="w-full rounded text-black"
             defaultValue={state.title}
             disabled={isFormDisabled}
             placeholder="Title"
@@ -378,7 +378,7 @@ function PostForm() {
           <Form.Control
             asChild
             autoComplete="off"
-            className="rounded text-black"
+            className="w-full rounded text-black"
             defaultValue={state.text}
             disabled={isFormDisabled}
             placeholder="Message"

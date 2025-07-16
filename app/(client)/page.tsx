@@ -9,7 +9,7 @@ import { StoreProgress } from "@/app/components/service/storage/StoreProgress";
 
 export default function Home() {
   return (
-    <div>
+    <div className="flex min-h-[100vh] flex-col">
       <header>
         <div className="flex items-center justify-between bg-gray-200 p-2">
           <h1>TheToolk.it</h1>
@@ -23,36 +23,17 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <main>
-        <div className="grid gap-8 p-2 lg:grid-cols-2 lg:gap-8 2xl:grid-cols-3">
-          <div className="hidden pt-4 2xl:order-2 2xl:block">
-            <div className="flex flex-col gap-8">
-              <section>
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <h3>Storage Service Settings</h3>
-                </div>
-                <StorageSettings />
-              </section>
-
-              <section>
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <h3>Posting Service Settings</h3>
-                </div>
-                <PostSettings />
-              </section>
-            </div>
-          </div>
-
-          <div className="lg:order-0 2xl:order-0">
-            <section>
-              {/* <h2 className="mb-4 text-2xl">Create a Post</h2> */}
+      <main className="flex-1">
+        <div className="grid gap-4 p-4 lg:grid-cols-2 2xl:grid-cols-3">
+          <div>
+            <section className="rounded bg-gray-100 p-4">
               <PostForm />
             </section>
           </div>
 
-          <div className="pt-4 lg:order-1 2xl:order-1">
-            <div className="flex flex-col gap-8">
-              <section>
+          <div>
+            <div className="flex flex-col gap-4">
+              <section className="rounded bg-gray-100 p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <h3>Active Storage Services</h3>
                   <div className="hidden lg:block 2xl:hidden">
@@ -66,7 +47,7 @@ export default function Home() {
                 </div>
                 <StoreProgress />
               </section>
-              <section>
+              <section className="rounded bg-gray-100 p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <h3>Active Posting Services</h3>
                   <div className="hidden lg:block 2xl:hidden">
@@ -79,6 +60,23 @@ export default function Home() {
                   </div>
                 </div>
                 <PostProgress />
+              </section>
+            </div>
+          </div>
+
+          <div className="hidden 2xl:block">
+            <div className="flex flex-col gap-4">
+              <section className="rounded bg-gray-100 p-4">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3>Storage Service Settings</h3>
+                </div>
+                <StorageSettings />
+              </section>
+              <section className="rounded bg-gray-100 p-4">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3>Posting Service Settings</h3>
+                </div>
+                <PostSettings />
               </section>
             </div>
           </div>
