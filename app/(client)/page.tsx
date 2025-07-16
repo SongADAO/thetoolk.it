@@ -13,7 +13,7 @@ export default function Home() {
       <header>
         <div className="flex items-center justify-between bg-gray-200 p-2">
           <h1>TheToolk.it</h1>
-          <div className="flex gap-4 md:hidden">
+          <div className="flex gap-4 lg:hidden">
             <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
               <StorageSettings />
             </ServiceSettingsMenu>
