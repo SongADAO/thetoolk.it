@@ -336,23 +336,23 @@ export class VideoConverter {
             // bitrate: targetBitrate,
           };
         },
-        onAudioTrack: async ({ track, defaultAudioCodec, canCopyTrack }) => {
-          // if (!track) return { type: "drop" };
+        onAudioTrack: async ({ track, defaultAudioCodec, canCopyTrack }) =>
+          // // if (!track) return { type: "drop" };
 
-          // // Audio should now be compatible 16-bit PCM/AAC
-          // if (canCopyTrack && defaultAudioCodec === "aac") {
-          //   console.log("Copying preprocessed audio track");
-          //   return { type: "copy" };
-          // }
+          // // // Audio should now be compatible 16-bit PCM/AAC
+          // // if (canCopyTrack && defaultAudioCodec === "aac") {
+          // //   console.log("Copying preprocessed audio track");
+          // //   return { type: "copy" };
+          // // }
 
-          console.log("Re-encoding preprocessed audio to AAC");
-          return {
-            type: "reencode",
-            audioCodec: "aac",
-            bitrate: options.audioBitrate,
-            sampleRate: options.audioSampleRate,
-          };
-        },
+          // console.log("Re-encoding preprocessed audio to AAC");
+          // return {
+          //   type: "reencode",
+          //   audioCodec: "aac",
+          //   bitrate: options.audioBitrate,
+          //   sampleRate: options.audioSampleRate,
+          // };
+          ({ type: "copy" }),
       });
 
       const blob = await result.save();

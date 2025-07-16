@@ -157,7 +157,7 @@ function PostForm() {
     const videoUrl =
       // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
       // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/example.mp4";
-      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example.mp4";
+      "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
 
     const videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
 
