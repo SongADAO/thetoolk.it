@@ -1,7 +1,7 @@
 import { Form } from "radix-ui";
 import { useActionState } from "react";
 
-import { ButtonSpinner } from "@/app/components/ButtonSpinner";
+import { Spinner } from "@/app/components/Spinner";
 
 type ServiceFormState = Record<string, string>;
 
@@ -25,7 +25,6 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
   }
 
   function saveForm(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     previousState: ServiceFormState,
     formData: FormData,
   ): ServiceFormState {
@@ -74,7 +73,7 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
         className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-[#000] px-2 py-3 text-white hover:bg-gray-900"
         disabled={isPending}
       >
-        {isPending ? <ButtonSpinner /> : null}
+        {isPending ? <Spinner /> : null}
         Save API Settings
       </Form.Submit>
     </Form.Root>

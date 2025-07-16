@@ -1,8 +1,8 @@
 import { FaServer, FaUsersGear } from "react-icons/fa6";
 
-import { PostSettings } from "@/app/components/PostSettings";
+import { PostSettings } from "@/app/components/service/post/PostSettings";
+import { StorageSettings } from "@/app/components/service/storage/StorageSettings";
 import { SettingsMenuItem } from "@/app/components/SettingsMenuItem";
-import { StorageSettings } from "@/app/components/StorageSettings";
 
 function SettingsMenu() {
   return (

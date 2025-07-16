@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { FaCheck, FaCircleExclamation } from "react-icons/fa6";
 
-import { ButtonSpinner } from "@/app/components/ButtonSpinner";
+import { Spinner } from "@/app/components/Spinner";
 
 interface Props {
   brandColor: string;
@@ -73,7 +73,7 @@ function ServiceProgress({
           </div>
 
           <div>
-            {isPosting ? <ButtonSpinner /> : null}
+            {isPosting ? <Spinner /> : null}
 
             {!isPosting && postError ? (
               <FaCircleExclamation className="size-6" />

@@ -1,9 +1,9 @@
 import { PostForm } from "@/app/components/PostForm";
-import { PostProgress } from "@/app/components/PostProgress";
-import { PostProviders } from "@/app/components/PostProviders";
-import { PostRedirectHandlers } from "@/app/components/PostRedirectHandlers";
+import { PostProgress } from "@/app/components/service/post/PostProgress";
+import { PostProviders } from "@/app/components/service/post/PostProviders";
+import { PostRedirectHandlers } from "@/app/components/service/post/PostRedirectHandlers";
+import { StorageProviders } from "@/app/components/service/storage/StorageProviders";
 import { SettingsMenu } from "@/app/components/SettingsMenu";
-import { StorageProviders } from "@/app/components/StorageProviders";
 
 export default function Home() {
   return (

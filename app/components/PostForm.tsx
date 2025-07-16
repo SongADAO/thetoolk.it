@@ -3,7 +3,7 @@
 import { Form } from "radix-ui";
 import { use, useActionState, useEffect, useRef, useState } from "react";
 
-import { ButtonSpinner } from "@/app/components/ButtonSpinner";
+import { Spinner } from "@/app/components/Spinner";
 import {
   formatFileDuration,
   formatFileSize,
@@ -314,7 +314,7 @@ function PostForm() {
       {isConverting ? (
         <div className="mb-4 rounded bg-yellow-100 p-3 text-yellow-800">
           <div className="flex items-center gap-2">
-            <ButtonSpinner />
+            <Spinner />
             Converting video for optimal quality and size...
           </div>
           {conversionProgress > 0 && (
@@ -396,7 +396,7 @@ function PostForm() {
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isFormDisabled}
         >
-          {isFormDisabled ? <ButtonSpinner /> : null}
+          {isFormDisabled ? <Spinner /> : null}
           {isConverting
             ? "Converting Video..."
             : isPending

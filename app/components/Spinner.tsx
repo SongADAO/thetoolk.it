@@ -4,7 +4,7 @@ interface Props {
   size?: number | string;
 }
 
-function ButtonSpinner({
+function Spinner({
   color = "white",
   opacity = 100,
   size = 5,
@@ -35,4 +35,4 @@ function ButtonSpinner({
   );
 }
 
-export { ButtonSpinner };
+export { Spinner };

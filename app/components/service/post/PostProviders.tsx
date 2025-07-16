@@ -15,20 +15,20 @@ interface Props {
 
 export function PostProviders({ children }: Readonly<Props>) {
   return (
-    <YoutubeProvider>
-      <InstagramProvider>
-        <FacebookProvider>
-          <ThreadsProvider>
-            <BlueskyProvider>
-              <TiktokProvider>
-                <TwitterProvider>
-                  <NeynarProvider>{children}</NeynarProvider>
-                </TwitterProvider>
-              </TiktokProvider>
-            </BlueskyProvider>
-          </ThreadsProvider>
-        </FacebookProvider>
-      </InstagramProvider>
-    </YoutubeProvider>
+    <NeynarProvider>
+      <TwitterProvider>
+        <TiktokProvider>
+          <BlueskyProvider>
+            <ThreadsProvider>
+              <FacebookProvider>
+                <InstagramProvider>
+                  <YoutubeProvider>{children}</YoutubeProvider>
+                </InstagramProvider>
+              </FacebookProvider>
+            </ThreadsProvider>
+          </BlueskyProvider>
+        </TiktokProvider>
+      </TwitterProvider>
+    </NeynarProvider>
   );
 }
