@@ -1,6 +1,8 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
+import { DEBUG_MODE } from "@/app/config/constants";
 import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
+import { sleep } from "@/app/lib/utils";
 import type { AmazonS3Credentials } from "@/app/services/storage/types";
 
 interface UploadFileProps {
@@ -25,7 +27,13 @@ async function uploadFile({
     setIsStoring(true);
     setStoreError("");
     setStoreProgress(0);
-    setStoreStatus("Preparing file for upload...");
+    setStoreStatus("Preparing media for upload...");
+
+    if (DEBUG_MODE) {
+      console.log("Test Pinata: uploadFile");
+      await sleep(5000);
+      return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+    }
 
     // Generate unique filename
     const timestamp = Date.now();
@@ -33,11 +41,11 @@ async function uploadFile({
     const filename = `thetoolkit/${timestamp}-${sanitizedFileName}`;
 
     // Convert file to ArrayBuffer for browser compatibility
-    setStoreStatus("Buffering file...");
+    setStoreStatus("Buffering media...");
     const fileBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(fileBuffer);
 
-    setStoreStatus("Uploading video to S3...");
+    setStoreStatus("Uploading media...");
 
     // For progress tracking, we'll use a different approach
     // The AWS SDK doesn't provide built-in progress for browser uploads
@@ -53,7 +61,7 @@ async function uploadFile({
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
       setStoreProgress(Math.round(progress * 0.3));
-      setStoreStatus(`Uploading to S3... ${Math.round(progress)}%`);
+      setStoreStatus(`Uploading media... ${Math.round(progress)}%`);
     }, 500);
 
     let response = null;
@@ -80,7 +88,7 @@ async function uploadFile({
       // Execute the upload
       response = await s3Client.send(command);
     } catch (err: unknown) {
-      console.error("S3 upload error:", err);
+      console.error("S3 upload failed:", err);
       const errName = err instanceof Error ? err.name : "no-name";
       const errMessage = err instanceof Error ? err.message : "Upload failed";
 
@@ -111,7 +119,7 @@ async function uploadFile({
 
     // Complete the progress
     setStoreProgress(30);
-    setStoreStatus("S3 upload complete");
+    setStoreStatus("Upload complete");
 
     // Construct the public URL
     const publicUrl = `https://${credentials.bucket}.s3.${credentials.region}.amazonaws.com/${filename}`;
@@ -125,7 +133,7 @@ async function uploadFile({
     const errMessage = err instanceof Error ? err.message : "Upload failed";
 
     setStoreError(`Upload failed: ${errMessage}`);
-    setStoreStatus("❌ Upload failed");
+    setStoreStatus("Upload failed");
   } finally {
     setIsStoring(false);
     // Clear progress interval
@@ -180,7 +188,13 @@ async function uploadJson({
   setStoreProgress,
   setStoreStatus,
 }: Readonly<UploadJsonProps>): Promise<string | null> {
-  return "TODO";
+  throw new Error(`Not implemented`);
+
+  // if (DEBUG_MODE) {
+  //   console.log("Test Pinata: uploadJson");
+  //   await sleep(5000);
+  //   return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+  // }
 
   // return uploadFile({
   //   credentials,

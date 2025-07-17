@@ -209,17 +209,19 @@ function PostForm() {
     let videoThumbnailUrl = "";
     /* eslint-enable no-useless-assignment */
 
-    if (DEBUG_MODE) {
-      video = selectedFile;
-      videoUrl =
-        "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
-      videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
-      videoThumbnailUrl =
-        "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
-    } else {
-      // Convert video if file is selected.
-      // -------------------------------------------------------------------------
-      if (selectedFile) {
+    // video = selectedFile;
+    // videoUrl =
+    //   "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+    // videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
+    // videoThumbnailUrl =
+    //   "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
+
+    // Convert video if file is selected.
+    // -------------------------------------------------------------------------
+    if (selectedFile) {
+      if (DEBUG_MODE) {
+        video = selectedFile;
+      } else {
         try {
           console.log("Converting video before upload...");
           video = await convertVideo(selectedFile);
@@ -227,11 +229,20 @@ function PostForm() {
           return newFormState;
         }
       }
-      // -------------------------------------------------------------------------
+    }
+    // -------------------------------------------------------------------------
 
-      // Make HLS Streamable video
-      // -------------------------------------------------------------------------
-      if (video) {
+    // Make HLS Streamable video
+    // -------------------------------------------------------------------------
+    if (selectedFile && video) {
+      if (DEBUG_MODE) {
+        hlsFiles = {
+          masterManifest: selectedFile, // manifest.m3u8
+          segments: [],
+          streamManifest: selectedFile, // video.m3u8
+          thumbnail: selectedFile,
+        };
+      } else {
         try {
           console.log("Converting HLS video before upload...");
           hlsFiles = await convertHLSVideo(video);
@@ -239,57 +250,57 @@ function PostForm() {
           return newFormState;
         }
       }
-      // -------------------------------------------------------------------------
-
-      // Upload video to storage.
-      // -------------------------------------------------------------------------
-      if (video) {
-        const s3VideoResult = await amazonS3StoreVideo(video);
-        if (s3VideoResult) {
-          videoUrl = s3VideoResult;
-        }
-
-        const pinataVideoResult = await pinataStoreVideo(video);
-        if (pinataVideoResult) {
-          videoUrl = pinataVideoResult;
-        }
-
-        if (!videoUrl) {
-          setStorageError("Failed to upload video to storage.");
-
-          return newFormState;
-        }
-      }
-      // -------------------------------------------------------------------------
-
-      // Upload HLS Streamable video to storage.
-      // -------------------------------------------------------------------------
-      if (hlsFiles) {
-        try {
-          // Upload HLS files to Pinata
-          console.log("Uploading HLS files to Pinata...");
-          hlsUploadResult = await pinataStoreHLSFolder(
-            hlsFiles,
-            `hls-video-${Date.now()}`,
-          );
-
-          if (hlsUploadResult === null) {
-            console.error("Failed to upload HLS files to Pinata");
-            throw new Error("Failed to upload HLS files to Pinata");
-          }
-
-          console.log("HLS upload successful:", hlsUploadResult);
-        } catch (error) {
-          console.error("HLS upload failed:", error);
-          setStorageError("Failed to upload HLS files to storage.");
-
-          return newFormState;
-        }
-      }
-      videoPlaylistUrl = hlsUploadResult?.playlistUrl ?? "";
-      videoThumbnailUrl = hlsUploadResult?.thumbnailUrl ?? "";
-      // -------------------------------------------------------------------------
     }
+    // -------------------------------------------------------------------------
+
+    // Upload video to storage.
+    // -------------------------------------------------------------------------
+    if (video) {
+      const s3VideoResult = await amazonS3StoreVideo(video);
+      if (s3VideoResult) {
+        videoUrl = s3VideoResult;
+      }
+
+      const pinataVideoResult = await pinataStoreVideo(video);
+      if (pinataVideoResult) {
+        videoUrl = pinataVideoResult;
+      }
+
+      if (!videoUrl) {
+        setStorageError("Failed to upload video to storage.");
+
+        return newFormState;
+      }
+    }
+    // -------------------------------------------------------------------------
+
+    // Upload HLS Streamable video to storage.
+    // -------------------------------------------------------------------------
+    if (hlsFiles) {
+      try {
+        // Upload HLS files to Pinata
+        console.log("Uploading HLS files to Pinata...");
+        hlsUploadResult = await pinataStoreHLSFolder(
+          hlsFiles,
+          `hls-video-${Date.now()}`,
+        );
+
+        if (hlsUploadResult === null) {
+          console.error("Failed to upload HLS files to Pinata");
+          throw new Error("Failed to upload HLS files to Pinata");
+        }
+
+        console.log("HLS upload successful:", hlsUploadResult);
+      } catch (error) {
+        console.error("HLS upload failed:", error);
+        setStorageError("Failed to upload HLS files to storage.");
+
+        return newFormState;
+      }
+    }
+    videoPlaylistUrl = hlsUploadResult?.playlistUrl ?? "";
+    videoThumbnailUrl = hlsUploadResult?.thumbnailUrl ?? "";
+    // -------------------------------------------------------------------------
 
     const allResults = await Promise.allSettled([
       blueskyPost({

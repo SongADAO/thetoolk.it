@@ -1,6 +1,8 @@
 import { PinataSDK } from "pinata";
 
+import { DEBUG_MODE } from "@/app/config/constants";
 import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
+import { sleep } from "@/app/lib/utils";
 import type { PinataCredentials } from "@/app/services/storage/types";
 
 interface UploadFileProps {
@@ -27,6 +29,12 @@ async function uploadFile({
     setStoreProgress(0);
     setStoreStatus("Preparing file for upload...");
 
+    if (DEBUG_MODE) {
+      console.log("Test Pinata: uploadFile");
+      await sleep(5000);
+      return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+    }
+
     // For progress tracking, we'll use a different approach
     // The AWS SDK doesn't provide built-in progress for browser uploads
     // So we'll simulate progress based on file size and time
@@ -41,7 +49,7 @@ async function uploadFile({
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
       setStoreProgress(Math.round(progress * 0.3));
-      setStoreStatus(`Uploading to S3... ${Math.round(progress)}%`);
+      setStoreStatus(`Uploading media... ${Math.round(progress)}%`);
     }, 500);
 
     const pinata = new PinataSDK({
@@ -63,7 +71,7 @@ async function uploadFile({
 
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setStoreError(`Upload failed: ${errMessage}`);
-    setStoreStatus("❌ Upload failed");
+    setStoreStatus("Upload failed");
   } finally {
     setIsStoring(false);
     // Clear progress interval
@@ -123,6 +131,12 @@ async function uploadJson({
     setStoreProgress(0);
     setStoreStatus("Preparing file for upload...");
 
+    if (DEBUG_MODE) {
+      console.log("Test Pinata: uploadJson");
+      await sleep(5000);
+      return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+    }
+
     const pinata = new PinataSDK({
       pinataJwt: credentials.jwt,
     });
@@ -140,7 +154,7 @@ async function uploadJson({
 
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setStoreError(`Upload failed: ${errMessage}`);
-    setStoreStatus("❌ Upload failed");
+    setStoreStatus("Upload failed");
   } finally {
     setIsStoring(false);
   }
@@ -166,6 +180,19 @@ async function uploadHLSFolder({
   setStoreProgress,
   setStoreStatus,
 }: Readonly<UploadHLSFolderProps>): Promise<HLSUploadResult> {
+  if (DEBUG_MODE) {
+    console.log("Test Pinata: uploadHLSFolder");
+    await sleep(5000);
+    return {
+      playlistUrl: `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`,
+      thumbnailUrl:
+        "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg",
+      // playlistUrl: `https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/video.m3u8`,
+      // thumbnailUrl:
+      //   "https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/thumbnail.jpg",
+    };
+  }
+
   try {
     const pinata = new PinataSDK({
       pinataJwt: credentials.jwt,
