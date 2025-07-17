@@ -291,94 +291,90 @@ function PostForm() {
       // -------------------------------------------------------------------------
     }
 
-    // Use the converted file for all posting services
-    await blueskyPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: blueskyAccounts[0]?.id,
-      username: blueskyAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
+    const allResults = await Promise.allSettled([
+      blueskyPost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: blueskyAccounts[0]?.id,
+        username: blueskyAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+      facebookPost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: facebookAccounts[0]?.id,
+        username: facebookAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+      instagramPost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: instagramAccounts[0]?.id,
+        username: instagramAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+      neynarPost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: neynarAccounts[0]?.id,
+        username: neynarAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+      threadsPost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: threadsAccounts[0]?.id,
+        username: threadsAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+      tiktokPost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: tiktokAccounts[0]?.id,
+        username: tiktokAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+      twitterPost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: twitterAccounts[0]?.id,
+        username: twitterAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+      youtubePost({
+        text: newFormState.text,
+        title: newFormState.title,
+        userId: youtubeAccounts[0]?.id,
+        username: youtubeAccounts[0]?.username,
+        video,
+        videoPlaylistUrl,
+        videoThumbnailUrl,
+        videoUrl,
+      }),
+    ]);
 
-    await facebookPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: facebookAccounts[0]?.id,
-      username: facebookAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
-    await instagramPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: instagramAccounts[0]?.id,
-      username: instagramAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
-    await neynarPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: neynarAccounts[0]?.id,
-      username: neynarAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
-    await threadsPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: threadsAccounts[0]?.id,
-      username: threadsAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
-    await tiktokPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: tiktokAccounts[0]?.id,
-      username: tiktokAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
-    await twitterPost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: twitterAccounts[0]?.id,
-      username: twitterAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
-
-    await youtubePost({
-      text: newFormState.text,
-      title: newFormState.title,
-      userId: youtubeAccounts[0]?.id,
-      username: youtubeAccounts[0]?.username,
-      video,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
-      videoUrl,
-    });
+    console.log(allResults);
 
     return newFormState;
   }
