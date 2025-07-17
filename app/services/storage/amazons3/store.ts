@@ -30,8 +30,10 @@ async function uploadFile({
     setStoreStatus("Preparing media for upload...");
 
     if (DEBUG_MODE) {
-      console.log("Test Pinata: uploadFile");
+      console.log("Test S3: uploadFile");
       await sleep(5000);
+      setStoreProgress(100);
+      setStoreStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
 
@@ -117,15 +119,14 @@ async function uploadFile({
     // Clear the progress interval
     clearInterval(progressInterval);
 
-    // Complete the progress
-    setStoreProgress(30);
-    setStoreStatus("Upload complete");
-
     // Construct the public URL
     const publicUrl = `https://${credentials.bucket}.s3.${credentials.region}.amazonaws.com/${filename}`;
 
     console.log("S3 upload successful:", response);
     console.log("Public URL:", publicUrl);
+
+    setStoreProgress(100);
+    setStoreStatus("Success");
 
     return publicUrl;
   } catch (err: unknown) {
@@ -191,7 +192,7 @@ async function uploadJson({
   throw new Error(`Not implemented`);
 
   // if (DEBUG_MODE) {
-  //   console.log("Test Pinata: uploadJson");
+  //   console.log("Test S3: uploadJson");
   //   await sleep(5000);
   //   return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
   // }

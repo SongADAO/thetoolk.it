@@ -27,11 +27,13 @@ async function uploadFile({
     setIsStoring(true);
     setStoreError("");
     setStoreProgress(0);
-    setStoreStatus("Preparing file for upload...");
+    setStoreStatus("Preparing media for upload...");
 
     if (DEBUG_MODE) {
       console.log("Test Pinata: uploadFile");
       await sleep(5000);
+      setStoreProgress(100);
+      setStoreStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
 
@@ -64,6 +66,9 @@ async function uploadFile({
     // const contentUri = `ipfs://${upload.cid}`;
     // const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
     const contentUri = `https://${credentials.gateway}/ipfs/${upload.cid}`;
+
+    setStoreProgress(100);
+    setStoreStatus("Success");
 
     return contentUri;
   } catch (err: unknown) {
@@ -129,11 +134,13 @@ async function uploadJson({
     setIsStoring(true);
     setStoreError("");
     setStoreProgress(0);
-    setStoreStatus("Preparing file for upload...");
+    setStoreStatus("Preparing media for upload...");
 
     if (DEBUG_MODE) {
       console.log("Test Pinata: uploadJson");
       await sleep(5000);
+      setStoreProgress(100);
+      setStoreStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
 
@@ -147,6 +154,9 @@ async function uploadJson({
     // const contentUri = `ipfs://${upload.cid}`;
     // const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
     const contentUri = `https://${credentials.gateway}/ipfs/${upload.cid}`;
+
+    setStoreProgress(100);
+    setStoreStatus("Success");
 
     return contentUri;
   } catch (err: unknown) {
@@ -180,20 +190,27 @@ async function uploadHLSFolder({
   setStoreProgress,
   setStoreStatus,
 }: Readonly<UploadHLSFolderProps>): Promise<HLSUploadResult> {
-  if (DEBUG_MODE) {
-    console.log("Test Pinata: uploadHLSFolder");
-    await sleep(5000);
-    return {
-      playlistUrl: `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`,
-      thumbnailUrl:
-        "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg",
-      // playlistUrl: `https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/video.m3u8`,
-      // thumbnailUrl:
-      //   "https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/thumbnail.jpg",
-    };
-  }
-
   try {
+    setIsStoring(true);
+    setStoreError("");
+    setStoreProgress(0);
+    setStoreStatus("Preparing HLS files for upload...");
+
+    if (DEBUG_MODE) {
+      console.log("Test Pinata: uploadHLSFolder");
+      await sleep(5000);
+      setStoreProgress(100);
+      setStoreStatus("Success");
+      return {
+        playlistUrl: `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`,
+        thumbnailUrl:
+          "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg",
+        // playlistUrl: `https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/video.m3u8`,
+        // thumbnailUrl:
+        //   "https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/thumbnail.jpg",
+      };
+    }
+
     const pinata = new PinataSDK({
       pinataJwt: credentials.jwt,
     });
@@ -239,6 +256,9 @@ async function uploadHLSFolder({
     const baseUrl = `https://${credentials.gateway}/ipfs/${uploadResult.cid}`;
     const playlistUrl = `${baseUrl}/${hlsFiles.masterManifest.name}`;
     const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
+
+    setStoreProgress(100);
+    setStoreStatus("Success");
 
     return {
       playlistUrl,
