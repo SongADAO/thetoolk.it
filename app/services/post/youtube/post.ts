@@ -66,6 +66,12 @@ async function uploadFileInChunks({
   uploadUrl,
   video,
 }: Readonly<UploadFileInChunks>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test YouTube: uploadFileInChunks");
+    await sleep(6000);
+    return "test";
+  }
+
   // 4MB chunks
   const CHUNK_SIZE = 1024 * 1024 * 4;
 

@@ -340,6 +340,12 @@ async function publishPost({
   mediaIds,
   text,
 }: Readonly<PublishPostProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test Twitter: publishPost");
+    await sleep(1000);
+    return "test";
+  }
+
   const response = await fetch("/api/twitter/2/posts", {
     body: JSON.stringify({ media: { media_ids: mediaIds }, text }),
     headers: {
