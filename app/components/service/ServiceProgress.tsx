@@ -44,7 +44,8 @@ function ServiceProgress({
   // error = "asdfgasdfasfa";
   // isProcessing = false;
 
-  const showProgress = !error;
+  const showProgress = !error && progress !== 100;
+  // const showProgress = true;
 
   const hasError = Boolean(error);
 
@@ -52,7 +53,7 @@ function ServiceProgress({
 
   return (
     <div
-      className={`group relative rounded text-brand-${brandColor}-inverse order-0 bg-[#6c7281] contain-paint data-[has-error=true]:order-1 data-[has-error=true]:bg-red-800 data-[is-complete=true]:order-2 data-[is-complete=true]:bg-green-800 2xl:p-1.5`}
+      className={`group relative rounded text-brand-${brandColor}-inverse order-0 bg-[#6c7281] contain-paint data-[has-error=true]:order-1 data-[has-error=true]:bg-red-800 data-[is-complete=true]:order-2 data-[is-complete=true]:bg-green-800`}
       data-has-error={hasError ? "true" : "false"}
       data-is-complete={isComplete ? "true" : "false"}
     >
@@ -65,7 +66,7 @@ function ServiceProgress({
         </div>
       ) : null}
 
-      <div className="relative z-20 flex items-center justify-between gap-2 p-2">
+      <div className="relative z-20 flex items-center justify-between gap-2 p-2 2xl:py-3.5">
         <div>{icon}</div>
 
         <div className="flex-1 text-left text-xs leading-[1]">

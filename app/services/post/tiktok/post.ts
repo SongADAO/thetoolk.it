@@ -100,7 +100,7 @@ async function createPost({
     }
 
     setPostProgress(100);
-    setPostStatus(`✅ Successfully posted to TikTook! Post ID: ${postId}`);
+    setPostStatus("Success");
 
     return postId;
   } catch (err: unknown) {

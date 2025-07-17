@@ -98,7 +98,7 @@ async function createPost({
     }
 
     setPostProgress(100);
-    setPostStatus(`✅ Successfully posted to Farcaster! Post ID: ${postId}`);
+    setPostStatus("Success");
 
     return postId;
   } catch (err: unknown) {

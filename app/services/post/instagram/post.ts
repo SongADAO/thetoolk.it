@@ -256,7 +256,7 @@ async function createPost({
     }
 
     setPostProgress(100);
-    setPostStatus(`✅ Successfully posted to Instagram! Post ID: ${postId}`);
+    setPostStatus("Success");
 
     return postId;
   } catch (err: unknown) {
