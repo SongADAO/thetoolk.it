@@ -85,6 +85,8 @@ async function createPost({
   videoThumbnailUrl,
   videoPlaylistUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
+  let progressInterval = null;
+
   try {
     setIsPosting(true);
     setPostError("");
@@ -93,7 +95,15 @@ async function createPost({
 
     let postId = "";
     if (videoPlaylistUrl) {
-      setPostStatus("Publishing cast …");
+      setPostStatus("Publishing post...");
+
+      // Simulate progress during upload
+      let progress = 10;
+      progressInterval = setInterval(() => {
+        progress = progress < 90 ? progress + 5 : progress;
+        setPostProgress(progress);
+      }, 2000);
+
       postId = await createCast({
         clientSecret: credentials.clientSecret,
         text,
@@ -101,6 +111,8 @@ async function createPost({
         videoPlaylistUrl,
         videoThumbnailUrl,
       });
+
+      clearInterval(progressInterval);
     } else {
       // TODO: Text only post.
     }
@@ -116,6 +128,10 @@ async function createPost({
     setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
+    // Clear progress interval
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
   }
 
   return null;

@@ -14,7 +14,7 @@ async function uploadVideoBlob({
 }: Readonly<UploadVideoBlobProps>): Promise<string> {
   if (DEBUG_MODE) {
     console.log("Test Bluesky: uploadVideoBlob");
-    await sleep(1000);
+    await sleep(6000);
     return "test";
   }
 
@@ -143,12 +143,12 @@ async function createPost({
 
     let postId = "";
     if (video) {
-      // Step 1: Upload video blob (0-70% progress)
+      // Step 1: Upload video blob
       setPostProgress(10);
       setPostStatus("Uploading post...");
 
       // Simulate progress during upload
-      let progress = 0;
+      let progress = 10;
       progressInterval = setInterval(() => {
         progress = progress < 90 ? progress + 5 : progress;
         setPostProgress(progress);
@@ -161,11 +161,10 @@ async function createPost({
       });
 
       clearInterval(progressInterval);
-      setPostProgress(70);
 
-      // Step 2: Create post (70-100% progress)
+      // Step 2: Create post
       setPostStatus("Publishing post...");
-      setPostProgress(80);
+      setPostProgress(90);
 
       postId = await createRecord({
         accessToken,

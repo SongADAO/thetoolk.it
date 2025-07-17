@@ -227,8 +227,8 @@ async function createPost({
 
     let postId = "";
     if (video) {
-      setPostProgress(5);
-      setPostStatus("Initializing upload...");
+      setPostProgress(10);
+      setPostStatus("Uploading post...");
 
       // Upload video to Twitter
       const mediaId = await uploadVideo({
@@ -238,11 +238,10 @@ async function createPost({
         video,
       });
 
-      setPostProgress(95);
+      setPostProgress(90);
       setPostStatus("Publishing post...");
 
       // Create post with media
-      setPostStatus("Creating post...");
       postId = await publishPost({
         accessToken,
         mediaIds: [mediaId],

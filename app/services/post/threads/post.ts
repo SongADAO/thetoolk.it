@@ -1,6 +1,8 @@
 import { DEBUG_MODE } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
+let DEBUG_STATUS_STEP = 0;
+
 // Create Threads media container
 interface CreateMediaContainerProps {
   accessToken: string;
@@ -79,6 +81,14 @@ async function checkMediaStatus({
   accessToken,
   creationId,
 }: Readonly<CheckMediaStatusProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    DEBUG_STATUS_STEP++;
+    console.log("Test Threads: checkMediaStatus");
+    // await sleep(1000);
+
+    return DEBUG_STATUS_STEP === 4 ? "FINISHED" : "IN_PROGRESS";
+  }
+
   const params = new URLSearchParams({
     access_token: accessToken,
     fields: "status",
@@ -114,6 +124,13 @@ async function publishMedia({
   creationId,
   userId,
 }: Readonly<PublishMediaProps>) {
+  if (DEBUG_MODE) {
+    console.log("Test Threads: publishMedia");
+    await sleep(1000);
+
+    return "test";
+  }
+
   const response = await fetch(
     `https://graph.threads.net/v1.0/${userId}/threads_publish`,
     {
@@ -185,7 +202,7 @@ async function createPost({
 
     let postId = "";
     if (videoUrl) {
-      setPostProgress(20);
+      setPostProgress(10);
       setPostStatus("Creating media container...");
 
       // Step 2: Create media container (30-50% progress)
@@ -196,29 +213,27 @@ async function createPost({
         videoUrl,
       });
 
-      setPostProgress(30);
-      setPostStatus("Waiting for Threads to process video...");
+      setPostProgress(20);
+      setPostStatus("Preparing post...");
 
       // Step 3: Wait for processing (50-80% progress)
       let status = "IN_PROGRESS";
       let attempts = 0;
-      // retry every 10 seconds
-      const retryDelay = 10 * 1000;
+      // retry every 5 seconds
+      const retryDelay = 5 * 1000;
       // 5 minutes max
-      const maxAttempts = 30;
+      const maxAttempts = 60;
 
       while (status === "IN_PROGRESS" && attempts < maxAttempts) {
         // Wait for retry delay.
         // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
-        await new Promise((resolve) => {
-          setTimeout(resolve, retryDelay);
-        });
+        await sleep(retryDelay);
 
         // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
         status = await checkMediaStatus({ accessToken, creationId });
         attempts++;
 
-        const progress = 30 + (attempts / maxAttempts) * 30;
+        const progress = 20 + (attempts / maxAttempts) * 30;
         setPostProgress(Math.round(progress));
         setPostStatus(`Submitting post... (${attempts}/${maxAttempts})`);
 
@@ -241,8 +256,8 @@ async function createPost({
         throw new Error(`Video processing failed with status: ${status}`);
       }
 
-      setPostProgress(85);
-      setPostStatus("Publishing to Threads...");
+      setPostProgress(90);
+      setPostStatus("Publishing post...");
 
       // Step 4: Publish the media (80-100% progress)
       postId = await publishMedia({ accessToken, creationId, userId });

@@ -17,7 +17,7 @@ async function createMediaContainer({
   videoUrl,
 }: Readonly<CreateMediaContainerProps>): Promise<string> {
   if (DEBUG_MODE) {
-    console.log("Test Facebook: uploadVideo");
+    console.log("Test Instagram: uploadVideo");
     await sleep(1000);
     return "test";
   }
@@ -97,8 +97,8 @@ async function checkMediaStatus({
 }: Readonly<CheckMediaStatusProps>): Promise<string> {
   if (DEBUG_MODE) {
     DEBUG_STATUS_STEP++;
-    console.log("Test Facebook: checkMediaStatus");
-    await sleep(1000);
+    console.log("Test Instagram: checkMediaStatus");
+    // await sleep(1000);
 
     return DEBUG_STATUS_STEP === 4 ? "FINISHED" : "IN_PROGRESS";
   }
@@ -139,7 +139,7 @@ async function publishMedia({
   userId,
 }: Readonly<PublishMediaProps>) {
   if (DEBUG_MODE) {
-    console.log("Test Facebook: publishMedia");
+    console.log("Test Instagram: publishMedia");
     await sleep(1000);
 
     return "test";
@@ -216,7 +216,7 @@ async function createPost({
 
     let postId = "";
     if (videoUrl) {
-      setPostProgress(20);
+      setPostProgress(10);
       setPostStatus("Creating media container...");
 
       // Step 2: Create media container (30-50% progress)
@@ -227,16 +227,16 @@ async function createPost({
         videoUrl,
       });
 
-      setPostProgress(30);
+      setPostProgress(20);
       setPostStatus("Preparing post...");
 
       // Step 3: Wait for processing (50-80% progress)
       let status = "IN_PROGRESS";
       let attempts = 0;
-      // retry every 10 seconds
-      const retryDelay = 10 * 1000;
+      // retry every 5 seconds
+      const retryDelay = 5 * 1000;
       // 5 minutes max
-      const maxAttempts = 30;
+      const maxAttempts = 60;
 
       while (status === "IN_PROGRESS" && attempts < maxAttempts) {
         // Wait for retry delay.
@@ -247,7 +247,7 @@ async function createPost({
         status = await checkMediaStatus({ accessToken, creationId });
         attempts++;
 
-        const progress = 30 + (attempts / maxAttempts) * 30;
+        const progress = 20 + (attempts / maxAttempts) * 30;
         setPostProgress(Math.round(progress));
         setPostStatus(`Uploading post... (${attempts}/${maxAttempts})`);
 
@@ -270,7 +270,7 @@ async function createPost({
         throw new Error(`Video processing failed with status: ${status}`);
       }
 
-      setPostProgress(85);
+      setPostProgress(90);
       setPostStatus("Publishing post...");
 
       // Step 4: Publish the media (80-100% progress)

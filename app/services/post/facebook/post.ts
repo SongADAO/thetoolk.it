@@ -111,14 +111,15 @@ async function createPost({
     // Upload video directly to Facebook using URL
     let postId = "";
     if (videoUrl) {
-      setPostStatus("Uploading video");
+      setPostProgress(10);
+      setPostStatus("Publishing post...");
 
       // Simulate progress updates during upload
-      let progress = 0;
+      let progress = 10;
       progressInterval = setInterval(() => {
         progress = progress < 90 ? progress + 5 : progress;
         setPostProgress(progress);
-      }, 1000);
+      }, 2000);
 
       postId = await uploadVideo({
         accessToken,

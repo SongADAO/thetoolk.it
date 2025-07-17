@@ -14,7 +14,7 @@ async function initiateResumableUpload({
 }: Readonly<InitiateResumableUploadProps>): Promise<string> {
   if (DEBUG_MODE) {
     console.log("Test YouTube: initiateResumableUpload");
-    await sleep(1000);
+    await sleep(6000);
     return "test";
   }
 
@@ -176,37 +176,44 @@ async function createPost({
   title,
   video,
 }: Readonly<CreatePostProps>): Promise<string | null> {
+  let progressInterval = null;
+
   try {
     setIsPosting(true);
     setPostError("");
     setPostProgress(0);
     setPostStatus("");
 
-    // Step 1: Upload video blob (0-70% progress)
-    setPostStatus("Starting upload...");
-    setPostProgress(10);
-
-    // Prepare metadata
-    const metadata = {
-      snippet: {
-        // TODO: Youtube category ID selection
-        // 22 = People & Blogs
-        categoryId: "22",
-        description: text,
-        tags: ""
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag),
-        title,
-      },
-      status: {
-        privacyStatus: "public",
-      },
-    };
-
     let postId = "";
     if (video) {
-      setPostStatus("Initiating resumable upload...");
+      // Step 1: Upload video blob
+      setPostProgress(10);
+      setPostStatus("Uploading post...");
+
+      // Simulate progress during upload
+      let progress = 10;
+      progressInterval = setInterval(() => {
+        progress = progress < 90 ? progress + 5 : progress;
+        setPostProgress(progress);
+      }, 2000);
+
+      // Prepare metadata
+      const metadata = {
+        snippet: {
+          // TODO: Youtube category ID selection
+          // 22 = People & Blogs
+          categoryId: "22",
+          description: text,
+          tags: ""
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag),
+          title,
+        },
+        status: {
+          privacyStatus: "public",
+        },
+      };
 
       // Start resumable upload
       const uploadUrl = await initiateResumableUpload({
@@ -215,7 +222,10 @@ async function createPost({
         video,
       });
 
-      setPostStatus("Starting video upload...");
+      clearInterval(progressInterval);
+
+      setPostProgress(90);
+      setPostStatus("Publishing post...");
 
       postId = await uploadFileInChunks({
         accessToken,
@@ -239,6 +249,10 @@ async function createPost({
     setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
+    // Clear progress interval
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
   }
 
   return null;

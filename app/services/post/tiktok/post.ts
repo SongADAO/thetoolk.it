@@ -15,7 +15,7 @@ async function uploadVideo({
 }: Readonly<UploadVideoProps>) {
   if (DEBUG_MODE) {
     console.log("Test Tiktok: uploadVideo");
-    await sleep(1000);
+    await sleep(6000);
     return "test";
   }
 
@@ -86,10 +86,11 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    setPostStatus("Uploading video to TikTok...");
+    setPostProgress(10);
+    setPostStatus("Uploading post...");
 
     // Simulate progress updates during upload
-    let progress = 0;
+    let progress = 10;
     progressInterval = setInterval(() => {
       progress = progress < 90 ? progress + 5 : progress;
       setPostProgress(progress);
