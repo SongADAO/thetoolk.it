@@ -1,3 +1,6 @@
+import { DEBUG_MODE } from "@/app/config/constants";
+import { sleep } from "@/app/lib/utils";
+
 interface UploadVideoProps {
   accessToken: string;
   text: string;
@@ -10,6 +13,12 @@ async function uploadVideo({
   title,
   videoUrl,
 }: Readonly<UploadVideoProps>) {
+  if (DEBUG_MODE) {
+    console.log("Test Tiktok: uploadVideo");
+    await sleep(1000);
+    return "test";
+  }
+
   // Single API call with both video source and post data
   const response = await fetch("/api/tiktok/v2/post/publish/video/init/", {
     body: JSON.stringify({
@@ -105,10 +114,9 @@ async function createPost({
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
-
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("❌ Post failed");
+    setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
     // Clear progress interval

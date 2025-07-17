@@ -1,3 +1,6 @@
+import { DEBUG_MODE } from "@/app/config/constants";
+import { sleep } from "@/app/lib/utils";
+
 interface UploadVideoProps {
   accessToken: string;
   text: string;
@@ -13,6 +16,12 @@ async function uploadVideo({
   userId,
   videoUrl,
 }: Readonly<UploadVideoProps>) {
+  if (DEBUG_MODE) {
+    console.log("Test Facebook: uploadVideo");
+    await sleep(1000);
+    return "test";
+  }
+
   const response = await fetch(
     `https://graph-video.facebook.com/v23.0/${userId}/videos`,
     {
@@ -102,7 +111,7 @@ async function createPost({
     // Upload video directly to Facebook using URL
     let postId = "";
     if (videoUrl) {
-      setPostStatus("Uploading video to Facebook...");
+      setPostStatus("Uploading video");
 
       // Simulate progress updates during upload
       let progress = 0;
@@ -128,10 +137,9 @@ async function createPost({
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
-
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("❌ Post failed");
+    setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
     // Clear progress interval

@@ -1,3 +1,6 @@
+import { DEBUG_MODE } from "@/app/config/constants";
+import { sleep } from "@/app/lib/utils";
+
 // Create Threads media container
 interface CreateMediaContainerProps {
   accessToken: string;
@@ -11,6 +14,12 @@ async function createMediaContainer({
   userId,
   videoUrl,
 }: Readonly<CreateMediaContainerProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test Threads: createMediaContainer");
+    await sleep(1000);
+    return "test";
+  }
+
   console.log("Creating Threads media container");
 
   const response = await fetch(
@@ -247,10 +256,9 @@ async function createPost({
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
-
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("❌ Post failed");
+    setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
   }

@@ -1,3 +1,5 @@
+import { DEBUG_MODE } from "@/app/config/constants";
+import { sleep } from "@/app/lib/utils";
 import type { OauthCredentials } from "@/app/services/post/types";
 
 interface CreateCastProps {
@@ -14,6 +16,12 @@ async function createCast({
   videoPlaylistUrl,
   videoThumbnailUrl,
 }: Readonly<CreateCastProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test Neynar: createCast");
+    await sleep(1000);
+    return "test";
+  }
+
   const params = {
     // channel_id: undefined,
     embeds: [
@@ -103,10 +111,9 @@ async function createPost({
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
-
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("❌ Post failed");
+    setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
   }

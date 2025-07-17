@@ -1,3 +1,6 @@
+import { DEBUG_MODE } from "@/app/config/constants";
+import { sleep } from "@/app/lib/utils";
+
 // Start resumable upload
 interface InitiateResumableUploadProps {
   accessToken: string;
@@ -9,6 +12,12 @@ async function initiateResumableUpload({
   metadata,
   video,
 }: Readonly<InitiateResumableUploadProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test YouTube: initiateResumableUpload");
+    await sleep(1000);
+    return "test";
+  }
+
   const params = new URLSearchParams({
     part: "snippet,status",
     uploadType: "resumable",
@@ -225,10 +234,9 @@ async function createPost({
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
-
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("❌ Post failed");
+    setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
   }

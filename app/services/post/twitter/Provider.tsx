@@ -8,6 +8,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
+import { DEBUG_MODE } from "@/app/config/constants";
 import {
   exchangeCodeForTokens,
   getAccounts,
@@ -142,6 +143,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
   }
 
   async function getValidAccessToken(): Promise<string> {
+    if (DEBUG_MODE) {
+      return "test-token";
+    }
+
     const newAuthorization = await refreshTokens();
 
     if (!newAuthorization?.accessToken) {

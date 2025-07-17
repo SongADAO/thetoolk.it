@@ -1,3 +1,6 @@
+import { DEBUG_MODE } from "@/app/config/constants";
+import { sleep } from "@/app/lib/utils";
+
 interface UploadVideoProps {
   accessToken: string;
   video: File;
@@ -10,6 +13,12 @@ async function uploadVideo({
   setPostStatus,
   video,
 }: Readonly<UploadVideoProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test Twitter: uploadVideo");
+    await sleep(1000);
+    return "test";
+  }
+
   // Step 1: INIT - Initialize the upload
   const initResponse = await fetch("/api/twitter/2/media/upload/initialize", {
     body: JSON.stringify({
@@ -249,10 +258,9 @@ async function createPost({
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
-
     const errMessage = err instanceof Error ? err.message : "Post failed";
     setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("❌ Post failed");
+    setPostStatus("Post failed");
   } finally {
     setIsPosting(false);
   }
