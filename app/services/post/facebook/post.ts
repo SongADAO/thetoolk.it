@@ -18,7 +18,7 @@ async function uploadVideo({
 }: Readonly<UploadVideoProps>) {
   if (DEBUG_MODE) {
     console.log("Test Facebook: uploadVideo");
-    await sleep(1000);
+    await sleep(6000);
     return "test";
   }
 
@@ -118,7 +118,7 @@ async function createPost({
       progressInterval = setInterval(() => {
         progress = progress < 90 ? progress + 5 : progress;
         setPostProgress(progress);
-      }, 2000);
+      }, 1000);
 
       postId = await uploadVideo({
         accessToken,
