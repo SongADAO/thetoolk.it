@@ -18,7 +18,6 @@ import {
   WALLET_CONNECT_PROJECT_ID,
 } from "@/app/config/constants";
 
-console.log(WALLET_CONNECT_PROJECT_ID);
 export const config = getDefaultConfig({
   appName: "Hugh Harmony Creator",
   chains: [
