@@ -285,7 +285,7 @@ function PostForm() {
           `hls-video-${Date.now()}`,
         );
 
-        if (hlsUploadResult === null) {
+        if (!hlsUploadResult?.playlistUrl || !hlsUploadResult.thumbnailUrl) {
           console.error("Failed to upload HLS files to Pinata");
           throw new Error("Failed to upload HLS files to Pinata");
         }
@@ -297,9 +297,10 @@ function PostForm() {
 
         return newFormState;
       }
+
+      videoPlaylistUrl = hlsUploadResult.playlistUrl;
+      videoThumbnailUrl = hlsUploadResult.thumbnailUrl;
     }
-    videoPlaylistUrl = hlsUploadResult?.playlistUrl ?? "";
-    videoThumbnailUrl = hlsUploadResult?.thumbnailUrl ?? "";
     // -------------------------------------------------------------------------
 
     const allResults = await Promise.allSettled([

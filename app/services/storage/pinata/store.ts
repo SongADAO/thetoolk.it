@@ -72,9 +72,9 @@ async function uploadFile({
 
     return contentUri;
   } catch (err: unknown) {
-    console.error("Post error:", err);
+    console.error("Pinata upload error:", err);
 
-    const errMessage = err instanceof Error ? err.message : "Post failed";
+    const errMessage = err instanceof Error ? err.message : "Upload failed";
     setStoreError(`Upload failed: ${errMessage}`);
     setStoreStatus("Upload failed");
   } finally {
@@ -160,9 +160,9 @@ async function uploadJson({
 
     return contentUri;
   } catch (err: unknown) {
-    console.error("Post error:", err);
+    console.error("Pinata upload error:", err);
 
-    const errMessage = err instanceof Error ? err.message : "Post failed";
+    const errMessage = err instanceof Error ? err.message : "Upload failed";
     setStoreError(`Upload failed: ${errMessage}`);
     setStoreStatus("Upload failed");
   } finally {
@@ -190,6 +190,8 @@ async function uploadHLSFolder({
   setStoreProgress,
   setStoreStatus,
 }: Readonly<UploadHLSFolderProps>): Promise<HLSUploadResult> {
+  let progressInterval = null;
+
   try {
     setIsStoring(true);
     setStoreError("");
@@ -210,6 +212,29 @@ async function uploadHLSFolder({
         //   "https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/thumbnail.jpg",
       };
     }
+
+    // For progress tracking, we'll use a different approach
+    // The AWS SDK doesn't provide built-in progress for browser uploads
+    // So we'll simulate progress based on file size and time
+    const startTime = Date.now();
+    const fileSize =
+      hlsFiles.masterManifest.size +
+      hlsFiles.streamManifest.size +
+      hlsFiles.thumbnail.size +
+      hlsFiles.segments
+        .map((segment) => segment.size)
+        .reduce((a, b) => a + b, 0);
+
+    // Start a progress simulation
+    progressInterval = setInterval(() => {
+      const elapsedTime = Date.now() - startTime;
+      // Estimate based on file size
+      const estimatedTime = Math.max(5000, fileSize / 100000);
+      const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
+      // S3 upload is 30% of total
+      setStoreProgress(Math.round(progress * 0.3));
+      setStoreStatus(`Uploading media... ${Math.round(progress)}%`);
+    }, 500);
 
     const pinata = new PinataSDK({
       pinataJwt: credentials.jwt,
@@ -247,6 +272,9 @@ async function uploadHLSFolder({
         segments: hlsFiles.segments.length.toString(),
       });
 
+    // Clear the progress interval
+    clearInterval(progressInterval);
+
     console.log("HLS folder uploaded successfully:", uploadResult);
 
     // Construct URLs
@@ -265,10 +293,23 @@ async function uploadHLSFolder({
       thumbnailUrl,
     };
   } catch (err: unknown) {
+    console.error("Pinata HLS Upload error:", err);
+
     const errMessage = err instanceof Error ? err.message : "HLS Upload failed";
-    console.error("Failed to upload HLS folder to Pinata:", errMessage);
-    throw new Error(`HLS upload failed: ${errMessage}`);
+    setStoreError(`HLS Upload failed: ${errMessage}`);
+    setStoreStatus("HLS Upload failed");
+  } finally {
+    setIsStoring(false);
+    // Clear progress interval
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
   }
+
+  return {
+    playlistUrl: "",
+    thumbnailUrl: "",
+  };
 }
 
 export { uploadFile, uploadHLSFolder, uploadJson, uploadVideo };
