@@ -82,6 +82,9 @@ async function checkMediaStatus({
   creationId,
 }: Readonly<CheckMediaStatusProps>): Promise<string> {
   if (DEBUG_MODE) {
+    if (DEBUG_STATUS_STEP === 4) {
+      DEBUG_STATUS_STEP = 0;
+    }
     DEBUG_STATUS_STEP++;
     console.log("Test Threads: checkMediaStatus");
     // await sleep(1000);

@@ -1,25 +1,53 @@
 import { DEBUG_MODE } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
-interface UploadVideoProps {
+let DEBUG_STATUS_STEP = 0;
+
+interface TwitterFinalizeUploadResponse {
+  data?: {
+    media_id?: string;
+    media_key?: string;
+    processing_info?: {
+      check_after_secs?: number;
+      error?: {
+        code?: number;
+        message?: string;
+        name?: string;
+      };
+      state?: string;
+    };
+  };
+}
+
+interface TwitterStatusUploadResponse {
+  data?: {
+    processing_info?: {
+      check_after_secs?: number;
+      error?: {
+        code?: number;
+        message?: string;
+        name?: string;
+      };
+      progress_percent?: number;
+      state?: string;
+    };
+  };
+}
+
+interface InitializeUploadVideoProps {
   accessToken: string;
   video: File;
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
 }
-async function uploadVideo({
+async function initializeUploadVideo({
   accessToken,
-  setPostProgress,
-  setPostStatus,
   video,
-}: Readonly<UploadVideoProps>): Promise<string> {
+}: Readonly<InitializeUploadVideoProps>): Promise<string> {
   if (DEBUG_MODE) {
-    console.log("Test Twitter: uploadVideo");
+    console.log("Test Twitter: initializeUploadVideo");
     await sleep(1000);
     return "test";
   }
 
-  // Step 1: INIT - Initialize the upload
   const initResponse = await fetch("/api/twitter/2/media/upload/initialize", {
     body: JSON.stringify({
       media_category: "tweet_video",
@@ -42,49 +70,80 @@ async function uploadVideo({
   const mediaId = initData.data.id;
 
   console.log("Upload initialized:", initData);
-  setPostProgress(10);
-  setPostStatus("Uploading video chunks...");
 
-  // Step 2: APPEND - Upload the file in chunks
-  // 4MB chunks
-  const chunkSize = 1024 * 1024 * 4;
-  const totalChunks = Math.ceil(video.size / chunkSize);
+  return mediaId;
+}
 
-  for (let segmentIndex = 0; segmentIndex < totalChunks; segmentIndex++) {
-    const start = segmentIndex * chunkSize;
-    const end = Math.min(start + chunkSize, video.size);
-    const chunk = video.slice(start, end);
-
-    const formData = new FormData();
-    formData.append("segment_index", segmentIndex.toString());
-    formData.append("media", chunk);
-    // Include mediaId for the route
-    formData.append("mediaId", mediaId);
-
-    // eslint-disable-next-line no-await-in-loop
-    const appendResponse = await fetch("/api/twitter/2/media/upload/append", {
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      method: "POST",
-    });
-
-    if (!appendResponse.ok) {
-      // eslint-disable-next-line no-await-in-loop
-      const errorData = await appendResponse.json();
-      throw new Error(errorData.error);
-    }
-
-    const progress = 10 + ((segmentIndex + 1) / totalChunks) * 60;
-    setPostProgress(Math.round(progress));
-    setPostStatus(`Uploading chunk ${segmentIndex + 1}/${totalChunks}...`);
+interface AppendUploadVideoProps {
+  accessToken: string;
+  chunkSize: number;
+  mediaId: string;
+  segmentIndex: number;
+  video: File;
+}
+async function appendUploadVideo({
+  accessToken,
+  chunkSize,
+  mediaId,
+  segmentIndex,
+  video,
+}: Readonly<AppendUploadVideoProps>): Promise<void> {
+  if (DEBUG_MODE) {
+    console.log("Test Twitter: appendUploadVideo");
+    await sleep(1000);
+    return;
   }
 
-  setPostProgress(70);
-  setPostStatus("Finalizing upload...");
+  const start = segmentIndex * chunkSize;
+  const end = Math.min(start + chunkSize, video.size);
+  const chunk = video.slice(start, end);
 
-  // Step 3: FINALIZE - Complete the upload
+  const formData = new FormData();
+  formData.append("segment_index", segmentIndex.toString());
+  formData.append("media", chunk);
+  // Include mediaId for the route
+  formData.append("mediaId", mediaId);
+
+  const appendResponse = await fetch("/api/twitter/2/media/upload/append", {
+    body: formData,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    method: "POST",
+  });
+
+  if (!appendResponse.ok) {
+    const errorData = await appendResponse.json();
+    throw new Error(errorData.error);
+  }
+}
+
+interface FinalizeUploadVideoProps {
+  accessToken: string;
+  mediaId: string;
+}
+async function finalizeUploadVideo({
+  accessToken,
+  mediaId,
+}: Readonly<FinalizeUploadVideoProps>): Promise<TwitterFinalizeUploadResponse> {
+  if (DEBUG_MODE) {
+    console.log("Test Twitter: finalizeUploadVideo");
+    await sleep(1000);
+    return {
+      data: {
+        media_id: "test",
+        media_key: "test",
+        processing_info: {
+          check_after_secs: 4,
+          error: {
+            message: "test",
+          },
+          state: "test",
+        },
+      },
+    };
+  }
+
   const finalizeResponse = await fetch("/api/twitter/2/media/upload/finalize", {
     body: JSON.stringify({
       mediaId,
@@ -104,60 +163,161 @@ async function uploadVideo({
   const finalizeData = await finalizeResponse.json();
   console.log("Upload finalized:", finalizeData);
 
+  return finalizeData;
+}
+
+interface StatusUploadVideoProps {
+  accessToken: string;
+  mediaId: string;
+}
+async function statusUploadVideo({
+  accessToken,
+  mediaId,
+}: Readonly<StatusUploadVideoProps>): Promise<TwitterStatusUploadResponse> {
+  if (DEBUG_MODE) {
+    if (DEBUG_STATUS_STEP === 4) {
+      DEBUG_STATUS_STEP = 0;
+    }
+    DEBUG_STATUS_STEP++;
+    console.log("Test Twitter: statusUploadVideo");
+    // await sleep(1000);
+
+    return {
+      data: {
+        processing_info: {
+          check_after_secs: 4,
+          error: {
+            message: "",
+          },
+          state: DEBUG_STATUS_STEP === 4 ? "succeeded" : "in_progress",
+        },
+      },
+    };
+  }
+
+  const params = new URLSearchParams({
+    media_id: mediaId,
+  });
+
+  const statusResponse = await fetch(
+    `/api/twitter/2/media/upload/status?${params.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+
+  if (!statusResponse.ok) {
+    const errorData = await statusResponse.json();
+    throw new Error(errorData.error);
+  }
+
+  const statusData = await statusResponse.json();
+  console.log("Processing status:", statusData);
+
+  return statusData.data.processing_info.state;
+}
+
+interface UploadVideoProps {
+  accessToken: string;
+  video: File;
+  setPostProgress: (progress: number) => void;
+  setPostStatus: (status: string) => void;
+}
+async function uploadVideo({
+  accessToken,
+  setPostProgress,
+  setPostStatus,
+  video,
+}: Readonly<UploadVideoProps>): Promise<string> {
+  // Step 1: INIT - Initialize the upload
+  setPostProgress(10);
+  setPostStatus("Initializing upload...");
+  const mediaId = await initializeUploadVideo({
+    accessToken,
+    video,
+  });
+
+  setPostProgress(20);
+  setPostStatus("Uploading video chunks...");
+
+  // Step 2: APPEND - Upload the file in chunks
+  // 4MB chunks
+  const chunkSize = 1024 * 1024 * 4;
+  const totalChunks = Math.ceil(video.size / chunkSize);
+
+  for (let segmentIndex = 0; segmentIndex < totalChunks; segmentIndex++) {
+    // eslint-disable-next-line no-await-in-loop
+    await appendUploadVideo({
+      accessToken,
+      chunkSize,
+      mediaId,
+      segmentIndex,
+      video,
+    });
+
+    const progress = 20 + ((segmentIndex + 1) / totalChunks) * 50;
+    setPostProgress(Math.round(progress));
+    setPostStatus(`Uploading chunk ${segmentIndex + 1}/${totalChunks}...`);
+  }
+
+  // Step 3: FINALIZE - Complete the upload
+  setPostProgress(70);
+  setPostStatus("Finalizing upload...");
+  const finalizeData = await finalizeUploadVideo({
+    accessToken,
+    mediaId,
+  });
+
   // Step 4: Check processing status if needed
   if (finalizeData.data?.processing_info) {
     setPostProgress(75);
     setPostStatus("Processing video...");
 
+    await new Promise((resolve) => {
+      setTimeout(
+        resolve,
+        (finalizeData.data?.processing_info?.check_after_secs ?? 0) * 1000 ||
+          5000,
+      );
+    });
+
     let processingComplete = false;
     let attempts = 0;
-    const maxAttempts = 30;
+    const maxAttempts = 60;
 
     while (!processingComplete && attempts < maxAttempts) {
       // eslint-disable-next-line no-await-in-loop
-      await new Promise((resolve) => {
-        setTimeout(
-          resolve,
-          finalizeData.data.processing_info.check_after_secs * 1000 || 5000,
-        );
+      const statusData = await statusUploadVideo({
+        accessToken,
+        mediaId,
       });
 
-      const params = new URLSearchParams({
-        media_id: mediaId,
-      });
-
-      // eslint-disable-next-line no-await-in-loop
-      const statusResponse = await fetch(
-        `/api/twitter/2/media/upload/status?${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-
-      if (statusResponse.ok) {
-        // eslint-disable-next-line no-await-in-loop
-        const statusData = await statusResponse.json();
-        console.log("Processing status:", statusData);
-
-        if (statusData.data?.processing_info) {
-          // eslint-disable-next-line max-depth
-          if (statusData.data.processing_info.state === "succeeded") {
-            processingComplete = true;
-          } else if (statusData.data.processing_info.state === "failed") {
-            throw new Error(
-              `Video processing failed: ${statusData.data.processing_info.error?.message ?? "Unknown error"}`,
-            );
-          }
-
-          const progress = 75 + (attempts / maxAttempts) * 15;
-          setPostProgress(Math.round(progress));
-          setPostStatus(`Processing video... (${attempts + 1}/${maxAttempts})`);
-        } else {
-          processingComplete = true;
-        }
+      if (statusData.data?.processing_info?.state === "failed") {
+        const errorMessage =
+          statusData.data.processing_info.error?.message ?? "Unknown error";
+        throw new Error(`Video processing failed: ${errorMessage}`);
       }
+
+      if (statusData.data?.processing_info?.state === "in_progress") {
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve) => {
+          setTimeout(
+            resolve,
+            (statusData.data?.processing_info?.check_after_secs ?? 0) * 1000 ||
+              5000,
+          );
+        });
+      }
+
+      if (statusData.data?.processing_info?.state === "succeeded") {
+        processingComplete = true;
+      }
+
+      const progress = 75 + (attempts / maxAttempts) * 15;
+      setPostProgress(Math.round(progress));
+      setPostStatus(`Processing video... (${attempts + 1}/${maxAttempts})`);
 
       attempts++;
     }
@@ -227,9 +387,6 @@ async function createPost({
 
     let postId = "";
     if (video) {
-      setPostProgress(10);
-      setPostStatus("Uploading post...");
-
       // Upload video to Twitter
       const mediaId = await uploadVideo({
         accessToken,
