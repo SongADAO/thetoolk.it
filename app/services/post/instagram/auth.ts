@@ -1,3 +1,4 @@
+import { DEBUG_MODE } from "@/app/config/constants";
 import { objectIdHash } from "@/app/lib/hash";
 import { hasExpired } from "@/app/services/post/helpers";
 import type {
@@ -340,6 +341,10 @@ async function getAccountAccessToken(
   token: string,
   accountId: string,
 ): Promise<string> {
+  if (DEBUG_MODE) {
+    return "test-account-token";
+  }
+
   const accounts = await getAccounts(token);
   const userAccounts = accounts.filter((page) => page.id === accountId);
 

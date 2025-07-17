@@ -1,6 +1,8 @@
 import { DEBUG_MODE } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
+let DEBUG_STATUS_STEP = 0;
+
 // Create Instagram media container
 interface CreateMediaContainerProps {
   accessToken: string;
@@ -93,6 +95,14 @@ async function checkMediaStatus({
   accessToken,
   creationId,
 }: Readonly<CheckMediaStatusProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    DEBUG_STATUS_STEP++;
+    console.log("Test Facebook: checkMediaStatus");
+    await sleep(1000);
+
+    return DEBUG_STATUS_STEP === 4 ? "FINISHED" : "IN_PROGRESS";
+  }
+
   const params = new URLSearchParams({
     access_token: accessToken,
     fields: "status_code",
@@ -128,6 +138,13 @@ async function publishMedia({
   creationId,
   userId,
 }: Readonly<PublishMediaProps>) {
+  if (DEBUG_MODE) {
+    console.log("Test Facebook: publishMedia");
+    await sleep(1000);
+
+    return "test";
+  }
+
   const response = await fetch(
     `https://graph.facebook.com/v23.0/${userId}/media_publish`,
     {
@@ -210,8 +227,8 @@ async function createPost({
         videoUrl,
       });
 
-      setPostProgress(20);
-      setPostStatus("Waiting for Instagram to process video...");
+      setPostProgress(30);
+      setPostStatus("Preparing post...");
 
       // Step 3: Wait for processing (50-80% progress)
       let status = "IN_PROGRESS";
@@ -224,9 +241,7 @@ async function createPost({
       while (status === "IN_PROGRESS" && attempts < maxAttempts) {
         // Wait for retry delay.
         // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
-        await new Promise((resolve) => {
-          setTimeout(resolve, retryDelay);
-        });
+        await sleep(retryDelay);
 
         // eslint-disable-next-line no-await-in-loop -- Intentional polling pattern
         status = await checkMediaStatus({ accessToken, creationId });
@@ -234,7 +249,7 @@ async function createPost({
 
         const progress = 30 + (attempts / maxAttempts) * 30;
         setPostProgress(Math.round(progress));
-        setPostStatus(`Submitting post... (${attempts}/${maxAttempts})`);
+        setPostStatus(`Uploading post... (${attempts}/${maxAttempts})`);
 
         console.log(`Attempt ${attempts}: Status = ${status}`);
       }
@@ -256,7 +271,7 @@ async function createPost({
       }
 
       setPostProgress(85);
-      setPostStatus("Publishing to Instagram...");
+      setPostStatus("Publishing post...");
 
       // Step 4: Publish the media (80-100% progress)
       postId = await publishMedia({ accessToken, creationId, userId });

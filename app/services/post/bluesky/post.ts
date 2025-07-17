@@ -145,7 +145,7 @@ async function createPost({
     if (video) {
       // Step 1: Upload video blob (0-70% progress)
       setPostProgress(10);
-      setPostStatus("Starting upload...");
+      setPostStatus("Uploading post...");
 
       // Simulate progress during upload
       let progress = 0;
@@ -164,7 +164,7 @@ async function createPost({
       setPostProgress(70);
 
       // Step 2: Create post (70-100% progress)
-      setPostStatus("Creating Bluesky post...");
+      setPostStatus("Publishing post...");
       setPostProgress(80);
 
       postId = await createRecord({
