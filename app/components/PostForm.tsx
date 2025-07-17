@@ -1,9 +1,9 @@
 "use client";
-
 import { Form } from "radix-ui";
 import { use, useActionState, useRef, useState } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
+import { DEBUG_MODE } from "@/app/config/constants";
 import {
   HLSConverter,
   type HLSFiles,
@@ -200,97 +200,96 @@ function PostForm() {
     // console.log(newFormState);
     // console.log(selectedFile);
 
-    // const video = selectedFile;
-
-    // Convert video if file is selected.
-    // -------------------------------------------------------------------------
-    let video: File | null = null;
-    if (selectedFile) {
-      try {
-        console.log("Converting video before upload...");
-        video = await convertVideo(selectedFile);
-      } catch (error) {
-        return newFormState;
-      }
-    }
-    // -------------------------------------------------------------------------
-
-    // Make HLS Streamable video
-    // -------------------------------------------------------------------------
+    /* eslint-disable no-useless-assignment */
     let hlsFiles: HLSFiles | null = null;
-    if (video) {
-      try {
-        console.log("Converting HLS video before upload...");
-        hlsFiles = await convertHLSVideo(video);
-      } catch (error) {
-        return newFormState;
-      }
-    }
-    // -------------------------------------------------------------------------
-
-    // Upload video to storage.
-    // -------------------------------------------------------------------------
-    let videoUrl = "";
-    if (video) {
-      const s3VideoResult = await amazonS3StoreVideo(video);
-      if (s3VideoResult) {
-        videoUrl = s3VideoResult;
-      }
-
-      const pinataVideoResult = await pinataStoreVideo(video);
-      if (pinataVideoResult) {
-        videoUrl = pinataVideoResult;
-      }
-
-      if (!videoUrl) {
-        setStorageError("Failed to upload video to storage.");
-
-        return newFormState;
-      }
-    }
-    // -------------------------------------------------------------------------
-
-    // Upload HLS Streamable video to storage.
-    // -------------------------------------------------------------------------
     let hlsUploadResult: HLSUploadResult | null = null;
-    if (hlsFiles) {
-      try {
-        // Upload HLS files to Pinata
-        console.log("Uploading HLS files to Pinata...");
-        hlsUploadResult = await pinataStoreHLSFolder(
-          hlsFiles,
-          `hls-video-${Date.now()}`,
-        );
+    let video: File | null = null;
+    let videoUrl = "";
+    let videoPlaylistUrl = "";
+    let videoThumbnailUrl = "";
+    /* eslint-enable no-useless-assignment */
 
-        if (hlsUploadResult === null) {
-          console.error("Failed to upload HLS files to Pinata");
-          throw new Error("Failed to upload HLS files to Pinata");
+    if (DEBUG_MODE) {
+      video = selectedFile;
+      videoUrl =
+        "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+      videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
+      videoThumbnailUrl =
+        "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
+    } else {
+      // Convert video if file is selected.
+      // -------------------------------------------------------------------------
+      if (selectedFile) {
+        try {
+          console.log("Converting video before upload...");
+          video = await convertVideo(selectedFile);
+        } catch (error) {
+          return newFormState;
+        }
+      }
+      // -------------------------------------------------------------------------
+
+      // Make HLS Streamable video
+      // -------------------------------------------------------------------------
+      if (video) {
+        try {
+          console.log("Converting HLS video before upload...");
+          hlsFiles = await convertHLSVideo(video);
+        } catch (error) {
+          return newFormState;
+        }
+      }
+      // -------------------------------------------------------------------------
+
+      // Upload video to storage.
+      // -------------------------------------------------------------------------
+      if (video) {
+        const s3VideoResult = await amazonS3StoreVideo(video);
+        if (s3VideoResult) {
+          videoUrl = s3VideoResult;
         }
 
-        console.log("HLS upload successful:", hlsUploadResult);
-      } catch (error) {
-        console.error("HLS upload failed:", error);
-        setStorageError("Failed to upload HLS files to storage.");
+        const pinataVideoResult = await pinataStoreVideo(video);
+        if (pinataVideoResult) {
+          videoUrl = pinataVideoResult;
+        }
 
-        return newFormState;
+        if (!videoUrl) {
+          setStorageError("Failed to upload video to storage.");
+
+          return newFormState;
+        }
       }
+      // -------------------------------------------------------------------------
+
+      // Upload HLS Streamable video to storage.
+      // -------------------------------------------------------------------------
+      if (hlsFiles) {
+        try {
+          // Upload HLS files to Pinata
+          console.log("Uploading HLS files to Pinata...");
+          hlsUploadResult = await pinataStoreHLSFolder(
+            hlsFiles,
+            `hls-video-${Date.now()}`,
+          );
+
+          if (hlsUploadResult === null) {
+            console.error("Failed to upload HLS files to Pinata");
+            throw new Error("Failed to upload HLS files to Pinata");
+          }
+
+          console.log("HLS upload successful:", hlsUploadResult);
+        } catch (error) {
+          console.error("HLS upload failed:", error);
+          setStorageError("Failed to upload HLS files to storage.");
+
+          return newFormState;
+        }
+      }
+      videoPlaylistUrl = hlsUploadResult?.playlistUrl ?? "";
+      videoThumbnailUrl = hlsUploadResult?.thumbnailUrl ?? "";
+      // -------------------------------------------------------------------------
     }
-    const videoPlaylistUrl = hlsUploadResult?.playlistUrl ?? "";
-    const videoThumbnailUrl = hlsUploadResult?.thumbnailUrl ?? "";
-    // -------------------------------------------------------------------------
-
-    console.log(videoPlaylistUrl);
-    console.log(videoThumbnailUrl);
-
-    // const videoUrl =
-    //   // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/1752372581514-insta.mp4";
-    //   // "https://thetoolkit-test.s3.us-east-1.amazonaws.com/thetoolkit/example.mp4";
-    //   "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
-
-    // const videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
-
-    // const videoThumbnailUrl =
-    //   "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
     // Use the converted file for all posting services
     await blueskyPost({

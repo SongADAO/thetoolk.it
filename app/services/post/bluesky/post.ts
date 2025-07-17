@@ -1,3 +1,5 @@
+import { DEBUG_MODE } from "@/app/config/constants";
+import { sleep } from "@/app/lib/utils";
 import type { BlueskyCredentials } from "@/app/services/post/types";
 
 interface UploadVideoBlobProps {
@@ -10,6 +12,12 @@ async function uploadVideoBlob({
   credentials,
   video,
 }: Readonly<UploadVideoBlobProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test Bluesky: uploadVideoBlob");
+    await sleep(1000);
+    return "test";
+  }
+
   // Convert file to ArrayBuffer
   const fileBuffer = await video.arrayBuffer();
 
@@ -54,6 +62,12 @@ async function createRecord({
   username,
   videoBlob,
 }: Readonly<CreateRecordProps>): Promise<string> {
+  if (DEBUG_MODE) {
+    console.log("Test Bluesky: createRecord");
+    await sleep(1000);
+    return "test";
+  }
+
   const postRecord = {
     $type: "app.bsky.feed.post",
     createdAt: new Date().toISOString(),
