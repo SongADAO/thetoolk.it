@@ -19,7 +19,11 @@ import { ThreadsContext } from "@/app/services/post/threads/Context";
 import { TiktokContext } from "@/app/services/post/tiktok/Context";
 import { TwitterContext } from "@/app/services/post/twitter/Context";
 import { YoutubeContext } from "@/app/services/post/youtube/Context";
-import { PostContext, type PostVideo } from "@/app/services/PostContext";
+import {
+  type CreatePostProps,
+  PostContext,
+  type PostVideo,
+} from "@/app/services/PostContext";
 import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
 import { PinataContext } from "@/app/services/storage/pinata/Context";
 
@@ -33,15 +37,23 @@ export function PostProvider({ children }: Readonly<Props>) {
     use(FacebookContext);
   const { accounts: instagramAccounts, post: instagramPost } =
     use(InstagramContext);
-  const { accounts: neynarAccounts, post: neynarPost } = use(NeynarContext);
+  const {
+    isEnabled: neynarIsEnabled,
+    accounts: neynarAccounts,
+    post: neynarPost,
+  } = use(NeynarContext);
   const { accounts: threadsAccounts, post: threadsPost } = use(ThreadsContext);
   const { accounts: tiktokAccounts, post: tiktokPost } = use(TiktokContext);
   const { accounts: twitterAccounts, post: twitterPost } = use(TwitterContext);
   const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
 
-  const { storeVideo: pinataStoreVideo, storeHLSFolder: pinataStoreHLSFolder } =
-    use(PinataContext);
-  const { storeVideo: amazonS3StoreVideo } = use(AmazonS3Context);
+  const {
+    isUsable: pinataIsUsable,
+    storeVideo: pinataStoreVideo,
+    storeHLSFolder: pinataStoreHLSFolder,
+  } = use(PinataContext);
+  const { isUsable: amazonS3IsUsable, storeVideo: amazonS3StoreVideo } =
+    use(AmazonS3Context);
 
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
@@ -167,6 +179,22 @@ export function PostProvider({ children }: Readonly<Props>) {
   }
 
   async function preparePostVideo(selectedFile: File): Promise<PostVideo> {
+    const needsHls = neynarIsEnabled;
+
+    if (!pinataIsUsable && !amazonS3IsUsable) {
+      throw new Error("You must select a storage provider.");
+    }
+
+    if (needsHls && !pinataIsUsable) {
+      throw new Error(
+        "To use Farcaster or Lens, you must select an IPFS storage provider (Pinata).",
+      );
+    }
+
+    if (!pinataIsUsable && !amazonS3IsUsable) {
+      throw new Error("You must select a storage provider.");
+    }
+
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
@@ -226,13 +254,13 @@ export function PostProvider({ children }: Readonly<Props>) {
     };
   }
 
-  async function createPost(
-    text: string,
-    title: string,
-    video: File | null,
-    videoUrl: string,
-    videoHSLUrl: string,
-  ): Promise<void> {
+  async function createPost({
+    text,
+    title,
+    video,
+    videoHSLUrl,
+    videoUrl,
+  }: Readonly<CreatePostProps>): Promise<void> {
     const allResults = await Promise.allSettled([
       blueskyPost({
         text,

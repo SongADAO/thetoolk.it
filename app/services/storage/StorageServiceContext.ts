@@ -22,6 +22,7 @@ interface StorageServiceContextType {
   isComplete: boolean;
   isEnabled: boolean;
   isStoring: boolean;
+  isUsable: boolean;
   label: string;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
@@ -52,6 +53,7 @@ const storageServiceContextDefault = {
   isComplete: false,
   isEnabled: false,
   isStoring: false,
+  isUsable: false,
   label: "",
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},

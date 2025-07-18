@@ -42,6 +42,8 @@ function PostForm() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const [error, setError] = useState<string>("");
+
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
@@ -53,26 +55,29 @@ function PostForm() {
     console.log(newFormState);
 
     try {
-      const { video, videoUrl, videoHSLUrl } = selectedFile
+      const { video, videoHSLUrl, videoUrl } = selectedFile
         ? await preparePostVideo(selectedFile)
         : {
             video: null,
-            videoUrl: "",
             videoHSLUrl: "",
+            videoUrl: "",
           };
 
       // const video = selectedFile;
       // const videoUrl = "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
       // const videoHSLUrl = "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8";
 
-      await createPost(
-        newFormState.text,
-        newFormState.title,
+      await createPost({
+        text: newFormState.text,
+        title: newFormState.title,
         video,
-        videoUrl,
         videoHSLUrl,
-      );
+        videoUrl,
+      });
     } catch (err: unknown) {
+      const errMessage = err instanceof Error ? err.message : "Post failed";
+      setError(errMessage);
+
       console.error(err);
     }
 

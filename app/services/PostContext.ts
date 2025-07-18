@@ -6,14 +6,16 @@ interface PostVideo {
   videoHSLUrl: string;
 }
 
+interface CreatePostProps {
+  text: string;
+  title: string;
+  video: File | null;
+  videoHSLUrl: string;
+  videoUrl: string;
+}
+
 interface PostContextType {
-  createPost: (
-    text: string,
-    title: string,
-    video: File | null,
-    videoUrl: string,
-    videoHSLUrl: string,
-  ) => Promise<void>;
+  createPost: (params: CreatePostProps) => Promise<void>;
   getVideoInfo: (video: File | null) => Promise<void>;
   hlsConversionError: string | null;
   hlsConversionProgress: number;
@@ -37,8 +39,8 @@ const PostContext = createContext<PostContextType>({
   isVideoConverting: false,
   preparePostVideo: async () => ({
     video: null,
-    videoUrl: "",
     videoHSLUrl: "",
+    videoUrl: "",
   }),
   videoCodecInfo: "",
   videoConversionError: null,
@@ -48,4 +50,4 @@ const PostContext = createContext<PostContextType>({
   videoPreviewUrl: "",
 });
 
-export { PostContext, type PostVideo };
+export { type CreatePostProps, PostContext, type PostVideo };

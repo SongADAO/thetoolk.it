@@ -59,6 +59,8 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const isAuthorized = isComplete;
 
+  const isUsable = isEnabled && isComplete && isAuthorized;
+
   const authorizationExpiresAt = "0";
 
   const accounts: ServiceAccount[] = [];
@@ -193,6 +195,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isStoring,
+      isUsable,
       label,
       saveData,
       setIsEnabled,
@@ -220,6 +223,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isStoring,
+      isUsable,
       label,
       storeError,
       storeProgress,
