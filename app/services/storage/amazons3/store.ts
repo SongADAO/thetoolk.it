@@ -20,7 +20,7 @@ async function uploadFile({
   setStoreError,
   setStoreProgress,
   setStoreStatus,
-}: Readonly<UploadFileProps>): Promise<string | null> {
+}: Readonly<UploadFileProps>): Promise<string> {
   let progressInterval = null;
 
   try {
@@ -143,7 +143,7 @@ async function uploadFile({
     }
   }
 
-  return null;
+  return "";
 }
 
 interface UploadVideoProps {
@@ -161,7 +161,7 @@ async function uploadVideo({
   setStoreError,
   setStoreProgress,
   setStoreStatus,
-}: Readonly<UploadVideoProps>): Promise<string | null> {
+}: Readonly<UploadVideoProps>): Promise<string> {
   return uploadFile({
     credentials,
     file,
@@ -190,10 +190,10 @@ async function uploadJson({
   setStoreProgress,
   setStoreStatus,
   /* eslint-enable @typescript-eslint/no-unused-vars */
-}: Readonly<UploadJsonProps>): Promise<string | null> {
+}: Readonly<UploadJsonProps>): Promise<string> {
   throw new Error(`Not implemented`);
 
-  return Promise.resolve(null);
+  return Promise.resolve("");
 
   // if (DEBUG_STORAGE) {
   //   console.log("Test S3: uploadJson");

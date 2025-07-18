@@ -234,11 +234,14 @@ export function PostProvider({ children }: Readonly<Props>) {
 
     // Make HLS Streamable video
     // -------------------------------------------------------------------------
-    console.log("Converting HLS video before upload...");
-    const hlsFiles = await convertHLSVideo(video);
+    let hlsFiles: HLSFiles | null = null;
+    if (needsHls) {
+      console.log("Converting HLS video before upload...");
+      hlsFiles = await convertHLSVideo(video);
+    }
     // -------------------------------------------------------------------------
 
-    throw new Error("TESTING CONVERSION ONLY");
+    // throw new Error("TESTING CONVERSION ONLY");
 
     // Upload video to storage.
     // -------------------------------------------------------------------------
@@ -266,18 +269,21 @@ export function PostProvider({ children }: Readonly<Props>) {
 
     // Upload HLS Streamable video to storage.
     // -------------------------------------------------------------------------
-    // Upload HLS files to Pinata
-    console.log("Uploading HLS files to Pinata...");
-    const videoHSLUrl = await pinataStoreHLSFolder(
-      hlsFiles,
-      `hls-video-${Date.now()}`,
-    );
+    let videoHSLUrl = "";
+    if (needsHls && hlsFiles) {
+      // Upload HLS files to Pinata
+      console.log("Uploading HLS files to Pinata...");
+      videoHSLUrl = await pinataStoreHLSFolder(
+        hlsFiles,
+        `hls-video-${Date.now()}`,
+      );
 
-    if (!videoHSLUrl) {
-      throw new Error("Failed to upload HLS files to Pinata");
+      if (!videoHSLUrl) {
+        throw new Error("Failed to upload HLS files to Pinata");
+      }
+
+      console.log("HLS upload successful:", videoHSLUrl);
     }
-
-    console.log("HLS upload successful:", videoHSLUrl);
     // -------------------------------------------------------------------------
 
     return {

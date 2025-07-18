@@ -116,9 +116,9 @@ export function PinataProvider({ children }: Readonly<Props>) {
   const [storeProgress, setStoreProgress] = useState<number>(0);
   const [storeStatus, setStoreStatus] = useState<string>("");
 
-  async function storeFile(file: File): Promise<string | null> {
+  async function storeFile(file: File): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
-      return null;
+      return "";
     }
 
     return await uploadFile({
@@ -131,9 +131,9 @@ export function PinataProvider({ children }: Readonly<Props>) {
     });
   }
 
-  async function storeJson(data: object): Promise<string | null> {
+  async function storeJson(data: object): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
-      return null;
+      return "";
     }
 
     return await uploadJson({
@@ -146,9 +146,9 @@ export function PinataProvider({ children }: Readonly<Props>) {
     });
   }
 
-  async function storeVideo(file: File): Promise<string | null> {
+  async function storeVideo(file: File): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
-      return null;
+      return "";
     }
 
     return await uploadVideo({

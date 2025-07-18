@@ -27,15 +27,12 @@ interface StorageServiceContextType {
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
   storeError: string;
-  storeFile: (file: File) => Promise<string | null>;
-  storeHLSFolder: (
-    hlsFiles: HLSFiles,
-    folderName?: string,
-  ) => Promise<string | null>;
-  storeJson: (data: object) => Promise<string | null>;
+  storeFile: (file: File) => Promise<string>;
+  storeHLSFolder: (hlsFiles: HLSFiles, folderName?: string) => Promise<string>;
+  storeJson: (data: object) => Promise<string>;
   storeProgress: number;
   storeStatus: string;
-  storeVideo: (video: File) => Promise<string | null>;
+  storeVideo: (video: File) => Promise<string>;
 }
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -59,13 +56,13 @@ const storageServiceContextDefault = {
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
   storeError: "",
-  storeFile: async (file: File) => Promise.resolve(null),
+  storeFile: async (file: File) => Promise.resolve(""),
   storeHLSFolder: async (hlsFiles: HLSFiles, folderName?: string) =>
-    Promise.resolve(null),
-  storeJson: async (data: object) => Promise.resolve(null),
+    Promise.resolve(""),
+  storeJson: async (data: object) => Promise.resolve(""),
   storeProgress: 0,
   storeStatus: "",
-  storeVideo: async (video: File) => Promise.resolve(null),
+  storeVideo: async (video: File) => Promise.resolve(""),
 };
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
