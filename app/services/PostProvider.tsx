@@ -101,6 +101,10 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoConversionProgress(40);
         await sleep(1000);
         setVideoConversionProgress(60);
+        await sleep(1000);
+        setVideoConversionProgress(80);
+        await sleep(1000);
+        setVideoConversionProgress(100);
 
         return video;
       }
@@ -161,6 +165,10 @@ export function PostProvider({ children }: Readonly<Props>) {
         setHLSConversionProgress(40);
         await sleep(1000);
         setHLSConversionProgress(60);
+        await sleep(1000);
+        setHLSConversionProgress(80);
+        await sleep(1000);
+        setHLSConversionProgress(100);
 
         return {
           masterManifest: video,
