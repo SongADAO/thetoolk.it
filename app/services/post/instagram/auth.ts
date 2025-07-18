@@ -23,8 +23,8 @@ const SCOPES: string[] = [
   "business_management",
   "instagram_basic",
   "instagram_content_publish",
-  "pages_show_list",
   "pages_read_engagement",
+  "pages_show_list",
 ];
 
 const OAUTH_STATE = "instagram_auth";
