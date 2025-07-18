@@ -22,9 +22,9 @@ import {
   needsRefreshTokenRenewal,
   refreshAccessToken,
   shouldHandleAuthRedirect,
-} from "@/app/services/post/instagram/auth";
-import { InstagramContext } from "@/app/services/post/instagram/Context";
-import { createPost } from "@/app/services/post/instagram/post";
+} from "@/app/services/post/instagramfb/auth";
+import { InstagramContext } from "@/app/services/post/instagramfb/Context";
+import { createPost } from "@/app/services/post/instagramfb/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
@@ -50,25 +50,25 @@ export function InstagramProvider({ children }: Readonly<Props>) {
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
-    "thetoolkit-instagram-enabled",
+    "thetoolkit-instagramfb-enabled",
     false,
     { initializeWithValue: false },
   );
 
   const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
-    "thetoolkit-instagram-credentials",
+    "thetoolkit-instagramfb-credentials",
     defaultOauthCredentials,
     { initializeWithValue: true },
   );
 
   const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
-    "thetoolkit-instagram-authorization",
+    "thetoolkit-instagramfb-authorization",
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
 
   const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
-    "thetoolkit-instagram-accounts",
+    "thetoolkit-instagramfb-accounts",
     [],
     { initializeWithValue: true },
   );
