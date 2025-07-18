@@ -1,0 +1,6 @@
+https://localhost:3000/authorize
+https://dev.thetoolk.it/authorize
+
+https://dev.thetoolk.it/deauthorize
+
+https://dev.thetoolk.it/delete-auth
