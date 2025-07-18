@@ -9,7 +9,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_POST } from "@/app/config/constants";
 import {
   // getAccounts,
   getAuthorizationExpiresAt,

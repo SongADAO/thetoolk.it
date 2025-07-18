@@ -1,4 +1,4 @@
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
 let DEBUG_STATUS_STEP = 0;
@@ -16,7 +16,7 @@ async function createMediaContainer({
   userId,
   videoUrl,
 }: Readonly<CreateMediaContainerProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Threads: createMediaContainer");
     await sleep(1000);
     return "test";
@@ -81,7 +81,7 @@ async function checkMediaStatus({
   accessToken,
   creationId,
 }: Readonly<CheckMediaStatusProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     if (DEBUG_STATUS_STEP === 4) {
       DEBUG_STATUS_STEP = 0;
     }
@@ -127,7 +127,7 @@ async function publishMedia({
   creationId,
   userId,
 }: Readonly<PublishMediaProps>) {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Threads: publishMedia");
     await sleep(1000);
 

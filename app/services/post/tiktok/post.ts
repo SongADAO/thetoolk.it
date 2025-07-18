@@ -1,4 +1,4 @@
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
 interface UploadVideoProps {
@@ -13,7 +13,7 @@ async function uploadVideo({
   title,
   videoUrl,
 }: Readonly<UploadVideoProps>) {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Tiktok: uploadVideo");
     await sleep(6000);
     return "test";

@@ -1,6 +1,6 @@
 import { PinataSDK } from "pinata";
 
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_STORAGE } from "@/app/config/constants";
 import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
 import { sleep } from "@/app/lib/utils";
 import type { PinataCredentials } from "@/app/services/storage/types";
@@ -29,7 +29,7 @@ async function uploadFile({
     setStoreProgress(0);
     setStoreStatus("Preparing media for upload...");
 
-    if (DEBUG_MODE) {
+    if (DEBUG_STORAGE) {
       console.log("Test Pinata: uploadFile");
       await sleep(5000);
       setStoreProgress(100);
@@ -136,7 +136,7 @@ async function uploadJson({
     setStoreProgress(0);
     setStoreStatus("Preparing media for upload...");
 
-    if (DEBUG_MODE) {
+    if (DEBUG_STORAGE) {
       console.log("Test Pinata: uploadJson");
       await sleep(5000);
       setStoreProgress(100);
@@ -198,7 +198,7 @@ async function uploadHLSFolder({
     setStoreProgress(0);
     setStoreStatus("Preparing HLS files for upload...");
 
-    if (DEBUG_MODE) {
+    if (DEBUG_STORAGE) {
       console.log("Test Pinata: uploadHLSFolder");
       await sleep(5000);
       setStoreProgress(100);

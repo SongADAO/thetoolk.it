@@ -1,4 +1,4 @@
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 import type { OauthCredentials } from "@/app/services/post/types";
 
@@ -16,7 +16,7 @@ async function createCast({
   videoPlaylistUrl,
   videoThumbnailUrl,
 }: Readonly<CreateCastProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Neynar: createCast");
     await sleep(1000);
     return "test";

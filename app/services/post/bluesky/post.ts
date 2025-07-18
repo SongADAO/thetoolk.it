@@ -1,4 +1,4 @@
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 import type { BlueskyCredentials } from "@/app/services/post/types";
 
@@ -12,7 +12,7 @@ async function uploadVideoBlob({
   credentials,
   video,
 }: Readonly<UploadVideoBlobProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Bluesky: uploadVideoBlob");
     await sleep(6000);
     return "test";
@@ -62,7 +62,7 @@ async function createRecord({
   username,
   videoBlob,
 }: Readonly<CreateRecordProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Bluesky: createRecord");
     await sleep(1000);
     return "test";

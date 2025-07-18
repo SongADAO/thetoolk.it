@@ -3,7 +3,7 @@ import { Form } from "radix-ui";
 import { use, useActionState, useRef, useState } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_MEDIA } from "@/app/config/constants";
 import {
   HLSConverter,
   type HLSFiles,
@@ -219,7 +219,7 @@ function PostForm() {
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     if (selectedFile) {
-      if (DEBUG_MODE) {
+      if (DEBUG_MEDIA) {
         video = selectedFile;
       } else {
         try {
@@ -235,7 +235,7 @@ function PostForm() {
     // Make HLS Streamable video
     // -------------------------------------------------------------------------
     if (selectedFile && video) {
-      if (DEBUG_MODE) {
+      if (DEBUG_MEDIA) {
         hlsFiles = {
           masterManifest: selectedFile, // manifest.m3u8
           segments: [],

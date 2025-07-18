@@ -1,4 +1,4 @@
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
 // Start resumable upload
@@ -12,7 +12,7 @@ async function initiateResumableUpload({
   metadata,
   video,
 }: Readonly<InitiateResumableUploadProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test YouTube: initiateResumableUpload");
     await sleep(6000);
     return "test";
@@ -66,7 +66,7 @@ async function uploadFileInChunks({
   uploadUrl,
   video,
 }: Readonly<UploadFileInChunks>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test YouTube: uploadFileInChunks");
     await sleep(6000);
     return "test";

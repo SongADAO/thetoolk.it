@@ -1,4 +1,4 @@
-import { DEBUG_MODE } from "@/app/config/constants";
+import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
 let DEBUG_STATUS_STEP = 0;
@@ -42,7 +42,7 @@ async function initializeUploadVideo({
   accessToken,
   video,
 }: Readonly<InitializeUploadVideoProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Twitter: initializeUploadVideo");
     await sleep(1000);
     return "test";
@@ -88,7 +88,7 @@ async function appendUploadVideo({
   segmentIndex,
   video,
 }: Readonly<AppendUploadVideoProps>): Promise<void> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Twitter: appendUploadVideo");
     await sleep(1000);
     return;
@@ -126,7 +126,7 @@ async function finalizeUploadVideo({
   accessToken,
   mediaId,
 }: Readonly<FinalizeUploadVideoProps>): Promise<TwitterFinalizeUploadResponse> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Twitter: finalizeUploadVideo");
     await sleep(1000);
     return {
@@ -174,7 +174,7 @@ async function statusUploadVideo({
   accessToken,
   mediaId,
 }: Readonly<StatusUploadVideoProps>): Promise<TwitterStatusUploadResponse> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     if (DEBUG_STATUS_STEP === 4) {
       DEBUG_STATUS_STEP = 0;
     }
@@ -340,7 +340,7 @@ async function publishPost({
   mediaIds,
   text,
 }: Readonly<PublishPostProps>): Promise<string> {
-  if (DEBUG_MODE) {
+  if (DEBUG_POST) {
     console.log("Test Twitter: publishPost");
     await sleep(1000);
     return "test";
