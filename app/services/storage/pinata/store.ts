@@ -189,7 +189,7 @@ async function uploadHLSFolder({
   setStoreError,
   setStoreProgress,
   setStoreStatus,
-}: Readonly<UploadHLSFolderProps>): Promise<string | null> {
+}: Readonly<UploadHLSFolderProps>): Promise<string> {
   let progressInterval = null;
 
   try {
@@ -297,7 +297,7 @@ async function uploadHLSFolder({
     }
   }
 
-  return null;
+  return "";
 }
 
 export { uploadFile, uploadHLSFolder, uploadJson, uploadVideo };

@@ -39,17 +39,9 @@ export function PostProvider({ children }: Readonly<Props>) {
   const { accounts: twitterAccounts, post: twitterPost } = use(TwitterContext);
   const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
 
-  const {
-    // storeJson: pinataStoreJson,
-    // storeFile: pinataStoreFile,
-    storeVideo: pinataStoreVideo,
-    storeHLSFolder: pinataStoreHLSFolder,
-  } = use(PinataContext);
-  const {
-    // storeJson: amazonS3StoreJson,
-    // storeFile: amazonS3StoreFile,
-    storeVideo: amazonS3StoreVideo,
-  } = use(AmazonS3Context);
+  const { storeVideo: pinataStoreVideo, storeHLSFolder: pinataStoreHLSFolder } =
+    use(PinataContext);
+  const { storeVideo: amazonS3StoreVideo } = use(AmazonS3Context);
 
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
@@ -207,6 +199,8 @@ export function PostProvider({ children }: Readonly<Props>) {
       console.error("Failed to upload video to storage.");
       throw new Error("Failed to upload video to storage.");
     }
+
+    console.log("Video upload successful:", videoUrl);
     // -------------------------------------------------------------------------
 
     // Upload HLS Streamable video to storage.
@@ -225,10 +219,6 @@ export function PostProvider({ children }: Readonly<Props>) {
     console.log("HLS upload successful:", videoHSLUrl);
     // -------------------------------------------------------------------------
 
-    console.log(video);
-    console.log(videoUrl);
-    console.log(videoHSLUrl);
-
     return {
       video,
       videoUrl,
@@ -240,8 +230,8 @@ export function PostProvider({ children }: Readonly<Props>) {
     text: string,
     title: string,
     video: File | null,
-    videoUrl: string | null,
-    videoHSLUrl: string | null,
+    videoUrl: string,
+    videoHSLUrl: string,
   ): Promise<void> {
     const allResults = await Promise.allSettled([
       blueskyPost({

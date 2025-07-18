@@ -225,7 +225,7 @@ async function uploadHLSFolder({
   setStoreError,
   setStoreProgress,
   setStoreStatus,
-}: Readonly<UploadHLSFolderProps>): Promise<string | null> {
+}: Readonly<UploadHLSFolderProps>): Promise<string> {
   throw new Error(`Not implemented`);
 
   // try {

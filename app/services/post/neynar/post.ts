@@ -6,15 +6,13 @@ interface CreateCastProps {
   clientSecret: string;
   text: string;
   userId: string;
-  videoPlaylistUrl: string;
-  videoThumbnailUrl: string;
+  videoHSLUrl: string;
 }
 async function createCast({
   clientSecret,
   text,
   userId,
-  videoPlaylistUrl,
-  videoThumbnailUrl,
+  videoHSLUrl,
 }: Readonly<CreateCastProps>): Promise<string> {
   if (DEBUG_POST) {
     console.log("Test Neynar: createCast");
@@ -26,12 +24,9 @@ async function createCast({
     // channel_id: undefined,
     embeds: [
       {
-        metadata: {
-          videoThumbnailUrl,
-        },
         mimeType: "video/mp4",
         type: "video",
-        url: videoPlaylistUrl,
+        url: videoHSLUrl,
       },
     ],
     // mentions: [],
@@ -71,8 +66,7 @@ interface CreatePostProps {
   title: string;
   text: string;
   userId: string;
-  videoThumbnailUrl: string;
-  videoPlaylistUrl: string;
+  videoHSLUrl: string;
 }
 async function createPost({
   credentials,
@@ -82,8 +76,7 @@ async function createPost({
   setPostStatus,
   text,
   userId,
-  videoThumbnailUrl,
-  videoPlaylistUrl,
+  videoHSLUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 
@@ -94,7 +87,7 @@ async function createPost({
     setPostStatus("");
 
     let postId = "";
-    if (videoPlaylistUrl) {
+    if (videoHSLUrl) {
       setPostStatus("Publishing post...");
 
       // Simulate progress during upload
@@ -108,8 +101,7 @@ async function createPost({
         clientSecret: credentials.clientSecret,
         text,
         userId,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
+        videoHSLUrl,
       });
 
       clearInterval(progressInterval);

@@ -161,9 +161,9 @@ export function PinataProvider({ children }: Readonly<Props>) {
   async function storeHLSFolder(
     hlsFiles: HLSFiles,
     folderName?: string,
-  ): Promise<string | null> {
+  ): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
-      return null;
+      return "";
     }
 
     return await uploadHLSFolder({

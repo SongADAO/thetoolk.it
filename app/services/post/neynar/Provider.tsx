@@ -91,8 +91,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
     title,
     text,
     userId,
-    videoPlaylistUrl,
-    videoThumbnailUrl,
+    videoHSLUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
@@ -107,8 +106,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       text,
       title,
       userId,
-      videoPlaylistUrl,
-      videoThumbnailUrl,
+      videoHSLUrl,
     });
   }
 
