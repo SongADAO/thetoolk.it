@@ -9,7 +9,7 @@ https://dev.thetoolk.it/authorize
 Uninstall/Deauthorize Callback
 https://dev.thetoolk.it/deauthorize
 
-Delete Callback URL
+Delete Data Callback URL
 https://dev.thetoolk.it/delete-data
 
 Terms of Service
@@ -18,7 +18,5 @@ https://dev.thetoolk.it/terms-of-service
 Privacy Policy
 https://dev.thetoolk.it/privacy-policy
 
-
-
-
+TikTok Dev Callback URL
 https://caring-annually-teal.ngrok-free.app/authorize
