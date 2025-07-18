@@ -39,6 +39,10 @@ function PostForm() {
     videoPreviewUrl,
   } = use(PostContext);
 
+  const [state, setState] = useState<FormState>(fromInitial());
+
+  const [isPending, setIsPending] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -51,12 +55,16 @@ function PostForm() {
     getVideoInfo(file);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function saveForm(previousState: FormState, formData: FormData) {
-    const newFormState = fromFormData(formData);
-    console.log(newFormState);
-
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     try {
+      event.preventDefault();
+      setIsPending(true);
+      setError("");
+
+      const formData = new FormData(event.currentTarget);
+      const newFormState = fromFormData(formData);
+      setState(newFormState);
+
       const { video, videoHSLUrl, videoUrl } = selectedFile
         ? await preparePostVideo(selectedFile)
         : {
@@ -80,15 +88,10 @@ function PostForm() {
       console.error(err);
       const errMessage = err instanceof Error ? err.message : "Post failed";
       setError(errMessage);
+    } finally {
+      setIsPending(false);
     }
-
-    return newFormState;
   }
-
-  const [state, formAction, isPending] = useActionState<FormState, FormData>(
-    saveForm,
-    fromInitial(),
-  );
 
   // Check if we should disable the form
   const isFormDisabled = isPending;
@@ -135,18 +138,21 @@ function PostForm() {
         </div>
       ) : null}
 
-      <Form.Root action={formAction}>
+      <Form.Root onSubmit={handleSubmit}>
         <Form.Field className="mb-4 flex flex-col" key="title" name="title">
           <Form.Label className="mb-2">Title</Form.Label>
           <Form.Control
             autoComplete="off"
             className="w-full rounded text-black"
-            defaultValue={state.title}
             disabled={isFormDisabled}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, title: e.target.value }))
+            }
             placeholder="Title"
             required
             title="Title"
             type="text"
+            value={state.title}
           />
           <div>
             <Form.Message match="valueMissing">Missing title.</Form.Message>
@@ -159,11 +165,14 @@ function PostForm() {
             asChild
             autoComplete="off"
             className="w-full rounded text-black"
-            defaultValue={state.text}
             disabled={isFormDisabled}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, text: e.target.value }))
+            }
             placeholder="Message"
             required
             title="Message"
+            value={state.text}
           >
             <textarea rows={6} />
           </Form.Control>
@@ -172,8 +181,6 @@ function PostForm() {
           </div>
         </Form.Field>
 
-        <div>{isVideoConverting.toString()}</div>
-        <div>{isHLSConverting.toString()}</div>
         {isVideoConverting ? (
           <div className="mb-4 rounded bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">

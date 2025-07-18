@@ -236,6 +236,8 @@ export function PostProvider({ children }: Readonly<Props>) {
     const hlsFiles = await convertHLSVideo(video);
     // -------------------------------------------------------------------------
 
+    // throw new Error("TESTING CONVERSION ONLY");
+
     // Upload video to storage.
     // -------------------------------------------------------------------------
     console.log("Uploading video to remote storage...");
