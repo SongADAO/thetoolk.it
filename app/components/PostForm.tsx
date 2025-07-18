@@ -53,8 +53,13 @@ function PostForm() {
     console.log(newFormState);
 
     try {
-      const { video, videoUrl, videoHSLUrl } =
-        await preparePostVideo(selectedFile);
+      const { video, videoUrl, videoHSLUrl } = selectedFile
+        ? await preparePostVideo(selectedFile)
+        : {
+            video: null,
+            videoUrl: "",
+            videoHSLUrl: "",
+          };
 
       // const video = selectedFile;
       // const videoUrl = "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
