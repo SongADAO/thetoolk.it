@@ -8,11 +8,6 @@ export interface HLSFiles {
   segments: File[];
 }
 
-export interface HLSUploadResult {
-  playlistUrl: string;
-  thumbnailUrl: string;
-}
-
 export class HLSConverter {
   private readonly ffmpeg: FFmpeg;
   private initialized = false;

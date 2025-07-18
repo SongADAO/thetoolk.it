@@ -8,7 +8,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
+import type { HLSFiles } from "@/app/lib/hls-converter";
 import {
   getCredentialsId,
   hasCompleteCredentials,
@@ -161,7 +161,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
   async function storeHLSFolder(
     hlsFiles: HLSFiles,
     folderName?: string,
-  ): Promise<HLSUploadResult | null> {
+  ): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return null;
     }

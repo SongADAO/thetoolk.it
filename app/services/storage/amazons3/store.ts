@@ -1,7 +1,7 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 import { DEBUG_STORAGE } from "@/app/config/constants";
-import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
+import type { HLSFiles } from "@/app/lib/hls-converter";
 import { sleep } from "@/app/lib/utils";
 import type { AmazonS3Credentials } from "@/app/services/storage/types";
 
@@ -225,7 +225,7 @@ async function uploadHLSFolder({
   setStoreError,
   setStoreProgress,
   setStoreStatus,
-}: Readonly<UploadHLSFolderProps>): Promise<HLSUploadResult> {
+}: Readonly<UploadHLSFolderProps>): Promise<string | null> {
   throw new Error(`Not implemented`);
 
   // try {

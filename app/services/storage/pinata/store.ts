@@ -1,7 +1,7 @@
 import { PinataSDK } from "pinata";
 
 import { DEBUG_STORAGE } from "@/app/config/constants";
-import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
+import type { HLSFiles } from "@/app/lib/hls-converter";
 import { sleep } from "@/app/lib/utils";
 import type { PinataCredentials } from "@/app/services/storage/types";
 
@@ -189,7 +189,7 @@ async function uploadHLSFolder({
   setStoreError,
   setStoreProgress,
   setStoreStatus,
-}: Readonly<UploadHLSFolderProps>): Promise<HLSUploadResult> {
+}: Readonly<UploadHLSFolderProps>): Promise<string | null> {
   let progressInterval = null;
 
   try {
@@ -203,14 +203,8 @@ async function uploadHLSFolder({
       await sleep(5000);
       setStoreProgress(100);
       setStoreStatus("Success");
-      return {
-        playlistUrl: `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`,
-        thumbnailUrl:
-          "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg",
-        // playlistUrl: `https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/video.m3u8`,
-        // thumbnailUrl:
-        //   "https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/thumbnail.jpg",
-      };
+      return `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
+      // return `https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/video.m3u8`;
     }
 
     // For progress tracking, we'll use a different approach
@@ -288,10 +282,7 @@ async function uploadHLSFolder({
     setStoreProgress(100);
     setStoreStatus("Success");
 
-    return {
-      playlistUrl,
-      thumbnailUrl,
-    };
+    return playlistUrl;
   } catch (err: unknown) {
     console.error("Pinata HLS Upload error:", err);
 
@@ -306,10 +297,7 @@ async function uploadHLSFolder({
     }
   }
 
-  return {
-    playlistUrl: "",
-    thumbnailUrl: "",
-  };
+  return null;
 }
 
 export { uploadFile, uploadHLSFolder, uploadJson, uploadVideo };

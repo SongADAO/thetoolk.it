@@ -4,7 +4,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import type { HLSFiles, HLSUploadResult } from "@/app/lib/hls-converter";
+import type { HLSFiles } from "@/app/lib/hls-converter";
 import type { ServiceAccount } from "@/app/services/storage/types";
 
 interface StorageServiceContextType {
@@ -30,7 +30,7 @@ interface StorageServiceContextType {
   storeHLSFolder: (
     hlsFiles: HLSFiles,
     folderName?: string,
-  ) => Promise<HLSUploadResult | null>;
+  ) => Promise<string | null>;
   storeJson: (data: object) => Promise<string | null>;
   storeProgress: number;
   storeStatus: string;

@@ -70,10 +70,10 @@ function formatFileDuration(duration: number) {
 }
 
 function getVideoDuration({
-  file,
+  video,
   setVideoDuration,
 }: Readonly<{
-  file: File;
+  video: File;
   setVideoDuration: (duration: number) => void;
 }>) {
   const videoElement = document.createElement("video");
@@ -84,7 +84,7 @@ function getVideoDuration({
     setVideoDuration(videoElement.duration);
   };
 
-  videoElement.src = URL.createObjectURL(file);
+  videoElement.src = URL.createObjectURL(video);
 }
 
 export {

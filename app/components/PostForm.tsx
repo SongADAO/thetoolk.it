@@ -3,31 +3,8 @@ import { Form } from "radix-ui";
 import { use, useActionState, useRef, useState } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
-import { DEBUG_MEDIA } from "@/app/config/constants";
-import {
-  HLSConverter,
-  type HLSFiles,
-  type HLSUploadResult,
-} from "@/app/lib/hls-converter";
-import {
-  formatFileDuration,
-  formatFileSize,
-  // getVideoCodecInfo,
-  getVideoDuration,
-} from "@/app/lib/video";
-// import { VideoConverter } from "@/app/lib/video-converter-ffmpeg";
-import { VideoConverter } from "@/app/lib/video-converter-webcodecs";
-// import { validateVideoFile } from "@/app/lib/video-validator";
-import { BlueskyContext } from "@/app/services/post/bluesky/Context";
-import { FacebookContext } from "@/app/services/post/facebook/Context";
-import { InstagramContext } from "@/app/services/post/instagram/Context";
-import { NeynarContext } from "@/app/services/post/neynar/Context";
-import { ThreadsContext } from "@/app/services/post/threads/Context";
-import { TiktokContext } from "@/app/services/post/tiktok/Context";
-import { TwitterContext } from "@/app/services/post/twitter/Context";
-import { YoutubeContext } from "@/app/services/post/youtube/Context";
-import { AmazonS3Context } from "@/app/services/storage/amazons3/Context";
-import { PinataContext } from "@/app/services/storage/pinata/Context";
+import { formatFileDuration, formatFileSize } from "@/app/lib/video";
+import { PostContext } from "@/app/services/PostContext";
 
 interface FormState {
   text: string;
@@ -49,178 +26,31 @@ function fromFormData(formData: FormData): FormState {
 }
 
 function PostForm() {
-  const { accounts: blueskyAccounts, post: blueskyPost } = use(BlueskyContext);
-  const { accounts: facebookAccounts, post: facebookPost } =
-    use(FacebookContext);
-  const { accounts: instagramAccounts, post: instagramPost } =
-    use(InstagramContext);
-  const { accounts: neynarAccounts, post: neynarPost } = use(NeynarContext);
-  const { accounts: threadsAccounts, post: threadsPost } = use(ThreadsContext);
-  const { accounts: tiktokAccounts, post: tiktokPost } = use(TiktokContext);
-  const { accounts: twitterAccounts, post: twitterPost } = use(TwitterContext);
-  const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
-
   const {
-    // storeJson: pinataStoreJson,
-    // storeFile: pinataStoreFile,
-    storeVideo: pinataStoreVideo,
-    storeHLSFolder: pinataStoreHLSFolder,
-  } = use(PinataContext);
-  const {
-    // storeJson: amazonS3StoreJson,
-    // storeFile: amazonS3StoreFile,
-    storeVideo: amazonS3StoreVideo,
-  } = use(AmazonS3Context);
+    createPost,
+    getVideoInfo,
+    isVideoConverting,
+    preparePostVideo,
+    videoCodecInfo,
+    videoConversionProgress,
+    videoDuration,
+    videoFileSize,
+    videoPreviewUrl,
+  } = use(PostContext);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
-  const [videoFileSize, setVideoFileSize] = useState<number>(0);
-  const [videoDuration, setVideoDuration] = useState<number>(0);
-  const [videoCodecInfo, setVideoCodecInfo] = useState<string>("");
-
-  // Video conversion state
-  const [videoConverter, setVideoConverter] = useState<VideoConverter | null>(
-    null,
-  );
-  const [conversionProgress, setConversionProgress] = useState(0);
-  const [conversionError, setConversionError] = useState("");
-  const [isConverting, setIsConverting] = useState(false);
-
-  const [hlsConversionProgress, setHlsConversionProgress] = useState(0);
-  const [hlsConversionError, setHlsConversionError] = useState("");
-  const [isHLSConverting, setIsHLSConverting] = useState(false);
-
-  const [storageError, setStorageError] = useState("");
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
-
-    if (file) {
-      setVideoPreviewUrl(URL.createObjectURL(file));
-      setVideoFileSize(file.size);
-      getVideoDuration({ file, setVideoDuration });
-      // setVideoCodecInfo(await getVideoCodecInfo(file));
-
-      // console.log("check video info");
-      // const result = await validateVideoFile(file);
-      // console.log("Video validation:", result);
-
-      return;
-    }
-
-    setVideoPreviewUrl("");
-    setVideoFileSize(0);
-    setVideoDuration(0);
-    setVideoCodecInfo("");
-  }
-
-  // Convert video file to optimized format
-  async function convertVideo(video: File): Promise<File> {
-    try {
-      if (DEBUG_MEDIA) {
-        return video;
-      }
-
-      setIsConverting(true);
-      setConversionProgress(0);
-
-      console.log("Initializing Video converter...");
-      const converter = new VideoConverter();
-      await converter.initialize();
-      setConversionProgress(20);
-
-      console.log("Starting video conversion...");
-      const convertedData = await converter.convertVideo(video, {
-        audioBitrate: 128000,
-        audioSampleRate: 48000,
-        crf: 23,
-        duration: videoDuration,
-        maxFileSizeMB: 20,
-        maxWidth: 1920,
-        targetFps: 30,
-      });
-      setHlsConversionProgress(80);
-
-      // Convert Uint8Array back to File object
-      const convertedVideo = new File(
-        [convertedData],
-        `converted_${video.name}`,
-        { type: "video/mp4" },
-      );
-
-      console.log(
-        `Conversion complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedVideo.size / 1024 / 1024).toFixed(2)}MB`,
-      );
-      setHlsConversionProgress(100);
-
-      // converter.downloadFile(convertedVideo);
-
-      return convertedVideo;
-    } catch (error) {
-      console.error("Video conversion failed:", error);
-      setConversionError("Failed to convert video.");
-      throw error;
-    } finally {
-      setIsConverting(false);
-      setConversionProgress(0);
-    }
-  }
-
-  async function convertHLSVideo(video: File): Promise<HLSFiles> {
-    try {
-      if (DEBUG_MEDIA) {
-        return {
-          masterManifest: video,
-          segments: [],
-          streamManifest: video,
-          thumbnail: video,
-        };
-      }
-
-      setIsHLSConverting(true);
-      setHlsConversionProgress(0);
-
-      console.log("Initializing HLS converter...");
-      const hlsConverter = new HLSConverter();
-      await hlsConverter.initialize();
-      setHlsConversionProgress(20);
-
-      // Convert to HLS (try copy first, fallback to encoding if needed)
-      console.log("Converting video to HLS format...");
-      const hlsFiles = await hlsConverter.convertToHLS(video);
-      setHlsConversionProgress(80);
-
-      console.log("HLS conversion successful");
-      setHlsConversionProgress(100);
-
-      return hlsFiles;
-    } catch (error) {
-      console.error("HLS conversion/upload failed:", error);
-      setHlsConversionError("Failed to convert video to HLS format.");
-      throw error;
-    } finally {
-      setIsHLSConverting(false);
-      setHlsConversionProgress(0);
-    }
+    await getVideoInfo(file);
   }
 
   async function saveForm(previousState: FormState, formData: FormData) {
     const newFormState = fromFormData(formData);
-
-    console.log(previousState);
     console.log(newFormState);
-    console.log(selectedFile);
-
-    /* eslint-disable no-useless-assignment */
-    let hlsFiles: HLSFiles | null = null;
-    let hlsUploadResult: HLSUploadResult | null = null;
-    let video: File | null = null;
-    let videoUrl = "";
-    let videoPlaylistUrl = "";
-    let videoThumbnailUrl = "";
-    /* eslint-enable no-useless-assignment */
 
     // video = selectedFile;
     // videoUrl =
@@ -229,174 +59,15 @@ function PostForm() {
     // videoThumbnailUrl =
     //   "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
 
-    // Convert video if file is selected.
-    // -------------------------------------------------------------------------
-    if (selectedFile) {
-      try {
-        console.log("Converting video before upload...");
-        video = await convertVideo(selectedFile);
-      } catch (error) {
-        console.error("Failed convert video.");
+    const [video, videoUrl, videoHSLUrl] = await preparePostVideo(selectedFile);
 
-        return newFormState;
-      }
-    }
-    // -------------------------------------------------------------------------
-
-    // Make HLS Streamable video
-    // -------------------------------------------------------------------------
-    if (video) {
-      try {
-        console.log("Converting HLS video before upload...");
-        hlsFiles = await convertHLSVideo(video);
-      } catch (error) {
-        console.error("Failed convert HLS videos.");
-
-        return newFormState;
-      }
-    }
-    // -------------------------------------------------------------------------
-
-    // Upload video to storage.
-    // -------------------------------------------------------------------------
-    if (video) {
-      const s3VideoResult = await amazonS3StoreVideo(video);
-      console.log(s3VideoResult);
-      if (s3VideoResult) {
-        videoUrl = s3VideoResult;
-      }
-
-      const pinataVideoResult = await pinataStoreVideo(video);
-      console.log(pinataVideoResult);
-      if (pinataVideoResult) {
-        videoUrl = pinataVideoResult;
-      }
-
-      if (!videoUrl) {
-        console.error("Failed to upload video to storage.");
-
-        return newFormState;
-      }
-    }
-    // -------------------------------------------------------------------------
-
-    // Upload HLS Streamable video to storage.
-    // -------------------------------------------------------------------------
-    if (hlsFiles) {
-      try {
-        // Upload HLS files to Pinata
-        console.log("Uploading HLS files to Pinata...");
-        hlsUploadResult = await pinataStoreHLSFolder(
-          hlsFiles,
-          `hls-video-${Date.now()}`,
-        );
-
-        if (!hlsUploadResult?.playlistUrl || !hlsUploadResult.thumbnailUrl) {
-          throw new Error("Failed to upload HLS files to Pinata");
-        }
-
-        console.log("HLS upload successful:", hlsUploadResult);
-      } catch (err: unknown) {
-        console.error("HLS upload failed:", err);
-
-        return newFormState;
-      }
-
-      videoPlaylistUrl = hlsUploadResult.playlistUrl;
-      videoThumbnailUrl = hlsUploadResult.thumbnailUrl;
-    }
-    // -------------------------------------------------------------------------
-
-    console.log(videoUrl);
-    console.log(videoPlaylistUrl);
-    console.log(videoThumbnailUrl);
-
-    const allResults = await Promise.allSettled([
-      blueskyPost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: blueskyAccounts[0]?.id,
-        username: blueskyAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-      facebookPost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: facebookAccounts[0]?.id,
-        username: facebookAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-      instagramPost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: instagramAccounts[0]?.id,
-        username: instagramAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-      neynarPost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: neynarAccounts[0]?.id,
-        username: neynarAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-      threadsPost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: threadsAccounts[0]?.id,
-        username: threadsAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-      tiktokPost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: tiktokAccounts[0]?.id,
-        username: tiktokAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-      twitterPost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: twitterAccounts[0]?.id,
-        username: twitterAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-      youtubePost({
-        text: newFormState.text,
-        title: newFormState.title,
-        userId: youtubeAccounts[0]?.id,
-        username: youtubeAccounts[0]?.username,
-        video,
-        videoPlaylistUrl,
-        videoThumbnailUrl,
-        videoUrl,
-      }),
-    ]);
-
-    console.log(allResults);
-
-    return newFormState;
+    return await createPost(
+      newFormState.text,
+      newFormState.title,
+      video,
+      videoUrl,
+      videoHSLUrl,
+    );
   }
 
   const [state, formAction, isPending] = useActionState<FormState, FormData>(
@@ -405,7 +76,7 @@ function PostForm() {
   );
 
   // Check if we should disable the form
-  const isFormDisabled = isPending || isConverting;
+  const isFormDisabled = isPending || isVideoConverting;
 
   return (
     <div>
@@ -430,21 +101,23 @@ function PostForm() {
         </Form.Field>
       </Form.Root>
 
-      {isConverting ? (
+      {isVideoConverting ? (
         <div className="mb-4 rounded bg-yellow-100 p-3 text-yellow-800">
           <div className="flex items-center gap-2">
             <Spinner />
             Converting video for optimal quality and size...
           </div>
-          {conversionProgress > 0 && (
+          {videoConversionProgress > 0 && (
             <div className="mt-2">
               <div className="h-2 w-full rounded bg-yellow-200">
                 <div
                   className="h-2 rounded bg-yellow-600 transition-all duration-300"
-                  style={{ width: `${conversionProgress}%` }}
+                  style={{ width: `${videoConversionProgress}%` }}
                 />
               </div>
-              <div className="mt-1 text-sm">{conversionProgress}% complete</div>
+              <div className="mt-1 text-sm">
+                {videoConversionProgress}% complete
+              </div>
             </div>
           )}
         </div>
@@ -466,11 +139,6 @@ function PostForm() {
           <div className="flex items-center justify-between gap-2 text-sm">
             <div>Codec: {videoCodecInfo}</div>
           </div>
-          {selectedFile && videoConverter ? (
-            <div className="text-sm text-gray-600">
-              Video will be optimized to under 300MB with H.264/AAC encoding
-            </div>
-          ) : null}
         </div>
       ) : null}
 
