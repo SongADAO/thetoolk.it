@@ -6,6 +6,7 @@ import { PostSettings } from "@/app/components/service/post/PostSettings";
 import { ServiceSettingsMenu } from "@/app/components/service/ServiceSettingsMenu";
 import { StorageSettings } from "@/app/components/service/storage/StorageSettings";
 import { StoreProgress } from "@/app/components/service/storage/StoreProgress";
+import { PostProvider } from "@/app/services/PostProvider";
 
 export default function Home() {
   return (
@@ -27,7 +28,9 @@ export default function Home() {
         <div className="grid gap-4 p-4 lg:grid-cols-2 2xl:grid-cols-[1fr_1fr_620px]">
           <div>
             <section className="rounded bg-gray-100 p-4">
-              <PostForm />
+              <PostProvider>
+                <PostForm />
+              </PostProvider>
             </section>
           </div>
 
