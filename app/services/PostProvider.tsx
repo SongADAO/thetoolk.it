@@ -2,7 +2,11 @@
 
 import { ReactNode, use, useMemo, useState } from "react";
 
-import { DEBUG_MEDIA } from "@/app/config/constants";
+import {
+  DEBUG_MEDIA,
+  DEBUG_STOP_AFTER_CONVERSION,
+  DEBUG_STOP_AFTER_STORAGE,
+} from "@/app/config/constants";
 import { HLSConverter, type HLSFiles } from "@/app/lib/hls-converter";
 import { sleep } from "@/app/lib/utils";
 import {
@@ -317,7 +321,9 @@ export function PostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
-    // throw new Error("TESTING CONVERSION ONLY");
+    if (DEBUG_STOP_AFTER_CONVERSION) {
+      throw new Error("TESTING CONVERSION ONLY");
+    }
     // -------------------------------------------------------------------------
 
     // Upload video to storage.
@@ -364,7 +370,9 @@ export function PostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
-    // throw new Error("TESTING UPLOAD ONLY");
+    if (DEBUG_STOP_AFTER_STORAGE) {
+      throw new Error("TESTING STORAGE ONLY");
+    }
     // -------------------------------------------------------------------------
 
     return {
