@@ -7,6 +7,7 @@ interface Props {
   icon: ReactNode;
   isEnabled: boolean;
   isStoring: boolean;
+  isUsable: boolean;
   label: string;
   storeError: string;
   storeProgress: number;
@@ -18,6 +19,7 @@ function ServiceStoreProgress({
   icon,
   isEnabled,
   isStoring,
+  isUsable,
   label,
   storeError,
   storeProgress,
@@ -30,6 +32,7 @@ function ServiceStoreProgress({
       icon={icon}
       isEnabled={isEnabled}
       isProcessing={isStoring}
+      isUsable={isUsable}
       label={label}
       progress={storeProgress}
       status={storeStatus}

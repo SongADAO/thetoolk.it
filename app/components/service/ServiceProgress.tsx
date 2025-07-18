@@ -6,6 +6,7 @@ import { Spinner } from "@/app/components/Spinner";
 interface Props {
   brandColor: string;
   icon: ReactNode;
+  isUsable: boolean;
   isEnabled: boolean;
   isProcessing: boolean;
   label: string;
@@ -17,6 +18,7 @@ interface Props {
 function ServiceProgress({
   brandColor,
   icon,
+  isUsable,
   isEnabled,
   isProcessing,
   label,
@@ -47,7 +49,7 @@ function ServiceProgress({
   const showProgress = !error && progress !== 100;
   // const showProgress = true;
 
-  const hasError = Boolean(error);
+  const hasError = Boolean(error) || !isUsable;
 
   const isComplete = !error && status && progress === 100;
 
@@ -76,12 +78,14 @@ function ServiceProgress({
           {!error && status ? <p>{status}</p> : null}
 
           {!error && !status ? <p>{label}</p> : null}
+
+          {isUsable ? null : <p>Not authorized</p>}
         </div>
 
         <div>
           {isProcessing ? <Spinner /> : null}
 
-          {!isProcessing && error ? (
+          {!isProcessing && (error || !isUsable) ? (
             <FaCircleExclamation className="size-6" />
           ) : null}
 

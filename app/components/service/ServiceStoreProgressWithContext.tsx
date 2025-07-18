@@ -20,6 +20,7 @@ export function ServiceStoreProgressWithContext<
     icon: contextValue.icon,
     isEnabled: contextValue.isEnabled,
     isStoring: contextValue.isStoring,
+    isUsable: contextValue.isUsable,
     label: contextValue.label,
     storeError: contextValue.storeError,
     storeProgress: contextValue.storeProgress,

@@ -20,6 +20,7 @@ export function ServicePostProgressWithContext<
     icon: contextValue.icon,
     isEnabled: contextValue.isEnabled,
     isPosting: contextValue.isPosting,
+    isUsable: contextValue.isUsable,
     label: contextValue.label,
     postError: contextValue.postError,
     postProgress: contextValue.postProgress,
