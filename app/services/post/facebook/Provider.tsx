@@ -79,6 +79,8 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
+  const isUsable = isEnabled && isComplete && isAuthorized;
+
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
   async function exchangeCode(
@@ -287,6 +289,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       post,
       postError,
@@ -312,6 +315,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       postError,
       postProgress,

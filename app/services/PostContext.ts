@@ -15,6 +15,8 @@ interface CreatePostProps {
 }
 
 interface PostContextType {
+  canPostToAllServices: boolean;
+  canStoreToAllServices: boolean;
   createPost: (params: CreatePostProps) => Promise<void>;
   getVideoInfo: (video: File | null) => void;
   hlsConversionError: string | null;
@@ -31,6 +33,8 @@ interface PostContextType {
 }
 
 const PostContext = createContext<PostContextType>({
+  canPostToAllServices: false,
+  canStoreToAllServices: false,
   createPost: async () => {},
   getVideoInfo: () => {},
   hlsConversionError: null,

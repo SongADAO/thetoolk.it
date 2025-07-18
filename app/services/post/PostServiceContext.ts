@@ -24,6 +24,7 @@ interface PostServiceContextType {
   isEnabled: boolean;
   isHandlingAuth: boolean;
   isPosting: boolean;
+  isUsable: boolean;
   label: string;
   post: (props: PostProps) => Promise<string | null>;
   postError: string;
@@ -52,6 +53,7 @@ const postServiceContextDefault = {
   isEnabled: false,
   isHandlingAuth: false,
   isPosting: false,
+  isUsable: false,
   label: "",
   post: async (props: PostProps) => Promise.resolve(null),
   postError: "",

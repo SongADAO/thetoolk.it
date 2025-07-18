@@ -75,6 +75,8 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
+  const isUsable = isEnabled && isComplete && isAuthorized;
+
   async function authorize() {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -166,6 +168,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       post,
       postError,
@@ -191,6 +194,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       postError,
       postProgress,

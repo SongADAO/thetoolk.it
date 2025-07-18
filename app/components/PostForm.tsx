@@ -1,6 +1,7 @@
 "use client";
+
 import { Form } from "radix-ui";
-import { use, useActionState, useRef, useState } from "react";
+import { use, useRef, useState } from "react";
 
 import { Spinner } from "@/app/components/Spinner";
 import { formatFileDuration, formatFileSize } from "@/app/lib/video";
@@ -37,6 +38,8 @@ function PostForm() {
     videoDuration,
     videoFileSize,
     videoPreviewUrl,
+    canPostToAllServices,
+    canStoreToAllServices,
   } = use(PostContext);
 
   const [state, setState] = useState<FormState>(fromInitial());
@@ -60,6 +63,14 @@ function PostForm() {
       event.preventDefault();
       setIsPending(true);
       setError("");
+
+      if (!canPostToAllServices) {
+        setError("Some selected posting services are not authorized.");
+      }
+
+      if (!canStoreToAllServices) {
+        setError("Some selected storage services are not authorized.");
+      }
 
       const formData = new FormData(event.currentTarget);
       const newFormState = fromFormData(formData);
@@ -94,7 +105,8 @@ function PostForm() {
   }
 
   // Check if we should disable the form
-  const isFormDisabled = isPending;
+  const isFormDisabled =
+    isPending || !canPostToAllServices || !canStoreToAllServices;
 
   return (
     <div>
@@ -227,12 +239,26 @@ function PostForm() {
           </p>
         ) : null}
 
+        {canPostToAllServices ? null : (
+          <p className="mb-4 rounded bg-red-800 p-2 text-center text-white">
+            Some enabled posting services are not authorized. Finish authorizing
+            them before posting.
+          </p>
+        )}
+
+        {canStoreToAllServices ? null : (
+          <p className="mb-4 rounded bg-red-800 p-2 text-center text-white">
+            Some enabled storage services are not authorized. Finish authorizing
+            them before posting.
+          </p>
+        )}
+
         <Form.Submit
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isFormDisabled}
         >
-          {isFormDisabled ? <Spinner /> : null}
-          {isFormDisabled ? "Posting..." : "Post"}
+          {isPending ? <Spinner /> : null}
+          {isPending ? "Posting..." : "Post"}
         </Form.Submit>
       </Form.Root>
     </div>

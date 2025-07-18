@@ -33,28 +33,66 @@ interface Props {
 }
 
 export function PostProvider({ children }: Readonly<Props>) {
-  const { accounts: blueskyAccounts, post: blueskyPost } = use(BlueskyContext);
-  const { accounts: facebookAccounts, post: facebookPost } =
-    use(FacebookContext);
-  const { accounts: instagramAccounts, post: instagramPost } =
-    use(InstagramContext);
   const {
+    isEnabled: blueskyIsEnabled,
+    isUsable: blueskyIsUsable,
+    accounts: blueskyAccounts,
+    post: blueskyPost,
+  } = use(BlueskyContext);
+  const {
+    isEnabled: facebookIsEnabled,
+    isUsable: facebookIsUsable,
+    accounts: facebookAccounts,
+    post: facebookPost,
+  } = use(FacebookContext);
+  const {
+    isEnabled: instagramIsEnabled,
+    isUsable: instagramIsUsable,
+    accounts: instagramAccounts,
+    post: instagramPost,
+  } = use(InstagramContext);
+  const {
+    isUsable: neynarIsUsable,
     isEnabled: neynarIsEnabled,
     accounts: neynarAccounts,
     post: neynarPost,
   } = use(NeynarContext);
-  const { accounts: threadsAccounts, post: threadsPost } = use(ThreadsContext);
-  const { accounts: tiktokAccounts, post: tiktokPost } = use(TiktokContext);
-  const { accounts: twitterAccounts, post: twitterPost } = use(TwitterContext);
-  const { accounts: youtubeAccounts, post: youtubePost } = use(YoutubeContext);
+  const {
+    isEnabled: threadsIsEnabled,
+    isUsable: threadsIsUsable,
+    accounts: threadsAccounts,
+    post: threadsPost,
+  } = use(ThreadsContext);
+  const {
+    isEnabled: tiktokIsEnabled,
+    isUsable: tiktokIsUsable,
+    accounts: tiktokAccounts,
+    post: tiktokPost,
+  } = use(TiktokContext);
+  const {
+    isEnabled: twitterIsEnabled,
+    isUsable: twitterIsUsable,
+    accounts: twitterAccounts,
+    post: twitterPost,
+  } = use(TwitterContext);
+  const {
+    isEnabled: youtubeIsEnabled,
+    isUsable: youtubeIsUsable,
+    accounts: youtubeAccounts,
+    post: youtubePost,
+  } = use(YoutubeContext);
 
   const {
+    isEnabled: pinataIsEnabled,
     isUsable: pinataIsUsable,
     storeVideo: pinataStoreVideo,
     storeHLSFolder: pinataStoreHLSFolder,
   } = use(PinataContext);
-  const { isUsable: amazonS3IsUsable, storeVideo: amazonS3StoreVideo } =
-    use(AmazonS3Context);
+  const {
+    isEnabled: amazonS3IsEnabled,
+    isUsable: amazonS3IsUsable,
+    storeVideo: amazonS3StoreVideo,
+  } = use(AmazonS3Context);
 
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
@@ -68,6 +106,43 @@ export function PostProvider({ children }: Readonly<Props>) {
   const [hlsConversionProgress, setHLSConversionProgress] = useState(0);
   const [hlsConversionError, setHLSConversionError] = useState("");
   const [isHLSConverting, setIsHLSConverting] = useState(false);
+
+  const canPostToAllServices = useMemo(
+    () =>
+      (!blueskyIsEnabled || blueskyIsUsable) &&
+      (!facebookIsEnabled || facebookIsUsable) &&
+      (!instagramIsEnabled || instagramIsUsable) &&
+      (!neynarIsEnabled || neynarIsUsable) &&
+      (!threadsIsEnabled || threadsIsUsable) &&
+      (!tiktokIsEnabled || tiktokIsUsable) &&
+      (!twitterIsEnabled || twitterIsUsable) &&
+      (!youtubeIsEnabled || youtubeIsUsable),
+    [
+      blueskyIsEnabled,
+      blueskyIsUsable,
+      facebookIsEnabled,
+      facebookIsUsable,
+      instagramIsEnabled,
+      instagramIsUsable,
+      neynarIsEnabled,
+      neynarIsUsable,
+      threadsIsEnabled,
+      threadsIsUsable,
+      tiktokIsEnabled,
+      tiktokIsUsable,
+      twitterIsEnabled,
+      twitterIsUsable,
+      youtubeIsEnabled,
+      youtubeIsUsable,
+    ],
+  );
+
+  const canStoreToAllServices = useMemo(
+    () =>
+      (!pinataIsEnabled || pinataIsUsable) &&
+      (!amazonS3IsEnabled || amazonS3IsUsable),
+    [pinataIsEnabled, pinataIsUsable, amazonS3IsEnabled, amazonS3IsUsable],
+  );
 
   function getVideoInfo(video: File | null): void {
     if (video) {
@@ -386,6 +461,8 @@ export function PostProvider({ children }: Readonly<Props>) {
 
   const providerValues = useMemo(
     () => ({
+      canPostToAllServices,
+      canStoreToAllServices,
       createPost,
       getVideoInfo,
       hlsConversionError,
@@ -402,6 +479,8 @@ export function PostProvider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      canPostToAllServices,
+      canStoreToAllServices,
       hlsConversionError,
       hlsConversionProgress,
       isHLSConverting,

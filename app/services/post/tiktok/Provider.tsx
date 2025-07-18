@@ -80,6 +80,8 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
+  const isUsable = isEnabled && isComplete && isAuthorized;
+
   async function exchangeCode(
     code: string,
   ): Promise<OauthAuthorization | null> {
@@ -284,6 +286,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       post,
       postError,
@@ -309,6 +312,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       postError,
       postProgress,

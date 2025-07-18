@@ -77,6 +77,8 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
+  const isUsable = isEnabled && isComplete && isAuthorized;
+
   async function exchangeCode(): Promise<OauthAuthorization | null> {
     try {
       const newAuthorization = await exchangeCodeForTokens(credentials);
@@ -275,6 +277,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       post,
       postError,
@@ -300,6 +303,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       isEnabled,
       isHandlingAuth,
       isPosting,
+      isUsable,
       label,
       postError,
       postProgress,
