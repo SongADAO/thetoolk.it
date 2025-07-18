@@ -9,7 +9,6 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/app/components/service/ServiceForm";
-import { DEBUG_POST } from "@/app/config/constants";
 import {
   // getAccounts,
   getAuthorizationExpiresAt,
@@ -41,6 +40,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   const hasAuthorizationStep = true;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
@@ -77,9 +77,13 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   async function authorize() {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function handleAuthRedirect(searchParams: URLSearchParams) {}
 
   const [isPosting, setIsPosting] = useState<boolean>(false);

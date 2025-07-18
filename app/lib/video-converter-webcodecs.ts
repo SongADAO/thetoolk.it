@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file, @typescript-eslint/class-methods-use-this */
+
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 // import { toBlobURL } from "@ffmpeg/util";
 import { parseMedia } from "@remotion/media-parser";
@@ -17,11 +19,11 @@ export class FFmpegAudioPreprocessor {
   private readonly ffmpeg: FFmpeg;
   private initialized = false;
 
-  constructor() {
+  public constructor() {
     this.ffmpeg = new FFmpeg();
   }
 
-  async initialize(): Promise<void> {
+  public async initialize(): Promise<void> {
     if (this.initialized) return;
 
     console.log("Initializing FFmpeg...");
@@ -42,7 +44,7 @@ export class FFmpegAudioPreprocessor {
   }
 
   // Convert 32-bit audio to 16-bit PCM stereo using FFmpeg
-  async convertAudioTo16BitPCM(file: File): Promise<File> {
+  public async convertAudioTo16BitPCM(file: File): Promise<File> {
     if (!this.initialized) {
       throw new Error("FFmpeg not initialized. Call initialize() first.");
     }
@@ -68,14 +70,18 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.exec([
         "-i",
         inputFileName,
-        "-vn", // No video
+        // No video
+        "-vn",
+        // 16-bit PCM
         "-acodec",
-        "pcm_s16le", // 16-bit PCM
+        "pcm_s16le",
+        // Stereo
         "-ac",
-        "2", // Stereo
+        "2",
+        // sample rate
         "-ar",
-        // "44100", // 44.1kHz sample rate
-        "48000", // 48kHz sample rate
+        // "44100",
+        "48000",
         outputFileName,
       ]);
 
@@ -105,7 +111,7 @@ export class FFmpegAudioPreprocessor {
   }
 
   // Extract video without audio (for separate processing)
-  async extractVideoOnly(file: File): Promise<File> {
+  public async extractVideoOnly(file: File): Promise<File> {
     if (!this.initialized) {
       throw new Error("FFmpeg not initialized. Call initialize() first.");
     }
@@ -125,9 +131,11 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.exec([
         "-i",
         inputFileName,
-        "-an", // No audio
+        // No audio
+        "-an",
+        // Copy video without re-encoding
         "-vcodec",
-        "copy", // Copy video without re-encoding
+        "copy",
         outputFileName,
       ]);
 
@@ -155,7 +163,10 @@ export class FFmpegAudioPreprocessor {
   }
 
   // Combine processed audio with video using FFmpeg (alternative to webcodecs)
-  async combineAudioVideo(videoFile: File, audioFile: File): Promise<File> {
+  public async combineAudioVideo(
+    videoFile: File,
+    audioFile: File,
+  ): Promise<File> {
     if (!this.initialized) {
       throw new Error("FFmpeg not initialized. Call initialize() first.");
     }
@@ -178,17 +189,23 @@ export class FFmpegAudioPreprocessor {
 
       // Combine audio and video
       await this.ffmpeg.exec([
+        // Video input
         "-i",
-        videoFileName, // Video input
+        videoFileName,
+        // Audio input
         "-i",
-        audioFileName, // Audio input
+        audioFileName,
+        // Copy video without re-encoding
         "-c:v",
-        "copy", // Copy video without re-encoding
+        "copy",
+        // Encode audio as AAC
         "-c:a",
-        "aac", // Encode audio as AAC
+        "aac",
+        // Audio bitrate
         "-b:a",
-        "128k", // Audio bitrate
-        "-shortest", // Match shortest stream duration
+        "128k",
+        // Match shortest stream duration
+        "-shortest",
         outputFileName,
       ]);
 
@@ -222,11 +239,11 @@ export class VideoConverter {
   private readonly ffmpegProcessor: FFmpegAudioPreprocessor;
   private initialized = false;
 
-  constructor() {
+  public constructor() {
     this.ffmpegProcessor = new FFmpegAudioPreprocessor();
   }
 
-  async initialize(): Promise<void> {
+  public async initialize(): Promise<void> {
     // Check WebCodecs support
     if (!("VideoEncoder" in window) || !("VideoDecoder" in window)) {
       throw new Error("WebCodecs is not supported in this browser");
@@ -239,7 +256,7 @@ export class VideoConverter {
     console.log("VideoConverter with FFmpeg preprocessing initialized");
   }
 
-  async convertVideo(
+  public async convertVideo(
     file: File,
     options: ConversionOptions,
   ): Promise<Uint8Array> {
@@ -268,17 +285,17 @@ export class VideoConverter {
 
       // Step 3: Now use WebCodecs on the file with compatible audio
       const metadata = await parseMedia({
-        src: videoWithProcessedAudio,
         fields: {
           dimensions: true,
-          fps: true,
           durationInSeconds: true,
+          fps: true,
         },
+        src: videoWithProcessedAudio,
       });
 
       const { width: originalWidth, height: originalHeight } =
-        metadata.dimensions ?? { width: 1920, height: 1080 };
-      const originalFps = metadata.fps ?? 30;
+        metadata.dimensions ?? { height: 1080, width: 1920 };
+      // const originalFps = metadata.fps ?? 30;
 
       // Calculate target dimensions
       let targetWidth = originalWidth;
@@ -323,13 +340,28 @@ export class VideoConverter {
       })();
 
       const result = await convertMedia({
-        src: videoWithProcessedAudio,
-        container: "mp4",
-        videoCodec: "h264",
         audioCodec: "aac",
+        container: "mp4",
         // expectedDurationInSeconds: options.duration,
         // expectedFrameRate: Math.min(originalFps, options.targetFps),
-        resize: resizeOperation,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        onAudioTrack: ({ track, defaultAudioCodec, canCopyTrack }) =>
+          // // if (!track) return { type: "drop" };
+
+          // // // Audio should now be compatible 16-bit PCM/AAC
+          // // if (canCopyTrack && defaultAudioCodec === "aac") {
+          // //   console.log("Copying preprocessed audio track");
+          // //   return { type: "copy" };
+          // // }
+
+          // console.log("Re-encoding preprocessed audio to AAC");
+          // return {
+          //   type: "reencode",
+          //   audioCodec: "aac",
+          //   bitrate: options.audioBitrate,
+          //   sampleRate: options.audioSampleRate,
+          // };
+          ({ type: "copy" }),
         onProgress: ({ overallProgress }) => {
           if (overallProgress) {
             console.log(
@@ -337,7 +369,8 @@ export class VideoConverter {
             );
           }
         },
-        onVideoTrack: async ({ track, defaultVideoCodec, canCopyTrack }) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        onVideoTrack: ({ track, defaultVideoCodec, canCopyTrack }) => {
           // if (
           //   canCopyTrack &&
           //   targetWidth === originalWidth &&
@@ -356,23 +389,9 @@ export class VideoConverter {
             // bitrate: targetBitrate,
           };
         },
-        onAudioTrack: async ({ track, defaultAudioCodec, canCopyTrack }) =>
-          // // if (!track) return { type: "drop" };
-
-          // // // Audio should now be compatible 16-bit PCM/AAC
-          // // if (canCopyTrack && defaultAudioCodec === "aac") {
-          // //   console.log("Copying preprocessed audio track");
-          // //   return { type: "copy" };
-          // // }
-
-          // console.log("Re-encoding preprocessed audio to AAC");
-          // return {
-          //   type: "reencode",
-          //   audioCodec: "aac",
-          //   bitrate: options.audioBitrate,
-          //   sampleRate: options.audioSampleRate,
-          // };
-          ({ type: "copy" }),
+        resize: resizeOperation,
+        src: videoWithProcessedAudio,
+        videoCodec: "h264",
       });
 
       const blob = await result.save();
@@ -391,7 +410,7 @@ export class VideoConverter {
     }
   }
 
-  downloadFile(file: File): void {
+  public downloadFile(file: File): void {
     const url = URL.createObjectURL(file);
     const a = document.createElement("a");
     a.href = url;
@@ -404,7 +423,7 @@ export class VideoConverter {
   }
 
   // Helper method to create a File from Uint8Array for downloading
-  createFileFromArray(
+  public createFileFromArray(
     data: Uint8Array,
     filename = "converted_video.mp4",
   ): File {

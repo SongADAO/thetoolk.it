@@ -158,7 +158,7 @@ async function refreshAccessToken(
 async function getAccounts(
   serviceUrl: string,
   username: string,
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   token: string,
 ): Promise<ServiceAccount[]> {
   const accounts = [];
@@ -169,7 +169,7 @@ async function getAccounts(
     username,
   });
 
-  return accounts;
+  return Promise.resolve(accounts);
 }
 
 // -----------------------------------------------------------------------------
