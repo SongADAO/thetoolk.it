@@ -335,6 +335,8 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl,
       }),
     ]);
+
+    console.log("All results:", allResults);
   }
 
   const providerValues = useMemo(

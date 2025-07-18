@@ -383,10 +383,10 @@ export class VideoConverter {
 
           console.log("Re-encoding video track");
           return {
+            // bitrate: targetBitrate,
+            // crf: options.crf,
             type: "reencode",
             videoCodec: "h264",
-            // crf: options.crf,
-            // bitrate: targetBitrate,
           };
         },
         resize: resizeOperation,
