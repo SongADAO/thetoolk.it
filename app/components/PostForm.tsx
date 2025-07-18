@@ -42,6 +42,7 @@ function PostForm() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>("");
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
