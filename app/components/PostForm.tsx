@@ -91,7 +91,7 @@ function PostForm() {
   );
 
   // Check if we should disable the form
-  const isFormDisabled = isPending || isVideoConverting;
+  const isFormDisabled = isPending;
 
   return (
     <div>
@@ -172,6 +172,8 @@ function PostForm() {
           </div>
         </Form.Field>
 
+        <div>{isVideoConverting.toString()}</div>
+        <div>{isHLSConverting.toString()}</div>
         {isVideoConverting ? (
           <div className="mb-4 rounded bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">

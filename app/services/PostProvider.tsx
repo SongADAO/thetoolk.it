@@ -93,6 +93,7 @@ export function PostProvider({ children }: Readonly<Props>) {
   async function convertVideo(video: File): Promise<File> {
     try {
       if (DEBUG_MEDIA) {
+        console.log("DEBUG MODE: Skipping video conversion.");
         setIsVideoConverting(true);
         setVideoConversionProgress(0);
         await sleep(1000);
@@ -157,6 +158,7 @@ export function PostProvider({ children }: Readonly<Props>) {
   async function convertHLSVideo(video: File): Promise<HLSFiles> {
     try {
       if (DEBUG_MEDIA) {
+        console.log("DEBUG MODE: Skipping HLS conversion.");
         setIsHLSConverting(true);
         setHLSConversionProgress(0);
         await sleep(1000);
