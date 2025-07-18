@@ -1,4 +1,4 @@
-import mediaInfoFactory from "mediainfo.js";
+// import mediaInfoFactory from "mediainfo.js";
 
 // async function getVideoCodecInfo(file: File): Promise<string> {
 //   const MediaInfo = await mediaInfoFactory();

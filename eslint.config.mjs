@@ -415,14 +415,14 @@ export default tseslint.config(
 
       // TODO
       // ---------------------------------------------------------------------
-      "sort-keys": "off",
-      "@typescript-eslint/require-await": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/explicit-member-accessibility": "off",
-      "@typescript-eslint/class-methods-use-this": "off",
-      "@typescript-eslint/member-ordering": "off",
-      "max-classes-per-file": "off",
-      "no-inline-comments": "off",
+      // "sort-keys": "off",
+      // "@typescript-eslint/require-await": "off",
+      // "@typescript-eslint/no-unused-vars": "off",
+      // "@typescript-eslint/explicit-member-accessibility": "off",
+      // "@typescript-eslint/class-methods-use-this": "off",
+      // "@typescript-eslint/member-ordering": "off",
+      // "max-classes-per-file": "off",
+      // "no-inline-comments": "off",
       "@typescript-eslint/max-params": "off",
       // "@typescript-eslint/no-unnecessary-condition": "off",
     },

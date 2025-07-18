@@ -25,6 +25,7 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
   }
 
   function saveForm(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     previousState: ServiceFormState,
     formData: FormData,
   ): ServiceFormState {

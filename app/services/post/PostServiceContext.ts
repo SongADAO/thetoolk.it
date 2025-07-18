@@ -33,6 +33,7 @@ interface PostServiceContextType {
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const postServiceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
@@ -52,12 +53,13 @@ const postServiceContextDefault = {
   isHandlingAuth: false,
   isPosting: false,
   label: "",
-  post: async (props: PostProps) => null,
+  post: async (props: PostProps) => Promise.resolve(null),
   postError: "",
   postProgress: 0,
   postStatus: "",
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
 };
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 export { postServiceContextDefault, type PostServiceContextType };

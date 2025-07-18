@@ -12,11 +12,11 @@ export class HLSConverter {
   private readonly ffmpeg: FFmpeg;
   private initialized = false;
 
-  constructor() {
+  public constructor() {
     this.ffmpeg = new FFmpeg();
   }
 
-  async initialize(): Promise<void> {
+  public async initialize(): Promise<void> {
     if (this.initialized) return;
 
     // Load FFmpeg WASM
@@ -25,14 +25,14 @@ export class HLSConverter {
     this.initialized = true;
   }
 
-  async convertToHLS(videoFile: File): Promise<HLSFiles> {
+  public async convertToHLS(videoFile: File): Promise<HLSFiles> {
     if (!this.initialized) {
       throw new Error("FFmpeg not initialized. Call initialize() first.");
     }
 
     const inputFileName = "input.mp4";
-    const streamPlaylist = "video.m3u8"; // Stream manifest
-    const masterManifest = "manifest.m3u8"; // Master manifest
+    const streamPlaylist = "video.m3u8";
+    const masterManifest = "manifest.m3u8";
     const thumbnailName = "thumbnail.jpg";
 
     try {
@@ -44,7 +44,7 @@ export class HLSConverter {
         "-i",
         inputFileName,
         "-c",
-        "copy", // Copy streams without re-encoding
+        "copy",
         "-f",
         "hls",
         "-hls_time",
@@ -53,7 +53,7 @@ export class HLSConverter {
         "vod",
         "-hls_segment_filename",
         "segment_%03d.ts",
-        streamPlaylist, // This generates video.m3u8
+        streamPlaylist,
       ]);
 
       // Generate thumbnail
@@ -87,7 +87,8 @@ export class HLSConverter {
             new File([segmentData], segmentName, { type: "video/mp2t" }),
           );
           segmentIndex++;
-        } catch (error) {
+        } catch (err: unknown) {
+          console.error(err);
           // No more segments
           break;
         }
@@ -137,10 +138,10 @@ ${streamPlaylist}
 
       // 🎯 RETURN BOTH MANIFESTS
       return {
-        masterManifest: masterManifestFile, // manifest.m3u8
-        streamManifest: streamManifestFile, // video.m3u8
-        thumbnail,
+        masterManifest: masterManifestFile,
         segments,
+        streamManifest: streamManifestFile,
+        thumbnail,
       };
     } catch (err: unknown) {
       const errMessage =

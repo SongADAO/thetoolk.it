@@ -16,7 +16,7 @@ interface CreatePostProps {
 
 interface PostContextType {
   createPost: (params: CreatePostProps) => Promise<void>;
-  getVideoInfo: (video: File | null) => Promise<void>;
+  getVideoInfo: (video: File | null) => void;
   hlsConversionError: string | null;
   hlsConversionProgress: number;
   isHLSConverting: boolean;
@@ -32,16 +32,17 @@ interface PostContextType {
 
 const PostContext = createContext<PostContextType>({
   createPost: async () => {},
-  getVideoInfo: async () => {},
+  getVideoInfo: () => {},
   hlsConversionError: null,
   hlsConversionProgress: 0,
   isHLSConverting: false,
   isVideoConverting: false,
-  preparePostVideo: async () => ({
-    video: null,
-    videoHSLUrl: "",
-    videoUrl: "",
-  }),
+  preparePostVideo: async () =>
+    await Promise.resolve({
+      video: null,
+      videoHSLUrl: "",
+      videoUrl: "",
+    }),
   videoCodecInfo: "",
   videoConversionError: null,
   videoConversionProgress: 0,

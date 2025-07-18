@@ -50,6 +50,7 @@ function PostForm() {
     await getVideoInfo(file);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function saveForm(previousState: FormState, formData: FormData) {
     const newFormState = fromFormData(formData);
     console.log(newFormState);

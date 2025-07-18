@@ -178,9 +178,13 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function handleAuthRedirect(searchParams: URLSearchParams) {}
 
   const [isPosting, setIsPosting] = useState<boolean>(false);

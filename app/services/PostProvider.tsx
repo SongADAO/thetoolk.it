@@ -68,11 +68,11 @@ export function PostProvider({ children }: Readonly<Props>) {
   const [hlsConversionError, setHlsConversionError] = useState("");
   const [isHLSConverting, setIsHLSConverting] = useState(false);
 
-  async function getVideoInfo(video: File | null): Promise<void> {
+  function getVideoInfo(video: File | null): void {
     if (video) {
       setVideoPreviewUrl(URL.createObjectURL(video));
       setVideoFileSize(video.size);
-      getVideoDuration({ video, setVideoDuration });
+      getVideoDuration({ setVideoDuration, video });
       // setVideoCodecInfo(await getVideoCodecInfo(video));
 
       // console.log("check video info");
@@ -249,8 +249,8 @@ export function PostProvider({ children }: Readonly<Props>) {
 
     return {
       video,
-      videoUrl,
       videoHSLUrl,
+      videoUrl,
     };
   }
 
@@ -345,12 +345,12 @@ export function PostProvider({ children }: Readonly<Props>) {
       hlsConversionProgress,
       isHLSConverting,
       isVideoConverting,
+      preparePostVideo,
       videoCodecInfo,
       videoConversionError,
       videoConversionProgress,
       videoDuration,
       videoFileSize,
-      preparePostVideo,
       videoPreviewUrl,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -359,9 +359,9 @@ export function PostProvider({ children }: Readonly<Props>) {
       hlsConversionProgress,
       isHLSConverting,
       isVideoConverting,
+      preparePostVideo,
       videoCodecInfo,
       videoConversionError,
-      preparePostVideo,
       videoConversionProgress,
       videoDuration,
       videoFileSize,
