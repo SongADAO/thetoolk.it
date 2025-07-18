@@ -170,8 +170,8 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
     return await uploadHLSFolder({
       credentials,
-      hlsFiles,
       folderName,
+      hlsFiles,
       setIsStoring,
       setStoreError,
       setStoreProgress,

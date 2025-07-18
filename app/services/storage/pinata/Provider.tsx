@@ -95,16 +95,16 @@ export function PinataProvider({ children }: Readonly<Props>) {
   const initial: ServiceFormState = {
     apiKey: credentials.apiKey,
     apiSecret: credentials.apiSecret,
-    jwt: credentials.jwt,
     gateway: credentials.gateway,
+    jwt: credentials.jwt,
   };
 
   function saveData(formState: ServiceFormState): ServiceFormState {
     setCredentials({
       apiKey: formState.apiKey,
       apiSecret: formState.apiSecret,
-      jwt: formState.jwt,
       gateway: formState.gateway,
+      jwt: formState.jwt,
     });
 
     return formState;
@@ -170,8 +170,8 @@ export function PinataProvider({ children }: Readonly<Props>) {
 
     return await uploadHLSFolder({
       credentials,
-      hlsFiles,
       folderName,
+      hlsFiles,
       setIsStoring,
       setStoreError,
       setStoreProgress,

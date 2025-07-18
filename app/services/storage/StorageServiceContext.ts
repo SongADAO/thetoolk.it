@@ -38,6 +38,7 @@ interface StorageServiceContextType {
   storeVideo: (video: File) => Promise<string | null>;
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const storageServiceContextDefault = {
   accounts: [],
   authorizationExpiresAt: "",
@@ -58,12 +59,14 @@ const storageServiceContextDefault = {
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
   storeError: "",
-  storeFile: async (file: File) => null,
-  storeHLSFolder: async (hlsFiles: HLSFiles, folderName?: string) => null,
-  storeJson: async (data: object) => null,
+  storeFile: async (file: File) => Promise.resolve(null),
+  storeHLSFolder: async (hlsFiles: HLSFiles, folderName?: string) =>
+    Promise.resolve(null),
+  storeJson: async (data: object) => Promise.resolve(null),
   storeProgress: 0,
   storeStatus: "",
-  storeVideo: async (video: File) => null,
+  storeVideo: async (video: File) => Promise.resolve(null),
 };
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 export { storageServiceContextDefault, type StorageServiceContextType };

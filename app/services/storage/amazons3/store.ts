@@ -182,14 +182,18 @@ interface UploadJsonProps {
 }
 
 async function uploadJson({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   credentials,
   data,
   setIsStoring,
   setStoreError,
   setStoreProgress,
   setStoreStatus,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 }: Readonly<UploadJsonProps>): Promise<string | null> {
   throw new Error(`Not implemented`);
+
+  return Promise.resolve(null);
 
   // if (DEBUG_STORAGE) {
   //   console.log("Test S3: uploadJson");
@@ -218,6 +222,7 @@ interface UploadHLSFolderProps {
 }
 
 async function uploadHLSFolder({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   credentials,
   folderName,
   hlsFiles,
@@ -225,8 +230,11 @@ async function uploadHLSFolder({
   setStoreError,
   setStoreProgress,
   setStoreStatus,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 }: Readonly<UploadHLSFolderProps>): Promise<string> {
   throw new Error(`Not implemented`);
+
+  return Promise.resolve("");
 
   // try {
   //   const pinata = new PinataSDK({

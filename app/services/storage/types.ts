@@ -42,8 +42,8 @@ const defaultAmazonS3Credentials: AmazonS3Credentials = {
 const defaultPinataCredentials: PinataCredentials = {
   apiKey: "",
   apiSecret: "",
-  jwt: "",
   gateway: "",
+  jwt: "",
 };
 
 export {

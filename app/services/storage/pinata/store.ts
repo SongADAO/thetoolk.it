@@ -251,9 +251,9 @@ async function uploadHLSFolder({
 
     console.log(`Uploading HLS folder with ${files.length} files:`, {
       masterManifest: hlsFiles.masterManifest.name,
+      segments: hlsFiles.segments.length,
       streamManifest: hlsFiles.streamManifest.name,
       thumbnail: hlsFiles.thumbnail.name,
-      segments: hlsFiles.segments.length,
     });
 
     // Upload folder to Pinata using the new SDK
@@ -261,9 +261,9 @@ async function uploadHLSFolder({
       .fileArray(files)
       .name(folderName ?? `hls-video-${Date.now()}`)
       .keyvalues({
-        type: "hls-video",
         files: files.length.toString(),
         segments: hlsFiles.segments.length.toString(),
+        type: "hls-video",
       });
 
     // Clear the progress interval
@@ -277,7 +277,7 @@ async function uploadHLSFolder({
     // const baseUrl = `https://ipfs.io/ipfs/${uploadResult.cid}`;
     const baseUrl = `https://${credentials.gateway}/ipfs/${uploadResult.cid}`;
     const playlistUrl = `${baseUrl}/${hlsFiles.masterManifest.name}`;
-    const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
+    // const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
 
     setStoreProgress(100);
     setStoreStatus("Success");

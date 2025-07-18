@@ -44,10 +44,10 @@ function PostForm() {
 
   const [error, setError] = useState<string>("");
 
-  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
-    await getVideoInfo(file);
+    getVideoInfo(file);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
