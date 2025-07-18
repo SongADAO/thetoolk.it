@@ -119,6 +119,10 @@ function PostForm() {
   // Convert video file to optimized format
   async function convertVideo(video: File): Promise<File> {
     try {
+      if (DEBUG_MEDIA) {
+        return video;
+      }
+
       setIsConverting(true);
       setConversionProgress(0);
 
@@ -166,6 +170,15 @@ function PostForm() {
 
   async function convertHLSVideo(video: File): Promise<HLSFiles> {
     try {
+      if (DEBUG_MEDIA) {
+        return {
+          masterManifest: video,
+          segments: [],
+          streamManifest: video,
+          thumbnail: video,
+        };
+      }
+
       setIsHLSConverting(true);
       setHlsConversionProgress(0);
 
@@ -196,9 +209,9 @@ function PostForm() {
   async function saveForm(previousState: FormState, formData: FormData) {
     const newFormState = fromFormData(formData);
 
-    // console.log(previousState);
-    // console.log(newFormState);
-    // console.log(selectedFile);
+    console.log(previousState);
+    console.log(newFormState);
+    console.log(selectedFile);
 
     /* eslint-disable no-useless-assignment */
     let hlsFiles: HLSFiles | null = null;
@@ -219,36 +232,27 @@ function PostForm() {
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     if (selectedFile) {
-      if (DEBUG_MEDIA) {
-        video = selectedFile;
-      } else {
-        try {
-          console.log("Converting video before upload...");
-          video = await convertVideo(selectedFile);
-        } catch (error) {
-          return newFormState;
-        }
+      try {
+        console.log("Converting video before upload...");
+        video = await convertVideo(selectedFile);
+      } catch (error) {
+        console.error("Failed convert video.");
+
+        return newFormState;
       }
     }
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
     // -------------------------------------------------------------------------
-    if (selectedFile && video) {
-      if (DEBUG_MEDIA) {
-        hlsFiles = {
-          masterManifest: selectedFile, // manifest.m3u8
-          segments: [],
-          streamManifest: selectedFile, // video.m3u8
-          thumbnail: selectedFile,
-        };
-      } else {
-        try {
-          console.log("Converting HLS video before upload...");
-          hlsFiles = await convertHLSVideo(video);
-        } catch (error) {
-          return newFormState;
-        }
+    if (video) {
+      try {
+        console.log("Converting HLS video before upload...");
+        hlsFiles = await convertHLSVideo(video);
+      } catch (error) {
+        console.error("Failed convert HLS videos.");
+
+        return newFormState;
       }
     }
     // -------------------------------------------------------------------------
@@ -257,17 +261,19 @@ function PostForm() {
     // -------------------------------------------------------------------------
     if (video) {
       const s3VideoResult = await amazonS3StoreVideo(video);
+      console.log(s3VideoResult);
       if (s3VideoResult) {
         videoUrl = s3VideoResult;
       }
 
       const pinataVideoResult = await pinataStoreVideo(video);
+      console.log(pinataVideoResult);
       if (pinataVideoResult) {
         videoUrl = pinataVideoResult;
       }
 
       if (!videoUrl) {
-        setStorageError("Failed to upload video to storage.");
+        console.error("Failed to upload video to storage.");
 
         return newFormState;
       }
@@ -286,14 +292,12 @@ function PostForm() {
         );
 
         if (!hlsUploadResult?.playlistUrl || !hlsUploadResult.thumbnailUrl) {
-          console.error("Failed to upload HLS files to Pinata");
           throw new Error("Failed to upload HLS files to Pinata");
         }
 
         console.log("HLS upload successful:", hlsUploadResult);
-      } catch (error) {
-        console.error("HLS upload failed:", error);
-        setStorageError("Failed to upload HLS files to storage.");
+      } catch (err: unknown) {
+        console.error("HLS upload failed:", err);
 
         return newFormState;
       }
@@ -302,6 +306,10 @@ function PostForm() {
       videoThumbnailUrl = hlsUploadResult.thumbnailUrl;
     }
     // -------------------------------------------------------------------------
+
+    console.log(videoUrl);
+    console.log(videoPlaylistUrl);
+    console.log(videoThumbnailUrl);
 
     const allResults = await Promise.allSettled([
       blueskyPost({
