@@ -53,7 +53,8 @@ function ServiceProgress({
 
   return (
     <div
-      className={`group relative rounded text-brand-${brandColor}-inverse order-0 bg-[#6c7281] contain-paint data-[has-error=true]:order-1 data-[has-error=true]:bg-red-800 data-[is-complete=true]:order-2 data-[is-complete=true]:bg-green-800`}
+      // className={`group relative rounded text-brand-${brandColor}-inverse order-0 bg-[#6c7281] contain-paint data-[has-error=true]:order-1 data-[has-error=true]:bg-red-800 data-[is-complete=true]:order-2 data-[is-complete=true]:bg-green-800`}
+      className={`group relative rounded text-brand-${brandColor}-inverse bg-[#6c7281] contain-paint data-[has-error=true]:bg-red-800 data-[is-complete=true]:bg-green-800`}
       data-has-error={hasError ? "true" : "false"}
       data-is-complete={isComplete ? "true" : "false"}
     >
