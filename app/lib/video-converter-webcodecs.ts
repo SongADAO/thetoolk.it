@@ -259,6 +259,7 @@ export class VideoConverter {
   public async convertVideo(
     file: File,
     options: ConversionOptions,
+    onProgress: (progress: number) => void,
   ): Promise<Uint8Array> {
     if (!this.initialized) {
       throw new Error(
@@ -364,6 +365,7 @@ export class VideoConverter {
           ({ type: "copy" }),
         onProgress: ({ overallProgress }) => {
           if (overallProgress) {
+            onProgress(Math.round(overallProgress * 100));
             console.log(
               `WebCodecs conversion progress: ${Math.round(overallProgress * 100)}%`,
             );

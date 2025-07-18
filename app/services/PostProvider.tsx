@@ -116,19 +116,21 @@ export function PostProvider({ children }: Readonly<Props>) {
       console.log("Initializing Video converter...");
       const converter = new VideoConverter();
       await converter.initialize();
-      setVideoConversionProgress(20);
 
       console.log("Starting video conversion...");
-      const convertedData = await converter.convertVideo(video, {
-        audioBitrate: 128000,
-        audioSampleRate: 48000,
-        crf: 23,
-        duration: videoDuration,
-        maxFileSizeMB: 20,
-        maxWidth: 1920,
-        targetFps: 30,
-      });
-      setVideoConversionProgress(80);
+      const convertedData = await converter.convertVideo(
+        video,
+        {
+          audioBitrate: 128000,
+          audioSampleRate: 48000,
+          crf: 23,
+          duration: videoDuration,
+          maxFileSizeMB: 20,
+          maxWidth: 1920,
+          targetFps: 30,
+        },
+        setVideoConversionProgress,
+      );
 
       // Convert Uint8Array back to File object
       const convertedVideo = new File(
@@ -236,7 +238,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     const hlsFiles = await convertHLSVideo(video);
     // -------------------------------------------------------------------------
 
-    // throw new Error("TESTING CONVERSION ONLY");
+    throw new Error("TESTING CONVERSION ONLY");
 
     // Upload video to storage.
     // -------------------------------------------------------------------------
