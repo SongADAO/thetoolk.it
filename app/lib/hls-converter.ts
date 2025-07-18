@@ -22,7 +22,7 @@ export interface ProgressInfo {
   time?: number; // current time in seconds (if available)
 }
 
-export type ProgressCallback = (progress: ProgressInfo) => void;
+export type ProgressCallback = (progress: number) => void;
 
 export class HLSConverter {
   private readonly ffmpeg: FFmpeg;
@@ -353,7 +353,7 @@ ${streamPlaylist}
       `[${progress.phase}] ${progress.progress}% - ${progress.message}`,
     );
     if (this.progressCallback) {
-      this.progressCallback(progress);
+      this.progressCallback(progress.progress ?? 0);
     }
   }
 

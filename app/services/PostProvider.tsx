@@ -138,6 +138,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         `converted_${video.name}`,
         { type: "video/mp4" },
       );
+      console.log(convertedVideo);
 
       console.log(
         `Conversion complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedVideo.size / 1024 / 1024).toFixed(2)}MB`,
@@ -187,16 +188,14 @@ export function PostProvider({ children }: Readonly<Props>) {
 
       console.log("Initializing HLS converter...");
       const hlsConverter = new HLSConverter();
-      await hlsConverter.initialize();
-      setHLSConversionProgress(20);
+      await hlsConverter.initialize(setHLSConversionProgress);
 
       // Convert to HLS (try copy first, fallback to encoding if needed)
       console.log("Converting video to HLS format...");
       const hlsFiles = await hlsConverter.convertToHLS(video);
-      setHLSConversionProgress(80);
+      console.log(hlsFiles);
 
       console.log("HLS conversion successful");
-      setHLSConversionProgress(100);
 
       return hlsFiles;
     } catch (error) {
@@ -230,6 +229,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
     const video = await convertVideo(selectedFile);
+    // const video = selectedFile;
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
