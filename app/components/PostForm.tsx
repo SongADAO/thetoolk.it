@@ -52,22 +52,26 @@ function PostForm() {
     const newFormState = fromFormData(formData);
     console.log(newFormState);
 
-    // video = selectedFile;
-    // videoUrl =
-    //   "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
-    // videoPlaylistUrl = `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
-    // videoThumbnailUrl =
-    //   "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/thumbnail.jpg";
+    try {
+      const { video, videoUrl, videoHSLUrl } =
+        await preparePostVideo(selectedFile);
 
-    const [video, videoUrl, videoHSLUrl] = await preparePostVideo(selectedFile);
+      // const video = selectedFile;
+      // const videoUrl = "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+      // const videoHSLUrl = "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8";
 
-    return await createPost(
-      newFormState.text,
-      newFormState.title,
-      video,
-      videoUrl,
-      videoHSLUrl,
-    );
+      await createPost(
+        newFormState.text,
+        newFormState.title,
+        video,
+        videoUrl,
+        videoHSLUrl,
+      );
+    } catch (err: unknown) {
+      console.error(err);
+    }
+
+    return newFormState;
   }
 
   const [state, formAction, isPending] = useActionState<FormState, FormData>(
