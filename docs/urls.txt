@@ -6,7 +6,19 @@ URLS
 https://localhost:3000/authorize
 https://dev.thetoolk.it/authorize
 
-
+Uninstall/Deauthorize Callback
 https://dev.thetoolk.it/deauthorize
 
-https://dev.thetoolk.it/delete-auth
+Delete Callback URL
+https://dev.thetoolk.it/delete-data
+
+Terms of Service
+https://dev.thetoolk.it/terms-of-service
+
+Privacy Policy
+https://dev.thetoolk.it/privacy-policy
+
+
+
+
+https://caring-annually-teal.ngrok-free.app/authorize
