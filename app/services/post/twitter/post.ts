@@ -216,7 +216,7 @@ async function statusUploadVideo({
   const statusData = await statusResponse.json();
   console.log("Processing status:", statusData);
 
-  return statusData.data.processing_info.state;
+  return statusData;
 }
 
 interface UploadVideoProps {
