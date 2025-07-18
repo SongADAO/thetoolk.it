@@ -4,6 +4,7 @@ import { ReactNode, use, useMemo, useState } from "react";
 
 import { DEBUG_MEDIA } from "@/app/config/constants";
 import { HLSConverter, type HLSFiles } from "@/app/lib/hls-converter";
+import { sleep } from "@/app/lib/utils";
 import {
   // getVideoCodecInfo,
   getVideoDuration,
@@ -64,8 +65,8 @@ export function PostProvider({ children }: Readonly<Props>) {
   const [videoConversionError, setVideoConversionError] = useState("");
   const [isVideoConverting, setIsVideoConverting] = useState(false);
 
-  const [hlsConversionProgress, setHlsConversionProgress] = useState(0);
-  const [hlsConversionError, setHlsConversionError] = useState("");
+  const [hlsConversionProgress, setHLSConversionProgress] = useState(0);
+  const [hlsConversionError, setHLSConversionError] = useState("");
   const [isHLSConverting, setIsHLSConverting] = useState(false);
 
   function getVideoInfo(video: File | null): void {
@@ -92,6 +93,15 @@ export function PostProvider({ children }: Readonly<Props>) {
   async function convertVideo(video: File): Promise<File> {
     try {
       if (DEBUG_MEDIA) {
+        setIsVideoConverting(true);
+        setVideoConversionProgress(0);
+        await sleep(1000);
+        setVideoConversionProgress(20);
+        await sleep(1000);
+        setVideoConversionProgress(40);
+        await sleep(1000);
+        setVideoConversionProgress(60);
+
         return video;
       }
 
@@ -143,6 +153,15 @@ export function PostProvider({ children }: Readonly<Props>) {
   async function convertHLSVideo(video: File): Promise<HLSFiles> {
     try {
       if (DEBUG_MEDIA) {
+        setIsHLSConverting(true);
+        setHLSConversionProgress(0);
+        await sleep(1000);
+        setHLSConversionProgress(20);
+        await sleep(1000);
+        setHLSConversionProgress(40);
+        await sleep(1000);
+        setHLSConversionProgress(60);
+
         return {
           masterManifest: video,
           segments: [],
@@ -152,29 +171,29 @@ export function PostProvider({ children }: Readonly<Props>) {
       }
 
       setIsHLSConverting(true);
-      setHlsConversionProgress(0);
+      setHLSConversionProgress(0);
 
       console.log("Initializing HLS converter...");
       const hlsConverter = new HLSConverter();
       await hlsConverter.initialize();
-      setHlsConversionProgress(20);
+      setHLSConversionProgress(20);
 
       // Convert to HLS (try copy first, fallback to encoding if needed)
       console.log("Converting video to HLS format...");
       const hlsFiles = await hlsConverter.convertToHLS(video);
-      setHlsConversionProgress(80);
+      setHLSConversionProgress(80);
 
       console.log("HLS conversion successful");
-      setHlsConversionProgress(100);
+      setHLSConversionProgress(100);
 
       return hlsFiles;
     } catch (error) {
       console.error("HLS conversion/upload failed:", error);
-      setHlsConversionError("Failed to convert video to HLS format.");
+      setHLSConversionError("Failed to convert video to HLS format.");
       throw error;
     } finally {
       setIsHLSConverting(false);
-      setHlsConversionProgress(0);
+      setHLSConversionProgress(0);
     }
   }
 
@@ -182,17 +201,17 @@ export function PostProvider({ children }: Readonly<Props>) {
     const needsHls = neynarIsEnabled;
 
     if (!pinataIsUsable && !amazonS3IsUsable) {
-      throw new Error("You must select a storage provider.");
+      throw new Error("You must enable a storage provider.");
     }
 
     if (needsHls && !pinataIsUsable) {
       throw new Error(
-        "To use Farcaster or Lens, you must select an IPFS storage provider (Pinata).",
+        "To use Farcaster or Lens at least one enabled storage provider must support IPFS or Arweave. (Pinata).",
       );
     }
 
     if (!pinataIsUsable && !amazonS3IsUsable) {
-      throw new Error("You must select a storage provider.");
+      throw new Error("You must enable a storage provider.");
     }
 
     // Convert video if file is selected.

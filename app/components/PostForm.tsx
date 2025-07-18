@@ -29,9 +29,10 @@ function PostForm() {
   const {
     createPost,
     getVideoInfo,
+    hlsConversionProgress,
+    isHLSConverting,
     isVideoConverting,
     preparePostVideo,
-    videoCodecInfo,
     videoConversionProgress,
     videoDuration,
     videoFileSize,
@@ -42,7 +43,6 @@ function PostForm() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>("");
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -77,10 +77,9 @@ function PostForm() {
         videoUrl,
       });
     } catch (err: unknown) {
+      console.error(err);
       const errMessage = err instanceof Error ? err.message : "Post failed";
       setError(errMessage);
-
-      console.error(err);
     }
 
     return newFormState;
@@ -117,28 +116,6 @@ function PostForm() {
         </Form.Field>
       </Form.Root>
 
-      {isVideoConverting ? (
-        <div className="mb-4 rounded bg-yellow-100 p-3 text-yellow-800">
-          <div className="flex items-center gap-2">
-            <Spinner />
-            Converting video for optimal quality and size...
-          </div>
-          {videoConversionProgress > 0 && (
-            <div className="mt-2">
-              <div className="h-2 w-full rounded bg-yellow-200">
-                <div
-                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
-                  style={{ width: `${videoConversionProgress}%` }}
-                />
-              </div>
-              <div className="mt-1 text-sm">
-                {videoConversionProgress}% complete
-              </div>
-            </div>
-          )}
-        </div>
-      ) : null}
-
       {videoPreviewUrl ? (
         <div className="mb-4 flex flex-col gap-2">
           <div>
@@ -152,9 +129,9 @@ function PostForm() {
             <div>Size: {formatFileSize(videoFileSize)}</div>
             <div>Duration: {formatFileDuration(videoDuration)}</div>
           </div>
-          <div className="flex items-center justify-between gap-2 text-sm">
+          {/* <div className="flex items-center justify-between gap-2 text-sm">
             <div>Codec: {videoCodecInfo}</div>
-          </div>
+          </div> */}
         </div>
       ) : null}
 
@@ -194,6 +171,52 @@ function PostForm() {
             <Form.Message match="valueMissing">Missing message.</Form.Message>
           </div>
         </Form.Field>
+
+        {isVideoConverting ? (
+          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              Converting video for optimal quality and size...
+            </div>
+            <div className="mt-2">
+              <div className="h-2 w-full rounded bg-gray-600">
+                <div
+                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
+                  style={{ width: `${videoConversionProgress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-center text-sm">
+                {videoConversionProgress}% complete
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isHLSConverting ? (
+          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              Creating HLS video for optimal Farcaster display...
+            </div>
+            <div className="mt-2">
+              <div className="h-2 w-full rounded bg-gray-600">
+                <div
+                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
+                  style={{ width: `${hlsConversionProgress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-center text-sm">
+                {hlsConversionProgress}% complete
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {error ? (
+          <p className="mb-4 rounded bg-red-800 p-2 text-center text-white">
+            {error}
+          </p>
+        ) : null}
 
         <Form.Submit
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50"

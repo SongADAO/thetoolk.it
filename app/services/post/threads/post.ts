@@ -266,6 +266,7 @@ async function createPost({
       postId = await publishMedia({ accessToken, creationId, userId });
     } else {
       // TODO: Text only post.
+      throw new Error("Text only posts are not supported yet.");
     }
 
     setPostProgress(100);
