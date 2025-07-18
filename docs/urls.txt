@@ -1,5 +1,11 @@
+Origins
+https://localhost:3000
+https://dev.thetoolk.it
+
+URLS
 https://localhost:3000/authorize
 https://dev.thetoolk.it/authorize
+
 
 https://dev.thetoolk.it/deauthorize
 
