@@ -7,15 +7,9 @@ import type {
   ServiceAccount,
 } from "@/app/services/post/types";
 
-interface FacebookTokenResponse {
+interface InstagramTokenResponse {
   access_token: string;
   expires_in: number;
-}
-
-interface FacebookPage {
-  id: string;
-  name: string;
-  access_token: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -94,7 +88,7 @@ function shouldHandleAuthRedirect(
   return Boolean(code && state?.includes(OAUTH_STATE));
 }
 
-function formatTokens(tokens: FacebookTokenResponse): OauthAuthorization {
+function formatTokens(tokens: InstagramTokenResponse): OauthAuthorization {
   // Tokens have a 10 minutes lifespan (TODO: verify expiration)
   const expiresIn = 10 * 60 * 60 * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
