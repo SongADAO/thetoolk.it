@@ -205,8 +205,8 @@ export function PostProvider({ children }: Readonly<Props>) {
           crf: 23,
           duration: videoDuration,
           maxFileSizeMB: 20,
+          maxFps: 60,
           maxWidth: 1920,
-          targetFps: 30,
         },
         setVideoConversionProgress,
       );

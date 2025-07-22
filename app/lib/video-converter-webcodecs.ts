@@ -12,7 +12,7 @@ export interface ConversionOptions {
   duration: number;
   maxFileSizeMB: number;
   maxWidth: number;
-  targetFps: number;
+  maxFps: number;
 }
 
 export class FFmpegAudioPreprocessor {
@@ -296,7 +296,7 @@ export class VideoConverter {
 
       const { width: originalWidth, height: originalHeight } =
         metadata.dimensions ?? { height: 1080, width: 1920 };
-      // const originalFps = metadata.fps ?? 30;
+      const originalFps = metadata.fps ?? 30;
 
       // Calculate target dimensions
       let targetWidth = originalWidth;
@@ -344,7 +344,7 @@ export class VideoConverter {
         audioCodec: "aac",
         container: "mp4",
         // expectedDurationInSeconds: options.duration,
-        // expectedFrameRate: Math.min(originalFps, options.targetFps),
+        // expectedFrameRate: Math.min(originalFps, options.maxFps),
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onAudioTrack: ({ track, defaultAudioCodec, canCopyTrack }) =>
           // // if (!track) return { type: "drop" };
@@ -377,7 +377,7 @@ export class VideoConverter {
           //   canCopyTrack &&
           //   targetWidth === originalWidth &&
           //   targetHeight === originalHeight &&
-          //   originalFps <= options.targetFps
+          //   originalFps <= options.maxFps
           // ) {
           //   console.log("Copying video track");
           //   return { type: "copy" };
