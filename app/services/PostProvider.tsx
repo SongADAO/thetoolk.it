@@ -128,10 +128,12 @@ export function PostProvider({ children }: Readonly<Props>) {
   const [videoDuration, setVideoDuration] = useState<number>(0);
   const [videoCodecInfo, setVideoCodecInfo] = useState<string>("");
 
+  const [videoConversionStatus, setVideoConversionStatus] = useState("");
   const [videoConversionProgress, setVideoConversionProgress] = useState(0);
   const [videoConversionError, setVideoConversionError] = useState("");
   const [isVideoConverting, setIsVideoConverting] = useState(false);
 
+  const [hlsConversionStatus, setHLSConversionStatus] = useState("");
   const [hlsConversionProgress, setHLSConversionProgress] = useState(0);
   const [hlsConversionError, setHLSConversionError] = useState("");
   const [isHLSConverting, setIsHLSConverting] = useState(false);
@@ -196,10 +198,12 @@ export function PostProvider({ children }: Readonly<Props>) {
   // Convert video file to optimized format
   async function convertVideo(video: File): Promise<File> {
     try {
+      setIsVideoConverting(true);
+      setVideoConversionProgress(0);
+      setVideoConversionStatus("Preparing video...");
+
       if (DEBUG_MEDIA) {
         console.log("DEBUG MODE: Skipping video conversion.");
-        setIsVideoConverting(true);
-        setVideoConversionProgress(0);
         await sleep(1000);
         setVideoConversionProgress(20);
         await sleep(1000);
@@ -214,12 +218,9 @@ export function PostProvider({ children }: Readonly<Props>) {
         return video;
       }
 
-      setIsVideoConverting(true);
-      setVideoConversionProgress(0);
-
       console.log("Initializing Video converter...");
       const converter = new VideoConverter();
-      await converter.initialize();
+      await converter.initialize(setVideoConversionProgress);
 
       console.log("Starting video conversion...");
       const convertedData = await converter.convertVideo(
@@ -234,6 +235,7 @@ export function PostProvider({ children }: Readonly<Props>) {
           maxWidth: 1920,
         },
         setVideoConversionProgress,
+        setVideoConversionStatus,
       );
 
       // Convert Uint8Array back to File object
@@ -264,10 +266,14 @@ export function PostProvider({ children }: Readonly<Props>) {
 
   async function convertHLSVideo(video: File): Promise<HLSFiles> {
     try {
+      setIsHLSConverting(true);
+      setHLSConversionStatus(
+        "Creating HLS video for optimal Farcaster display...",
+      );
+      setHLSConversionProgress(0);
+
       if (DEBUG_MEDIA) {
         console.log("DEBUG MODE: Skipping HLS conversion.");
-        setIsHLSConverting(true);
-        setHLSConversionProgress(0);
         await sleep(1000);
         setHLSConversionProgress(20);
         await sleep(1000);
@@ -286,9 +292,6 @@ export function PostProvider({ children }: Readonly<Props>) {
           thumbnail: video,
         };
       }
-
-      setIsHLSConverting(true);
-      setHLSConversionProgress(0);
 
       console.log("Initializing HLS converter...");
       const hlsConverter = new HLSConverter();
@@ -614,12 +617,14 @@ export function PostProvider({ children }: Readonly<Props>) {
       getVideoInfo,
       hlsConversionError,
       hlsConversionProgress,
+      hlsConversionStatus,
       isHLSConverting,
       isVideoConverting,
       preparePostVideo,
       videoCodecInfo,
       videoConversionError,
       videoConversionProgress,
+      videoConversionStatus,
       videoDuration,
       videoFileSize,
       videoPreviewUrl,
@@ -630,12 +635,14 @@ export function PostProvider({ children }: Readonly<Props>) {
       canStoreToAllServices,
       hlsConversionError,
       hlsConversionProgress,
+      hlsConversionStatus,
       isHLSConverting,
       isVideoConverting,
       preparePostVideo,
       videoCodecInfo,
       videoConversionError,
       videoConversionProgress,
+      videoConversionStatus,
       videoDuration,
       videoFileSize,
       videoPreviewUrl,

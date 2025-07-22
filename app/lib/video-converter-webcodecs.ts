@@ -23,7 +23,7 @@ export class FFmpegAudioPreprocessor {
     this.ffmpeg = new FFmpeg();
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(onProgress?: (progress: number) => void): Promise<void> {
     if (this.initialized) return;
 
     console.log("Initializing FFmpeg...");
@@ -41,10 +41,21 @@ export class FFmpegAudioPreprocessor {
 
     this.initialized = true;
     console.log("FFmpeg initialized");
+
+    // Set up progress tracking
+    if (onProgress) {
+      this.ffmpeg.on("progress", ({ progress }) => {
+        // FFmpeg progress is between 0 and 1, convert to percentage
+        const progressPercent = Math.round(progress * 100);
+        onProgress(progressPercent);
+      });
+    }
   }
 
   // Convert 32-bit audio to 16-bit PCM stereo using FFmpeg
-  public async convertAudioTo16BitPCM(file: File): Promise<File> {
+  public async convertAudioTo16BitPCM(
+    file: File,
+  ): Promise<File> {
     if (!this.initialized) {
       throw new Error("FFmpeg not initialized. Call initialize() first.");
     }
@@ -243,14 +254,14 @@ export class VideoConverter {
     this.ffmpegProcessor = new FFmpegAudioPreprocessor();
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(onProgress?: (progress: number) => void): Promise<void> {
     // Check WebCodecs support
     if (!("VideoEncoder" in window) || !("VideoDecoder" in window)) {
       throw new Error("WebCodecs is not supported in this browser");
     }
 
     // Initialize FFmpeg
-    await this.ffmpegProcessor.initialize();
+    await this.ffmpegProcessor.initialize(onProgress);
 
     this.initialized = true;
     console.log("VideoConverter with FFmpeg preprocessing initialized");
@@ -260,6 +271,7 @@ export class VideoConverter {
     file: File,
     options: ConversionOptions,
     onProgress: (progress: number) => void,
+    setVideoConversionStatus: (status: string) => void,
   ): Promise<Uint8Array> {
     if (!this.initialized) {
       throw new Error(
@@ -272,17 +284,31 @@ export class VideoConverter {
         "Converting with WebCodecs after FFmpeg audio preprocessing...",
       );
 
-      // Step 1: Preprocess audio with FFmpeg
+      // Step 1: Preprocess audio with FFmpeg (with progress tracking)
+      setVideoConversionStatus("Encoding audio for optimal quality and size...");
+      onProgress(0);
       const processedAudioFile =
         await this.ffmpegProcessor.convertAudioTo16BitPCM(file);
 
+      setVideoConversionStatus("Extracting video...");
+      onProgress(0);
+      const extractVideo = await this.ffmpegProcessor.extractVideoOnly(file);
+
       // Step 2: Create a new video file with the processed audio
       // This requires muxing the audio back with the original video
+      setVideoConversionStatus("Combining audio and video...");
+      onProgress(0);
       const videoWithProcessedAudio =
         await this.ffmpegProcessor.combineAudioVideo(
-          await this.ffmpegProcessor.extractVideoOnly(file),
+          extractVideo,
           processedAudioFile,
         );
+
+      // Reset progress back to 0 after audio conversion
+      setVideoConversionStatus(
+        "Encoding video for optimal quality and size...",
+      );
+      onProgress(0);
 
       // Step 3: Now use WebCodecs on the file with compatible audio
       const metadata = await parseMedia({

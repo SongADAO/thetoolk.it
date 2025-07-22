@@ -31,10 +31,12 @@ function PostForm() {
     createPost,
     getVideoInfo,
     hlsConversionProgress,
+    hlsConversionStatus,
     isHLSConverting,
     isVideoConverting,
     preparePostVideo,
     videoConversionProgress,
+    videoConversionStatus,
     videoDuration,
     videoFileSize,
     videoPreviewUrl,
@@ -211,7 +213,7 @@ function PostForm() {
           <div className="mb-4 rounded bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">
               <Spinner />
-              Converting video for optimal quality and size...
+              {videoConversionStatus}
             </div>
             <div className="mt-2">
               <div className="h-2 w-full rounded bg-gray-600">
@@ -231,7 +233,7 @@ function PostForm() {
           <div className="mb-4 rounded bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">
               <Spinner />
-              Creating HLS video for optimal Farcaster display...
+              {hlsConversionStatus}
             </div>
             <div className="mt-2">
               <div className="h-2 w-full rounded bg-gray-600">

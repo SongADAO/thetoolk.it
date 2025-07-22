@@ -29,12 +29,14 @@ interface PostContextType {
   getVideoInfo: (video: File | null) => void;
   hlsConversionError: string | null;
   hlsConversionProgress: number;
+  hlsConversionStatus: string;
   isHLSConverting: boolean;
   isVideoConverting: boolean;
   preparePostVideo: (selectedFile: File) => Promise<Record<string, PostVideo>>;
   videoCodecInfo: string;
   videoConversionError: string | null;
   videoConversionProgress: number;
+  videoConversionStatus: string;
   videoDuration: number;
   videoFileSize: number;
   videoPreviewUrl: string;
@@ -47,6 +49,7 @@ const PostContext = createContext<PostContextType>({
   getVideoInfo: () => {},
   hlsConversionError: null,
   hlsConversionProgress: 0,
+  hlsConversionStatus: "",
   isHLSConverting: false,
   isVideoConverting: false,
   preparePostVideo: async () =>
@@ -60,6 +63,7 @@ const PostContext = createContext<PostContextType>({
   videoCodecInfo: "",
   videoConversionError: null,
   videoConversionProgress: 0,
+  videoConversionStatus: "",
   videoDuration: 0,
   videoFileSize: 0,
   videoPreviewUrl: "",
