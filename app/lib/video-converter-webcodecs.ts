@@ -296,7 +296,7 @@ export class VideoConverter {
 
       // Step 2: Create a new video file with the processed audio
       // This requires muxing the audio back with the original video
-      setVideoConversionStatus("Combining audio and video...");
+      setVideoConversionStatus("Recombining audio and video...");
       onProgress(0);
       const videoWithProcessedAudio =
         await this.ffmpegProcessor.combineAudioVideo(
