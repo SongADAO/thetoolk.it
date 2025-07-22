@@ -9,17 +9,7 @@ interface PostVideo {
 interface CreatePostProps {
   text: string;
   title: string;
-  videos: {
-    base: PostVideo;
-    bluesky?: PostVideo;
-    facebook?: PostVideo;
-    instagram?: PostVideo;
-    neynar?: PostVideo;
-    threads?: PostVideo;
-    tiktok?: PostVideo;
-    twitter?: PostVideo;
-    youtube?: PostVideo;
-  };
+  videos: Record<string, PostVideo>;
 }
 
 interface PostContextType {

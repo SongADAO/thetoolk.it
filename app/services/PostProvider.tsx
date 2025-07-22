@@ -220,7 +220,7 @@ export function PostProvider({ children }: Readonly<Props>) {
 
       console.log("Initializing Video converter...");
       const converter = new VideoConverter();
-      await converter.initialize(setVideoConversionProgress);
+      await converter.initialize();
 
       console.log("Starting video conversion...");
       const convertedData = await converter.convertVideo(
@@ -488,9 +488,9 @@ export function PostProvider({ children }: Readonly<Props>) {
           throw new Error("Failed to upload video to storage.");
         }
 
-        videos[videoId].videoUrl = videoUrl;
-
         console.log("Video upload successful:", videoUrl);
+
+        videos[videoId].videoUrl = videoUrl;
       }
     }
     // -------------------------------------------------------------------------
@@ -500,16 +500,18 @@ export function PostProvider({ children }: Readonly<Props>) {
     if (needsHls && hlsFiles) {
       // Upload HLS files to Pinata
       console.log("Uploading HLS files to Pinata...");
-      videos.neynar.videoHSLUrl = await pinataStoreHLSFolder(
+      const videoHSLUrl = await pinataStoreHLSFolder(
         hlsFiles,
         `hls-video-${Date.now()}`,
       );
 
-      if (!videos.neynar.videoHSLUrl) {
+      if (!videoHSLUrl) {
         throw new Error("Failed to upload HLS files to Pinata");
       }
 
-      console.log("HLS upload successful:", videos.neynar.videoHSLUrl);
+      console.log("HLS upload successful:", videoHSLUrl);
+
+      videos.neynar.videoHSLUrl = videoHSLUrl;
     }
     // -------------------------------------------------------------------------
 
@@ -529,7 +531,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     title,
     videos,
   }: Readonly<CreatePostProps>): Promise<void> {
-    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
     const allResults = await Promise.allSettled([
       blueskyPost({
         text,
@@ -604,7 +606,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.youtube?.videoUrl || videos.base.videoUrl,
       }),
     ]);
-    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
 
     console.log("All results:", allResults);
   }
