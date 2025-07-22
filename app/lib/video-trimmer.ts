@@ -1,16 +1,19 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { fetchFile } from "@ffmpeg/util";
 
 interface TrimVideoOptions {
+  maxDuration: number;
+  maxFilesize: number;
+  minDuration: number;
+  onProgress: ((progress: number) => void) | undefined | null;
   video: File;
-  maxDuration: number; // in seconds
-  maxFilesize: number; // in bytes
-  minDuration: number; // in seconds
 }
 
 let ffmpegInstance: FFmpeg | null = null;
 
-async function initializeFFmpeg(): Promise<FFmpeg> {
+async function initializeFFmpeg(
+  onProgress: ((progress: number) => void) | undefined | null,
+): Promise<FFmpeg> {
   if (ffmpegInstance) {
     return ffmpegInstance;
   }
@@ -20,38 +23,19 @@ async function initializeFFmpeg(): Promise<FFmpeg> {
   // Load FFmpeg with WebAssembly
   await ffmpeg.load();
 
+  // Set up progress tracking
+  if (onProgress) {
+    ffmpeg.on("progress", ({ progress }) => {
+      // FFmpeg progress is between 0 and 1, convert to percentage
+      const progressPercent = Math.round(progress * 100);
+      onProgress(progressPercent);
+    });
+  }
+
+  // eslint-disable-next-line require-atomic-updates
   ffmpegInstance = ffmpeg;
 
   return ffmpeg;
-}
-
-async function getVideoDurationFFmpeg(
-  ffmpeg: FFmpeg,
-  inputFileName: string,
-): Promise<number> {
-  try {
-    // Use ffprobe to get video duration
-    await ffmpeg.exec([
-      "-i",
-      inputFileName,
-      "-hide_banner",
-      "-v",
-      "quiet",
-      "-show_entries",
-      "format=duration",
-      "-of",
-      "csv=p=0",
-    ]);
-
-    // This is a simplified approach - in practice you might want to parse ffprobe output
-    // For now, we'll fall back to getting duration from the video element
-    return 0;
-  } catch (error) {
-    console.warn(
-      "Could not get duration from ffmpeg, falling back to video element",
-    );
-    return 0;
-  }
 }
 
 async function getVideoActualDuration(video: File): Promise<number> {
@@ -79,10 +63,11 @@ function getFileExtension(filename: string): string {
 }
 
 export async function trimVideo({
-  video,
   maxDuration,
   maxFilesize,
   minDuration,
+  onProgress,
+  video,
 }: TrimVideoOptions): Promise<File | null> {
   try {
     console.log(
@@ -106,7 +91,7 @@ export async function trimVideo({
 
     // Initialize FFmpeg
     console.log("Initializing FFmpeg...");
-    const ffmpeg = await initializeFFmpeg();
+    const ffmpeg = await initializeFFmpeg(onProgress);
 
     const inputFileName = `input_${Date.now()}.${getFileExtension(video.name)}`;
     const outputFileName = `output_${Date.now()}.${getFileExtension(video.name)}`;
@@ -124,15 +109,20 @@ export async function trimVideo({
     await ffmpeg.exec([
       "-i",
       inputFileName,
+      // Duration to trim to
       "-t",
-      trimDuration.toString(), // Duration to trim to
+      trimDuration.toString(),
+      // Copy streams without re-encoding
       "-c",
-      "copy", // Copy streams without re-encoding
+      "copy",
+      // Handle timestamp issues
       "-avoid_negative_ts",
-      "make_zero", // Handle timestamp issues
+      "make_zero",
+      // Generate presentation timestamps
       "-fflags",
-      "+genpts", // Generate presentation timestamps
-      "-y", // Overwrite output file
+      "+genpts",
+      // Overwrite output file
+      "-y",
       outputFileName,
     ]);
 
