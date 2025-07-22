@@ -452,14 +452,9 @@ export function PostProvider({ children }: Readonly<Props>) {
       };
     }
 
+    // -------------------------------------------------------------------------
     console.log(videos);
 
-    // if (videos.bluesky.video) {
-    //   const converter = new VideoConverter();
-    //   converter.downloadFile(videos.bluesky.video);
-    // }
-
-    // -------------------------------------------------------------------------
     if (DEBUG_STOP_AFTER_CONVERSION) {
       throw new Error("TESTING CONVERSION ONLY");
     }
@@ -516,6 +511,8 @@ export function PostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
+    console.log(videos);
+
     if (DEBUG_STOP_AFTER_STORAGE) {
       throw new Error("TESTING STORAGE ONLY");
     }
