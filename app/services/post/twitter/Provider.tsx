@@ -23,7 +23,12 @@ import {
   shouldHandleAuthRedirect,
 } from "@/app/services/post/twitter/auth";
 import { TwitterContext } from "@/app/services/post/twitter/Context";
-import { createPost } from "@/app/services/post/twitter/post";
+import {
+  createPost,
+  VIDEO_MAX_DURATION,
+  VIDEO_MAX_FILESIZE,
+  VIDEO_MIN_DURATION,
+} from "@/app/services/post/twitter/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
@@ -267,6 +272,9 @@ export function TwitterProvider({ children }: Readonly<Props>) {
 
   const providerValues = useMemo(
     () => ({
+      VIDEO_MAX_DURATION,
+      VIDEO_MAX_FILESIZE,
+      VIDEO_MIN_DURATION,
       accounts,
       authorizationExpiresAt,
       authorize,
@@ -295,6 +303,9 @@ export function TwitterProvider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      VIDEO_MAX_DURATION,
+      VIDEO_MAX_FILESIZE,
+      VIDEO_MIN_DURATION,
       accounts,
       authorization,
       brandColor,

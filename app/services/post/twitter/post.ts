@@ -3,6 +3,10 @@ import { sleep } from "@/app/lib/utils";
 
 let DEBUG_STATUS_STEP = 0;
 
+const VIDEO_MAX_FILESIZE = 512;
+const VIDEO_MIN_DURATION = 3;
+const VIDEO_MAX_DURATION = 140;
+
 interface TwitterFinalizeUploadResponse {
   data?: {
     media_id?: string;
@@ -431,4 +435,9 @@ async function createPost({
   return null;
 }
 
-export { createPost };
+export {
+  createPost,
+  VIDEO_MAX_DURATION,
+  VIDEO_MAX_FILESIZE,
+  VIDEO_MIN_DURATION,
+};

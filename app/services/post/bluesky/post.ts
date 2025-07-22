@@ -2,6 +2,10 @@ import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 import type { BlueskyCredentials } from "@/app/services/post/types";
 
+const VIDEO_MAX_FILESIZE = 100;
+const VIDEO_MIN_DURATION = 3;
+const VIDEO_MAX_DURATION = 180;
+
 interface UploadVideoBlobProps {
   accessToken: string;
   credentials: BlueskyCredentials;
@@ -199,4 +203,9 @@ async function createPost({
   return null;
 }
 
-export { createPost };
+export {
+  createPost,
+  VIDEO_MAX_DURATION,
+  VIDEO_MAX_FILESIZE,
+  VIDEO_MIN_DURATION,
+};

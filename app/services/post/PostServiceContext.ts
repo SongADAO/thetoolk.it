@@ -7,6 +7,9 @@ import type {
 import type { PostProps, ServiceAccount } from "@/app/services/post/types";
 
 interface PostServiceContextType {
+  VIDEO_MAX_DURATION: number;
+  VIDEO_MAX_FILESIZE: number;
+  VIDEO_MIN_DURATION: number;
   accounts: ServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
@@ -36,6 +39,9 @@ interface PostServiceContextType {
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const postServiceContextDefault = {
+  VIDEO_MAX_DURATION: 0,
+  VIDEO_MAX_FILESIZE: 0,
+  VIDEO_MIN_DURATION: 0,
   accounts: [],
   authorizationExpiresAt: "",
   authorize: () => {},

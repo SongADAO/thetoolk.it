@@ -23,7 +23,12 @@ import {
   shouldHandleAuthRedirect,
 } from "@/app/services/post/tiktok/auth";
 import { TiktokContext } from "@/app/services/post/tiktok/Context";
-import { createPost } from "@/app/services/post/tiktok/post";
+import {
+  createPost,
+  VIDEO_MAX_DURATION,
+  VIDEO_MAX_FILESIZE,
+  VIDEO_MIN_DURATION,
+} from "@/app/services/post/tiktok/post";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
@@ -269,6 +274,9 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   const providerValues = useMemo(
     () => ({
+      VIDEO_MAX_DURATION,
+      VIDEO_MAX_FILESIZE,
+      VIDEO_MIN_DURATION,
       accounts,
       authorizationExpiresAt,
       authorize,
@@ -297,6 +305,9 @@ export function TiktokProvider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      VIDEO_MAX_DURATION,
+      VIDEO_MAX_FILESIZE,
+      VIDEO_MIN_DURATION,
       accounts,
       authorization,
       brandColor,

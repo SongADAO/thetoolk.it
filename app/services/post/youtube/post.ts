@@ -1,6 +1,10 @@
 import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
+const VIDEO_MAX_FILESIZE = 1024 * 128;
+const VIDEO_MIN_DURATION = 12;
+const VIDEO_MAX_DURATION = 60 * 24 * 12;
+
 // Start resumable upload
 interface InitiateResumableUploadProps {
   accessToken: string;
@@ -265,4 +269,9 @@ async function createPost({
   return null;
 }
 
-export { createPost };
+export {
+  createPost,
+  VIDEO_MAX_DURATION,
+  VIDEO_MAX_FILESIZE,
+  VIDEO_MIN_DURATION,
+};

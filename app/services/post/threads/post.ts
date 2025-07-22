@@ -3,6 +3,10 @@ import { sleep } from "@/app/lib/utils";
 
 let DEBUG_STATUS_STEP = 0;
 
+const VIDEO_MAX_FILESIZE = 1024 * 1;
+const VIDEO_MIN_DURATION = 3;
+const VIDEO_MAX_DURATION = 300;
+
 // Create Threads media container
 interface CreateMediaContainerProps {
   accessToken: string;
@@ -285,4 +289,9 @@ async function createPost({
   return null;
 }
 
-export { createPost };
+export {
+  createPost,
+  VIDEO_MAX_DURATION,
+  VIDEO_MAX_FILESIZE,
+  VIDEO_MIN_DURATION,
+};
