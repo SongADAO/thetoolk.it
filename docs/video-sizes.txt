@@ -1,10 +1,17 @@
+https://support.vistasocial.com/hc/en-us/articles/5231863512987-Video-specs-and-guidelines-per-social-network#h_01GSTVKXP3PT1BNYTPC1MT7Z8G
+
 farcaster
 hls streaming format
 
 bluesky
+100MB
+180 sec max (3 min)
+0 sec min
 
 facebook
-no real documented limits
+4GB
+14400 sec max (240 min)
+3 sec min
 
 facebook reels/stories
 4GB
@@ -35,3 +42,6 @@ twitter
 0.5 sec min
 
 youtube
+128GB
+12 hour max
+12 sec min
