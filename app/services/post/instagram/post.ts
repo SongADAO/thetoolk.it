@@ -3,7 +3,7 @@ import { sleep } from "@/app/lib/utils";
 
 let DEBUG_STATUS_STEP = 0;
 
-const VIDEO_MAX_FILESIZE = 300;
+const VIDEO_MAX_FILESIZE = 1024 * 1024 * 300;
 const VIDEO_MIN_DURATION = 3;
 const VIDEO_MAX_DURATION = 900;
 

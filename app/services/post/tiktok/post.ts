@@ -1,7 +1,7 @@
 import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
-const VIDEO_MAX_FILESIZE = 1024 * 1;
+const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 1;
 const VIDEO_MIN_DURATION = 3;
 const VIDEO_MAX_DURATION = 600;
 

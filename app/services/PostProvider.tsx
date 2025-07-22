@@ -15,6 +15,7 @@ import {
 } from "@/app/lib/video";
 // import { VideoConverter } from "@/app/lib/video-converter-ffmpeg";
 import { VideoConverter } from "@/app/lib/video-converter-webcodecs";
+import { trimVideo } from "@/app/lib/video-trimmer";
 // import { validateVideoFile } from "@/app/lib/video-validator";
 import { BlueskyContext } from "@/app/services/post/bluesky/Context";
 import { FacebookContext } from "@/app/services/post/facebook/Context";
@@ -42,48 +43,72 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: blueskyIsUsable,
     accounts: blueskyAccounts,
     post: blueskyPost,
+    VIDEO_MAX_DURATION: BLUESKY_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: BLUESKY_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: BLUESKY_VIDEO_MIN_DURATION,
   } = use(BlueskyContext);
   const {
     isEnabled: facebookIsEnabled,
     isUsable: facebookIsUsable,
     accounts: facebookAccounts,
     post: facebookPost,
+    VIDEO_MAX_DURATION: FACEBOOK_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: FACEBOOK_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: FACEBOOK_VIDEO_MIN_DURATION,
   } = use(FacebookContext);
   const {
     isEnabled: instagramIsEnabled,
     isUsable: instagramIsUsable,
     accounts: instagramAccounts,
     post: instagramPost,
+    VIDEO_MAX_DURATION: INSTAGRAM_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: INSTAGRAM_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: INSTAGRAM_VIDEO_MIN_DURATION,
   } = use(InstagramContext);
   const {
     isUsable: neynarIsUsable,
     isEnabled: neynarIsEnabled,
     accounts: neynarAccounts,
     post: neynarPost,
+    VIDEO_MAX_DURATION: NEYNAR_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: NEYNAR_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: NEYNAR_VIDEO_MIN_DURATION,
   } = use(NeynarContext);
   const {
     isEnabled: threadsIsEnabled,
     isUsable: threadsIsUsable,
     accounts: threadsAccounts,
     post: threadsPost,
+    VIDEO_MAX_DURATION: THREADS_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: THREADS_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: THREADS_VIDEO_MIN_DURATION,
   } = use(ThreadsContext);
   const {
     isEnabled: tiktokIsEnabled,
     isUsable: tiktokIsUsable,
     accounts: tiktokAccounts,
     post: tiktokPost,
+    VIDEO_MAX_DURATION: TIKTOK_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: TIKTOK_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: TIKTOK_VIDEO_MIN_DURATION,
   } = use(TiktokContext);
   const {
     isEnabled: twitterIsEnabled,
     isUsable: twitterIsUsable,
     accounts: twitterAccounts,
     post: twitterPost,
+    VIDEO_MAX_DURATION: TWITTER_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: TWITTER_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: TWITTER_VIDEO_MIN_DURATION,
   } = use(TwitterContext);
   const {
     isEnabled: youtubeIsEnabled,
     isUsable: youtubeIsUsable,
     accounts: youtubeAccounts,
     post: youtubePost,
+    VIDEO_MAX_DURATION: YOUTUBE_VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE: YOUTUBE_VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION: YOUTUBE_VIDEO_MIN_DURATION,
   } = use(YoutubeContext);
 
   const {
@@ -287,7 +312,9 @@ export function PostProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function preparePostVideo(selectedFile: File): Promise<PostVideo> {
+  async function preparePostVideo(
+    selectedFile: File,
+  ): Promise<Record<string, PostVideo>> {
     const needsHls = neynarIsEnabled;
 
     if (!pinataIsUsable && !amazonS3IsUsable) {
@@ -304,11 +331,19 @@ export function PostProvider({ children }: Readonly<Props>) {
       throw new Error("You must enable a storage provider.");
     }
 
+    const videos: Record<string, PostVideo> = {
+      base: {
+        video: null,
+        videoHSLUrl: "",
+        videoUrl: "",
+      },
+    };
+
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
-    const video = await convertVideo(selectedFile);
-    // const video = selectedFile;
+    // videos.base.video = await convertVideo(selectedFile);
+    videos.base.video = selectedFile;
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
@@ -316,9 +351,114 @@ export function PostProvider({ children }: Readonly<Props>) {
     let hlsFiles: HLSFiles | null = null;
     if (needsHls) {
       console.log("Converting HLS video before upload...");
-      hlsFiles = await convertHLSVideo(video);
+      hlsFiles = await convertHLSVideo(videos.base.video);
     }
     // -------------------------------------------------------------------------
+
+    if (blueskyIsEnabled) {
+      videos.bluesky = {
+        video: await trimVideo({
+          maxDuration: BLUESKY_VIDEO_MAX_DURATION,
+          maxFilesize: BLUESKY_VIDEO_MAX_FILESIZE,
+          minDuration: BLUESKY_VIDEO_MIN_DURATION,
+          video: videos.base.video,
+        }),
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+    if (facebookIsEnabled) {
+      videos.facebook = {
+        video: await trimVideo({
+          maxDuration: FACEBOOK_VIDEO_MAX_DURATION,
+          maxFilesize: FACEBOOK_VIDEO_MAX_FILESIZE,
+          minDuration: FACEBOOK_VIDEO_MIN_DURATION,
+          video: videos.base.video,
+        }),
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+    if (instagramIsEnabled) {
+      videos.instagram = {
+        video: await trimVideo({
+          maxDuration: INSTAGRAM_VIDEO_MAX_DURATION,
+          maxFilesize: INSTAGRAM_VIDEO_MAX_FILESIZE,
+          minDuration: INSTAGRAM_VIDEO_MIN_DURATION,
+          video: videos.base.video,
+        }),
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+    if (neynarIsEnabled) {
+      videos.neynar = {
+        // video: await trimVideo({
+        //   maxDuration: NEYNAR_VIDEO_MAX_DURATION,
+        //   maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
+        //   minDuration: NEYNAR_VIDEO_MIN_DURATION,
+        //   video: videos.base.video,
+        // }),
+        video: null,
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+    if (threadsIsEnabled) {
+      videos.threads = {
+        video: await trimVideo({
+          maxDuration: THREADS_VIDEO_MAX_DURATION,
+          maxFilesize: THREADS_VIDEO_MAX_FILESIZE,
+          minDuration: THREADS_VIDEO_MIN_DURATION,
+          video: videos.base.video,
+        }),
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+    if (tiktokIsEnabled) {
+      videos.tiktok = {
+        video: await trimVideo({
+          maxDuration: TIKTOK_VIDEO_MAX_DURATION,
+          maxFilesize: TIKTOK_VIDEO_MAX_FILESIZE,
+          minDuration: TIKTOK_VIDEO_MIN_DURATION,
+          video: videos.base.video,
+        }),
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+    if (twitterIsEnabled) {
+      videos.twitter = {
+        video: await trimVideo({
+          maxDuration: TWITTER_VIDEO_MAX_DURATION,
+          maxFilesize: TWITTER_VIDEO_MAX_FILESIZE,
+          minDuration: TWITTER_VIDEO_MIN_DURATION,
+          video: videos.base.video,
+        }),
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+    if (youtubeIsEnabled) {
+      videos.youtube = {
+        video: await trimVideo({
+          maxDuration: YOUTUBE_VIDEO_MAX_DURATION,
+          maxFilesize: YOUTUBE_VIDEO_MAX_FILESIZE,
+          minDuration: YOUTUBE_VIDEO_MIN_DURATION,
+          video: videos.base.video,
+        }),
+        videoHSLUrl: "",
+        videoUrl: "",
+      };
+    }
+
+    console.log(videos);
+
+    // if (videos.bluesky.video) {
+    //   const converter = new VideoConverter();
+    //   converter.downloadFile(videos.bluesky.video);
+    // }
 
     // -------------------------------------------------------------------------
     if (DEBUG_STOP_AFTER_CONVERSION) {
@@ -330,42 +470,49 @@ export function PostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
     console.log("Uploading video to remote storage...");
 
-    let videoUrl = "";
+    for (const [videoId, videoData] of Object.entries(videos)) {
+      if (videoData.video) {
+        let videoUrl = "";
 
-    const s3VideoResult = await amazonS3StoreVideo(video);
-    if (s3VideoResult) {
-      videoUrl = s3VideoResult;
+        // eslint-disable-next-line no-await-in-loop
+        const s3VideoResult = await amazonS3StoreVideo(videoData.video);
+        if (s3VideoResult) {
+          videoUrl = s3VideoResult;
+        }
+
+        // eslint-disable-next-line no-await-in-loop
+        const pinataVideoResult = await pinataStoreVideo(videoData.video);
+        if (pinataVideoResult) {
+          videoUrl = pinataVideoResult;
+        }
+
+        if (!videoUrl) {
+          console.error("Failed to upload video to storage.");
+          throw new Error("Failed to upload video to storage.");
+        }
+
+        videos[videoId].videoUrl = videoUrl;
+
+        console.log("Video upload successful:", videoUrl);
+      }
     }
-
-    const pinataVideoResult = await pinataStoreVideo(video);
-    if (pinataVideoResult) {
-      videoUrl = pinataVideoResult;
-    }
-
-    if (!videoUrl) {
-      console.error("Failed to upload video to storage.");
-      throw new Error("Failed to upload video to storage.");
-    }
-
-    console.log("Video upload successful:", videoUrl);
     // -------------------------------------------------------------------------
 
     // Upload HLS Streamable video to storage.
     // -------------------------------------------------------------------------
-    let videoHSLUrl = "";
     if (needsHls && hlsFiles) {
       // Upload HLS files to Pinata
       console.log("Uploading HLS files to Pinata...");
-      videoHSLUrl = await pinataStoreHLSFolder(
+      videos.neynar.videoHSLUrl = await pinataStoreHLSFolder(
         hlsFiles,
         `hls-video-${Date.now()}`,
       );
 
-      if (!videoHSLUrl) {
+      if (!videos.neynar.videoHSLUrl) {
         throw new Error("Failed to upload HLS files to Pinata");
       }
 
-      console.log("HLS upload successful:", videoHSLUrl);
+      console.log("HLS upload successful:", videos.neynar.videoHSLUrl);
     }
     // -------------------------------------------------------------------------
 
@@ -375,11 +522,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     }
     // -------------------------------------------------------------------------
 
-    return {
-      video,
-      videoHSLUrl,
-      videoUrl,
-    };
+    return videos;
   }
 
   async function createPost({

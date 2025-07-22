@@ -2,7 +2,7 @@ import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 import type { BlueskyCredentials } from "@/app/services/post/types";
 
-const VIDEO_MAX_FILESIZE = 100;
+const VIDEO_MAX_FILESIZE = 1024 * 1024 * 100;
 const VIDEO_MIN_DURATION = 3;
 const VIDEO_MAX_DURATION = 180;
 

@@ -1,0 +1,195 @@
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { fetchFile, toBlobURL } from "@ffmpeg/util";
+
+interface TrimVideoOptions {
+  video: File;
+  maxDuration: number; // in seconds
+  maxFilesize: number; // in bytes
+  minDuration: number; // in seconds
+}
+
+let ffmpegInstance: FFmpeg | null = null;
+
+async function initializeFFmpeg(): Promise<FFmpeg> {
+  if (ffmpegInstance) {
+    return ffmpegInstance;
+  }
+
+  const ffmpeg = new FFmpeg();
+
+  // Load FFmpeg with WebAssembly
+  await ffmpeg.load();
+
+  ffmpegInstance = ffmpeg;
+
+  return ffmpeg;
+}
+
+async function getVideoDurationFFmpeg(
+  ffmpeg: FFmpeg,
+  inputFileName: string,
+): Promise<number> {
+  try {
+    // Use ffprobe to get video duration
+    await ffmpeg.exec([
+      "-i",
+      inputFileName,
+      "-hide_banner",
+      "-v",
+      "quiet",
+      "-show_entries",
+      "format=duration",
+      "-of",
+      "csv=p=0",
+    ]);
+
+    // This is a simplified approach - in practice you might want to parse ffprobe output
+    // For now, we'll fall back to getting duration from the video element
+    return 0;
+  } catch (error) {
+    console.warn(
+      "Could not get duration from ffmpeg, falling back to video element",
+    );
+    return 0;
+  }
+}
+
+async function getVideoActualDuration(video: File): Promise<number> {
+  return new Promise((resolve) => {
+    const videoElement = document.createElement("video");
+    videoElement.preload = "metadata";
+
+    videoElement.onloadedmetadata = () => {
+      window.URL.revokeObjectURL(videoElement.src);
+      resolve(videoElement.duration);
+    };
+
+    videoElement.onerror = () => {
+      window.URL.revokeObjectURL(videoElement.src);
+      resolve(0);
+    };
+
+    videoElement.src = URL.createObjectURL(video);
+  });
+}
+
+function getFileExtension(filename: string): string {
+  const extension = filename.split(".").pop()?.toLowerCase();
+  return extension ?? "mp4";
+}
+
+export async function trimVideo({
+  video,
+  maxDuration,
+  maxFilesize,
+  minDuration,
+}: TrimVideoOptions): Promise<File | null> {
+  try {
+    console.log(
+      `Trimming video: maxDuration=${maxDuration}s, maxFilesize=${maxFilesize} bytes, minDuration=${minDuration}s`,
+    );
+
+    // Get actual video duration
+    const actualDuration = await getVideoActualDuration(video);
+    console.log(`Video actual duration: ${actualDuration}s`);
+
+    // If video is shorter than minimum duration, return as-is
+    if (actualDuration < minDuration) {
+      throw new Error("Video is shorter than minimum duration!");
+    }
+
+    // Check if video needs trimming
+    if (actualDuration <= maxDuration && video.size <= maxFilesize) {
+      console.log("Video is within limits, no trimming needed");
+      return null;
+    }
+
+    // Initialize FFmpeg
+    console.log("Initializing FFmpeg...");
+    const ffmpeg = await initializeFFmpeg();
+
+    const inputFileName = `input_${Date.now()}.${getFileExtension(video.name)}`;
+    const outputFileName = `output_${Date.now()}.${getFileExtension(video.name)}`;
+
+    // Write input file to FFmpeg filesystem
+    console.log("Writing input file to FFmpeg filesystem...");
+    await ffmpeg.writeFile(inputFileName, await fetchFile(video));
+
+    // Calculate trim duration (use the smaller of maxDuration or actual duration)
+    const trimDuration = Math.min(maxDuration, actualDuration);
+    console.log(`Trimming to ${trimDuration}s`);
+
+    // Trim video using stream copy (no re-encoding)
+    console.log("Executing FFmpeg trim command...");
+    await ffmpeg.exec([
+      "-i",
+      inputFileName,
+      "-t",
+      trimDuration.toString(), // Duration to trim to
+      "-c",
+      "copy", // Copy streams without re-encoding
+      "-avoid_negative_ts",
+      "make_zero", // Handle timestamp issues
+      "-fflags",
+      "+genpts", // Generate presentation timestamps
+      "-y", // Overwrite output file
+      outputFileName,
+    ]);
+
+    // Read the output file
+    console.log("Reading trimmed video...");
+    const outputData = await ffmpeg.readFile(outputFileName);
+
+    // Clean up FFmpeg filesystem
+    try {
+      await ffmpeg.deleteFile(inputFileName);
+      await ffmpeg.deleteFile(outputFileName);
+    } catch (cleanupError) {
+      console.warn("Failed to clean up temporary files:", cleanupError);
+    }
+
+    // Convert output to File object
+    const trimmedBlob = new Blob([outputData], { type: video.type });
+    const trimmedFile = new File([trimmedBlob], `trimmed_${video.name}`, {
+      type: video.type,
+    });
+
+    console.log(
+      `Trim complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB (${actualDuration.toFixed(1)}s) -> ` +
+        `Trimmed: ${(trimmedFile.size / 1024 / 1024).toFixed(2)}MB (${trimDuration.toFixed(1)}s)`,
+    );
+
+    // Check if trimmed file still exceeds filesize limit
+    if (trimmedFile.size > maxFilesize) {
+      console.warn(
+        `Trimmed video (${(trimmedFile.size / 1024 / 1024).toFixed(2)}MB) still exceeds ` +
+          `filesize limit (${(maxFilesize / 1024 / 1024).toFixed(2)}MB). Consider additional processing.`,
+      );
+    }
+
+    return trimmedFile;
+  } catch (error) {
+    console.error("Video trimming failed:", error);
+
+    // If trimming fails, return original video if it meets minimum requirements
+    if (video.size <= maxFilesize) {
+      console.log(
+        "Trimming failed but original video meets filesize requirements, returning original",
+      );
+      return video;
+    }
+
+    throw new Error(
+      `Video trimming failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+  }
+}
+
+// Utility function to clean up FFmpeg instance if needed
+export function cleanupFFmpeg(): void {
+  if (ffmpegInstance) {
+    // FFmpeg doesn't have an explicit cleanup method in the current API
+    // The instance will be garbage collected
+    ffmpegInstance = null;
+  }
+}

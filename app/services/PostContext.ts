@@ -23,7 +23,7 @@ interface PostContextType {
   hlsConversionProgress: number;
   isHLSConverting: boolean;
   isVideoConverting: boolean;
-  preparePostVideo: (selectedFile: File) => Promise<PostVideo>;
+  preparePostVideo: (selectedFile: File) => Promise<Record<string, PostVideo>>;
   videoCodecInfo: string;
   videoConversionError: string | null;
   videoConversionProgress: number;
