@@ -532,8 +532,8 @@ export function PostProvider({ children }: Readonly<Props>) {
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
-    // videos.base.video = await convertVideo(selectedFile);
-    videos.base.video = selectedFile;
+    videos.base.video = await convertVideo(selectedFile);
+    // videos.base.video = selectedFile;
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
