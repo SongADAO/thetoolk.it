@@ -35,6 +35,8 @@ function PostForm() {
     hlsConversionProgress,
     hlsConversionStatus,
     isHLSConverting,
+    isPosting,
+    isStoring,
     isVideoConverting,
     isVideoTrimming,
     preparePostVideo,
@@ -268,6 +270,24 @@ function PostForm() {
               <div className="mt-1 text-center text-sm">
                 {hlsConversionProgress}% complete
               </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isStoring ? (
+          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              Uploading videos to storage...
+            </div>
+          </div>
+        ) : null}
+
+        {isPosting ? (
+          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              Submitting posts to services...
             </div>
           </div>
         ) : null}

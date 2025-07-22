@@ -21,6 +21,8 @@ interface PostContextType {
   hlsConversionProgress: number;
   hlsConversionStatus: string;
   isHLSConverting: boolean;
+  isPosting: boolean;
+  isStoring: boolean;
   isVideoConverting: boolean;
   isVideoTrimming: boolean;
   preparePostVideo: (selectedFile: File) => Promise<Record<string, PostVideo>>;
@@ -45,6 +47,8 @@ const PostContext = createContext<PostContextType>({
   hlsConversionProgress: 0,
   hlsConversionStatus: "",
   isHLSConverting: false,
+  isPosting: false,
+  isStoring: false,
   isVideoConverting: false,
   isVideoTrimming: false,
   preparePostVideo: async () =>

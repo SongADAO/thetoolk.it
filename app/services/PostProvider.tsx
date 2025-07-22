@@ -42,6 +42,7 @@ interface Props {
 
 export function PostProvider({ children }: Readonly<Props>) {
   const {
+    isPosting: blueskyIsPosting,
     isEnabled: blueskyIsEnabled,
     isUsable: blueskyIsUsable,
     accounts: blueskyAccounts,
@@ -51,6 +52,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     VIDEO_MIN_DURATION: BLUESKY_VIDEO_MIN_DURATION,
   } = use(BlueskyContext);
   const {
+    isPosting: facebookIsPosting,
     isEnabled: facebookIsEnabled,
     isUsable: facebookIsUsable,
     accounts: facebookAccounts,
@@ -60,6 +62,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     VIDEO_MIN_DURATION: FACEBOOK_VIDEO_MIN_DURATION,
   } = use(FacebookContext);
   const {
+    isPosting: instagramIsPosting,
     isEnabled: instagramIsEnabled,
     isUsable: instagramIsUsable,
     accounts: instagramAccounts,
@@ -69,6 +72,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     VIDEO_MIN_DURATION: INSTAGRAM_VIDEO_MIN_DURATION,
   } = use(InstagramContext);
   const {
+    isPosting: neynarIsPosting,
     isUsable: neynarIsUsable,
     isEnabled: neynarIsEnabled,
     accounts: neynarAccounts,
@@ -78,6 +82,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     // VIDEO_MIN_DURATION: NEYNAR_VIDEO_MIN_DURATION,
   } = use(NeynarContext);
   const {
+    isPosting: threadsIsPosting,
     isEnabled: threadsIsEnabled,
     isUsable: threadsIsUsable,
     accounts: threadsAccounts,
@@ -87,6 +92,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     VIDEO_MIN_DURATION: THREADS_VIDEO_MIN_DURATION,
   } = use(ThreadsContext);
   const {
+    isPosting: tiktokIsPosting,
     isEnabled: tiktokIsEnabled,
     isUsable: tiktokIsUsable,
     accounts: tiktokAccounts,
@@ -96,6 +102,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     VIDEO_MIN_DURATION: TIKTOK_VIDEO_MIN_DURATION,
   } = use(TiktokContext);
   const {
+    isPosting: twitterIsPosting,
     isEnabled: twitterIsEnabled,
     isUsable: twitterIsUsable,
     accounts: twitterAccounts,
@@ -105,6 +112,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     VIDEO_MIN_DURATION: TWITTER_VIDEO_MIN_DURATION,
   } = use(TwitterContext);
   const {
+    isPosting: youtubeIsPosting,
     isEnabled: youtubeIsEnabled,
     isUsable: youtubeIsUsable,
     accounts: youtubeAccounts,
@@ -115,16 +123,30 @@ export function PostProvider({ children }: Readonly<Props>) {
   } = use(YoutubeContext);
 
   const {
+    isStoring: pinataIsStoring,
     isEnabled: pinataIsEnabled,
     isUsable: pinataIsUsable,
     storeVideo: pinataStoreVideo,
     storeHLSFolder: pinataStoreHLSFolder,
   } = use(PinataContext);
   const {
+    isStoring: amazonS3IsStoring,
     isEnabled: amazonS3IsEnabled,
     isUsable: amazonS3IsUsable,
     storeVideo: amazonS3StoreVideo,
   } = use(AmazonS3Context);
+
+  const isStoring = pinataIsStoring || amazonS3IsStoring;
+
+  const isPosting =
+    blueskyIsPosting ||
+    facebookIsPosting ||
+    instagramIsPosting ||
+    neynarIsPosting ||
+    threadsIsPosting ||
+    tiktokIsPosting ||
+    twitterIsPosting ||
+    youtubeIsPosting;
 
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
@@ -695,6 +717,8 @@ export function PostProvider({ children }: Readonly<Props>) {
       hlsConversionProgress,
       hlsConversionStatus,
       isHLSConverting,
+      isPosting,
+      isStoring,
       isVideoConverting,
       isVideoTrimming,
       preparePostVideo,
@@ -717,6 +741,8 @@ export function PostProvider({ children }: Readonly<Props>) {
       hlsConversionProgress,
       hlsConversionStatus,
       isHLSConverting,
+      isPosting,
+      isStoring,
       isVideoConverting,
       isVideoTrimming,
       preparePostVideo,
