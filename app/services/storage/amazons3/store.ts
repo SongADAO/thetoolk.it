@@ -62,7 +62,7 @@ async function uploadFile({
       const estimatedTime = Math.max(5000, fileSize / 100000);
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
-      setStoreProgress(Math.round(progress * 0.3));
+      setStoreProgress(Math.round(progress));
       setStoreStatus(`Uploading media... ${Math.round(progress)}%`);
     }, 500);
 
