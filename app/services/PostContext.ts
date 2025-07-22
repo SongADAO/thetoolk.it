@@ -9,9 +9,7 @@ interface PostVideo {
 interface CreatePostProps {
   text: string;
   title: string;
-  video: File | null;
-  videoHSLUrl: string;
-  videoUrl: string;
+  videos: Record<string, PostVideo>;
 }
 
 interface PostContextType {
@@ -43,9 +41,11 @@ const PostContext = createContext<PostContextType>({
   isVideoConverting: false,
   preparePostVideo: async () =>
     await Promise.resolve({
-      video: null,
-      videoHSLUrl: "",
-      videoUrl: "",
+      base: {
+        video: null,
+        videoHSLUrl: "",
+        videoUrl: "",
+      },
     }),
   videoCodecInfo: "",
   videoConversionError: null,

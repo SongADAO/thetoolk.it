@@ -70,9 +70,9 @@ export function PostProvider({ children }: Readonly<Props>) {
     isEnabled: neynarIsEnabled,
     accounts: neynarAccounts,
     post: neynarPost,
-    VIDEO_MAX_DURATION: NEYNAR_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: NEYNAR_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: NEYNAR_VIDEO_MIN_DURATION,
+    // VIDEO_MAX_DURATION: NEYNAR_VIDEO_MAX_DURATION,
+    // VIDEO_MAX_FILESIZE: NEYNAR_VIDEO_MAX_FILESIZE,
+    // VIDEO_MIN_DURATION: NEYNAR_VIDEO_MIN_DURATION,
   } = use(NeynarContext);
   const {
     isEnabled: threadsIsEnabled,
@@ -342,8 +342,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
-    // videos.base.video = await convertVideo(selectedFile);
-    videos.base.video = selectedFile;
+    videos.base.video = await convertVideo(selectedFile);
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
@@ -528,9 +527,7 @@ export function PostProvider({ children }: Readonly<Props>) {
   async function createPost({
     text,
     title,
-    video,
-    videoHSLUrl,
-    videoUrl,
+    videos,
   }: Readonly<CreatePostProps>): Promise<void> {
     const allResults = await Promise.allSettled([
       blueskyPost({
@@ -538,72 +535,72 @@ export function PostProvider({ children }: Readonly<Props>) {
         title,
         userId: blueskyAccounts[0]?.id,
         username: blueskyAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.bluesky.video ?? videos.base.video,
+        videoHSLUrl: videos.bluesky.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.bluesky.videoUrl || videos.base.videoUrl,
       }),
       facebookPost({
         text,
         title,
         userId: facebookAccounts[0]?.id,
         username: facebookAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.facebook.video ?? videos.base.video,
+        videoHSLUrl: videos.facebook.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.facebook.videoUrl || videos.base.videoUrl,
       }),
       instagramPost({
         text,
         title,
         userId: instagramAccounts[0]?.id,
         username: instagramAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.instagram.video ?? videos.base.video,
+        videoHSLUrl: videos.instagram.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.instagram.videoUrl || videos.base.videoUrl,
       }),
       neynarPost({
         text,
         title,
         userId: neynarAccounts[0]?.id,
         username: neynarAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.neynar.video ?? videos.base.video,
+        videoHSLUrl: videos.neynar.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.neynar.videoUrl || videos.base.videoUrl,
       }),
       threadsPost({
         text,
         title,
         userId: threadsAccounts[0]?.id,
         username: threadsAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.threads.video ?? videos.base.video,
+        videoHSLUrl: videos.threads.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.threads.videoUrl || videos.base.videoUrl,
       }),
       tiktokPost({
         text,
         title,
         userId: tiktokAccounts[0]?.id,
         username: tiktokAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.tiktok.video ?? videos.base.video,
+        videoHSLUrl: videos.tiktok.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.tiktok.videoUrl || videos.base.videoUrl,
       }),
       twitterPost({
         text,
         title,
         userId: twitterAccounts[0]?.id,
         username: twitterAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.twitter.video ?? videos.base.video,
+        videoHSLUrl: videos.twitter.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.twitter.videoUrl || videos.base.videoUrl,
       }),
       youtubePost({
         text,
         title,
         userId: youtubeAccounts[0]?.id,
         username: youtubeAccounts[0]?.username,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        video: videos.youtube.video ?? videos.base.video,
+        videoHSLUrl: videos.youtube.videoHSLUrl || videos.base.videoHSLUrl,
+        videoUrl: videos.youtube.videoUrl || videos.base.videoUrl,
       }),
     ]);
 

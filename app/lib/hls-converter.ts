@@ -122,7 +122,7 @@ export class HLSConverter {
     });
 
     // Add file size check (adjust based on your needs)
-    const maxFileSize = 300 * 1024 * 1024; // 300MB for H.264/AAC
+    const maxFileSize = 1024 * 1024 * 1024; // 1GB for H.264/AAC
     if (videoFile.size > maxFileSize) {
       throw new Error(
         `Video file too large: ${(videoFile.size / 1024 / 1024).toFixed(1)}MB. Maximum: ${maxFileSize / 1024 / 1024}MB`,

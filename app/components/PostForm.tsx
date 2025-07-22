@@ -64,25 +64,41 @@ function PostForm() {
       setIsPending(true);
       setError("");
 
-      if (!canPostToAllServices) {
-        setError("Some selected posting services are not authorized.");
-      }
-
-      if (!canStoreToAllServices) {
-        setError("Some selected storage services are not authorized.");
-      }
-
       const formData = new FormData(event.currentTarget);
       const newFormState = fromFormData(formData);
       setState(newFormState);
 
-      const { video, videoHSLUrl, videoUrl } = selectedFile
-        ? await preparePostVideo(selectedFile)
-        : {
-            video: null,
-            videoHSLUrl: "",
-            videoUrl: "",
-          };
+      if (!newFormState.text) {
+        throw new Error("Please enter a message.");
+      }
+
+      if (!newFormState.title) {
+        throw new Error("Please enter a title.");
+      }
+
+      if (!selectedFile) {
+        throw new Error("Please select a video file.");
+      }
+
+      if (!canPostToAllServices) {
+        throw new Error("Some selected posting services are not authorized.");
+      }
+
+      if (!canStoreToAllServices) {
+        throw new Error("Some selected storage services are not authorized.");
+      }
+
+      const videos = await preparePostVideo(selectedFile);
+
+      // const videos = selectedFile
+      //   ? await preparePostVideo(selectedFile)
+      //   : {
+      //       base: {
+      //         video: null,
+      //         videoHSLUrl: "",
+      //         videoUrl: "",
+      //       },
+      //     };
 
       // const video = selectedFile;
       // const videoUrl = "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
@@ -91,9 +107,7 @@ function PostForm() {
       await createPost({
         text: newFormState.text,
         title: newFormState.title,
-        video,
-        videoHSLUrl,
-        videoUrl,
+        videos,
       });
     } catch (err: unknown) {
       console.error(err);
