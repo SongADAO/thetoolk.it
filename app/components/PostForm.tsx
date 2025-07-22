@@ -28,20 +28,23 @@ function fromFormData(formData: FormData): FormState {
 
 function PostForm() {
   const {
+    canPostToAllServices,
+    canStoreToAllServices,
     createPost,
     getVideoInfo,
     hlsConversionProgress,
     hlsConversionStatus,
     isHLSConverting,
     isVideoConverting,
+    isVideoTrimming,
     preparePostVideo,
     videoConversionProgress,
     videoConversionStatus,
     videoDuration,
     videoFileSize,
     videoPreviewUrl,
-    canPostToAllServices,
-    canStoreToAllServices,
+    videoTrimProgress,
+    videoTrimStatus,
   } = use(PostContext);
 
   const [state, setState] = useState<FormState>(fromInitial());
@@ -224,6 +227,26 @@ function PostForm() {
               </div>
               <div className="mt-1 text-center text-sm">
                 {videoConversionProgress}% complete
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isVideoTrimming ? (
+          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              {videoTrimStatus}
+            </div>
+            <div className="mt-2">
+              <div className="h-2 w-full rounded bg-gray-600">
+                <div
+                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
+                  style={{ width: `${videoTrimProgress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-center text-sm">
+                {videoTrimProgress}% complete
               </div>
             </div>
           </div>

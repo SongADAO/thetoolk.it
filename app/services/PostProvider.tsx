@@ -133,6 +133,11 @@ export function PostProvider({ children }: Readonly<Props>) {
   const [videoConversionError, setVideoConversionError] = useState("");
   const [isVideoConverting, setIsVideoConverting] = useState(false);
 
+  const [videoTrimStatus, setVideoTrimStatus] = useState("");
+  const [videoTrimProgress, setVideoTrimProgress] = useState(0);
+  const [videoTrimError, setVideoTrimError] = useState("");
+  const [isVideoTrimming, setIsVideoTrimming] = useState(false);
+
   const [hlsConversionStatus, setHLSConversionStatus] = useState("");
   const [hlsConversionProgress, setHLSConversionProgress] = useState(0);
   const [hlsConversionError, setHLSConversionError] = useState("");
@@ -315,6 +320,145 @@ export function PostProvider({ children }: Readonly<Props>) {
     }
   }
 
+  async function trimPlatformVideos(
+    videos: Record<string, PostVideo>,
+  ): Promise<Record<string, PostVideo>> {
+    try {
+      setIsVideoTrimming(true);
+      setVideoTrimStatus("Trimming videos for platform constraints...");
+      setVideoTrimProgress(0);
+
+      if (DEBUG_MEDIA) {
+        console.log("DEBUG MODE: Skipping video trimming.");
+        await sleep(1000);
+        setVideoTrimProgress(20);
+        await sleep(1000);
+        setVideoTrimProgress(40);
+        await sleep(1000);
+        setVideoTrimProgress(60);
+        await sleep(1000);
+        setVideoTrimProgress(80);
+        await sleep(1000);
+        setVideoTrimProgress(100);
+
+        return videos;
+      }
+
+      if (videos.base.video === null) {
+        throw new Error("Base video is missing.");
+      }
+
+      /* eslint-disable require-atomic-updates */
+      if (blueskyIsEnabled) {
+        videos.bluesky = {
+          video: await trimVideo({
+            maxDuration: BLUESKY_VIDEO_MAX_DURATION,
+            maxFilesize: BLUESKY_VIDEO_MAX_FILESIZE,
+            minDuration: BLUESKY_VIDEO_MIN_DURATION,
+            video: videos.base.video,
+          }),
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      if (facebookIsEnabled) {
+        videos.facebook = {
+          video: await trimVideo({
+            maxDuration: FACEBOOK_VIDEO_MAX_DURATION,
+            maxFilesize: FACEBOOK_VIDEO_MAX_FILESIZE,
+            minDuration: FACEBOOK_VIDEO_MIN_DURATION,
+            video: videos.base.video,
+          }),
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      if (instagramIsEnabled) {
+        videos.instagram = {
+          video: await trimVideo({
+            maxDuration: INSTAGRAM_VIDEO_MAX_DURATION,
+            maxFilesize: INSTAGRAM_VIDEO_MAX_FILESIZE,
+            minDuration: INSTAGRAM_VIDEO_MIN_DURATION,
+            video: videos.base.video,
+          }),
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      if (neynarIsEnabled) {
+        videos.neynar = {
+          // video: await trimVideo({
+          //   maxDuration: NEYNAR_VIDEO_MAX_DURATION,
+          //   maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
+          //   minDuration: NEYNAR_VIDEO_MIN_DURATION,
+          //   video: videos.base.video,
+          // }),
+          video: null,
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      if (threadsIsEnabled) {
+        videos.threads = {
+          video: await trimVideo({
+            maxDuration: THREADS_VIDEO_MAX_DURATION,
+            maxFilesize: THREADS_VIDEO_MAX_FILESIZE,
+            minDuration: THREADS_VIDEO_MIN_DURATION,
+            video: videos.base.video,
+          }),
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      if (tiktokIsEnabled) {
+        videos.tiktok = {
+          video: await trimVideo({
+            maxDuration: TIKTOK_VIDEO_MAX_DURATION,
+            maxFilesize: TIKTOK_VIDEO_MAX_FILESIZE,
+            minDuration: TIKTOK_VIDEO_MIN_DURATION,
+            video: videos.base.video,
+          }),
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      if (twitterIsEnabled) {
+        videos.twitter = {
+          video: await trimVideo({
+            maxDuration: TWITTER_VIDEO_MAX_DURATION,
+            maxFilesize: TWITTER_VIDEO_MAX_FILESIZE,
+            minDuration: TWITTER_VIDEO_MIN_DURATION,
+            video: videos.base.video,
+          }),
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      if (youtubeIsEnabled) {
+        videos.youtube = {
+          video: await trimVideo({
+            maxDuration: YOUTUBE_VIDEO_MAX_DURATION,
+            maxFilesize: YOUTUBE_VIDEO_MAX_FILESIZE,
+            minDuration: YOUTUBE_VIDEO_MIN_DURATION,
+            video: videos.base.video,
+          }),
+          videoHSLUrl: "",
+          videoUrl: "",
+        };
+      }
+      /* eslint-enable require-atomic-updates */
+
+      return videos;
+    } catch (error) {
+      console.error("Platform video trimming failed:", error);
+      setVideoTrimError("Failed to trim some videos.");
+      throw error;
+    } finally {
+      setIsVideoTrimming(false);
+      setVideoTrimProgress(0);
+    }
+  }
+
   async function preparePostVideo(
     selectedFile: File,
   ): Promise<Record<string, PostVideo>> {
@@ -334,7 +478,7 @@ export function PostProvider({ children }: Readonly<Props>) {
       throw new Error("You must enable a storage provider.");
     }
 
-    const videos: Record<string, PostVideo> = {
+    let videos: Record<string, PostVideo> = {
       base: {
         video: null,
         videoHSLUrl: "",
@@ -346,6 +490,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
     videos.base.video = await convertVideo(selectedFile);
+    // videos.base.video = selectedFile;
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
@@ -357,103 +502,11 @@ export function PostProvider({ children }: Readonly<Props>) {
     }
     // -------------------------------------------------------------------------
 
-    if (blueskyIsEnabled) {
-      videos.bluesky = {
-        video: await trimVideo({
-          maxDuration: BLUESKY_VIDEO_MAX_DURATION,
-          maxFilesize: BLUESKY_VIDEO_MAX_FILESIZE,
-          minDuration: BLUESKY_VIDEO_MIN_DURATION,
-          video: videos.base.video,
-        }),
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
-    if (facebookIsEnabled) {
-      videos.facebook = {
-        video: await trimVideo({
-          maxDuration: FACEBOOK_VIDEO_MAX_DURATION,
-          maxFilesize: FACEBOOK_VIDEO_MAX_FILESIZE,
-          minDuration: FACEBOOK_VIDEO_MIN_DURATION,
-          video: videos.base.video,
-        }),
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
-    if (instagramIsEnabled) {
-      videos.instagram = {
-        video: await trimVideo({
-          maxDuration: INSTAGRAM_VIDEO_MAX_DURATION,
-          maxFilesize: INSTAGRAM_VIDEO_MAX_FILESIZE,
-          minDuration: INSTAGRAM_VIDEO_MIN_DURATION,
-          video: videos.base.video,
-        }),
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
-    if (neynarIsEnabled) {
-      videos.neynar = {
-        // video: await trimVideo({
-        //   maxDuration: NEYNAR_VIDEO_MAX_DURATION,
-        //   maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
-        //   minDuration: NEYNAR_VIDEO_MIN_DURATION,
-        //   video: videos.base.video,
-        // }),
-        video: null,
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
-    if (threadsIsEnabled) {
-      videos.threads = {
-        video: await trimVideo({
-          maxDuration: THREADS_VIDEO_MAX_DURATION,
-          maxFilesize: THREADS_VIDEO_MAX_FILESIZE,
-          minDuration: THREADS_VIDEO_MIN_DURATION,
-          video: videos.base.video,
-        }),
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
-    if (tiktokIsEnabled) {
-      videos.tiktok = {
-        video: await trimVideo({
-          maxDuration: TIKTOK_VIDEO_MAX_DURATION,
-          maxFilesize: TIKTOK_VIDEO_MAX_FILESIZE,
-          minDuration: TIKTOK_VIDEO_MIN_DURATION,
-          video: videos.base.video,
-        }),
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
-    if (twitterIsEnabled) {
-      videos.twitter = {
-        video: await trimVideo({
-          maxDuration: TWITTER_VIDEO_MAX_DURATION,
-          maxFilesize: TWITTER_VIDEO_MAX_FILESIZE,
-          minDuration: TWITTER_VIDEO_MIN_DURATION,
-          video: videos.base.video,
-        }),
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
-    if (youtubeIsEnabled) {
-      videos.youtube = {
-        video: await trimVideo({
-          maxDuration: YOUTUBE_VIDEO_MAX_DURATION,
-          maxFilesize: YOUTUBE_VIDEO_MAX_FILESIZE,
-          minDuration: YOUTUBE_VIDEO_MIN_DURATION,
-          video: videos.base.video,
-        }),
-        videoHSLUrl: "",
-        videoUrl: "",
-      };
-    }
+    // Trim platform specific videos
+    // -------------------------------------------------------------------------
+    console.log("Converting HLS video before upload...");
+    videos = await trimPlatformVideos(videos);
+    // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
     console.log(videos);
@@ -622,6 +675,7 @@ export function PostProvider({ children }: Readonly<Props>) {
       hlsConversionStatus,
       isHLSConverting,
       isVideoConverting,
+      isVideoTrimming,
       preparePostVideo,
       videoCodecInfo,
       videoConversionError,
@@ -630,6 +684,9 @@ export function PostProvider({ children }: Readonly<Props>) {
       videoDuration,
       videoFileSize,
       videoPreviewUrl,
+      videoTrimError,
+      videoTrimProgress,
+      videoTrimStatus,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -640,6 +697,7 @@ export function PostProvider({ children }: Readonly<Props>) {
       hlsConversionStatus,
       isHLSConverting,
       isVideoConverting,
+      isVideoTrimming,
       preparePostVideo,
       videoCodecInfo,
       videoConversionError,
@@ -648,6 +706,9 @@ export function PostProvider({ children }: Readonly<Props>) {
       videoDuration,
       videoFileSize,
       videoPreviewUrl,
+      videoTrimError,
+      videoTrimProgress,
+      videoTrimStatus,
     ],
   );
 
