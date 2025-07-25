@@ -40,6 +40,8 @@ function PostForm() {
     isVideoConverting,
     isVideoTrimming,
     preparePostVideo,
+    resetPostState,
+    resetStoreState,
     videoConversionProgress,
     videoConversionStatus,
     videoDuration,
@@ -74,6 +76,9 @@ function PostForm() {
       const formData = new FormData(event.currentTarget);
       const newFormState = fromFormData(formData);
       setState(newFormState);
+
+      resetPostState();
+      resetStoreState();
 
       if (!newFormState.text) {
         throw new Error("Please enter a message.");

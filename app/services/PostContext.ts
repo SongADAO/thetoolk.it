@@ -26,6 +26,8 @@ interface PostContextType {
   isVideoConverting: boolean;
   isVideoTrimming: boolean;
   preparePostVideo: (selectedFile: File) => Promise<Record<string, PostVideo>>;
+  resetPostState: () => void;
+  resetStoreState: () => void;
   videoCodecInfo: string;
   videoConversionError: string | null;
   videoConversionProgress: number;
@@ -59,6 +61,8 @@ const PostContext = createContext<PostContextType>({
         videoUrl: "",
       },
     }),
+  resetPostState: () => {},
+  resetStoreState: () => {},
   videoCodecInfo: "",
   videoConversionError: null,
   videoConversionProgress: 0,

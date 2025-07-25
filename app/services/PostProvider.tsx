@@ -47,6 +47,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: blueskyIsUsable,
     accounts: blueskyAccounts,
     post: blueskyPost,
+    resetPostState: blueskyResetPostState,
     VIDEO_MAX_DURATION: BLUESKY_VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE: BLUESKY_VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION: BLUESKY_VIDEO_MIN_DURATION,
@@ -57,6 +58,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: facebookIsUsable,
     accounts: facebookAccounts,
     post: facebookPost,
+    resetPostState: facebookResetPostState,
     VIDEO_MAX_DURATION: FACEBOOK_VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE: FACEBOOK_VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION: FACEBOOK_VIDEO_MIN_DURATION,
@@ -67,6 +69,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: instagramIsUsable,
     accounts: instagramAccounts,
     post: instagramPost,
+    resetPostState: instagramResetPostState,
     VIDEO_MAX_DURATION: INSTAGRAM_VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE: INSTAGRAM_VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION: INSTAGRAM_VIDEO_MIN_DURATION,
@@ -77,6 +80,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isEnabled: neynarIsEnabled,
     accounts: neynarAccounts,
     post: neynarPost,
+    resetPostState: neynarResetPostState,
     // VIDEO_MAX_DURATION: NEYNAR_VIDEO_MAX_DURATION,
     // VIDEO_MAX_FILESIZE: NEYNAR_VIDEO_MAX_FILESIZE,
     // VIDEO_MIN_DURATION: NEYNAR_VIDEO_MIN_DURATION,
@@ -87,6 +91,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: threadsIsUsable,
     accounts: threadsAccounts,
     post: threadsPost,
+    resetPostState: threadsResetPostState,
     VIDEO_MAX_DURATION: THREADS_VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE: THREADS_VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION: THREADS_VIDEO_MIN_DURATION,
@@ -97,6 +102,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: tiktokIsUsable,
     accounts: tiktokAccounts,
     post: tiktokPost,
+    resetPostState: tiktokResetPostState,
     VIDEO_MAX_DURATION: TIKTOK_VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE: TIKTOK_VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION: TIKTOK_VIDEO_MIN_DURATION,
@@ -107,6 +113,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: twitterIsUsable,
     accounts: twitterAccounts,
     post: twitterPost,
+    resetPostState: twitterResetPostState,
     VIDEO_MAX_DURATION: TWITTER_VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE: TWITTER_VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION: TWITTER_VIDEO_MIN_DURATION,
@@ -117,6 +124,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isUsable: youtubeIsUsable,
     accounts: youtubeAccounts,
     post: youtubePost,
+    resetPostState: youtubeResetPostState,
     VIDEO_MAX_DURATION: YOUTUBE_VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE: YOUTUBE_VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION: YOUTUBE_VIDEO_MIN_DURATION,
@@ -126,6 +134,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     isStoring: pinataIsStoring,
     isEnabled: pinataIsEnabled,
     isUsable: pinataIsUsable,
+    resetStoreState: pinataResetStoreState,
     storeVideo: pinataStoreVideo,
     storeHLSFolder: pinataStoreHLSFolder,
   } = use(PinataContext);
@@ -133,8 +142,25 @@ export function PostProvider({ children }: Readonly<Props>) {
     isStoring: amazonS3IsStoring,
     isEnabled: amazonS3IsEnabled,
     isUsable: amazonS3IsUsable,
+    resetStoreState: amazonS3ResetStoreState,
     storeVideo: amazonS3StoreVideo,
   } = use(AmazonS3Context);
+
+  function resetPostState(): void {
+    blueskyResetPostState();
+    facebookResetPostState();
+    instagramResetPostState();
+    neynarResetPostState();
+    threadsResetPostState();
+    tiktokResetPostState();
+    twitterResetPostState();
+    youtubeResetPostState();
+  }
+
+  function resetStoreState(): void {
+    pinataResetStoreState();
+    amazonS3ResetStoreState();
+  }
 
   const isStoring = pinataIsStoring || amazonS3IsStoring;
 
@@ -739,6 +765,8 @@ export function PostProvider({ children }: Readonly<Props>) {
       isVideoConverting,
       isVideoTrimming,
       preparePostVideo,
+      resetPostState,
+      resetStoreState,
       videoCodecInfo,
       videoConversionError,
       videoConversionProgress,
@@ -763,6 +791,8 @@ export function PostProvider({ children }: Readonly<Props>) {
       isVideoConverting,
       isVideoTrimming,
       preparePostVideo,
+      resetPostState,
+      resetStoreState,
       videoCodecInfo,
       videoConversionError,
       videoConversionProgress,

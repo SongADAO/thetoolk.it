@@ -116,6 +116,13 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   const [storeProgress, setStoreProgress] = useState<number>(0);
   const [storeStatus, setStoreStatus] = useState<string>("");
 
+  function resetStoreState() {
+    setIsStoring(false);
+    setStoreError("");
+    setStoreProgress(0);
+    setStoreStatus("");
+  }
+
   async function storeFile(file: File, serviceLabel: string): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
@@ -206,6 +213,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       isStoring,
       isUsable,
       label,
+      resetStoreState,
       saveData,
       setIsEnabled,
       storeError,
@@ -234,6 +242,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       isStoring,
       isUsable,
       label,
+      resetStoreState,
       storeError,
       storeProgress,
       storeStatus,

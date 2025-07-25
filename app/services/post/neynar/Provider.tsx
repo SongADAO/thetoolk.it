@@ -98,6 +98,13 @@ export function NeynarProvider({ children }: Readonly<Props>) {
   const [postProgress, setPostProgress] = useState<number>(0);
   const [postStatus, setPostStatus] = useState<string>("");
 
+  function resetPostState() {
+    setIsPosting(false);
+    setPostError("");
+    setPostProgress(0);
+    setPostStatus("");
+  }
+
   async function post({
     title,
     text,
@@ -182,6 +189,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       postError,
       postProgress,
       postStatus,
+      resetPostState,
       saveData,
       setIsEnabled,
     }),
@@ -210,6 +218,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       postError,
       postProgress,
       postStatus,
+      resetPostState,
     ],
   );
 

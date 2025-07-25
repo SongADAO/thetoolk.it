@@ -24,6 +24,7 @@ interface StorageServiceContextType {
   isStoring: boolean;
   isUsable: boolean;
   label: string;
+  resetStoreState: () => void;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
   storeError: string;
@@ -58,6 +59,7 @@ const storageServiceContextDefault = {
   isUsable: false,
   label: "",
   saveData: (formState: ServiceFormState) => ({}),
+  resetStoreState: () => {},
   setIsEnabled: (isEnabled: boolean) => {},
   storeError: "",
   storeFile: async (file: File, serviceLabel: string) => Promise.resolve(""),
