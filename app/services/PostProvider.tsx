@@ -620,8 +620,8 @@ export function PostProvider({ children }: Readonly<Props>) {
         }
 
         if (!videoUrl) {
-          console.error("Failed to upload video to storage.");
-          throw new Error("Failed to upload video to storage.");
+          console.error(`Failed to upload ${videoId} video to storage.`);
+          throw new Error(`Failed to upload ${videoId} video to storage.`);
         }
 
         console.log("Video upload successful:", videoUrl);
