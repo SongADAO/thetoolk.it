@@ -6,7 +6,7 @@ const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 128;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
 // 12 hours
-const VIDEO_MAX_DURATION = 60 * 24 * 12;
+const VIDEO_MAX_DURATION = 60 * 24 * 12 - 1;
 
 // Start resumable upload
 interface InitiateResumableUploadProps {

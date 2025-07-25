@@ -6,7 +6,7 @@ const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 1;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
 // 10 minutes
-const VIDEO_MAX_DURATION = 600;
+const VIDEO_MAX_DURATION = 600 - 1;
 
 interface UploadVideoProps {
   accessToken: string;

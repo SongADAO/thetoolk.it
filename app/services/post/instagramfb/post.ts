@@ -8,7 +8,7 @@ const VIDEO_MAX_FILESIZE = 1024 * 1024 * 300;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
 // 15 minutes
-const VIDEO_MAX_DURATION = 900;
+const VIDEO_MAX_DURATION = 900 - 1;
 
 // Create Instagram media container
 interface CreateMediaContainerProps {

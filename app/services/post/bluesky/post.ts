@@ -7,7 +7,7 @@ const VIDEO_MAX_FILESIZE = 1024 * 1024 * 100;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
 // 3 minutes
-const VIDEO_MAX_DURATION = 180;
+const VIDEO_MAX_DURATION = 180 - 1;
 
 interface UploadVideoBlobProps {
   accessToken: string;
