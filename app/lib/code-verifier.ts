@@ -1,19 +1,3 @@
-function hasExpired(expiry: string | null, bufferSeconds: number) {
-  if (!expiry) {
-    return false;
-  }
-
-  const expiryDate = new Date(expiry);
-
-  // Check if token is expired or about to expire (5 minutes buffer)
-  const now = new Date();
-
-  // Convert seconds to milliseconds
-  const bufferMilliseconds = bufferSeconds * 1000;
-
-  return now.getTime() > expiryDate.getTime() - bufferMilliseconds;
-}
-
 function generateCodeVerifier(): string {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
@@ -33,4 +17,4 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
     .replace(/[=]/gu, "");
 }
 
-export { generateCodeChallenge, generateCodeVerifier, hasExpired };
+export { generateCodeChallenge, generateCodeVerifier };
