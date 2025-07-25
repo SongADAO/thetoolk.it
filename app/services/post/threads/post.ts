@@ -3,8 +3,11 @@ import { sleep } from "@/app/lib/utils";
 
 let DEBUG_STATUS_STEP = 0;
 
+// 1GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 1;
+// 3 seconds
 const VIDEO_MIN_DURATION = 3;
+// 5 minutes
 const VIDEO_MAX_DURATION = 300;
 
 // Create Threads media container

@@ -1,8 +1,11 @@
 import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 
+// 4GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 4;
+// 3 seconds
 const VIDEO_MIN_DURATION = 3;
+// 15 minutes
 const VIDEO_MAX_DURATION = 900;
 
 interface UploadVideoProps {

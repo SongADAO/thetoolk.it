@@ -2,8 +2,11 @@ import { DEBUG_POST } from "@/app/config/constants";
 import { sleep } from "@/app/lib/utils";
 import type { OauthCredentials } from "@/app/services/post/types";
 
+// 100GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 100;
+// 3 seconds
 const VIDEO_MIN_DURATION = 3;
+// 100 days
 const VIDEO_MAX_DURATION = 60 * 24 * 100;
 
 interface CreateCastProps {

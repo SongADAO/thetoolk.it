@@ -3,8 +3,11 @@ import { sleep } from "@/app/lib/utils";
 
 let DEBUG_STATUS_STEP = 0;
 
+// 300MB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 300;
+// 3 seconds
 const VIDEO_MIN_DURATION = 3;
+// 15 minutes
 const VIDEO_MAX_DURATION = 900;
 
 // Create Instagram media container
