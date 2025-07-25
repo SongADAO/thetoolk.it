@@ -19,7 +19,7 @@ import {
 } from "@/app/config/constants";
 
 export const config = getDefaultConfig({
-  appName: "Hugh Harmony Creator",
+  appName: "TheToolk.it",
   chains: [
     arbitrum,
     base,
