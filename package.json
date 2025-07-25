@@ -32,8 +32,6 @@
     "@remotion/webcodecs": "^4.0.324",
     "@tanstack/react-query": "^5.81.5",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
-    "mediainfo.js": "0.3.4",
-    "mp4-muxer": "^5.2.2",
     "next": "^15.3.4",
     "next-themes": "^0.4.6",
     "pinata": "^2.4.9",
