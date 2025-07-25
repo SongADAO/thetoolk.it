@@ -313,6 +313,7 @@ export class VideoConverter {
 
       // Step 3: Now use WebCodecs on the file with compatible audio
       const metadata = await parseMedia({
+        // acknowledgeRemotionLicense: true,
         fields: {
           dimensions: true,
           durationInSeconds: true,
