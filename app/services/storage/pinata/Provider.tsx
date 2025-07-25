@@ -116,7 +116,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
   const [storeProgress, setStoreProgress] = useState<number>(0);
   const [storeStatus, setStoreStatus] = useState<string>("");
 
-  async function storeFile(file: File): Promise<string> {
+  async function storeFile(file: File, serviceLabel: string): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
@@ -124,6 +124,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
     return await uploadFile({
       credentials,
       file,
+      serviceLabel,
       setIsStoring,
       setStoreError,
       setStoreProgress,
@@ -131,7 +132,10 @@ export function PinataProvider({ children }: Readonly<Props>) {
     });
   }
 
-  async function storeJson(data: object): Promise<string> {
+  async function storeJson(
+    data: object,
+    serviceLabel: string,
+  ): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
@@ -139,6 +143,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
     return await uploadJson({
       credentials,
       data,
+      serviceLabel,
       setIsStoring,
       setStoreError,
       setStoreProgress,
@@ -146,7 +151,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
     });
   }
 
-  async function storeVideo(file: File): Promise<string> {
+  async function storeVideo(file: File, serviceLabel: string): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
@@ -154,6 +159,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
     return await uploadVideo({
       credentials,
       file,
+      serviceLabel,
       setIsStoring,
       setStoreError,
       setStoreProgress,
@@ -163,7 +169,8 @@ export function PinataProvider({ children }: Readonly<Props>) {
 
   async function storeHLSFolder(
     hlsFiles: HLSFiles,
-    folderName?: string,
+    folderName: string,
+    serviceLabel: string,
   ): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
@@ -173,6 +180,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
       credentials,
       folderName,
       hlsFiles,
+      serviceLabel,
       setIsStoring,
       setStoreError,
       setStoreProgress,

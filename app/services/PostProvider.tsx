@@ -582,7 +582,10 @@ export function PostProvider({ children }: Readonly<Props>) {
         }
 
         // eslint-disable-next-line no-await-in-loop
-        const pinataVideoResult = await pinataStoreVideo(videoData.video);
+        const pinataVideoResult = await pinataStoreVideo(
+          videoData.video,
+          videoId,
+        );
         if (pinataVideoResult) {
           videoUrl = pinataVideoResult;
         }

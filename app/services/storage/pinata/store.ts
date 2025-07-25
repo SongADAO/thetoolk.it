@@ -8,14 +8,16 @@ import type { PinataCredentials } from "@/app/services/storage/types";
 interface UploadFileProps {
   credentials: PinataCredentials;
   file: File;
+  serviceLabel: string;
   setIsStoring: (isStoring: boolean) => void;
   setStoreError: (error: string) => void;
-  setStoreStatus: (status: string) => void;
   setStoreProgress: (progress: number) => void;
+  setStoreStatus: (status: string) => void;
 }
 async function uploadFile({
   credentials,
   file,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
@@ -51,7 +53,9 @@ async function uploadFile({
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
       setStoreProgress(Math.round(progress));
-      setStoreStatus(`Uploading media... ${Math.round(progress)}%`);
+      setStoreStatus(
+        `Uploading ${serviceLabel} media... ${Math.round(progress)}%`,
+      );
     }, 500);
 
     const pinata = new PinataSDK({
@@ -95,10 +99,12 @@ interface UploadVideoProps {
   setStoreError: (error: string) => void;
   setStoreStatus: (status: string) => void;
   setStoreProgress: (progress: number) => void;
+  serviceLabel: string;
 }
 async function uploadVideo({
   credentials,
   file,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
@@ -107,6 +113,7 @@ async function uploadVideo({
   return uploadFile({
     credentials,
     file,
+    serviceLabel,
     setIsStoring,
     setStoreError,
     setStoreProgress,
@@ -117,14 +124,16 @@ async function uploadVideo({
 interface UploadJsonProps {
   credentials: PinataCredentials;
   data: object;
+  serviceLabel: string;
   setIsStoring: (isStoring: boolean) => void;
   setStoreError: (error: string) => void;
-  setStoreStatus: (status: string) => void;
   setStoreProgress: (progress: number) => void;
+  setStoreStatus: (status: string) => void;
 }
 async function uploadJson({
   credentials,
   data,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
@@ -143,6 +152,8 @@ async function uploadJson({
       setStoreStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
+
+    setStoreStatus(`Uploading ${serviceLabel} json...`);
 
     const pinata = new PinataSDK({
       pinataJwt: credentials.jwt,
@@ -176,6 +187,7 @@ interface UploadHLSFolderProps {
   credentials: PinataCredentials;
   folderName?: string;
   hlsFiles: HLSFiles;
+  serviceLabel: string;
   setIsStoring: (isStoring: boolean) => void;
   setStoreError: (error: string) => void;
   setStoreProgress: (progress: number) => void;
@@ -185,6 +197,7 @@ async function uploadHLSFolder({
   credentials,
   folderName,
   hlsFiles,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
@@ -227,7 +240,9 @@ async function uploadHLSFolder({
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
       setStoreProgress(Math.round(progress));
-      setStoreStatus(`Uploading media... ${Math.round(progress)}%`);
+      setStoreStatus(
+        `Uploading ${serviceLabel} media... ${Math.round(progress)}%`,
+      );
     }, 500);
 
     const pinata = new PinataSDK({

@@ -8,6 +8,7 @@ import type { AmazonS3Credentials } from "@/app/services/storage/types";
 interface UploadFileProps {
   credentials: AmazonS3Credentials;
   file: File;
+  serviceLabel: string;
   setIsStoring: (isStoring: boolean) => void;
   setStoreError: (error: string) => void;
   setStoreProgress: (progress: number) => void;
@@ -16,6 +17,7 @@ interface UploadFileProps {
 async function uploadFile({
   credentials,
   file,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
@@ -47,7 +49,7 @@ async function uploadFile({
     const fileBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(fileBuffer);
 
-    setStoreStatus("Uploading media...");
+    setStoreStatus(`Uploading ${serviceLabel} media...`);
 
     // For progress tracking, we'll use a different approach
     // The AWS SDK doesn't provide built-in progress for browser uploads
@@ -63,7 +65,9 @@ async function uploadFile({
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
       setStoreProgress(Math.round(progress));
-      setStoreStatus(`Uploading media... ${Math.round(progress)}%`);
+      setStoreStatus(
+        `Uploading ${serviceLabel} media... ${Math.round(progress)}%`,
+      );
     }, 500);
 
     let response = null;
@@ -149,6 +153,7 @@ async function uploadFile({
 interface UploadVideoProps {
   credentials: AmazonS3Credentials;
   file: File;
+  serviceLabel: string;
   setIsStoring: (isStoring: boolean) => void;
   setStoreError: (error: string) => void;
   setStoreStatus: (status: string) => void;
@@ -157,6 +162,7 @@ interface UploadVideoProps {
 async function uploadVideo({
   credentials,
   file,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
@@ -165,6 +171,7 @@ async function uploadVideo({
   return uploadFile({
     credentials,
     file,
+    serviceLabel,
     setIsStoring,
     setStoreError,
     setStoreProgress,
@@ -175,6 +182,7 @@ async function uploadVideo({
 interface UploadJsonProps {
   credentials: AmazonS3Credentials;
   data: object;
+  serviceLabel: string;
   setIsStoring: (isStoring: boolean) => void;
   setStoreError: (error: string) => void;
   setStoreStatus: (status: string) => void;
@@ -185,6 +193,7 @@ async function uploadJson({
   /* eslint-disable @typescript-eslint/no-unused-vars */
   credentials,
   data,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
@@ -204,6 +213,7 @@ async function uploadJson({
   // return uploadFile({
   //   credentials,
   //   data,
+  //   serviceLabel,,
   //   setIsStoring,
   //   setStoreError,
   //   setStoreProgress,
@@ -215,6 +225,7 @@ interface UploadHLSFolderProps {
   credentials: AmazonS3Credentials;
   folderName?: string;
   hlsFiles: HLSFiles;
+  serviceLabel: string;
   setIsStoring: (isStoring: boolean) => void;
   setStoreError: (error: string) => void;
   setStoreProgress: (progress: number) => void;
@@ -226,6 +237,7 @@ async function uploadHLSFolder({
   credentials,
   folderName,
   hlsFiles,
+  serviceLabel,
   setIsStoring,
   setStoreError,
   setStoreProgress,
