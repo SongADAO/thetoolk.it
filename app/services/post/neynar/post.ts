@@ -88,6 +88,11 @@ async function createPost({
   let progressInterval = null;
 
   try {
+    if (DEBUG_POST) {
+      // eslint-disable-next-line no-param-reassign
+      videoHSLUrl = "https://example.com/test-video.mp4";
+    }
+
     setIsPosting(true);
     setPostError("");
     setPostProgress(0);

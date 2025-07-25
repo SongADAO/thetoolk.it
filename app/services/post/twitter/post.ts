@@ -393,6 +393,11 @@ async function createPost({
   video,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   try {
+    if (DEBUG_POST) {
+      // eslint-disable-next-line no-param-reassign
+      video = new File(["a"], "test.mp4", { type: "video/mp4" });
+    }
+
     setIsPosting(true);
     setPostError("");
     setPostProgress(0);
