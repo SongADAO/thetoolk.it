@@ -613,6 +613,7 @@ export function PostProvider({ children }: Readonly<Props>) {
       const videoHSLUrl = await pinataStoreHLSFolder(
         hlsFiles,
         `hls-video-${Date.now()}`,
+        "HLS",
       );
 
       if (!videoHSLUrl) {
