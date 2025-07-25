@@ -576,7 +576,10 @@ export function PostProvider({ children }: Readonly<Props>) {
         let videoUrl = "";
 
         // eslint-disable-next-line no-await-in-loop
-        const s3VideoResult = await amazonS3StoreVideo(videoData.video);
+        const s3VideoResult = await amazonS3StoreVideo(
+          videoData.video,
+          videoId,
+        );
         if (s3VideoResult) {
           videoUrl = s3VideoResult;
         }
