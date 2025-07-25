@@ -250,7 +250,7 @@ export function PostProvider({ children }: Readonly<Props>) {
 
       console.log("Initializing Video converter...");
       const converter = new VideoConverter();
-      await converter.initialize();
+      await converter.initialize(setVideoConversionProgress);
 
       console.log("Starting video conversion...");
       const convertedData = await converter.convertVideo(
