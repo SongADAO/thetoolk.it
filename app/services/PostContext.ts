@@ -55,7 +55,7 @@ const PostContext = createContext<PostContextType>({
   isVideoTrimming: false,
   preparePostVideo: async () =>
     await Promise.resolve({
-      base: {
+      full: {
         video: null,
         videoHSLUrl: "",
         videoUrl: "",

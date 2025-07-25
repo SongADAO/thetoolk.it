@@ -105,7 +105,7 @@ function PostForm() {
       // const videos = selectedFile
       //   ? await preparePostVideo(selectedFile)
       //   : {
-      //       base: {
+      //       full: {
       //         video: null,
       //         videoHSLUrl: "",
       //         videoUrl: "",

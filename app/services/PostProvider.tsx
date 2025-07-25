@@ -395,7 +395,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         return videos;
       }
 
-      if (videos.base.video === null) {
+      if (videos.full.video === null) {
         throw new Error("Base video is missing.");
       }
 
@@ -409,7 +409,7 @@ export function PostProvider({ children }: Readonly<Props>) {
             maxFilesize: BLUESKY_VIDEO_MAX_FILESIZE,
             minDuration: BLUESKY_VIDEO_MIN_DURATION,
             onProgress: setVideoTrimProgress,
-            video: videos.base.video,
+            video: videos.full.video,
           }),
           videoHSLUrl: "",
           videoUrl: "",
@@ -424,7 +424,7 @@ export function PostProvider({ children }: Readonly<Props>) {
             maxFilesize: FACEBOOK_VIDEO_MAX_FILESIZE,
             minDuration: FACEBOOK_VIDEO_MIN_DURATION,
             onProgress: setVideoTrimProgress,
-            video: videos.base.video,
+            video: videos.full.video,
           }),
           videoHSLUrl: "",
           videoUrl: "",
@@ -439,7 +439,7 @@ export function PostProvider({ children }: Readonly<Props>) {
             maxFilesize: INSTAGRAM_VIDEO_MAX_FILESIZE,
             minDuration: INSTAGRAM_VIDEO_MIN_DURATION,
             onProgress: setVideoTrimProgress,
-            video: videos.base.video,
+            video: videos.full.video,
           }),
           videoHSLUrl: "",
           videoUrl: "",
@@ -454,7 +454,7 @@ export function PostProvider({ children }: Readonly<Props>) {
           //   maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
           //   minDuration: NEYNAR_VIDEO_MIN_DURATION,
           //   onProgress: setVideoTrimProgress,
-          //   video: videos.base.video,
+          //   video: videos.full.video,
           // }),
           video: null,
           videoHSLUrl: "",
@@ -470,7 +470,7 @@ export function PostProvider({ children }: Readonly<Props>) {
             maxFilesize: THREADS_VIDEO_MAX_FILESIZE,
             minDuration: THREADS_VIDEO_MIN_DURATION,
             onProgress: setVideoTrimProgress,
-            video: videos.base.video,
+            video: videos.full.video,
           }),
           videoHSLUrl: "",
           videoUrl: "",
@@ -485,7 +485,7 @@ export function PostProvider({ children }: Readonly<Props>) {
             maxFilesize: TIKTOK_VIDEO_MAX_FILESIZE,
             minDuration: TIKTOK_VIDEO_MIN_DURATION,
             onProgress: setVideoTrimProgress,
-            video: videos.base.video,
+            video: videos.full.video,
           }),
           videoHSLUrl: "",
           videoUrl: "",
@@ -500,7 +500,7 @@ export function PostProvider({ children }: Readonly<Props>) {
             maxFilesize: TWITTER_VIDEO_MAX_FILESIZE,
             minDuration: TWITTER_VIDEO_MIN_DURATION,
             onProgress: setVideoTrimProgress,
-            video: videos.base.video,
+            video: videos.full.video,
           }),
           videoHSLUrl: "",
           videoUrl: "",
@@ -515,7 +515,7 @@ export function PostProvider({ children }: Readonly<Props>) {
             maxFilesize: YOUTUBE_VIDEO_MAX_FILESIZE,
             minDuration: YOUTUBE_VIDEO_MIN_DURATION,
             onProgress: setVideoTrimProgress,
-            video: videos.base.video,
+            video: videos.full.video,
           }),
           videoHSLUrl: "",
           videoUrl: "",
@@ -556,7 +556,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     }
 
     let videos: Record<string, PostVideo> = {
-      base: {
+      full: {
         video: null,
         videoHSLUrl: "",
         videoUrl: "",
@@ -566,8 +566,8 @@ export function PostProvider({ children }: Readonly<Props>) {
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
-    videos.base.video = await convertVideo(selectedFile);
-    // videos.base.video = selectedFile;
+    videos.full.video = await convertVideo(selectedFile);
+    // videos.full.video = selectedFile;
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
@@ -575,7 +575,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     let hlsFiles: HLSFiles | null = null;
     if (needsHls) {
       console.log("Converting HLS video before upload...");
-      hlsFiles = await convertHLSVideo(videos.base.video);
+      hlsFiles = await convertHLSVideo(videos.full.video);
     }
     // -------------------------------------------------------------------------
 
@@ -675,72 +675,72 @@ export function PostProvider({ children }: Readonly<Props>) {
         title,
         userId: blueskyAccounts[0]?.id,
         username: blueskyAccounts[0]?.username,
-        video: videos.bluesky?.video || videos.base.video,
-        videoHSLUrl: videos.bluesky?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.bluesky?.videoUrl || videos.base.videoUrl,
+        video: videos.bluesky?.video || videos.full.video,
+        videoHSLUrl: videos.bluesky?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.bluesky?.videoUrl || videos.full.videoUrl,
       }),
       facebookPost({
         text,
         title,
         userId: facebookAccounts[0]?.id,
         username: facebookAccounts[0]?.username,
-        video: videos.facebook?.video || videos.base.video,
-        videoHSLUrl: videos.facebook?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.facebook?.videoUrl || videos.base.videoUrl,
+        video: videos.facebook?.video || videos.full.video,
+        videoHSLUrl: videos.facebook?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.facebook?.videoUrl || videos.full.videoUrl,
       }),
       instagramPost({
         text,
         title,
         userId: instagramAccounts[0]?.id,
         username: instagramAccounts[0]?.username,
-        video: videos.instagram?.video || videos.base.video,
-        videoHSLUrl: videos.instagram?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.instagram?.videoUrl || videos.base.videoUrl,
+        video: videos.instagram?.video || videos.full.video,
+        videoHSLUrl: videos.instagram?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.instagram?.videoUrl || videos.full.videoUrl,
       }),
       neynarPost({
         text,
         title,
         userId: neynarAccounts[0]?.id,
         username: neynarAccounts[0]?.username,
-        video: videos.neynar?.video || videos.base.video,
-        videoHSLUrl: videos.neynar?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.neynar?.videoUrl || videos.base.videoUrl,
+        video: videos.neynar?.video || videos.full.video,
+        videoHSLUrl: videos.neynar?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.neynar?.videoUrl || videos.full.videoUrl,
       }),
       threadsPost({
         text,
         title,
         userId: threadsAccounts[0]?.id,
         username: threadsAccounts[0]?.username,
-        video: videos.threads?.video || videos.base.video,
-        videoHSLUrl: videos.threads?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.threads?.videoUrl || videos.base.videoUrl,
+        video: videos.threads?.video || videos.full.video,
+        videoHSLUrl: videos.threads?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.threads?.videoUrl || videos.full.videoUrl,
       }),
       tiktokPost({
         text,
         title,
         userId: tiktokAccounts[0]?.id,
         username: tiktokAccounts[0]?.username,
-        video: videos.tiktok?.video || videos.base.video,
-        videoHSLUrl: videos.tiktok?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.tiktok?.videoUrl || videos.base.videoUrl,
+        video: videos.tiktok?.video || videos.full.video,
+        videoHSLUrl: videos.tiktok?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.tiktok?.videoUrl || videos.full.videoUrl,
       }),
       twitterPost({
         text,
         title,
         userId: twitterAccounts[0]?.id,
         username: twitterAccounts[0]?.username,
-        video: videos.twitter?.video || videos.base.video,
-        videoHSLUrl: videos.twitter?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.twitter?.videoUrl || videos.base.videoUrl,
+        video: videos.twitter?.video || videos.full.video,
+        videoHSLUrl: videos.twitter?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.twitter?.videoUrl || videos.full.videoUrl,
       }),
       youtubePost({
         text,
         title,
         userId: youtubeAccounts[0]?.id,
         username: youtubeAccounts[0]?.username,
-        video: videos.youtube?.video || videos.base.video,
-        videoHSLUrl: videos.youtube?.videoHSLUrl || videos.base.videoHSLUrl,
-        videoUrl: videos.youtube?.videoUrl || videos.base.videoUrl,
+        video: videos.youtube?.video || videos.full.video,
+        videoHSLUrl: videos.youtube?.videoHSLUrl || videos.full.videoHSLUrl,
+        videoUrl: videos.youtube?.videoUrl || videos.full.videoUrl,
       }),
     ]);
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
