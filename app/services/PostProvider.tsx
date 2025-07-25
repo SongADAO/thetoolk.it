@@ -378,6 +378,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming bluesky video if needed...");
         videos.bluesky = {
           video: await trimVideo({
+            label: "bluesky",
             maxDuration: BLUESKY_VIDEO_MAX_DURATION,
             maxFilesize: BLUESKY_VIDEO_MAX_FILESIZE,
             minDuration: BLUESKY_VIDEO_MIN_DURATION,
@@ -392,6 +393,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming facebook video if needed...");
         videos.facebook = {
           video: await trimVideo({
+            label: "facebook",
             maxDuration: FACEBOOK_VIDEO_MAX_DURATION,
             maxFilesize: FACEBOOK_VIDEO_MAX_FILESIZE,
             minDuration: FACEBOOK_VIDEO_MIN_DURATION,
@@ -406,6 +408,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming instagram video if needed...");
         videos.instagram = {
           video: await trimVideo({
+            label: "instagram",
             maxDuration: INSTAGRAM_VIDEO_MAX_DURATION,
             maxFilesize: INSTAGRAM_VIDEO_MAX_FILESIZE,
             minDuration: INSTAGRAM_VIDEO_MIN_DURATION,
@@ -420,6 +423,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming farcaster video if needed...");
         videos.neynar = {
           // video: await trimVideo({
+          //   label: "neynar",
           //   maxDuration: NEYNAR_VIDEO_MAX_DURATION,
           //   maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
           //   minDuration: NEYNAR_VIDEO_MIN_DURATION,
@@ -435,6 +439,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming threads video if needed...");
         videos.threads = {
           video: await trimVideo({
+            label: "threads",
             maxDuration: THREADS_VIDEO_MAX_DURATION,
             maxFilesize: THREADS_VIDEO_MAX_FILESIZE,
             minDuration: THREADS_VIDEO_MIN_DURATION,
@@ -449,6 +454,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming tiktok video if needed...");
         videos.tiktok = {
           video: await trimVideo({
+            label: "tiktok",
             maxDuration: TIKTOK_VIDEO_MAX_DURATION,
             maxFilesize: TIKTOK_VIDEO_MAX_FILESIZE,
             minDuration: TIKTOK_VIDEO_MIN_DURATION,
@@ -463,6 +469,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming twitter video if needed...");
         videos.twitter = {
           video: await trimVideo({
+            label: "twitter",
             maxDuration: TWITTER_VIDEO_MAX_DURATION,
             maxFilesize: TWITTER_VIDEO_MAX_FILESIZE,
             minDuration: TWITTER_VIDEO_MIN_DURATION,
@@ -477,6 +484,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         setVideoTrimStatus("Trimming youtube video if needed...");
         videos.youtube = {
           video: await trimVideo({
+            label: "youtube",
             maxDuration: YOUTUBE_VIDEO_MAX_DURATION,
             maxFilesize: YOUTUBE_VIDEO_MAX_FILESIZE,
             minDuration: YOUTUBE_VIDEO_MIN_DURATION,

@@ -2,6 +2,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
 
 interface TrimVideoOptions {
+  label: string;
   maxDuration: number;
   maxFilesize: number;
   minDuration: number;
@@ -63,6 +64,7 @@ function getFileExtension(filename: string): string {
 }
 
 export async function trimVideo({
+  label,
   maxDuration,
   maxFilesize,
   minDuration,
@@ -140,9 +142,13 @@ export async function trimVideo({
 
     // Convert output to File object
     const trimmedBlob = new Blob([outputData], { type: video.type });
-    const trimmedFile = new File([trimmedBlob], `trimmed_${video.name}`, {
-      type: video.type,
-    });
+    const trimmedFile = new File(
+      [trimmedBlob],
+      `${label}_trimmed_${video.name}`,
+      {
+        type: video.type,
+      },
+    );
 
     console.log(
       `Trim complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB (${actualDuration.toFixed(1)}s) -> ` +
