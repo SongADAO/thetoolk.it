@@ -5,6 +5,12 @@ import type { HLSFiles } from "@/app/lib/hls-converter";
 import { sleep } from "@/app/lib/utils";
 import type { PinataCredentials } from "@/app/services/storage/types";
 
+// Ensure the gateway URL is sanitized
+function sanitizeGateway(gateway: string): string {
+  // Remove https:// prefix and trailing slash
+  return gateway.replace(/^https:\/\//u, "").replace(/\/$/u, "");
+}
+
 interface UploadFileProps {
   credentials: PinataCredentials;
   file: File;
@@ -69,7 +75,7 @@ async function uploadFile({
 
     // const contentUri = `ipfs://${upload.cid}`;
     // const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
-    const contentUri = `https://${credentials.gateway}/ipfs/${upload.cid}`;
+    const contentUri = `https://${sanitizeGateway(credentials.gateway)}/ipfs/${upload.cid}`;
 
     setStoreProgress(100);
     setStoreStatus("Success");
@@ -164,7 +170,7 @@ async function uploadJson({
 
     // const contentUri = `ipfs://${upload.cid}`;
     // const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
-    const contentUri = `https://${credentials.gateway}/ipfs/${upload.cid}`;
+    const contentUri = `https://${sanitizeGateway(credentials.gateway)}/ipfs/${upload.cid}`;
 
     setStoreProgress(100);
     setStoreStatus("Success");
@@ -290,7 +296,7 @@ async function uploadHLSFolder({
     // const baseUrl = `https://${this.pinata.config.pinataGateway}/ipfs/${uploadResult.cid}`;
     // const baseUrl = `ipfs://${uploadResult.cid}`;
     // const baseUrl = `https://ipfs.io/ipfs/${uploadResult.cid}`;
-    const baseUrl = `https://${credentials.gateway}/ipfs/${uploadResult.cid}`;
+    const baseUrl = `https://${sanitizeGateway(credentials.gateway)}/ipfs/${uploadResult.cid}`;
     const playlistUrl = `${baseUrl}/${hlsFiles.masterManifest.name}`;
     // const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
 
