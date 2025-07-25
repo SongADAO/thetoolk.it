@@ -5,8 +5,10 @@ import { sleep } from "@/app/lib/utils";
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 4;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
-// 15 minutes
-const VIDEO_MAX_DURATION = 900 - 1;
+// // 15 minutes
+// const VIDEO_MAX_DURATION = 900;
+// 4 minutes
+const VIDEO_MAX_DURATION = 240;
 
 interface UploadVideoProps {
   accessToken: string;

@@ -575,30 +575,32 @@ export function PostProvider({ children }: Readonly<Props>) {
       if (videoData.video) {
         let videoUrl = "";
 
-        // eslint-disable-next-line no-await-in-loop
-        const s3VideoResult = await amazonS3StoreVideo(
-          videoData.video,
-          videoId,
-        );
-        if (s3VideoResult) {
-          videoUrl = s3VideoResult;
-        }
+        if (videoId !== "base") {
+          // eslint-disable-next-line no-await-in-loop
+          const s3VideoResult = await amazonS3StoreVideo(
+            videoData.video,
+            videoId,
+          );
+          if (s3VideoResult) {
+            videoUrl = s3VideoResult;
+          }
 
-        // eslint-disable-next-line no-await-in-loop
-        const pinataVideoResult = await pinataStoreVideo(
-          videoData.video,
-          videoId,
-        );
-        if (pinataVideoResult) {
-          videoUrl = pinataVideoResult;
-        }
+          // eslint-disable-next-line no-await-in-loop
+          const pinataVideoResult = await pinataStoreVideo(
+            videoData.video,
+            videoId,
+          );
+          if (pinataVideoResult) {
+            videoUrl = pinataVideoResult;
+          }
 
-        if (!videoUrl) {
-          console.error("Failed to upload video to storage.");
-          throw new Error("Failed to upload video to storage.");
-        }
+          if (!videoUrl) {
+            console.error("Failed to upload video to storage.");
+            throw new Error("Failed to upload video to storage.");
+          }
 
-        console.log("Video upload successful:", videoUrl);
+          console.log("Video upload successful:", videoUrl);
+        }
 
         videos[videoId].videoUrl = videoUrl;
       }
