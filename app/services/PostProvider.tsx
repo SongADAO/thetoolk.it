@@ -540,9 +540,16 @@ export function PostProvider({ children }: Readonly<Props>) {
     selectedFile: File,
   ): Promise<Record<string, PostVideo>> {
     const needsHls = neynarIsEnabled;
+    const needsS3 = tiktokIsEnabled;
 
     if (!pinataIsUsable && !amazonS3IsUsable) {
       throw new Error("You must enable a storage provider.");
+    }
+
+    if (needsS3 && !amazonS3IsUsable && tiktokIsUsable) {
+      throw new Error(
+        "To use TikTok at least one non-ipfs storage provider must be enabled. (Amazon S3).",
+      );
     }
 
     if (needsHls && !pinataIsUsable) {
@@ -617,6 +624,11 @@ export function PostProvider({ children }: Readonly<Props>) {
         );
         if (pinataVideoResult) {
           videoUrl = pinataVideoResult;
+        }
+
+        // TikTok can't work with IPFS as the domain cannot be verified.
+        if (videoId === "tiktok") {
+          videoUrl = s3VideoResult;
         }
 
         if (!videoUrl) {
