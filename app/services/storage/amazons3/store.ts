@@ -135,10 +135,10 @@ async function uploadFile({
     return publicUrl;
   } catch (err: unknown) {
     console.error("S3 upload error:", err);
-    const errMessage = err instanceof Error ? err.message : "Upload failed";
 
-    setStoreError(`Upload failed: ${errMessage}`);
-    setStoreStatus("Upload failed");
+    const errMessage = err instanceof Error ? err.message : "Upload failed";
+    setStoreError(`Upload failed for ${serviceLabel}: ${errMessage}`);
+    setStoreStatus(`Upload failed for ${serviceLabel}`);
   } finally {
     setIsStoring(false);
     // Clear progress interval
