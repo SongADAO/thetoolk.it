@@ -18,12 +18,14 @@ export default function SignInForm() {
     setLoading(true);
     setError("");
 
-    const { data, error } = await signIn(email, password);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { data, error: signInError } = await signIn(email, password);
 
-    if (error) {
-      setError(error.message);
+    if (signInError) {
+      setError(signInError.message);
     } else {
-      router.push("/dashboard"); // Redirect after successful login
+      // Redirect after successful login
+      router.push("/dashboard");
     }
 
     setLoading(false);

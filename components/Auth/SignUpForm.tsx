@@ -16,10 +16,11 @@ export default function SignUpForm() {
     setLoading(true);
     setMessage("");
 
-    const { data, error } = await signUp(email, password);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { data, error: signUpError } = await signUp(email, password);
 
-    if (error) {
-      setMessage(error.message);
+    if (signUpError) {
+      setMessage(signUpError.message);
     } else {
       setMessage("Check your email for confirmation link!");
     }
