@@ -30,6 +30,8 @@
     "@rainbow-me/rainbowkit": "^2.2.8",
     "@remotion/media-parser": "^4.0.324",
     "@remotion/webcodecs": "^4.0.324",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.53.0",
     "@tanstack/react-query": "^5.81.5",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "next": "^15.3.4",

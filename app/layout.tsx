@@ -9,6 +9,7 @@ import { ReactNode } from "react";
 
 import { PostProviders } from "@/components/service/post/PostProviders";
 import { StorageProviders } from "@/components/service/storage/StorageProviders";
+import { AuthProvider } from "@/contexts/AuthProvider";
 // import { Providers } from "@/app/providers";
 
 // eslint-disable-next-line new-cap
@@ -36,11 +37,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <Providers> */}
-        <StorageProviders>
-          <PostProviders>{children}</PostProviders>
-        </StorageProviders>
-        {/* </Providers> */}
+        <AuthProvider>
+          {/* <Providers> */}
+          <StorageProviders>
+            <PostProviders>{children}</PostProviders>
+          </StorageProviders>
+          {/* </Providers> */}
+        </AuthProvider>
       </body>
     </html>
   );
