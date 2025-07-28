@@ -4,7 +4,7 @@ import { use } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
-export default function UserProfile(): JSX.Element {
+export default function UserProfile() {
   const { user, signOut, loading, isAuthenticated } = use(AuthContext);
 
   if (loading) {
@@ -41,6 +41,7 @@ export default function UserProfile(): JSX.Element {
       <button
         className="mt-4 rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
         onClick={handleSignOut}
+        type="button"
       >
         Sign Out
       </button>

@@ -9,9 +9,7 @@ interface ProtectedRouteProps {
   readonly children: React.ReactNode;
 }
 
-export default function ProtectedRoute({
-  children,
-}: ProtectedRouteProps): JSX.Element | null {
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = use(AuthContext);
   const router = useRouter();
 
@@ -33,5 +31,6 @@ export default function ProtectedRoute({
     return null;
   }
 
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
 }

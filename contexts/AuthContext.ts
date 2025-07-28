@@ -2,11 +2,13 @@ import { createContext } from "react";
 
 import type { AuthContextType } from "@/types/supabase";
 
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
+const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  signUp: async () => ({ data: null, error: null }),
-  signIn: async () => ({ data: null, error: null }),
-  signOut: async () => ({ error: null }),
+  loading: true,
+  signIn: async () => Promise.resolve({ data: null, error: null }),
+  signOut: async () => Promise.resolve({ error: null }),
+  signUp: async () => Promise.resolve({ data: null, error: null }),
+  user: null,
 });
+
+export { AuthContext };

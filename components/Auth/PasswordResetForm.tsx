@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
-export default function PasswordResetForm(): JSX.Element {
+export default function PasswordResetForm() {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
