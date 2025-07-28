@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { FaServer, FaUsersGear } from "react-icons/fa6";
 
-import { PostForm } from "@/app/components/PostForm";
-import { PostProgress } from "@/app/components/service/post/PostProgress";
-import { PostSettings } from "@/app/components/service/post/PostSettings";
-import { ServiceSettingsMenu } from "@/app/components/service/ServiceSettingsMenu";
-import { StorageSettings } from "@/app/components/service/storage/StorageSettings";
-import { StoreProgress } from "@/app/components/service/storage/StoreProgress";
-import { PostProvider } from "@/app/services/PostProvider";
+import { PostForm } from "@/components/PostForm";
+import { PostProgress } from "@/components/service/post/PostProgress";
+import { PostSettings } from "@/components/service/post/PostSettings";
+import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
+import { StorageSettings } from "@/components/service/storage/StorageSettings";
+import { StoreProgress } from "@/components/service/storage/StoreProgress";
+import { PostProvider } from "@/services/PostProvider";
 
 export default function Home() {
   return (

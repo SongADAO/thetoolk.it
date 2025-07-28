@@ -7,8 +7,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ReactNode } from "react";
 
-import { PostProviders } from "@/app/components/service/post/PostProviders";
-import { StorageProviders } from "@/app/components/service/storage/StorageProviders";
+import { PostProviders } from "@/components/service/post/PostProviders";
+import { StorageProviders } from "@/components/service/storage/StorageProviders";
 // import { Providers } from "@/app/providers";
 
 // eslint-disable-next-line new-cap

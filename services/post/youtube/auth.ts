@@ -1,0 +1,276 @@
+import { hasExpired } from "@/lib/expiration";
+import { objectIdHash } from "@/lib/hash";
+import type {
+  OauthAuthorization,
+  OauthCredentials,
+  ServiceAccount,
+} from "@/services/post/types";
+
+interface GoogleTokenResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  refresh_token_expires_in: number;
+  scope: string;
+  token_type: string;
+}
+
+// -----------------------------------------------------------------------------
+
+const SCOPES: string[] = [
+  "https://www.googleapis.com/auth/youtube.readonly",
+  "https://www.googleapis.com/auth/youtube.upload",
+];
+
+const OAUTH_SCOPE_DOMAIN = "https://www.googleapis.com";
+
+// 5 minutes
+const ACCESS_TOKEN_BUFFER_SECONDS = 5 * 60;
+
+// Never expires
+const REFRESH_TOKEN_BUFFER_SECONDS = -1 * 100 * 365 * 24 * 60 * 60;
+
+// 5 days
+// const REFRESH_TOKEN_BUFFER_SECONDS = 5 * 24 * 60 * 60;
+
+// 30 days
+// const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
+
+// -----------------------------------------------------------------------------
+
+function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
+  if (!authorization.accessToken || !authorization.accessTokenExpiresAt) {
+    return false;
+  }
+
+  return hasExpired(
+    authorization.accessTokenExpiresAt,
+    ACCESS_TOKEN_BUFFER_SECONDS,
+  );
+}
+
+function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
+  if (!authorization.refreshToken || !authorization.refreshTokenExpiresAt) {
+    return false;
+  }
+
+  return hasExpired(
+    authorization.refreshTokenExpiresAt,
+    REFRESH_TOKEN_BUFFER_SECONDS,
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+function getCredentialsId(credentials: OauthCredentials): string {
+  return objectIdHash(credentials);
+}
+
+function hasCompleteCredentials(credentials: OauthCredentials): boolean {
+  return credentials.clientId !== "" && credentials.clientSecret !== "";
+}
+
+function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
+  return (
+    authorization.refreshToken !== "" &&
+    authorization.refreshTokenExpiresAt !== "" &&
+    !needsRefreshTokenRenewal(authorization)
+  );
+}
+
+function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
+  return authorization.refreshTokenExpiresAt;
+}
+
+// -----------------------------------------------------------------------------
+
+function getRedirectUri(): string {
+  const url = new URL(window.location.href);
+
+  return `${url.origin}/authorize`;
+}
+
+function shouldHandleAuthRedirect(
+  code: string | null,
+  scope: string | null,
+): boolean {
+  return Boolean(code && scope?.includes(OAUTH_SCOPE_DOMAIN));
+}
+
+function formatTokens(tokens: GoogleTokenResponse): OauthAuthorization {
+  const expiresIn = tokens.expires_in * 1000;
+  const expiryTime = new Date(Date.now() + expiresIn);
+
+  const refreshExpiresIn = tokens.refresh_token_expires_in * 1000;
+  const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
+
+  return {
+    accessToken: tokens.access_token,
+    accessTokenExpiresAt: expiryTime.toISOString(),
+    refreshToken: tokens.refresh_token,
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
+  };
+}
+
+function getAuthorizationUrl(
+  credentials: OauthCredentials,
+  redirectUri: string,
+): string {
+  const params = new URLSearchParams({
+    access_type: "offline",
+    client_id: credentials.clientId,
+    prompt: "consent",
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: SCOPES.join(" "),
+  });
+
+  return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+}
+
+// Exchange authorization code for access token
+async function exchangeCodeForTokens(
+  code: string,
+  credentials: OauthCredentials,
+  redirectUri: string,
+): Promise<OauthAuthorization> {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    body: new URLSearchParams({
+      client_id: credentials.clientId,
+      client_secret: credentials.clientSecret,
+      code,
+      grant_type: "authorization_code",
+      redirect_uri: redirectUri,
+    }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  const tokens = await response.json();
+  console.log(tokens);
+
+  return formatTokens(tokens);
+}
+
+// Refresh access token using refresh token
+async function refreshAccessToken(
+  credentials: OauthCredentials,
+  authorization: OauthAuthorization,
+): Promise<OauthAuthorization> {
+  if (!authorization.refreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    body: new URLSearchParams({
+      client_id: credentials.clientId,
+      client_secret: credentials.clientSecret,
+      grant_type: "refresh_token",
+      refresh_token: authorization.refreshToken,
+    }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  const tokens = await response.json();
+
+  // The refresh token doesn't change, but is also not in the returned data,
+  // so we copy over the existing one.
+  if (typeof tokens.refresh_token === "undefined") {
+    tokens.refresh_token = authorization.refreshToken;
+  }
+
+  return formatTokens(tokens);
+}
+
+// -----------------------------------------------------------------------------
+
+async function getUserInfo(token: string): Promise<ServiceAccount> {
+  console.log(`Checking YouTube user info`);
+
+  const params = new URLSearchParams({
+    fields: "items(id,snippet(title,customUrl))",
+    mine: "true",
+    part: "snippet",
+  });
+
+  const response = await fetch(
+    `https://www.googleapis.com/youtube/v3/channels?${params.toString()}`,
+    {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to get user info: ${errorText}`);
+  }
+
+  const data = await response.json();
+
+  if (!data.items || data.items.length === 0) {
+    throw new Error("No channel found for this account");
+  }
+
+  const channel = data.items[0];
+  console.log("YouTube user info:", channel);
+
+  return {
+    accessToken: "",
+    id: channel.id,
+    username: channel.snippet.title,
+  };
+}
+
+async function getAccounts(token: string): Promise<ServiceAccount[]> {
+  const accounts = [];
+
+  // Get the main channel
+  const account = await getUserInfo(token);
+  accounts.push(account);
+
+  // Note: YouTube users can have multiple channels (brand accounts)
+  // If you need to get ALL channels (including brand channels),
+  // you would need additional API calls to get brand accounts
+  // For now, this returns just the main channel like the Threads example
+
+  return accounts;
+}
+
+// -----------------------------------------------------------------------------
+
+export {
+  exchangeCodeForTokens,
+  getAccounts,
+  getAuthorizationExpiresAt,
+  getAuthorizationUrl,
+  getCredentialsId,
+  getRedirectUri,
+  hasCompleteAuthorization,
+  hasCompleteCredentials,
+  needsAccessTokenRenewal,
+  needsRefreshTokenRenewal,
+  refreshAccessToken,
+  shouldHandleAuthRedirect,
+};
