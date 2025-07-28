@@ -23,20 +23,23 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      setUser(session?.user || null);
+      setUser(session?.user ?? null);
       setLoading(false);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getSession();
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user || null);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return () => subscription?.unsubscribe();
   }, [supabase.auth]);
 
