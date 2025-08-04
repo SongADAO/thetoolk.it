@@ -159,8 +159,8 @@ async function exchangeCodeForTokensHosted(
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  credentials: OauthCredentials,
   redirectUri: string,
+  credentials: OauthCredentials,
 ): Promise<OauthAuthorization> {
   const response = await fetch(
     "https://graph.facebook.com/v23.0/oauth/access_token",

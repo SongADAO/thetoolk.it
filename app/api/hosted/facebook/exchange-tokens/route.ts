@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
 
     const newAuthorization = await exchangeCodeForTokens(
       code,
-      HOSTED_CREDENTIALS,
       redirect_uri,
+      HOSTED_CREDENTIALS,
     );
 
     const accounts = await getAccounts(newAuthorization.accessToken);

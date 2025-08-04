@@ -107,8 +107,8 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       } else {
         const newAuthorization = await exchangeCodeForTokens(
           code,
-          credentials,
           getRedirectUri(),
+          credentials,
         );
         setAuthorization(newAuthorization);
 
