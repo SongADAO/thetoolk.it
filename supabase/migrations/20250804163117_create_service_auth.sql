@@ -35,7 +35,6 @@ SELECT add_updated_at_trigger('service_auths');
 
 -- Enable RLS on both tables
 ALTER TABLE service_auths ENABLE ROW LEVEL SECURITY;
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for service_auths
 CREATE POLICY "Users can view own service_auths" ON service_auths
