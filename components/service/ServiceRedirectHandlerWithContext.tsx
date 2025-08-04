@@ -4,13 +4,15 @@ import { useSearchParams } from "next/navigation";
 import { Context, ReactNode, use, useEffect } from "react";
 
 import { Spinner } from "@/components/Spinner";
+import { AuthContext } from "@/contexts/AuthContext";
 
 interface ServiceRedirectHandlerProps {
+  readonly error: string;
   readonly handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
   readonly hasCompletedAuth: boolean;
+  readonly icon: ReactNode;
   readonly isHandlingAuth: boolean;
   readonly label: string;
-  readonly icon: ReactNode;
 }
 
 interface Props<T extends ServiceRedirectHandlerProps> {
@@ -20,16 +22,28 @@ interface Props<T extends ServiceRedirectHandlerProps> {
 export function ServiceRedirectHandlerWithContext<
   T extends ServiceRedirectHandlerProps,
 >({ context }: Props<T>) {
-  const { handleAuthRedirect, isHandlingAuth, hasCompletedAuth, label, icon } =
-    use(context);
+  const { loading } = use(AuthContext);
+
+  const {
+    error,
+    handleAuthRedirect,
+    hasCompletedAuth,
+    icon,
+    isHandlingAuth,
+    label,
+  } = use(context);
 
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (loading) {
+      return;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleAuthRedirect(searchParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [searchParams, loading]);
 
   if (!isHandlingAuth) {
     return null;
@@ -44,7 +58,11 @@ export function ServiceRedirectHandlerWithContext<
 
         {hasCompletedAuth ? (
           <>
-            <p className="">Authorization Complete</p>
+            {error ? (
+              <p className="text-[#f00]">Failed to Authorize</p>
+            ) : (
+              <p className="">Authorization Complete</p>
+            )}
             <div className="flex items-center justify-center">
               <button
                 className="mt-4 cursor-pointer rounded bg-gray-500 px-4 py-2 text-white"

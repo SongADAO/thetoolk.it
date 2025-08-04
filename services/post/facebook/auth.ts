@@ -17,6 +17,11 @@ interface FacebookPage {
   access_token: string;
 }
 
+const HOSTED_CREDENTIALS = {
+  clientId: String(process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID ?? ""),
+  clientSecret: String(process.env.FACEBOOK_CLIENT_SECRET ?? ""),
+};
+
 // -----------------------------------------------------------------------------
 
 const SCOPES: string[] = [
@@ -113,12 +118,9 @@ function formatTokens(tokens: FacebookTokenResponse): OauthAuthorization {
   };
 }
 
-function getAuthorizationUrl(
-  credentials: OauthCredentials,
-  redirectUri: string,
-): string {
+function getAuthorizationUrl(clientId: string, redirectUri: string): string {
   const params = new URLSearchParams({
-    client_id: credentials.clientId,
+    client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
@@ -126,6 +128,33 @@ function getAuthorizationUrl(
   });
 
   return `https://www.facebook.com/v23.0/dialog/oauth?${params.toString()}`;
+}
+
+async function exchangeCodeForTokensHosted(
+  code: string,
+  redirectUri: string,
+): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/facebook/exchange-tokens", {
+    body: JSON.stringify({
+      code,
+      redirect_uri: redirectUri,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Authentication failed: ${errorData.message ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
 }
 
 // Exchange authorization code for access token
@@ -330,6 +359,7 @@ async function getAccountAccessToken(
 
 export {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
@@ -338,6 +368,7 @@ export {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,

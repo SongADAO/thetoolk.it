@@ -1,16 +1,18 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, use, useEffect, useMemo, useState } from "react";
 import { FaFacebook } from "react-icons/fa6";
-import { useLocalStorage } from "usehooks-ts";
 
 import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
 import { DEBUG_POST } from "@/config/constants";
+import { AuthContext } from "@/contexts/AuthContext";
+import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
@@ -19,6 +21,7 @@ import {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsRefreshTokenRenewal,
   refreshAccessToken,
   shouldHandleAuthRedirect,
@@ -44,6 +47,8 @@ interface Props {
 }
 
 export function FacebookProvider({ children }: Readonly<Props>) {
+  const { isAuthenticated, loading } = use(AuthContext);
+
   const label = "Facebook";
 
   const brandColor = "facebook";
@@ -54,25 +59,25 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
+  const [isEnabled, setIsEnabled] = useUserStorage<boolean>(
     "thetoolkit-facebook-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
+  const [credentials, setCredentials] = useUserStorage<OauthCredentials>(
     "thetoolkit-facebook-credentials",
     defaultOauthCredentials,
     { initializeWithValue: true },
   );
 
-  const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
+  const [authorization, setAuthorization] = useUserStorage<OauthAuthorization>(
     "thetoolkit-facebook-authorization",
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+  const [accounts, setAccounts] = useUserStorage<ServiceAccount[]>(
     "thetoolkit-facebook-accounts",
     [],
     { initializeWithValue: true },
@@ -80,31 +85,41 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
   const credentialsId = getCredentialsId(credentials);
 
-  const isComplete = hasCompleteCredentials(credentials);
+  const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
+
+  const isComplete = isAuthenticated || isCompleteOwnCredentials;
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
-  const isUsable = isEnabled && isComplete && isAuthorized;
-
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
-  async function exchangeCode(
-    code: string,
-  ): Promise<OauthAuthorization | null> {
-    try {
-      const newAuthorization = await exchangeCodeForTokens(
-        code,
-        credentials,
-        getRedirectUri(),
-      );
+  const isUsable = isEnabled && isComplete && isAuthorized;
 
-      setAuthorization(newAuthorization);
+  const mode = isAuthenticated ? "hosted" : "self";
+
+  async function exchangeCode(code: string) {
+    try {
+      if (mode === "hosted") {
+        await exchangeCodeForTokensHosted(code, getRedirectUri());
+
+        // TODO: pull access token dates and accounts from supabase
+      } else {
+        const newAuthorization = await exchangeCodeForTokens(
+          code,
+          credentials,
+          getRedirectUri(),
+        );
+        setAuthorization(newAuthorization);
+
+        const newAccounts = await getAccounts(newAuthorization.accessToken);
+        setAccounts(newAccounts);
+      }
 
       setError("");
 
       console.log("Tokens obtained successfully");
 
-      return newAuthorization;
+      return true;
     } catch (err: unknown) {
       console.error("Token exchange error:", err);
 
@@ -112,7 +127,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
       setError(`Failed to exchange code for tokens: ${errMessage}`);
 
-      return null;
+      return false;
     }
   }
 
@@ -161,28 +176,11 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     return newAuthorization.accessToken;
   }
 
-  async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
-    try {
-      const newAccounts = await getAccounts(accessToken);
-
-      setAccounts(newAccounts);
-
-      return newAccounts;
-    } catch (err: unknown) {
-      console.error("Token exchange error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to get facebook accounts: ${errMessage}`);
-
-      setAccounts([]);
-
-      return [];
-    }
-  }
-
   function authorize() {
-    const authUrl = getAuthorizationUrl(credentials, getRedirectUri());
+    const authUrl = getAuthorizationUrl(
+      mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId,
+      getRedirectUri(),
+    );
     window.open(authUrl, "_blank");
   }
 
@@ -199,10 +197,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
       if (code && state && shouldHandleAuthRedirect(code, state)) {
         setIsHandlingAuth(true);
 
-        const newAuthorization = await exchangeCode(code);
-        if (newAuthorization) {
-          await initAccounts(newAuthorization.accessToken);
-        }
+        await exchangeCode(code);
 
         setHasCompletedAuth(true);
       }

@@ -12,9 +12,9 @@ interface BlueskyTokenResponse {
 }
 
 const HOSTED_CREDENTIALS = {
-  appPassword: String(process.env.BLUESKY_APP_PASSWORD),
-  serviceUrl: String(process.env.BLUESKY_SERVICE_URL),
-  username: String(process.env.BLUESKY_USERNAME),
+  appPassword: String(process.env.BLUESKY_APP_PASSWORD ?? ""),
+  serviceUrl: String(process.env.BLUESKY_SERVICE_URL ?? ""),
+  username: String(process.env.BLUESKY_USERNAME ?? ""),
 };
 
 // -----------------------------------------------------------------------------
@@ -111,10 +111,7 @@ async function exchangeCodeForTokensHosted(): Promise<OauthAuthorization> {
     );
   }
 
-  const sessionData = await response.json();
-  console.log("Session data:", sessionData);
-
-  return formatTokens(sessionData);
+  return await response.json();
 }
 
 async function exchangeCodeForTokens(

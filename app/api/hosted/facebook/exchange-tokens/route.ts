@@ -4,8 +4,9 @@ import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import {
   exchangeCodeForTokens,
+  getAccounts,
   HOSTED_CREDENTIALS,
-} from "@/services/post/bluesky/auth";
+} from "@/services/post/facebook/auth";
 
 async function getUser(supabase: SupabaseClient) {
   const {
@@ -22,16 +23,26 @@ async function getUser(supabase: SupabaseClient) {
 
 export async function POST(request: NextRequest) {
   try {
+    // eslint-disable-next-line camelcase
+    const { code, redirect_uri } = await request.json();
+
     const supabase = await createClient();
 
     const user = await getUser(supabase);
 
-    const authorization = await exchangeCodeForTokens(HOSTED_CREDENTIALS);
+    const newAuthorization = await exchangeCodeForTokens(
+      code,
+      HOSTED_CREDENTIALS,
+      redirect_uri,
+    );
+
+    const accounts = await getAccounts(newAuthorization.accessToken);
 
     const { error } = await supabase.from("services").upsert(
       {
-        service_authorization: authorization,
-        service_id: "bluesky",
+        service_accounts: accounts,
+        service_authorization: newAuthorization,
+        service_id: "facebook",
         user_id: user.id,
       },
       {
@@ -40,13 +51,10 @@ export async function POST(request: NextRequest) {
     );
 
     if (error) {
-      throw new Error("Could not exchange authorization code");
+      throw new Error("Could not get accounts");
     }
 
-    return Response.json({
-      accessTokenExpiresAt: authorization.accessTokenExpiresAt,
-      refreshTokenExpiresAt: authorization.refreshTokenExpiresAt,
-    });
+    return Response.json({ success: true });
   } catch (err: unknown) {
     console.error(err);
     const errMessage = err instanceof Error ? err.message : "Auth failed";
