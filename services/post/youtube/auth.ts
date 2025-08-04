@@ -15,6 +15,11 @@ interface GoogleTokenResponse {
   token_type: string;
 }
 
+const HOSTED_CREDENTIALS = {
+  clientId: String(process.env.NEXT_PUBLIC_YOUTUBE_CLIENT_ID ?? ""),
+  clientSecret: String(process.env.YOUTUBE_CLIENT_SECRET ?? ""),
+};
+
 // -----------------------------------------------------------------------------
 
 const SCOPES: string[] = [
@@ -39,7 +44,7 @@ const REFRESH_TOKEN_BUFFER_SECONDS = -1 * 100 * 365 * 24 * 60 * 60;
 // -----------------------------------------------------------------------------
 
 function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.accessToken || !authorization.accessTokenExpiresAt) {
+  if (!authorization.accessTokenExpiresAt) {
     return false;
   }
 
@@ -50,7 +55,7 @@ function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
 }
 
 function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.refreshToken || !authorization.refreshTokenExpiresAt) {
+  if (!authorization.refreshTokenExpiresAt) {
     return false;
   }
 
@@ -72,7 +77,6 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
-    authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(authorization)
   );
@@ -112,10 +116,7 @@ function formatTokens(tokens: GoogleTokenResponse): OauthAuthorization {
   };
 }
 
-function getAuthorizationUrl(
-  credentials: OauthCredentials,
-  redirectUri: string,
-): string {
+function getAuthorizationUrl(clientId: string, redirectUri: string): string {
   const params = new URLSearchParams({
     access_type: "offline",
     client_id: credentials.clientId,
@@ -128,11 +129,38 @@ function getAuthorizationUrl(
   return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 }
 
+async function exchangeCodeForTokensHosted(
+  code: string,
+  redirectUri: string,
+): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/youtube/exchange-tokens", {
+    body: JSON.stringify({
+      code,
+      redirect_uri: redirectUri,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Authentication failed: ${errorData.message ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  credentials: OauthCredentials,
   redirectUri: string,
+  credentials: OauthCredentials,
 ): Promise<OauthAuthorization> {
   const response = await fetch("https://oauth2.googleapis.com/token", {
     body: new URLSearchParams({
@@ -159,6 +187,26 @@ async function exchangeCodeForTokens(
   console.log(tokens);
 
   return formatTokens(tokens);
+}
+
+async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/youtube/refresh-tokens", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
 }
 
 // Refresh access token using refresh token
@@ -191,6 +239,7 @@ async function refreshAccessToken(
   }
 
   const tokens = await response.json();
+  console.log(tokens);
 
   // The refresh token doesn't change, but is also not in the returned data,
   // so we copy over the existing one.
@@ -245,14 +294,9 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
 async function getAccounts(token: string): Promise<ServiceAccount[]> {
   const accounts = [];
 
-  // Get the main channel
   const account = await getUserInfo(token);
-  accounts.push(account);
 
-  // Note: YouTube users can have multiple channels (brand accounts)
-  // If you need to get ALL channels (including brand channels),
-  // you would need additional API calls to get brand accounts
-  // For now, this returns just the main channel like the Threads example
+  accounts.push(account);
 
   return accounts;
 }
@@ -261,6 +305,7 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
 
 export {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -268,8 +313,10 @@ export {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
+  refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 };

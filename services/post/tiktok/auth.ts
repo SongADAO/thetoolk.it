@@ -16,6 +16,11 @@ interface TiktokTokenResponse {
   token_type: string;
 }
 
+const HOSTED_CREDENTIALS = {
+  clientId: String(process.env.NEXT_PUBLIC_TIKTOK_CLIENT_ID ?? ""),
+  clientSecret: String(process.env.TIKTOK_CLIENT_SECRET ?? ""),
+};
+
 // -----------------------------------------------------------------------------
 
 const SCOPES: string[] = ["user.info.basic", "video.upload", "video.publish"];
@@ -31,7 +36,7 @@ const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
 // -----------------------------------------------------------------------------
 
 function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.accessToken || !authorization.accessTokenExpiresAt) {
+  if (!authorization.accessTokenExpiresAt) {
     return false;
   }
 
@@ -42,7 +47,7 @@ function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
 }
 
 function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.refreshToken || !authorization.refreshTokenExpiresAt) {
+  if (!authorization.refreshTokenExpiresAt) {
     return false;
   }
 
@@ -64,7 +69,6 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
-    authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(authorization)
   );
@@ -104,12 +108,9 @@ function formatTokens(tokens: TiktokTokenResponse): OauthAuthorization {
   };
 }
 
-function getAuthorizationUrl(
-  credentials: OauthCredentials,
-  redirectUri: string,
-): string {
+function getAuthorizationUrl(clientId: string, redirectUri: string): string {
   const params = new URLSearchParams({
-    client_key: credentials.clientId,
+    client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
@@ -119,11 +120,38 @@ function getAuthorizationUrl(
   return `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`;
 }
 
+async function exchangeCodeForTokensHosted(
+  code: string,
+  redirectUri: string,
+): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/tiktok/exchange-tokens", {
+    body: JSON.stringify({
+      code,
+      redirect_uri: redirectUri,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Authentication failed: ${errorData.message ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  credentials: OauthCredentials,
   redirectUri: string,
+  credentials: OauthCredentials,
 ): Promise<OauthAuthorization> {
   const response = await fetch("https://open.tiktokapis.com/v2/oauth/token/", {
     body: new URLSearchParams({
@@ -150,6 +178,26 @@ async function exchangeCodeForTokens(
   console.log(tokens);
 
   return formatTokens(tokens);
+}
+
+async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/tiktok/refresh-tokens", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
 }
 
 // Refresh access token using refresh token
@@ -234,6 +282,7 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
 
 export {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -241,8 +290,10 @@ export {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
+  refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 };
