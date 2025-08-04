@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:codegen": "supabase gen types typescript --project-id xwdeoyngusbwcwphepup > types/supabase.ts",
+    "db:migrate": "supabase db push",
     "supabase": "supabase",
     "format": "run-s -c format:*",
     "format:misc": "prettier --write \"./**/*.{htm,html,json,md,yml,yaml}\"",

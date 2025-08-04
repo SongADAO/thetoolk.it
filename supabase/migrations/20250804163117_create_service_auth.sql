@@ -20,31 +20,31 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create service_auths table with updated_at column
-CREATE TABLE service_auths (
+-- Create service_authorizations table with updated_at column
+CREATE TABLE service_authorizations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id),
-  title TEXT NOT NULL,
-  content TEXT,
+  service_id VARCHAR NOT NULL,
+  authorization JSON,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Add updated_at triggers to both tables using our helper function
-SELECT add_updated_at_trigger('service_auths');
+SELECT add_updated_at_trigger('service_authorizations');
 
 -- Enable RLS on both tables
-ALTER TABLE service_auths ENABLE ROW LEVEL SECURITY;
+ALTER TABLE service_authorizations ENABLE ROW LEVEL SECURITY;
 
--- RLS policies for service_auths
-CREATE POLICY "Users can view own service_auths" ON service_auths
+-- RLS policies for service_authorizations
+CREATE POLICY "Users can view own service_authorizations" ON service_authorizations
   FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can create service_auths" ON service_auths
+CREATE POLICY "Users can create service_authorizations" ON service_authorizations
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update own service_auths" ON service_auths
+CREATE POLICY "Users can update own service_authorizations" ON service_authorizations
   FOR UPDATE USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete own service_auths" ON service_auths
+CREATE POLICY "Users can delete own service_authorizations" ON service_authorizations
   FOR DELETE USING (auth.uid() = user_id);
