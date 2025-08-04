@@ -154,8 +154,14 @@ async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
   credentials: OauthCredentials,
+  mode = "unhosted",
 ): Promise<OauthAuthorization> {
-  const response = await fetch("/api/instagram/oauth/access_token", {
+  const endpoint =
+    mode === "unhosted"
+      ? "/api/instagram/oauth/access_token"
+      : "https://api.instagram.com/oauth/access_token";
+
+  const response = await fetch(endpoint, {
     body: new URLSearchParams({
       client_id: credentials.clientId,
       client_secret: credentials.clientSecret,

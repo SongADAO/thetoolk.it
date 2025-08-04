@@ -12,8 +12,8 @@ interface ThreadsTokenResponse {
 }
 
 const HOSTED_CREDENTIALS = {
-  clientId: String(process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID ?? ""),
-  clientSecret: String(process.env.FACEBOOK_CLIENT_SECRET ?? ""),
+  clientId: String(process.env.NEXT_PUBLIC_THREADS_CLIENT_ID ?? ""),
+  clientSecret: String(process.env.THREADS_CLIENT_SECRET ?? ""),
 };
 
 // -----------------------------------------------------------------------------

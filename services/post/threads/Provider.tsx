@@ -59,25 +59,25 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
 
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
+  const [isEnabled, setIsEnabled] = useUserStorage<boolean>(
     "thetoolkit-threads-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
+  const [credentials, setCredentials] = useUserStorage<OauthCredentials>(
     "thetoolkit-threads-credentials",
     defaultOauthCredentials,
     { initializeWithValue: true },
   );
 
-  const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
+  const [authorization, setAuthorization] = useUserStorage<OauthAuthorization>(
     "thetoolkit-threads-authorization",
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+  const [accounts, setAccounts] = useUserStorage<ServiceAccount[]>(
     "thetoolkit-threads-accounts",
     [],
     { initializeWithValue: true },
@@ -104,11 +104,11 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
 
         // TODO: pull access token dates and accounts from supabase
       } else {
-      const newAuthorization = await exchangeCodeForTokens(
-        code,
+        const newAuthorization = await exchangeCodeForTokens(
+          code,
           getRedirectUri(),
-        credentials,
-      );
+          credentials,
+        );
         setAuthorization(newAuthorization);
 
         const newAccounts = await getAccounts(newAuthorization.accessToken);
@@ -138,9 +138,9 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
 
         // TODO: pull access token dates from supabase
       } else {
-      const newAuthorization = await refreshAccessToken(authorization);
+        const newAuthorization = await refreshAccessToken(authorization);
 
-      setAuthorization(newAuthorization);
+        setAuthorization(newAuthorization);
       }
 
       setError("");
@@ -164,9 +164,9 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
 
   async function getValidAccessToken(): Promise<string> {
     try {
-    if (DEBUG_POST) {
-      return "test-token";
-    }
+      if (DEBUG_POST) {
+        return "test-token";
+      }
 
       const newAuthorization = await refreshAccessToken(authorization);
 
@@ -174,7 +174,7 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
 
       setError("");
 
-    return newAuthorization.accessToken;
+      return newAuthorization.accessToken;
 
       console.log("Access token refreshed successfully");
     } catch (err: unknown) {

@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/server";
-import { refreshAccessToken } from "@/services/post/facebook/auth";
+import { refreshAccessToken } from "@/services/post/threads/auth";
 
 async function getUser(supabase: SupabaseClient) {
   const {
@@ -26,7 +26,7 @@ export async function POST() {
       .from("services")
       .select("service_authorization")
       .eq("user_id", user.id)
-      .eq("service_id", "facebook")
+      .eq("service_id", "threads")
       .single();
 
     if (error) {
@@ -46,7 +46,7 @@ export async function POST() {
       .upsert(
         {
           service_authorization: newAuthorization,
-          service_id: "facebook",
+          service_id: "threads",
           user_id: user.id,
         },
         {
