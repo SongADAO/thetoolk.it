@@ -5,6 +5,11 @@ import type {
   ServiceAccount,
 } from "@/services/post/types";
 
+const HOSTED_CREDENTIALS = {
+  clientId: String(process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID ?? ""),
+  clientSecret: String(process.env.NEYNAR_CLIENT_SECRET ?? ""),
+};
+
 // -----------------------------------------------------------------------------
 
 function getCredentialsId(credentials: OauthCredentials): string {
@@ -41,4 +46,5 @@ export {
   getCredentialsId,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
 };

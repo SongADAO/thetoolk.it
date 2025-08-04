@@ -1,20 +1,21 @@
 "use client";
 
 import { NeynarContextProvider, Theme } from "@neynar/react";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, use, useMemo, useState } from "react";
 import { SiFarcaster } from "react-icons/si";
-import { useLocalStorage } from "usehooks-ts";
 
 import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
+import { AuthContext } from "@/contexts/AuthContext";
+import { useUserStorage } from "@/hooks/useUserStorage";
 import {
-  // getAccounts,
   getAuthorizationExpiresAt,
   getCredentialsId,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
 } from "@/services/post/neynar/auth";
 import { NeynarContext } from "@/services/post/neynar/Context";
 import {
@@ -37,6 +38,8 @@ interface Props {
 }
 
 export function NeynarProvider({ children }: Readonly<Props>) {
+  const { isAuthenticated, loading } = use(AuthContext);
+
   const label = "Farcaster";
 
   const brandColor = "farcaster";
@@ -48,25 +51,25 @@ export function NeynarProvider({ children }: Readonly<Props>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
+  const [isEnabled, setIsEnabled] = useUserStorage<boolean>(
     "thetoolkit-neynar-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
+  const [credentials, setCredentials] = useUserStorage<OauthCredentials>(
     "thetoolkit-neynar-credentials",
     defaultOauthCredentials,
     { initializeWithValue: true },
   );
 
-  const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
+  const [authorization, setAuthorization] = useUserStorage<OauthAuthorization>(
     "thetoolkit-neynar-authorization",
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+  const [accounts, setAccounts] = useUserStorage<ServiceAccount[]>(
     "thetoolkit-neynar-accounts",
     [],
     { initializeWithValue: true },
@@ -74,13 +77,17 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   const credentialsId = getCredentialsId(credentials);
 
-  const isComplete = hasCompleteCredentials(credentials);
+  const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
+
+  const isComplete = isAuthenticated || isCompleteOwnCredentials;
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
   const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
 
   const isUsable = isEnabled && isComplete && isAuthorized;
+
+  const mode = isAuthenticated ? "hosted" : "self";
 
   async function authorize() {}
 
@@ -155,11 +162,8 @@ export function NeynarProvider({ children }: Readonly<Props>) {
     return formState;
   }
 
-  // useEffect(() => {
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   renewRefreshTokenIfNeeded();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [authorization.refreshTokenExpiresAt]);
+  const clientId =
+    mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId;
 
   const providerValues = useMemo(
     () => ({
@@ -225,9 +229,9 @@ export function NeynarProvider({ children }: Readonly<Props>) {
   return (
     <NeynarContext.Provider value={providerValues}>
       <NeynarContextProvider
-        key={credentials.clientId}
+        key={clientId}
         settings={{
-          clientId: credentials.clientId,
+          clientId,
           defaultTheme: Theme.Light,
           eventsCallbacks: {
             onAuthSuccess: ({ user }) => {
