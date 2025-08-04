@@ -135,7 +135,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
   async function refreshTokens() {
     try {
       if (mode === "hosted") {
-        await refreshAccessTokenHosted(authorization);
+        await refreshAccessTokenHosted();
 
         // TODO: pull access token dates from supabase
       } else {
