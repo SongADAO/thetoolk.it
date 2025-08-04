@@ -108,6 +108,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
           code,
           getRedirectUri(),
           credentials,
+          "self",
         );
         setAuthorization(newAuthorization);
 
