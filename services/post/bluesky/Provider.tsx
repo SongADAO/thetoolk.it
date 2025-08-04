@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, use, useEffect, useMemo, useState } from "react";
 import { FaBluesky } from "react-icons/fa6";
 
 import type {
@@ -8,6 +8,7 @@ import type {
   ServiceFormState,
 } from "@/components/service/ServiceForm";
 import { DEBUG_POST } from "@/config/constants";
+import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
@@ -40,6 +41,8 @@ interface Props {
 }
 
 export function BlueskyProvider({ children }: Readonly<Props>) {
+  const { isAuthenticated } = use(AuthContext);
+
   const label = "Bluesky";
 
   const brandColor = "bluesky";
@@ -77,7 +80,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const credentialsId = getCredentialsId(credentials);
 
-  const isComplete = hasCompleteCredentials(credentials);
+  const isComplete = isAuthenticated || hasCompleteCredentials(credentials);
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
