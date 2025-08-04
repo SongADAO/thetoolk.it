@@ -76,7 +76,7 @@ export function useUserStorage<T>(
           {
             [serviceField]: newValue,
             service_id: serviceId,
-            updated_at: new Date().toISOString(),
+            // updated_at: new Date().toISOString(),
             user_id: user.id,
           },
           {
