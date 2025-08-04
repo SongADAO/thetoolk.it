@@ -12,6 +12,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getCredentialsId,
@@ -80,7 +81,9 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const credentialsId = getCredentialsId(credentials);
 
-  const isComplete = isAuthenticated || hasCompleteCredentials(credentials);
+  const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
+
+  const isComplete = isAuthenticated || isCompleteOwnCredentials;
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
@@ -88,9 +91,14 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 
+  const mode = isAuthenticated ? "hosted" : "self";
+
   async function exchangeCode(): Promise<OauthAuthorization | null> {
     try {
-      const newAuthorization = await exchangeCodeForTokens(credentials);
+      const newAuthorization =
+        mode === "hosted"
+          ? await exchangeCodeForTokensHosted()
+          : await exchangeCodeForTokens(credentials);
 
       setAuthorization(newAuthorization);
 

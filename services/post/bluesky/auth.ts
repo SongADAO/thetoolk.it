@@ -11,6 +11,12 @@ interface BlueskyTokenResponse {
   refreshJwt: string;
 }
 
+const HOSTED_CREDENTIALS = {
+  appPassword: String(process.env.BLUESKY_APP_PASSWORD),
+  serviceUrl: String(process.env.BLUESKY_SERVICE_URL),
+  username: String(process.env.BLUESKY_USERNAME),
+};
+
 // -----------------------------------------------------------------------------
 
 // 5 minutes
@@ -86,6 +92,29 @@ function formatTokens(tokens: BlueskyTokenResponse): OauthAuthorization {
     refreshToken: tokens.refreshJwt,
     refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
+}
+
+async function exchangeCodeForTokensHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Bluesky authentication...");
+
+  const response = await fetch("/hosted/bluesky/exchange-tokens", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Authentication failed: ${errorData.message ?? errorData.error}`,
+    );
+  }
+
+  const sessionData = await response.json();
+  console.log("Session data:", sessionData);
+
+  return formatTokens(sessionData);
 }
 
 async function exchangeCodeForTokens(
@@ -176,11 +205,13 @@ async function getAccounts(
 
 export {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getCredentialsId,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
