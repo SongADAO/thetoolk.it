@@ -171,6 +171,7 @@ async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
   credentials: OauthCredentials,
+  mode = "hosted",
 ): Promise<OauthAuthorization> {
   const codeVerifier = localStorage.getItem("thetoolkit_twitter_code_verifier");
 
@@ -180,7 +181,12 @@ async function exchangeCodeForTokens(
     );
   }
 
-  const response = await fetch("/api/twitter/2/oauth2/token", {
+  const endpoint =
+    mode === "hosted"
+      ? "https://api.twitter.com/2/oauth2/token"
+      : "/api/twitter/2/oauth2/token";
+
+  const response = await fetch(endpoint, {
     body: JSON.stringify({
       client_id: credentials.clientId,
       code,
@@ -230,12 +236,18 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
 async function refreshAccessToken(
   credentials: OauthCredentials,
   authorization: OauthAuthorization,
+  mode = "hosted",
 ): Promise<OauthAuthorization> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
 
-  const response = await fetch("/api/twitter/2/oauth2/token", {
+  const endpoint =
+    mode === "hosted"
+      ? "https://api.twitter.com/2/oauth2/token"
+      : "/api/twitter/2/oauth2/token";
+
+  const response = await fetch(endpoint, {
     body: JSON.stringify({
       client_id: credentials.clientId,
       grant_type: "refresh_token",

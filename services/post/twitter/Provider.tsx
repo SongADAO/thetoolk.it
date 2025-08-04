@@ -108,6 +108,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
           code,
           getRedirectUri(),
           credentials,
+          "self",
         );
         setAuthorization(newAuthorization);
 
@@ -141,6 +142,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
         const newAuthorization = await refreshAccessToken(
           credentials,
           authorization,
+          "self",
         );
 
         setAuthorization(newAuthorization);

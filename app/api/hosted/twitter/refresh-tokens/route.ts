@@ -1,7 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/server";
-import { refreshAccessToken } from "@/services/post/twitter/auth";
+import {
+  HOSTED_CREDENTIALS,
+  refreshAccessToken,
+} from "@/services/post/twitter/auth";
 
 async function getUser(supabase: SupabaseClient) {
   const {
@@ -39,7 +42,10 @@ export async function POST() {
       throw new Error("Could not get tokens to refresh");
     }
 
-    const newAuthorization = await refreshAccessToken(authorization);
+    const newAuthorization = await refreshAccessToken(
+      HOSTED_CREDENTIALS,
+      authorization,
+    );
 
     const { error: authorizationError } = await supabase
       .from("services")
