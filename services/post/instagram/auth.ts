@@ -11,6 +11,11 @@ interface InstagramTokenResponse {
   expires_in: number;
 }
 
+const HOSTED_CREDENTIALS = {
+  clientId: String(process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID ?? ""),
+  clientSecret: String(process.env.INSTAGRAM_CLIENT_SECRET ?? ""),
+};
+
 // -----------------------------------------------------------------------------
 
 const SCOPES: string[] = [
@@ -29,7 +34,7 @@ const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
 // -----------------------------------------------------------------------------
 
 function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.accessToken || !authorization.accessTokenExpiresAt) {
+  if (!authorization.accessTokenExpiresAt) {
     return false;
   }
 
@@ -40,7 +45,7 @@ function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
 }
 
 function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.refreshToken || !authorization.refreshTokenExpiresAt) {
+  if (!authorization.refreshTokenExpiresAt) {
     return false;
   }
 
@@ -62,7 +67,6 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
-    authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(authorization)
   );
@@ -106,12 +110,9 @@ function formatTokens(tokens: InstagramTokenResponse): OauthAuthorization {
   };
 }
 
-function getAuthorizationUrl(
-  credentials: OauthCredentials,
-  redirectUri: string,
-): string {
+function getAuthorizationUrl(clientId: string, redirectUri: string): string {
   const params = new URLSearchParams({
-    client_id: credentials.clientId,
+    client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
@@ -121,11 +122,38 @@ function getAuthorizationUrl(
   return `https://www.instagram.com/oauth/authorize?${params.toString()}`;
 }
 
+async function exchangeCodeForTokensHosted(
+  code: string,
+  redirectUri: string,
+): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/instagram/exchange-tokens", {
+    body: JSON.stringify({
+      code,
+      redirect_uri: redirectUri,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Authentication failed: ${errorData.message ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
-  credentials: OauthCredentials,
   redirectUri: string,
+  credentials: OauthCredentials,
 ): Promise<OauthAuthorization> {
   const response = await fetch("/api/instagram/oauth/access_token", {
     body: new URLSearchParams({
@@ -143,7 +171,6 @@ async function exchangeCodeForTokens(
 
   if (!response.ok) {
     const errorData = await response.json();
-    console.error(errorData);
     throw new Error(
       `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
     );
@@ -174,6 +201,26 @@ async function exchangeCodeForTokens(
   console.log(longLivedTokens);
 
   return formatTokens(longLivedTokens);
+}
+
+async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/instagram/refresh-tokens", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
 }
 
 // Refresh access token using refresh token
@@ -248,6 +295,7 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
 
 export {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -255,8 +303,10 @@ export {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
+  refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 };
