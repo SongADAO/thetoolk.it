@@ -244,7 +244,6 @@ export function NeynarProvider({ children }: Readonly<Props>) {
               });
               setAccounts([
                 {
-                  accessToken: user.signer_uuid,
                   id: user.signer_uuid,
                   username: user.username,
                 },
