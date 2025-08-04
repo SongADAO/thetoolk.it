@@ -2,13 +2,13 @@
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaBluesky } from "react-icons/fa6";
-import { useLocalStorage } from "usehooks-ts";
 
 import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
 import { DEBUG_POST } from "@/config/constants";
+import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
   getAccounts,
@@ -50,28 +50,29 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
+  // Replace useLocalStorage with useUserStorage
+  const [isEnabled, setIsEnabled] = useUserStorage<boolean>(
     "thetoolkit-bluesky-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<BlueskyCredentials>(
+  const [credentials, setCredentials] = useUserStorage<BlueskyCredentials>(
     "thetoolkit-bluesky-credentials",
     defaultBlueskyCredentials,
-    { initializeWithValue: true },
+    { initializeWithValue: false },
   );
 
-  const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
+  const [authorization, setAuthorization] = useUserStorage<OauthAuthorization>(
     "thetoolkit-bluesky-authorization",
     defaultOauthAuthorization,
-    { initializeWithValue: true },
+    { initializeWithValue: false },
   );
 
-  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+  const [accounts, setAccounts] = useUserStorage<ServiceAccount[]>(
     "thetoolkit-bluesky-accounts",
     [],
-    { initializeWithValue: true },
+    { initializeWithValue: false },
   );
 
   const credentialsId = getCredentialsId(credentials);

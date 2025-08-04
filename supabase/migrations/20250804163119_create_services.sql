@@ -25,13 +25,16 @@ CREATE TABLE services (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id),
   service_id VARCHAR NOT NULL,
-  service_is_enabled BOOLEAN,
+  service_enabled BOOLEAN,
   service_authorization JSON,
   service_credentials JSON,
   service_accounts JSON,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
+
+ALTER TABLE services
+ADD CONSTRAINT unique_user_service UNIQUE (user_id, service_id);
 
 -- Add updated_at triggers to both tables using our helper function
 SELECT add_updated_at_trigger('services');
