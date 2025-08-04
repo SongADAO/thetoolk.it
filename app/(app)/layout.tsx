@@ -1,14 +1,14 @@
 import { ReactNode } from "react";
 
+import { AppHeader } from "@/components/AppHeader";
+
 export default function AppLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
     <div className="flex min-h-[100vh] flex-col">
       <header>
-        <div className="flex items-center justify-between bg-gray-200 p-2">
-          <h1>TheToolk.it</h1>
-        </div>
+        <AppHeader />
       </header>
       <main className="flex-1">{children}</main>
       <footer>
