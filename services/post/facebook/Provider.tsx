@@ -24,6 +24,7 @@ import {
   HOSTED_CREDENTIALS,
   needsRefreshTokenRenewal,
   refreshAccessToken,
+  refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/facebook/auth";
 import { FacebookContext } from "@/services/post/facebook/Context";
@@ -131,17 +132,52 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokens(): Promise<OauthAuthorization | null> {
+  async function refreshTokens() {
     try {
+      if (mode === "hosted") {
+        await refreshAccessTokenHosted(authorization);
+
+        // TODO: pull access token dates from supabase
+      } else {
+        const newAuthorization = await refreshAccessToken(authorization);
+
+        setAuthorization(newAuthorization);
+      }
+
+      setError("");
+
+      console.log("Access token refreshed successfully");
+    } catch (err: unknown) {
+      console.error("Token refresh error:", err);
+
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+
+      setError(`Failed to refresh token: ${errMessage}`);
+    }
+  }
+
+  async function renewRefreshTokenIfNeeded() {
+    if (needsRefreshTokenRenewal(authorization)) {
+      console.log(`${label}: Refresh token will expire soon, refreshing...`);
+      await refreshTokens();
+    }
+  }
+
+  async function getValidAccessToken(): Promise<string> {
+    try {
+      if (DEBUG_POST) {
+        return "test-token";
+      }
+
       const newAuthorization = await refreshAccessToken(authorization);
 
       setAuthorization(newAuthorization);
 
       setError("");
 
-      console.log("Access token refreshed successfully");
+      return newAuthorization.accessToken;
 
-      return newAuthorization;
+      console.log("Access token refreshed successfully");
     } catch (err: unknown) {
       console.error("Token refresh error:", err);
 
@@ -149,31 +185,8 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
       setError(`Failed to refresh token: ${errMessage}`);
 
-      return null;
+      return "";
     }
-  }
-
-  async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
-    if (needsRefreshTokenRenewal(authorization)) {
-      console.log(`${label}: Refresh token will expire soon, refreshing...`);
-      return await refreshTokens();
-    }
-
-    return null;
-  }
-
-  async function getValidAccessToken(): Promise<string> {
-    if (DEBUG_POST) {
-      return "test-token";
-    }
-
-    const newAuthorization = await refreshTokens();
-
-    if (!newAuthorization?.accessToken) {
-      throw new Error("Failed to get valid access token");
-    }
-
-    return newAuthorization.accessToken;
   }
 
   function authorize() {

@@ -214,6 +214,26 @@ async function exchangeCodeForTokens(
   return formatTokens(longLivedTokens);
 }
 
+async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Facebook authentication...");
+
+  const response = await fetch("/api/hosted/facebook/refresh-tokens", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
 // Refresh tokens are automatically refreshed by Facebook when any API is called.
 async function refreshAccessToken(
   authorization: OauthAuthorization,
@@ -371,5 +391,6 @@ export {
   needsAccessTokenRenewal,
   needsRefreshTokenRenewal,
   refreshAccessToken,
+  refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 };
