@@ -215,7 +215,6 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log("Tiktok user info:", userInfo);
 
   return {
-    accessToken: "",
     id: userInfo.data.user.open_id,
     username: userInfo.data.user.display_name,
   };

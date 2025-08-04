@@ -229,7 +229,6 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   console.log("Threads user info:", userInfo);
 
   return {
-    accessToken: "",
     id: userInfo.id,
     username: userInfo.username,
   };

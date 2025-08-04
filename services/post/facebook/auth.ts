@@ -312,7 +312,6 @@ async function getUserInfoFromPage(
   console.log("✅ Facebook Account Details:", testData);
 
   return {
-    accessToken: page.access_token,
     id: page.id,
     username: page.name,
   };
@@ -345,14 +344,14 @@ async function getAccountAccessToken(
     return "test-account-token";
   }
 
-  const accounts = await getAccounts(token);
-  const userAccounts = accounts.filter((page) => page.id === accountId);
+  const facebookPages = await getFacebookPages(token);
+  const pages = facebookPages.filter((page) => page.id === accountId);
 
-  if (userAccounts.length !== 1) {
+  if (pages.length !== 1) {
     throw new Error("Could not get page access token");
   }
 
-  return userAccounts[0].accessToken;
+  return pages[0].access_token;
 }
 
 // -----------------------------------------------------------------------------

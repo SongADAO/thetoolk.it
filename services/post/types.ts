@@ -1,5 +1,4 @@
 interface ServiceAccount {
-  accessToken: string;
   id: string;
   username: string;
 }
