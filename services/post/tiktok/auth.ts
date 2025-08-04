@@ -110,7 +110,7 @@ function formatTokens(tokens: TiktokTokenResponse): OauthAuthorization {
 
 function getAuthorizationUrl(clientId: string, redirectUri: string): string {
   const params = new URLSearchParams({
-    client_id: clientId,
+    client_key: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
