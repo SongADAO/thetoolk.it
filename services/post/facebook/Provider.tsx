@@ -48,7 +48,7 @@ interface Props {
 }
 
 export function FacebookProvider({ children }: Readonly<Props>) {
-  const { isAuthenticated } = use(AuthContext);
+  const { isAuthenticated, loading } = use(AuthContext);
 
   const label = "Facebook";
 
@@ -285,10 +285,14 @@ export function FacebookProvider({ children }: Readonly<Props>) {
   }
 
   useEffect(() => {
+    if (loading) {
+      return;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     renewRefreshTokenIfNeeded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.refreshTokenExpiresAt]);
+  }, [authorization.refreshTokenExpiresAt, loading]);
 
   const providerValues = useMemo(
     () => ({
