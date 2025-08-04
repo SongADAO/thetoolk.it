@@ -7,7 +7,9 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
-    return exchangeCodeForTokens(HOSTED_CREDENTIALS);
+    const result = exchangeCodeForTokens(HOSTED_CREDENTIALS);
+
+    return Response.json(result);
   } catch (err: unknown) {
     console.error(err);
     const errMessage = err instanceof Error ? err.message : "Auth failed";

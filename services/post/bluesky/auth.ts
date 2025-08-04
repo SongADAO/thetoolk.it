@@ -97,7 +97,7 @@ function formatTokens(tokens: BlueskyTokenResponse): OauthAuthorization {
 async function exchangeCodeForTokensHosted(): Promise<OauthAuthorization> {
   console.log("Starting Bluesky authentication...");
 
-  const response = await fetch("/hosted/bluesky/exchange-tokens", {
+  const response = await fetch("/api/hosted/bluesky/exchange-tokens", {
     headers: {
       "Content-Type": "application/json",
     },
