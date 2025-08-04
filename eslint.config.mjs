@@ -12,6 +12,9 @@ import reactPlugin from "eslint-plugin-react";
 import reactRefresh from "eslint-plugin-react-refresh";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import tseslint from "typescript-eslint";
+// import pluginVue from "eslint-plugin-vue";
+// import vueParser from "vue-eslint-parser";
+import unusedImports from "eslint-plugin-unused-imports";
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
@@ -34,12 +37,14 @@ export default tseslint.config(
   // tseslint.configs.stylistic,
   tseslint.configs.all,
 
+  // ...pluginVue.configs["flat/recommended"],
+
   // reactPlugin.configs.flat.recommended
   reactPlugin.configs.flat.all,
 
   reactRefresh.configs.recommended,
 
-  // reactHooks.configs['recommended-latest'],
+  // reactHooks.configs["recommended-latest"],
 
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript"],
@@ -48,8 +53,8 @@ export default tseslint.config(
   // importPlugin.flatConfigs.recommended,
   // importPlugin.flatConfigs.typescript,
 
-  // jsdoc.configs['flat/recommended'],
-  // jsdoc.configs['flat/recommended-typescript'],
+  // jsdoc.configs["flat/recommended"],
+  // jsdoc.configs["flat/recommended-typescript"],
 
   eslintConfigPrettier,
 
@@ -84,18 +89,23 @@ export default tseslint.config(
     plugins: {
       "simple-import-sort": simpleImportSort,
       prettier: prettier,
+      "unused-imports": unusedImports,
     },
     linterOptions: {
       reportUnusedDisableDirectives: "off",
     },
     languageOptions: {
+      // parser: vueParser,
       ecmaVersion: 2020,
       globals: {
         ...globals.browser,
       },
       parserOptions: {
+        parser: tseslint.parser,
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
+        // Additional options for Vue + TypeScript
+        // extraFileExtensions: [".vue"],
       },
     },
     rules: {
@@ -251,7 +261,7 @@ export default tseslint.config(
       "import/dynamic-import-chunkname": "error",
       "import/exports-last": "error",
       "import/first": "error",
-      // "import/group-exports": "error",
+      "import/group-exports": "error",
       "import/max-dependencies": "off",
       "import/newline-after-import": "error",
       "import/no-anonymous-default-export": "error",
@@ -259,6 +269,10 @@ export default tseslint.config(
       "import/no-named-default": "error",
       "import/no-named-export": "off",
       "import/prefer-default-export": "off",
+
+      // Unused Imports
+      // ---------------------------------------------------------------------
+      "unused-imports/no-unused-imports": "error",
 
       // Simple Import Sort
       // ---------------------------------------------------------------------
