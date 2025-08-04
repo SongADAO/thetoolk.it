@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
-import type { AuthContextType, AuthProviderProps } from "@/types/supabase";
+import type { AuthContextType, AuthProviderProps } from "@/types/supabase-auth";
 
 export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   const [user, setUser] = useState<User | null>(null);

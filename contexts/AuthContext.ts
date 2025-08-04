@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-import type { AuthContextType } from "@/types/supabase";
+import type { AuthContextType } from "@/types/supabase-auth";
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
