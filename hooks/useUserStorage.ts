@@ -54,7 +54,7 @@ export function useUserStorage<T>(
         return null;
       }
 
-      return data?.value as T;
+      return data?.[serviceField] as T;
     } catch (error) {
       console.error("Error loading from Supabase:", error);
       return null;
