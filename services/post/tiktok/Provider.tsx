@@ -1,16 +1,18 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, use, useEffect, useMemo, useState } from "react";
 import { FaTiktok } from "react-icons/fa6";
-import { useLocalStorage } from "usehooks-ts";
 
 import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
 import { DEBUG_POST } from "@/config/constants";
+import { AuthContext } from "@/contexts/AuthContext";
+import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
+  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -18,8 +20,10 @@ import {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsRefreshTokenRenewal,
   refreshAccessToken,
+  refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/tiktok/auth";
 import { TiktokContext } from "@/services/post/tiktok/Context";
@@ -43,6 +47,8 @@ interface Props {
 }
 
 export function TiktokProvider({ children }: Readonly<Props>) {
+  const { isAuthenticated, loading } = use(AuthContext);
+
   const label = "Tiktok";
 
   const brandColor = "tiktok";
@@ -53,25 +59,25 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
+  const [isEnabled, setIsEnabled] = useUserStorage<boolean>(
     "thetoolkit-tiktok-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useLocalStorage<OauthCredentials>(
+  const [credentials, setCredentials] = useUserStorage<OauthCredentials>(
     "thetoolkit-tiktok-credentials",
     defaultOauthCredentials,
     { initializeWithValue: true },
   );
 
-  const [authorization, setAuthorization] = useLocalStorage<OauthAuthorization>(
+  const [authorization, setAuthorization] = useUserStorage<OauthAuthorization>(
     "thetoolkit-tiktok-authorization",
     defaultOauthAuthorization,
     { initializeWithValue: true },
   );
 
-  const [accounts, setAccounts] = useLocalStorage<ServiceAccount[]>(
+  const [accounts, setAccounts] = useUserStorage<ServiceAccount[]>(
     "thetoolkit-tiktok-accounts",
     [],
     { initializeWithValue: true },
@@ -79,7 +85,9 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   const credentialsId = getCredentialsId(credentials);
 
-  const isComplete = hasCompleteCredentials(credentials);
+  const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
+
+  const isComplete = isAuthenticated || isCompleteOwnCredentials;
 
   const isAuthorized = hasCompleteAuthorization(authorization);
 
@@ -87,23 +95,31 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 
-  async function exchangeCode(
-    code: string,
-  ): Promise<OauthAuthorization | null> {
-    try {
-      const newAuthorization = await exchangeCodeForTokens(
-        code,
-        credentials,
-        getRedirectUri(),
-      );
+  const mode = isAuthenticated ? "hosted" : "self";
 
-      setAuthorization(newAuthorization);
+  async function exchangeCode(code: string) {
+    try {
+      if (mode === "hosted") {
+        await exchangeCodeForTokensHosted(code, getRedirectUri());
+
+        // TODO: pull access token dates and accounts from supabase
+      } else {
+        const newAuthorization = await exchangeCodeForTokens(
+          code,
+          getRedirectUri(),
+          credentials,
+        );
+        setAuthorization(newAuthorization);
+
+        const newAccounts = await getAccounts(newAuthorization.accessToken);
+        setAccounts(newAccounts);
+      }
 
       setError("");
 
       console.log("Tokens obtained successfully");
 
-      return newAuthorization;
+      return true;
     } catch (err: unknown) {
       console.error("Token exchange error:", err);
 
@@ -111,12 +127,50 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
       setError(`Failed to exchange code for tokens: ${errMessage}`);
 
-      return null;
+      return false;
     }
   }
 
-  async function refreshTokens(): Promise<OauthAuthorization | null> {
+  async function refreshTokens() {
     try {
+      if (mode === "hosted") {
+        await refreshAccessTokenHosted();
+
+        // TODO: pull access token dates from supabase
+      } else {
+        const newAuthorization = await refreshAccessToken(
+          credentials,
+          authorization,
+        );
+
+        setAuthorization(newAuthorization);
+      }
+
+      setError("");
+
+      console.log("Access token refreshed successfully");
+    } catch (err: unknown) {
+      console.error("Token refresh error:", err);
+
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+
+      setError(`Failed to refresh token: ${errMessage}`);
+    }
+  }
+
+  async function renewRefreshTokenIfNeeded() {
+    if (needsRefreshTokenRenewal(authorization)) {
+      console.log(`${label}: Refresh token will expire soon, refreshing...`);
+      await refreshTokens();
+    }
+  }
+
+  async function getValidAccessToken(): Promise<string> {
+    try {
+      if (DEBUG_POST) {
+        return "test-token";
+      }
+
       const newAuthorization = await refreshAccessToken(
         credentials,
         authorization,
@@ -126,9 +180,9 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
       setError("");
 
-      console.log("Access token refreshed successfully");
+      return newAuthorization.accessToken;
 
-      return newAuthorization;
+      console.log("Access token refreshed successfully");
     } catch (err: unknown) {
       console.error("Token refresh error:", err);
 
@@ -136,55 +190,15 @@ export function TiktokProvider({ children }: Readonly<Props>) {
 
       setError(`Failed to refresh token: ${errMessage}`);
 
-      return null;
-    }
-  }
-
-  async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
-    if (needsRefreshTokenRenewal(authorization)) {
-      console.log(`${label}: Refresh token will expire soon, refreshing...`);
-      return await refreshTokens();
-    }
-
-    return null;
-  }
-
-  async function getValidAccessToken(): Promise<string> {
-    if (DEBUG_POST) {
-      return "test-token";
-    }
-
-    const newAuthorization = await refreshTokens();
-
-    if (!newAuthorization?.accessToken) {
-      throw new Error("Failed to get valid access token");
-    }
-
-    return newAuthorization.accessToken;
-  }
-
-  async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
-    try {
-      const newAccounts = await getAccounts(accessToken);
-
-      setAccounts(newAccounts);
-
-      return newAccounts;
-    } catch (err: unknown) {
-      console.error("Token exchange error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to get tiktok accounts: ${errMessage}`);
-
-      setAccounts([]);
-
-      return [];
+      return "";
     }
   }
 
   function authorize() {
-    const authUrl = getAuthorizationUrl(credentials, getRedirectUri());
+    const authUrl = getAuthorizationUrl(
+      mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId,
+      getRedirectUri(),
+    );
     window.open(authUrl, "_blank");
   }
 
@@ -201,10 +215,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
       if (code && state && shouldHandleAuthRedirect(code, state)) {
         setIsHandlingAuth(true);
 
-        const newAuthorization = await exchangeCode(code);
-        if (newAuthorization) {
-          await initAccounts(newAuthorization.accessToken);
-        }
+        await exchangeCode(code);
 
         setHasCompletedAuth(true);
       }
@@ -274,10 +285,15 @@ export function TiktokProvider({ children }: Readonly<Props>) {
   }
 
   useEffect(() => {
+    if (loading) {
+      // Wait for user data to load.
+      return;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     renewRefreshTokenIfNeeded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.refreshTokenExpiresAt]);
+  }, [authorization.refreshTokenExpiresAt, loading]);
 
   const providerValues = useMemo(
     () => ({
