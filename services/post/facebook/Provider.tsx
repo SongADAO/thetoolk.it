@@ -47,7 +47,7 @@ interface Props {
 }
 
 export function FacebookProvider({ children }: Readonly<Props>) {
-  const { isAuthenticated, loading } = use(AuthContext);
+  const { isAuthenticated } = use(AuthContext);
 
   const label = "Facebook";
 
