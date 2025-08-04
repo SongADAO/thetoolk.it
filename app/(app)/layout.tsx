@@ -10,9 +10,7 @@ export default function AppLayout({
           <h1>TheToolk.it</h1>
         </div>
       </header>
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
       <footer>
         <div className="flex items-center justify-center gap-2 bg-gray-200 p-2">
           <span>TheToolk.it</span> <span>v0.1.0</span> <span>&copy;2025</span>
