@@ -41,7 +41,7 @@ const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
 // -----------------------------------------------------------------------------
 
 function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.accessToken || !authorization.accessTokenExpiresAt) {
+  if (!authorization.accessTokenExpiresAt) {
     return false;
   }
 
@@ -52,7 +52,7 @@ function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
 }
 
 function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
-  if (!authorization.refreshToken || !authorization.refreshTokenExpiresAt) {
+  if (!authorization.refreshTokenExpiresAt) {
     return false;
   }
 
@@ -74,7 +74,6 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
-    authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(authorization)
   );

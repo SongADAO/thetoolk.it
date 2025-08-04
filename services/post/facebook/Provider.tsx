@@ -286,6 +286,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
   useEffect(() => {
     if (loading) {
+      // Wait for user data to load.
       return;
     }
 
