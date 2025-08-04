@@ -115,7 +115,10 @@ function formatTokens(tokens: TwitterTokenResponse): OauthAuthorization {
   };
 }
 
-function getAuthorizationUrl(clientId: string, redirectUri: string): string {
+async function getAuthorizationUrl(
+  clientId: string,
+  redirectUri: string,
+): Promise<string> {
   console.log("Starting Twitter authorization...");
 
   // Generate PKCE values
@@ -142,12 +145,14 @@ function getAuthorizationUrl(clientId: string, redirectUri: string): string {
 async function exchangeCodeForTokensHosted(
   code: string,
   redirectUri: string,
+  codeVerifier: string,
 ): Promise<OauthAuthorization> {
   console.log("Starting Facebook authentication...");
 
   const response = await fetch("/api/hosted/twitter/exchange-tokens", {
     body: JSON.stringify({
       code,
+      code_verifier: codeVerifier,
       redirect_uri: redirectUri,
     }),
     headers: {
@@ -170,17 +175,10 @@ async function exchangeCodeForTokensHosted(
 async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
+  codeVerifier: string,
   credentials: OauthCredentials,
   mode = "hosted",
 ): Promise<OauthAuthorization> {
-  const codeVerifier = localStorage.getItem("thetoolkit_twitter_code_verifier");
-
-  if (!codeVerifier) {
-    throw new Error(
-      "Code verifier not found. Please restart the authorization process.",
-    );
-  }
-
   const endpoint =
     mode === "hosted"
       ? "https://api.twitter.com/2/oauth2/token"
@@ -273,10 +271,18 @@ async function refreshAccessToken(
 
 // -----------------------------------------------------------------------------
 
-async function getUserInfo(token: string): Promise<ServiceAccount> {
+async function getUserInfo(
+  token: string,
+  mode = "hosted",
+): Promise<ServiceAccount> {
   console.log(`Checking Twitter user info`);
 
-  const response = await fetch("/api/twitter/2/users/me", {
+  const endpoint =
+    mode === "hosted"
+      ? "https://api.twitter.com/2/users/me"
+      : "/api/twitter/2/users/me";
+
+  const response = await fetch(endpoint, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -296,10 +302,13 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   };
 }
 
-async function getAccounts(token: string): Promise<ServiceAccount[]> {
+async function getAccounts(
+  token: string,
+  mode = "hosted",
+): Promise<ServiceAccount[]> {
   const accounts = [];
 
-  const account = await getUserInfo(token);
+  const account = await getUserInfo(token, mode);
 
   accounts.push(account);
 

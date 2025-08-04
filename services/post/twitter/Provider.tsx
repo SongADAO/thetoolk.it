@@ -99,20 +99,34 @@ export function TwitterProvider({ children }: Readonly<Props>) {
 
   async function exchangeCode(code: string) {
     try {
+      const codeVerifier = localStorage.getItem(
+        "thetoolkit_twitter_code_verifier",
+      );
+
+      if (!codeVerifier) {
+        throw new Error(
+          "Code verifier not found. Please restart the authorization process.",
+        );
+      }
+
       if (mode === "hosted") {
-        await exchangeCodeForTokensHosted(code, getRedirectUri());
+        await exchangeCodeForTokensHosted(code, getRedirectUri(), codeVerifier);
 
         // TODO: pull access token dates and accounts from supabase
       } else {
         const newAuthorization = await exchangeCodeForTokens(
           code,
           getRedirectUri(),
+          codeVerifier,
           credentials,
           "self",
         );
         setAuthorization(newAuthorization);
 
-        const newAccounts = await getAccounts(newAuthorization.accessToken);
+        const newAccounts = await getAccounts(
+          newAuthorization.accessToken,
+          "self",
+        );
         setAccounts(newAccounts);
       }
 
@@ -196,8 +210,8 @@ export function TwitterProvider({ children }: Readonly<Props>) {
     }
   }
 
-  function authorize() {
-    const authUrl = getAuthorizationUrl(
+  async function authorize() {
+    const authUrl = await getAuthorizationUrl(
       mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId,
       getRedirectUri(),
     );

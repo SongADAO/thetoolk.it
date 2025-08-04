@@ -119,7 +119,7 @@ function formatTokens(tokens: GoogleTokenResponse): OauthAuthorization {
 function getAuthorizationUrl(clientId: string, redirectUri: string): string {
   const params = new URLSearchParams({
     access_type: "offline",
-    client_id: credentials.clientId,
+    client_id: clientId,
     prompt: "consent",
     redirect_uri: redirectUri,
     response_type: "code",

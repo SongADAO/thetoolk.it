@@ -24,7 +24,7 @@ async function getUser(supabase: SupabaseClient) {
 export async function POST(request: NextRequest) {
   try {
     // eslint-disable-next-line camelcase
-    const { code, redirect_uri } = await request.json();
+    const { code, redirect_uri, code_verifier } = await request.json();
 
     const supabase = await createClient();
 
@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     const newAuthorization = await exchangeCodeForTokens(
       code,
       redirect_uri,
+      code_verifier,
       HOSTED_CREDENTIALS,
     );
 
