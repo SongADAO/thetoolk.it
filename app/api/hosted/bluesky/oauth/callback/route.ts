@@ -26,7 +26,8 @@ async function getUser(supabase: SupabaseClient): Promise<User> {
 
 export async function GET(request: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-  const authorizeUrl = new URL(`${baseUrl}/authorize`);
+  const successUrl = new URL(`${baseUrl}/authorize-success`);
+  const errorUrl = new URL(`${baseUrl}/authorize-error`);
 
   try {
     const supabase = await createClient();
@@ -45,8 +46,7 @@ export async function GET(request: NextRequest) {
     // Handle OAuth errors
     if (error) {
       console.error("OAuth callback error:", error, errorDescription);
-      const errorUrl = authorizeUrl;
-      errorUrl.searchParams.set("atproto_service", "bluesky");
+      errorUrl.searchParams.set("service", "bluesky");
       errorUrl.searchParams.set("error", error);
       if (errorDescription) {
         errorUrl.searchParams.set("error_description", errorDescription);
@@ -56,8 +56,7 @@ export async function GET(request: NextRequest) {
 
     if (!code || !iss || !state) {
       console.error("Missing OAuth callback parameters");
-      const errorUrl = authorizeUrl;
-      errorUrl.searchParams.set("atproto_service", "bluesky");
+      errorUrl.searchParams.set("service", "bluesky");
       errorUrl.searchParams.set("error", "missing_parameters");
       return NextResponse.redirect(errorUrl.toString());
     }
@@ -96,18 +95,16 @@ export async function GET(request: NextRequest) {
     console.log("Tokens stored successfully");
 
     // Redirect back to the application
-    const redirectUrl = authorizeUrl;
-    redirectUrl.searchParams.set("atproto_service", "bluesky");
-    redirectUrl.searchParams.set("auth", "success");
+    successUrl.searchParams.set("service", "bluesky");
+    successUrl.searchParams.set("auth", "success");
 
-    return NextResponse.redirect(redirectUrl.toString());
+    return NextResponse.redirect(successUrl.toString());
   } catch (error: unknown) {
     console.error("OAuth callback error:", error);
     const errMessage = error instanceof Error ? error.message : "Unknown error";
 
     // Redirect to app with error
-    const errorUrl = authorizeUrl;
-    errorUrl.searchParams.set("atproto_service", "bluesky");
+    errorUrl.searchParams.set("service", "bluesky");
     errorUrl.searchParams.set("error", "callback_failed");
     errorUrl.searchParams.set("error_description", errMessage);
 
