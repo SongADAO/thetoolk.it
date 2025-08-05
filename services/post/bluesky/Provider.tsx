@@ -224,9 +224,11 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     const authUrl = await getAuthorizationUrl(
       metadataUrl,
       getRedirectUri(),
+      credentials.serviceUrl,
       credentials.username,
     );
-    window.open(authUrl, "_blank");
+    console.log(authUrl);
+    // window.open(authUrl, "_blank");
   }
 
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);

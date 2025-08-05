@@ -35,6 +35,24 @@ const REFRESH_TOKEN_BUFFER_SECONDS = 24 * 60 * 60;
 
 // -----------------------------------------------------------------------------
 
+function getClientMetadata() {
+  return {
+    application_type: "web",
+    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata.json`,
+    client_name: "The Toolk.it",
+    client_uri: process.env.NEXT_PUBLIC_BASE_URL,
+    dpop_bound_access_tokens: true,
+    grant_types: ["authorization_code", "refresh_token"],
+    logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
+    redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/oauth/callback`],
+    response_types: ["code"],
+    scope: "atproto transition:generic",
+    token_endpoint_auth_method: "none",
+  };
+}
+
+// -----------------------------------------------------------------------------
+
 function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
   if (!authorization.accessTokenExpiresAt) {
     return false;
@@ -187,19 +205,16 @@ async function generateDPoPProof(method: string, url: string, nonce?: string) {
 }
 
 // Resolve Bluesky handle to find the user's PDS
-async function resolveHandle(handle: string): Promise<string> {
-  // Clean up handle
-  if (!handle.includes(".")) {
-    // eslint-disable-next-line no-param-reassign
-    handle = `${handle}.bsky.social`;
-  }
-
+async function resolveHandle(
+  serviceUrl: string,
+  username: string,
+): Promise<string> {
   const response = await fetch(
-    `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`,
+    `${serviceUrl}/xrpc/com.atproto.identity.resolveHandle?handle=${username}`,
   );
 
   if (!response.ok) {
-    throw new Error(`Failed to resolve handle: ${handle}`);
+    throw new Error(`Failed to resolve handle: ${username}`);
   }
 
   const data = await response.json();
@@ -245,11 +260,12 @@ async function getAuthServerMetadata(pdsUrl: string) {
 async function getAuthorizationUrl(
   metadataUrl: string,
   redirectUrl: string,
-  handle: string,
+  serviceUrl: string,
+  username: string,
 ): Promise<string> {
   try {
     // 1. Resolve handle to DID
-    const did = await resolveHandle(handle);
+    const did = await resolveHandle(serviceUrl, username);
 
     // 2. Get user's PDS
     const pdsUrl = await getPDSEndpoint(did);
@@ -265,12 +281,13 @@ async function getAuthorizationUrl(
       client_id: metadataUrl,
       code_challenge: codeChallenge,
       code_challenge_method: "S256",
-      login_hint: handle,
+      login_hint: username,
       redirect_uri: redirectUrl,
       response_type: "code",
       scope: SCOPES.join(" "),
       state: OAUTH_STATE,
     });
+    console.log(params);
 
     return `${metadata.authorization_endpoint}?${params.toString()}`;
   } catch (err: unknown) {
@@ -438,6 +455,7 @@ export {
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
+  getClientMetadata,
   getCredentialsId,
   getRedirectUri,
   hasCompleteAuthorization,
