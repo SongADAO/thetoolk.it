@@ -24,7 +24,7 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
     const { error } = await this.supabase.from("services").upsert(
       {
-        service_authorization: JSON.stringify(savedSession),
+        service_authorization: savedSession,
         service_id: "bluesky",
         user_id: this.user.id,
       },
@@ -60,8 +60,9 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
     //   await this.del(key);
     //   return undefined;
     // }
+    console.log(data.service_authorization);
 
-    return JSON.parse(data.service_authorization);
+    return data.service_authorization;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

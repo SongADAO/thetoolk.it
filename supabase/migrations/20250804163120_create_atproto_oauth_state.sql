@@ -1,7 +1,7 @@
 -- OAuth states table (for temporary auth flow state)
 CREATE TABLE atproto_oauth_states (
   key TEXT PRIMARY KEY,
-  value TEXT NOT NULL,
+  value JSON NOT NULL,
   user_id UUID REFERENCES auth.users(id),
   expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

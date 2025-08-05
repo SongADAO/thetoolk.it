@@ -22,7 +22,7 @@ class SupabaseStateStore implements NodeSavedStateStore {
         key,
         updated_at: new Date().toISOString(),
         user_id: this.user.id,
-        value: JSON.stringify(internalState),
+        value: internalState,
       },
       {
         onConflict: "key",
@@ -56,7 +56,7 @@ class SupabaseStateStore implements NodeSavedStateStore {
       return undefined;
     }
 
-    return JSON.parse(data.value);
+    return data.value;
   }
 
   public async del(key: string): Promise<void> {

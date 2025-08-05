@@ -9,8 +9,6 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-node";
 
-import type { BlueskyCredentials } from "@/services/post/types";
-
 const SCOPES: string[] = ["atproto", "transition:generic"];
 
 // OAuth client instance (singleton)
@@ -87,29 +85,34 @@ async function getOAuthClient(
 
 // Get a valid session for making API calls
 async function getValidSession(
-  credentials: BlueskyCredentials,
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
   accessToken: string,
 ): Promise<OAuthSession> {
-  const client = await getOAuthClient(credentials);
+  const client = await getOAuthClient(sessionStore, stateStore);
 
   return await client.restore(accessToken);
 }
 
 // Create an Agent for making API calls
 async function createAgent(
-  credentials: BlueskyCredentials,
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
   accessToken: string,
 ): Promise<Agent> {
-  return new Agent(await getValidSession(credentials, accessToken));
+  return new Agent(
+    await getValidSession(sessionStore, stateStore, accessToken),
+  );
 }
 
 // Check if we have a valid session
 async function hasValidSession(
-  credentials: BlueskyCredentials,
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
   accessToken: string,
 ): Promise<boolean> {
   try {
-    const client = await getOAuthClient(credentials);
+    const client = await getOAuthClient(sessionStore, stateStore);
 
     await client.restore(accessToken);
 

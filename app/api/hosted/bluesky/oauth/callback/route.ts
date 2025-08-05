@@ -1,12 +1,14 @@
 // app/api/bluesky/oauth/callback/route.ts
-import { Agent } from "@atproto/api";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
-import { handleCallback } from "@/services/post/bluesky/oauth-client-node";
+import {
+  createAgent,
+  handleCallback,
+} from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
@@ -73,7 +75,7 @@ export async function GET(request: NextRequest) {
 
     console.log("OAuth session created successfully");
 
-    const agent = new Agent(session);
+    const agent = await createAgent(sessionStore, stateStore, session.did);
 
     const accounts = await getAccountsFromAgent(agent, session.sub);
 
