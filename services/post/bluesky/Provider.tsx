@@ -113,7 +113,14 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         );
       }
 
+      if (!tokenEndpoint) {
+        throw new Error(
+          "Token endpoint not found. Please restart the authorization process.",
+        );
+      }
+
       if (mode === "hosted") {
+        throw new Error("host");
         await exchangeCodeForTokensHosted(
           code,
           getRedirectUri(),

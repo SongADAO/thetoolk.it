@@ -286,7 +286,13 @@ async function getAuthorizationUrl(
     const metadata = await getAuthServerMetadata(pdsUrl, serviceUrl);
 
     // 4. Generate PKCE
-    const { codeChallenge } = await generatePKCE();
+    const { codeChallenge, codeVerifier } = await generatePKCE();
+
+    localStorage.setItem("thetoolkit_bluesky_code_verifier", codeVerifier);
+    localStorage.setItem(
+      "thetoolkit_bluesky_token_endpoint",
+      metadata.token_endpoint,
+    );
 
     // 5. Create authorization URL
     const params = new URLSearchParams({
@@ -352,6 +358,10 @@ async function exchangeCodeForTokens(
   tokenEndpoint: string,
 ): Promise<OauthAuthorization> {
   console.log("Exchanging code for Bluesky tokens...");
+
+  console.log("Token endpoint:", tokenEndpoint);
+  console.log("Redirect URI:", redirectUri);
+  console.log("Code verifier:", codeVerifier);
 
   const response = await fetch(tokenEndpoint, {
     body: new URLSearchParams({
