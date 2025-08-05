@@ -156,18 +156,20 @@ async function getOAuthClient(
 
 // Get a valid session for making API calls
 async function getValidSession(
-  authorization: OauthAuthorization,
+  credentials: BlueskyCredentials,
+  accessToken: string,
 ): Promise<OAuthSession> {
-  if (!oauthClient) {
-    throw new Error("OAuth client not initialized");
-  }
+  const client = await getOAuthClient(credentials);
 
-  return await oauthClient.restore(authorization.accessToken);
+  return await client.restore(accessToken);
 }
 
 // Create an Agent for making API calls
-async function createAgent(authorization: OauthAuthorization): Promise<Agent> {
-  return new Agent(await getValidSession(authorization));
+async function createAgent(
+  credentials: BlueskyCredentials,
+  accessToken: string,
+): Promise<Agent> {
+  return new Agent(await getValidSession(credentials, accessToken));
 }
 
 // Clear OAuth session
@@ -181,14 +183,13 @@ function clearAuthSession(): void {
 
 // Check if we have a valid session
 async function hasValidSession(
-  authorization: OauthAuthorization,
+  credentials: BlueskyCredentials,
+  accessToken: string,
 ): Promise<boolean> {
   try {
-    if (!oauthClient || !authorization.accessToken) {
-      return false;
-    }
+    const client = await getOAuthClient(credentials);
 
-    await oauthClient.restore(authorization.accessToken);
+    await client.restore(accessToken);
 
     return true;
   } catch {
@@ -204,11 +205,7 @@ async function getAuthorizationUrl(
   try {
     console.log("Starting OAuth flow for:", credentials.username);
 
-    const client = await getOAuthClient({
-      appPassword: "",
-      serviceUrl: credentials.serviceUrl,
-      username: credentials.username,
-    });
+    const client = await getOAuthClient(credentials);
 
     // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
     const authUrl = await client.authorize(credentials.username, {
@@ -234,11 +231,7 @@ async function exchangeCodeForTokens(
   try {
     console.log("Processing OAuth callback...");
 
-    const client = await getOAuthClient({
-      appPassword: "",
-      serviceUrl: credentials.serviceUrl,
-      username: credentials.username,
-    });
+    const client = await getOAuthClient(credentials);
 
     // The library handles the token exchange internally
     const { session } = await client.callback(
@@ -264,11 +257,7 @@ async function refreshAccessToken(
   try {
     console.log("Refreshing access token...");
 
-    const client = await getOAuthClient({
-      appPassword: "",
-      serviceUrl: credentials.serviceUrl,
-      username: credentials.username,
-    });
+    const client = await getOAuthClient(credentials);
 
     // Try to restore the session (this will refresh tokens if needed)
     const session = await client.restore(authorization.accessToken);
@@ -324,6 +313,7 @@ function exchangeCodeForTokensHosted() {}
 function refreshAccessTokenHosted() {}
 
 export {
+  createAgent,
   exchangeCodeForTokens,
   exchangeCodeForTokensHosted,
   getAccounts,
@@ -334,6 +324,7 @@ export {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  hasValidSession,
   HOSTED_CREDENTIALS,
   needsAccessTokenRenewal,
   needsRefreshTokenRenewal,

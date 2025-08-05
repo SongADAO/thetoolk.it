@@ -1,6 +1,8 @@
+import type { Agent } from "@atproto/api";
+
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { BlueskyCredentials } from "@/services/post/types";
+import { createAgent } from "@/services/post/bluesky/auth";
 
 // 100MB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 100;
@@ -10,63 +12,51 @@ const VIDEO_MIN_DURATION = 3;
 const VIDEO_MAX_DURATION = 180;
 
 interface UploadVideoBlobProps {
-  accessToken: string;
-  credentials: BlueskyCredentials;
+  agent: Agent;
   video: File;
 }
+
 async function uploadVideoBlob({
-  accessToken,
-  credentials,
+  agent,
   video,
-}: Readonly<UploadVideoBlobProps>): Promise<string> {
+}: Readonly<UploadVideoBlobProps>): Promise<any> {
   if (DEBUG_POST) {
     console.log("Test Bluesky: uploadVideoBlob");
     await sleep(6000);
-    return "test";
+    return { ref: { $link: "test-blob-ref" } };
   }
 
-  // Convert file to ArrayBuffer
-  const fileBuffer = await video.arrayBuffer();
+  try {
+    // Convert file to Uint8Array for the Agent
+    const fileBuffer = await video.arrayBuffer();
+    const fileBytes = new Uint8Array(fileBuffer);
 
-  const response = await fetch(
-    `${credentials.serviceUrl}/xrpc/com.atproto.repo.uploadBlob`,
-    {
-      body: fileBuffer,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": video.type,
-      },
-      method: "POST",
-    },
-  );
+    // Use Agent's uploadBlob method - it handles OAuth authentication automatically
+    const response = await agent.uploadBlob(fileBytes, {
+      encoding: video.type,
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json();
+    console.log("Video blob uploaded successfully:", response);
+    return response.data.blob;
+  } catch (error) {
+    console.error("Failed to upload video blob:", error);
     throw new Error(
-      `Failed to upload video: ${errorData.message ?? response.statusText}`,
+      `Failed to upload video: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
-
-  const result = await response.json();
-  console.log("Video blob uploaded successfully:", result);
-
-  return result.blob;
 }
 
 interface CreateRecordProps {
-  accessToken: string;
-  credentials: BlueskyCredentials;
+  agent: Agent;
   text: string;
   title: string;
-  username: string;
-  videoBlob: string;
+  videoBlob: any;
 }
+
 async function createRecord({
-  accessToken,
-  credentials,
+  agent,
   text,
   title,
-  username,
   videoBlob,
 }: Readonly<CreateRecordProps>): Promise<string> {
   if (DEBUG_POST) {
@@ -75,47 +65,34 @@ async function createRecord({
     return "test";
   }
 
-  const postRecord = {
-    $type: "app.bsky.feed.post",
-    createdAt: new Date().toISOString(),
-    embed: {
-      $type: "app.bsky.embed.video",
-      alt: title,
-      video: videoBlob,
-    },
-    text,
-  };
-
-  const response = await fetch(
-    `${credentials.serviceUrl}/xrpc/com.atproto.repo.createRecord`,
-    {
-      body: JSON.stringify({
-        collection: "app.bsky.feed.post",
-        record: postRecord,
-        repo: username,
-      }),
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
+  try {
+    // Create the post record
+    const postRecord = {
+      createdAt: new Date().toISOString(),
+      embed: {
+        $type: "app.bsky.embed.video",
+        alt: title,
+        video: videoBlob,
       },
-      method: "POST",
-    },
-  );
+      text,
+    };
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    // Use Agent's post method - it handles authentication and repo automatically
+    const response = await agent.post(postRecord);
+
+    console.log("Post created successfully:", response);
+
+    // Extract post ID from the URI (at://did:plc:abc.../app.bsky.feed.post/POST_ID)
+    return response.uri.split("/").pop() ?? response.uri;
+  } catch (error) {
+    console.error("Failed to create post:", error);
     throw new Error(
-      `Failed to create post: ${errorData.message ?? response.statusText}`,
+      `Failed to create post: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
-
-  const result = await response.json();
-  console.log("Post created successfully:", result);
-
-  return result.uri.split("/").pop();
 }
 
-// Create a post
+// Updated interface - much simpler now!
 interface CreatePostProps {
   accessToken: string;
   credentials: BlueskyCredentials;
@@ -125,9 +102,9 @@ interface CreatePostProps {
   setPostStatus: (status: string) => void;
   text: string;
   title: string;
-  username: string;
   video: File | null;
 }
+
 async function createPost({
   accessToken,
   credentials,
@@ -137,7 +114,6 @@ async function createPost({
   setPostStatus,
   text,
   title,
-  username,
   video,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;
@@ -148,12 +124,15 @@ async function createPost({
       video = new File(["a"], "test.mp4", { type: "video/mp4" });
     }
 
+    const agent = await createAgent(credentials, accessToken);
+
     setIsPosting(true);
     setPostError("");
     setPostProgress(0);
     setPostStatus("");
 
     let postId = "";
+
     if (video) {
       // Step 1: Upload video blob
       setPostProgress(10);
@@ -167,8 +146,7 @@ async function createPost({
       }, 2000);
 
       const videoBlob = await uploadVideoBlob({
-        accessToken,
-        credentials,
+        agent,
         video,
       });
 
@@ -179,16 +157,22 @@ async function createPost({
       setPostProgress(90);
 
       postId = await createRecord({
-        accessToken,
-        credentials,
+        agent,
         text,
         title,
-        username,
         videoBlob,
       });
     } else {
-      // TODO: Text only post.
-      throw new Error("Text only posts are not supported yet.");
+      // Text-only post (much simpler with Agent!)
+      setPostStatus("Publishing post...");
+      setPostProgress(50);
+
+      const response = await agent.post({
+        createdAt: new Date().toISOString(),
+        text,
+      });
+
+      postId = response.uri.split("/").pop() ?? response.uri;
     }
 
     setPostProgress(100);

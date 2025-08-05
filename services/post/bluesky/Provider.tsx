@@ -250,7 +250,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   async function post({
     title,
     text,
-    username,
     video,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
@@ -266,7 +265,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       setPostStatus,
       text,
       title,
-      username,
       video,
     });
   }
