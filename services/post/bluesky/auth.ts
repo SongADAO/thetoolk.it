@@ -1,3 +1,9 @@
+import { Agent } from "@atproto/api";
+import {
+  BrowserOAuthClient,
+  type OAuthSession,
+} from "@atproto/oauth-client-browser";
+
 import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
@@ -5,16 +11,6 @@ import type {
   OauthAuthorization,
   ServiceAccount,
 } from "@/services/post/types";
-
-interface BlueskyTokenResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_in?: number;
-  token_type: string;
-  scope: string;
-  // This is the user's DID
-  sub: string;
-}
 
 const HOSTED_CREDENTIALS = {
   clientId: String(process.env.NEXT_PUBLIC_BLUESKY_METADATA_URL ?? ""),
@@ -32,24 +28,6 @@ const ACCESS_TOKEN_BUFFER_SECONDS = 2 * 60;
 
 // 1 day
 const REFRESH_TOKEN_BUFFER_SECONDS = 24 * 60 * 60;
-
-// -----------------------------------------------------------------------------
-
-function getClientMetadata() {
-  return {
-    application_type: "web",
-    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata.json`,
-    client_name: "The Toolk.it",
-    client_uri: process.env.NEXT_PUBLIC_BASE_URL,
-    dpop_bound_access_tokens: true,
-    grant_types: ["authorization_code", "refresh_token"],
-    logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
-    redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/authorize`],
-    response_types: ["code"],
-    scope: "atproto transition:generic",
-    token_endpoint_auth_method: "none",
-  };
-}
 
 // -----------------------------------------------------------------------------
 
@@ -104,6 +82,7 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 
 function getRedirectUri(): string {
   const url = new URL(window.location.href);
+
   return `${url.origin}/authorize`;
 }
 
@@ -111,277 +90,128 @@ function shouldHandleAuthRedirect(
   code: string | null,
   state: string | null,
 ): boolean {
-  return Boolean(code && state?.includes(OAUTH_STATE));
+  return Boolean(code); // The library handles state validation
 }
 
-function formatTokens(tokens: BlueskyTokenResponse): OauthAuthorization {
-  // Access tokens expire in ~15 minutes for Bluesky
-  const expiresIn = (tokens.expires_in ?? 15 * 60) * 1000;
+function formatTokens(tokens: OAuthSession): OauthAuthorization {
+  // Tokens have a 2 minutes lifespan (TODO: verify expiration)
+  const expiresIn = 2 * 60 * 60 * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
 
-  // Refresh tokens last longer
-  // 7 days
+  // Refresh tokens have a 7-day lifespan
   const refreshExpiresIn = 7 * 24 * 60 * 60 * 1000;
   const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
+  // Access tokens are the same as the refresh token.
+  // It is just the session DID.
+
   return {
-    accessToken: tokens.access_token,
+    accessToken: tokens.sub,
     accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.refresh_token,
+    refreshToken: tokens.sub,
     refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
-    // Store Bluesky-specific data
-    did: tokens.sub,
   };
 }
 
-// Generate PKCE challenge
-async function generatePKCE() {
-  const codeVerifier = btoa(
-    String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))),
-  )
-    .replace(/\+/gu, "-")
-    .replace(/\//gu, "_")
-    .replace(/[=]/gu, "");
+// -----------------------------------------------------------------------------
 
-  const encoder = new TextEncoder();
-  const data = encoder.encode(codeVerifier);
-  const digest = await crypto.subtle.digest("SHA-256", data);
-  const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest)))
-    .replace(/\+/gu, "-")
-    .replace(/\//gu, "_")
-    .replace(/[=]/gu, "");
+// OAuth client instance (singleton)
+let oauthClient: BrowserOAuthClient | null = null;
 
-  return { codeChallenge, codeVerifier };
+// Client metadata (to be served at your client_id URL)
+function getClientMetadata() {
+  return {
+    application_type: "web",
+    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata.json`,
+    client_name: "The Toolk.it",
+    client_uri: process.env.NEXT_PUBLIC_BASE_URL,
+    dpop_bound_access_tokens: true,
+    grant_types: ["authorization_code", "refresh_token"],
+    logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
+    redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/authorize`],
+    response_types: ["code"],
+    scope: "atproto transition:generic",
+    token_endpoint_auth_method: "none",
+  };
 }
 
-// Generate DPoP proof JWT
-async function generateDPoPProof(
-  method: string,
-  url: string,
-  nonce?: string,
-  accessToken?: string,
-) {
-  // Try to get existing key pair from storage, or generate new one
-  let keyPair;
-  const storedKeyPair = localStorage.getItem("thetoolkit_bluesky_dpop_keypair");
+// Initialize the OAuth client
+async function getOAuthClient(
+  credentials: BlueskyCredentials,
+): Promise<BrowserOAuthClient> {
+  if (!oauthClient) {
+    const clientMetadata = getClientMetadata();
 
-  if (storedKeyPair) {
-    try {
-      const keyData = JSON.parse(storedKeyPair);
-      keyPair = {
-        privateKey: await crypto.subtle.importKey(
-          "jwk",
-          keyData.privateKey,
-          { name: "ECDSA", namedCurve: "P-256" },
-          true,
-          ["sign"],
-        ),
-        publicKey: await crypto.subtle.importKey(
-          "jwk",
-          keyData.publicKey,
-          { name: "ECDSA", namedCurve: "P-256" },
-          true,
-          ["verify"],
-        ),
-      };
-    } catch (error) {
-      console.warn(
-        "Failed to load stored key pair, generating new one:",
-        error,
-      );
-      keyPair = null;
+    oauthClient = await BrowserOAuthClient.load({
+      clientId: clientMetadata.client_id,
+      handleResolver: credentials.serviceUrl || "https://bsky.social",
+    });
+  }
+
+  return oauthClient;
+}
+
+// Get a valid session for making API calls
+async function getValidSession(
+  authorization: OauthAuthorization,
+): Promise<OAuthSession> {
+  if (!oauthClient) {
+    throw new Error("OAuth client not initialized");
+  }
+
+  return await oauthClient.restore(authorization.accessToken);
+}
+
+// Create an Agent for making API calls
+async function createAgent(authorization: OauthAuthorization): Promise<Agent> {
+  return new Agent(await getValidSession(authorization));
+}
+
+// Clear OAuth session
+function clearAuthSession(): void {
+  if (oauthClient) {
+    // The library manages its own storage, so we just need to clear our reference
+    oauthClient = null;
+  }
+  console.log("OAuth session cleared");
+}
+
+// Check if we have a valid session
+async function hasValidSession(
+  authorization: OauthAuthorization,
+): Promise<boolean> {
+  try {
+    if (!oauthClient || !authorization.accessToken) {
+      return false;
     }
+
+    await oauthClient.restore(authorization.accessToken);
+
+    return true;
+  } catch {
+    return false;
   }
-
-  if (!keyPair) {
-    // Generate a new key pair for DPoP
-    keyPair = await crypto.subtle.generateKey(
-      {
-        name: "ECDSA",
-        namedCurve: "P-256",
-      },
-      true,
-      ["sign", "verify"],
-    );
-
-    // Store the key pair for future use
-    const privateKeyJwk = await crypto.subtle.exportKey(
-      "jwk",
-      keyPair.privateKey,
-    );
-    const publicKeyJwk = await crypto.subtle.exportKey(
-      "jwk",
-      keyPair.publicKey,
-    );
-
-    localStorage.setItem(
-      "thetoolkit_bluesky_dpop_keypair",
-      JSON.stringify({
-        privateKey: privateKeyJwk,
-        publicKey: publicKeyJwk,
-      }),
-    );
-  }
-
-  // Create JWK from public key
-  const publicKeyJwk = await crypto.subtle.exportKey("jwk", keyPair.publicKey);
-
-  const header = {
-    alg: "ES256",
-    jwk: publicKeyJwk,
-    typ: "dpop+jwt",
-  };
-
-  const payload: any = {
-    htm: method,
-    htu: url,
-    iat: Math.floor(Date.now() / 1000),
-    jti: crypto.randomUUID(),
-  };
-
-  // Add nonce if provided
-  if (nonce) {
-    payload.nonce = nonce;
-  }
-
-  // Add access token hash if provided
-  if (accessToken) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(accessToken);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-    const hashArray = new Uint8Array(hashBuffer);
-    const hashBase64 = btoa(String.fromCharCode(...hashArray))
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/[=]/g, "");
-    payload.ath = hashBase64;
-  }
-
-  // Create JWT
-  const encodedHeader = btoa(JSON.stringify(header)).replace(/[=]/g, "");
-  const encodedPayload = btoa(JSON.stringify(payload)).replace(/[=]/g, "");
-  const message = `${encodedHeader}.${encodedPayload}`;
-
-  const signature = await crypto.subtle.sign(
-    { hash: "SHA-256", name: "ECDSA" },
-    keyPair.privateKey,
-    new TextEncoder().encode(message),
-  );
-
-  const encodedSignature = btoa(
-    String.fromCharCode(...new Uint8Array(signature)),
-  )
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/[=]/g, "");
-
-  return `${message}.${encodedSignature}`;
 }
 
-// Resolve Bluesky handle to find the user's PDS
-async function resolveHandle(
-  serviceUrl: string,
-  username: string,
-): Promise<string> {
-  const response = await fetch(
-    `${serviceUrl}/xrpc/com.atproto.identity.resolveHandle?handle=${username}`,
-  );
+// -----------------------------------------------------------------------------
 
-  if (!response.ok) {
-    throw new Error(`Failed to resolve handle: ${username}`);
-  }
-
-  const data = await response.json();
-  return data.did;
-}
-
-// Get the user's PDS from their DID
-async function getPDSEndpoint(did: string): Promise<string> {
-  const response = await fetch(`https://plc.directory/${did}`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to get PDS for DID: ${did}`);
-  }
-
-  const data = await response.json();
-  const service = data.service?.find(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (serviceDetails: any) =>
-      serviceDetails.type === "AtprotoPersonalDataServer",
-  );
-
-  if (!service) {
-    throw new Error("No PDS found for user");
-  }
-
-  return service.serviceEndpoint;
-}
-
-// Get authorization server metadata
-async function getAuthServerMetadata(pdsUrl: string, serviceUrl: string) {
-  // Check if this is a Bluesky-hosted PDS (mushroom server)
-  const isBlueskyHosted = pdsUrl.includes(".host.bsky.network");
-
-  // For Bluesky-hosted PDSs, use the entryway service as the authorization server
-  const authServerUrl = isBlueskyHosted ? serviceUrl : pdsUrl;
-
-  console.log(
-    `Fetching auth server metadata from: ${authServerUrl}/.well-known/oauth-authorization-server`,
-  );
-
-  const response = await fetch(
-    `${authServerUrl}/.well-known/oauth-authorization-server`,
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to get authorization server metadata");
-  }
-
-  return await response.json();
-}
-
-// Generate authorization URL for Bluesky
 async function getAuthorizationUrl(
-  metadataUrl: string,
-  redirectUrl: string,
   serviceUrl: string,
   username: string,
 ): Promise<string> {
   try {
-    // 1. Resolve handle to DID
-    const did = await resolveHandle(serviceUrl, username);
-    console.log(`Resolved DID: ${did}`);
+    console.log("Starting OAuth flow for:", username);
 
-    // 2. Get user's PDS
-    const pdsUrl = await getPDSEndpoint(did);
-    console.log(`User's PDS URL: ${pdsUrl}`);
+    const credentials = { appPassword: "", serviceUrl, username };
+    const client = await getOAuthClient(credentials);
 
-    // 3. Get auth server metadata
-    const metadata = await getAuthServerMetadata(pdsUrl, serviceUrl);
-
-    // 4. Generate PKCE
-    const { codeChallenge, codeVerifier } = await generatePKCE();
-
-    localStorage.setItem("thetoolkit_bluesky_code_verifier", codeVerifier);
-    localStorage.setItem(
-      "thetoolkit_bluesky_token_endpoint",
-      metadata.token_endpoint,
-    );
-
-    // 5. Create authorization URL
-    const params = new URLSearchParams({
-      client_id: metadataUrl,
-      code_challenge: codeChallenge,
-      code_challenge_method: "S256",
-      login_hint: username,
-      redirect_uri: redirectUrl,
-      response_type: "code",
-      scope: SCOPES.join(" "),
-      state: OAUTH_STATE,
+    // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
+    const authUrl = await client.authorize(username, {
+      scope: "atproto transition:generic",
     });
-    console.log("Authorization URL parameters:", params.toString());
 
-    return `${metadata.authorization_endpoint}?${params.toString()}`;
+    console.log("Authorization URL generated:", authUrl.toString());
+    return authUrl.toString();
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Auth URL failed";
     console.error("Error creating authorization URL:", err);
@@ -389,45 +219,7 @@ async function getAuthorizationUrl(
   }
 }
 
-async function exchangeCodeForTokensHosted(
-  code: string,
-  metadataUrl: string,
-  redirectUri: string,
-  codeVerifier: string,
-  tokenEndpoint: string,
-): Promise<OauthAuthorization> {
-  console.log("Starting Bluesky authentication...");
-
-  // Generate DPoP proof for the token endpoint
-  const dpopProof = await generateDPoPProof("POST", tokenEndpoint);
-
-  const response = await fetch("/api/hosted/bluesky/exchange-tokens", {
-    body: JSON.stringify({
-      code,
-      code_verifier: codeVerifier,
-      metadata_url: metadataUrl,
-      redirect_uri: redirectUri,
-      state: OAUTH_STATE,
-      token_endpoint: tokenEndpoint,
-    }),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      DPoP: dpopProof,
-    },
-    method: "POST",
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      `Authentication failed: ${errorData.message ?? errorData.error}`,
-    );
-  }
-
-  return await response.json();
-}
-
-// Exchange authorization code for access token
+// Handle OAuth callback and exchange code for tokens
 async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
@@ -435,123 +227,110 @@ async function exchangeCodeForTokens(
   codeVerifier: string,
   tokenEndpoint: string,
 ): Promise<OauthAuthorization> {
-  console.log("Exchanging code for Bluesky tokens...");
+  try {
+    console.log("Processing OAuth callback...");
 
-  console.log("Token endpoint:", tokenEndpoint);
-  console.log("Redirect URI:", redirectUri);
-  console.log("Code verifier:", codeVerifier);
+    // Get the current URL parameters
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
 
-  // Generate DPoP proof for the token endpoint
-  const dpopProof = await generateDPoPProof("POST", tokenEndpoint);
+    if (!oauthClient) {
+      throw new Error(
+        "OAuth client not initialized. Please restart the authorization process.",
+      );
+    }
 
-  const response = await fetch(tokenEndpoint, {
-    body: new URLSearchParams({
-      client_id: metadataUrl,
-      code,
-      code_verifier: codeVerifier,
-      grant_type: "authorization_code",
-      redirect_uri: redirectUri,
-    }),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      DPoP: dpopProof,
-    },
-    method: "POST",
-  });
+    // The library handles the token exchange internally
+    const { session } = await oauthClient.callback(params);
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
-    );
+    console.log("OAuth session created successfully");
+
+    return formatTokens(session);
+  } catch (err: unknown) {
+    console.error("Token exchange error:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Failed to exchange code for tokens: ${errMessage}`);
   }
-
-  const tokens = await response.json();
-
-  return formatTokens(tokens);
 }
 
-async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
-  console.log("Refreshing Bluesky tokens...");
-
-  const response = await fetch("/api/hosted/bluesky/refresh-tokens", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
-    );
-  }
-
-  return await response.json();
-}
-
-// Refresh access token using refresh token
+// Refresh access token (handled internally by the library)
 async function refreshAccessToken(
+  credentials: BlueskyCredentials,
   authorization: OauthAuthorization,
+  mode?: string,
 ): Promise<OauthAuthorization> {
-  if (!authorization.refreshToken) {
-    throw new Error("No refresh token available");
-  }
+  try {
+    console.log("Refreshing access token...");
 
-  // This would require implementing the full DPoP flow
-  // For now, delegate to hosted implementation
-  return refreshAccessTokenHosted();
+    if (!oauthClient) {
+      throw new Error("OAuth client not initialized");
+    }
+
+    // Try to restore the session (this will refresh tokens if needed)
+    const session = await oauthClient.restore(authorization.accessToken);
+
+    if (!session) {
+      throw new Error("Failed to restore session. Please re-authorize.");
+    }
+
+    console.log("Access token refreshed successfully");
+
+    // Return updated authorization (the library handles token refresh internally)
+    return {
+      ...authorization,
+      accessTokenExpiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+    };
+  } catch (err: unknown) {
+    console.error("Token refresh error:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Failed to refresh token: ${errMessage}`);
+  }
 }
 
-// -----------------------------------------------------------------------------
+// Get user accounts using the session
+async function getAccounts(
+  token: string, // This is actually the DID in our case
+  mode?: string,
+): Promise<ServiceAccount[]> {
+  try {
+    console.log("Getting user accounts...");
 
-async function getUserInfo(
-  token: string,
-  serviceUrl?: string,
-): Promise<ServiceAccount> {
-  console.log(`Getting Bluesky user info`);
+    if (!oauthClient) {
+      throw new Error("OAuth client not initialized");
+    }
 
-  const dpopProof = await generateDPoPProof(
-    "GET",
-    `${serviceUrl}/xrpc/com.atproto.repo.getRecord`,
-  );
+    // Restore the session using the DID
+    const session = await oauthClient.restore(token);
 
-  const response = await fetch(
-    `${serviceUrl}/xrpc/com.atproto.repo.getRecord?repo=${encodeURIComponent(token)}&collection=app.bsky.actor.profile&rkey=self`,
-    {
-      headers: {
-        Authorization: `DPoP ${token}`,
-        DPoP: dpopProof,
+    if (!session) {
+      throw new Error("Failed to restore session");
+    }
+
+    // Create an Agent to make API calls
+    const agent = new Agent(session);
+
+    // Get the user's profile
+    const profile = await agent.getProfile({ actor: session.sub });
+
+    console.log("User profile retrieved:", profile.data);
+
+    return [
+      {
+        id: session.sub,
+        username: profile.data.handle,
       },
-    },
-  );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to get user info: ${errorText}`);
+    ];
+  } catch (err: unknown) {
+    console.error("Error getting accounts:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Failed to get accounts: ${errMessage}`);
   }
-
-  const data = await response.json();
-  const profile = data.value;
-
-  console.log("Bluesky user info:", profile);
-
-  return {
-    id: token,
-    username: profile.handle,
-  };
 }
 
-async function getAccounts(token: string): Promise<ServiceAccount[]> {
-  const accounts = [];
-  const account = await getUserInfo(token);
-  accounts.push(account);
+// Export functions with the same signatures as before
 
-  return accounts;
-}
-
-// -----------------------------------------------------------------------------
+function exchangeCodeForTokensHosted() {}
+function refreshAccessTokenHosted() {}
 
 export {
   exchangeCodeForTokens,

@@ -229,8 +229,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   async function authorize() {
     const authUrl = await getAuthorizationUrl(
-      metadataUrl,
-      getRedirectUri(),
       credentials.serviceUrl,
       credentials.username,
     );
