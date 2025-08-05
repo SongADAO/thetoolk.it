@@ -1,7 +1,6 @@
 // app/api/bluesky/oauth/callback/route.ts
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { redirect } from "next/navigation";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
@@ -52,7 +51,7 @@ export async function GET(request: NextRequest) {
       if (errorDescription) {
         errorUrl.searchParams.set("error_description", errorDescription);
       }
-      return redirect(errorUrl.toString());
+      return NextResponse.redirect(errorUrl.toString());
     }
 
     if (!code || !iss || !state) {
@@ -60,7 +59,7 @@ export async function GET(request: NextRequest) {
       const errorUrl = authorizeUrl;
       errorUrl.searchParams.set("atproto_service", "bluesky");
       errorUrl.searchParams.set("error", "missing_parameters");
-      return redirect(errorUrl.toString());
+      return NextResponse.redirect(errorUrl.toString());
     }
 
     console.log("Processing OAuth callback...");
@@ -101,7 +100,7 @@ export async function GET(request: NextRequest) {
     redirectUrl.searchParams.set("atproto_service", "bluesky");
     redirectUrl.searchParams.set("auth", "success");
 
-    return redirect(redirectUrl.toString());
+    return NextResponse.redirect(redirectUrl.toString());
   } catch (error: unknown) {
     console.error("OAuth callback error:", error);
     const errMessage = error instanceof Error ? error.message : "Unknown error";
@@ -112,6 +111,6 @@ export async function GET(request: NextRequest) {
     errorUrl.searchParams.set("error", "callback_failed");
     errorUrl.searchParams.set("error_description", errMessage);
 
-    return redirect(errorUrl.toString());
+    return NextResponse.redirect(errorUrl.toString());
   }
 }

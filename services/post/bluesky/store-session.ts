@@ -41,9 +41,10 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async get(key: string): Promise<NodeSavedSession | undefined> {
     const { data, error } = await this.supabase
-      .from("oauth_sessions")
+      .from("services")
       .select("service_authorization")
       // .eq("key", key)
+      .eq("service_id", "bluesky")
       .eq("user_id", this.user.id)
       .single();
 
@@ -68,9 +69,10 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async del(key: string): Promise<void> {
     const { error } = await this.supabase
-      .from("oauth_sessions")
+      .from("services")
       .delete()
       // .eq("key", key)
+      .eq("service_id", "bluesky")
       .eq("user_id", this.user.id);
 
     if (error) {
