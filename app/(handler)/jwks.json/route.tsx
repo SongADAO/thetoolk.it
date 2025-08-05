@@ -1,6 +1,3 @@
-// app/api/jwks/route.ts
-// Serve your public keys as JWKS using the same keyset as OAuth client
-
 import { NextResponse } from "next/server";
 
 import { getKeyset } from "@/services/post/bluesky/oauth-client-node";
