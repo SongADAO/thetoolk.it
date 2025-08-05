@@ -1,36 +1,34 @@
 // app/api/bluesky/oauth/callback/route.ts
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
-import {
-  encryptData,
-  getBlueskyCredentials,
-  storeBlueskyTokens,
-} from "@/lib/server/auth";
+import { createClient } from "@/lib/supabase/server";
 import { handleCallback } from "@/services/post/bluesky/oauth-client-node";
+import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
+import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
-function formatTokens(session: any) {
-  // Sessions in AT Protocol OAuth have their own expiration handling
-  // We'll store the session data itself rather than individual tokens
-  const now = new Date();
+async function getUser(supabase: SupabaseClient): Promise<User> {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  // Access tokens typically expire in 2 hours
-  const accessTokenExpiresAt = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+  if (error || !user) {
+    throw new Error("Unauthorized");
+  }
 
-  // Refresh tokens typically expire in 7 days
-  const refreshTokenExpiresAt = new Date(
-    now.getTime() + 7 * 24 * 60 * 60 * 1000,
-  );
-
-  return {
-    sessionData: JSON.stringify(session),
-    accessTokenExpiresAt: accessTokenExpiresAt.toISOString(),
-    refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
-  };
+  return user;
 }
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient();
+
+    const user = await getUser(supabase);
+    const stateStore = new SupabaseStateStore(supabase, user);
+    const sessionStore = new SupabaseSessionStore(supabase, user);
+
     const searchParams = request.nextUrl.searchParams;
     const code = searchParams.get("code");
     const iss = searchParams.get("iss");
@@ -41,7 +39,10 @@ export async function GET(request: NextRequest) {
     // Handle OAuth errors
     if (error) {
       console.error("OAuth callback error:", error, errorDescription);
-      const errorUrl = new URL(process.env.NEXT_PUBLIC_BASE_URL || "");
+      const errorUrl = new URL(
+        process.env.NEXT_PUBLIC_BASE_URL ?? "/authorize",
+      );
+      errorUrl.searchParams.set("atproto_service", "bluesky");
       errorUrl.searchParams.set("error", error);
       if (errorDescription) {
         errorUrl.searchParams.set("error_description", errorDescription);
@@ -51,44 +52,55 @@ export async function GET(request: NextRequest) {
 
     if (!code || !iss || !state) {
       console.error("Missing OAuth callback parameters");
-      const errorUrl = new URL(process.env.NEXT_PUBLIC_BASE_URL || "");
+      const errorUrl = new URL(
+        process.env.NEXT_PUBLIC_BASE_URL ?? "/authorize",
+      );
+      errorUrl.searchParams.set("atproto_service", "bluesky");
       errorUrl.searchParams.set("error", "missing_parameters");
       return redirect(errorUrl.toString());
     }
 
     console.log("Processing OAuth callback...");
 
-    // Extract userId from state
-    const userId = state;
-
-    // Get user's credentials if they exist
-    const credentials = await getBlueskyCredentials(userId);
-
     // Handle the callback using the node OAuth client
-    const { session } = await handleCallback(searchParams, credentials);
+    const { session } = await handleCallback(
+      searchParams,
+      sessionStore,
+      stateStore,
+    );
+    console.log("OAuth session created successfully:", session);
 
     console.log("OAuth session created successfully");
 
-    const tokenData = formatTokens(session);
+    // Extract userId from state
+    // const userId = state;
 
-    // Store session data securely in database
-    await storeBlueskyTokens(userId, {
-      sessionData: await encryptData(tokenData.sessionData),
-      accessTokenExpiresAt: tokenData.accessTokenExpiresAt,
-      refreshTokenExpiresAt: tokenData.refreshTokenExpiresAt,
-      serviceUrl:
-        credentials?.serviceUrl ||
-        process.env.NEXT_PUBLIC_BLUESKY_SERVICE_URL ||
-        "https://bsky.social",
-      credentials: credentials
-        ? await encryptData(JSON.stringify(credentials))
-        : null,
-    });
+    // Get user's credentials if they exist
+    // const credentials = await getBlueskyCredentials(userId);
+
+    // const tokenData = formatTokens(session);
+
+    // // Store session data securely in database
+    // await storeBlueskyTokens(userId, {
+    //   sessionData: await encryptData(tokenData.sessionData),
+    //   accessTokenExpiresAt: tokenData.accessTokenExpiresAt,
+    //   refreshTokenExpiresAt: tokenData.refreshTokenExpiresAt,
+    //   serviceUrl:
+    //     credentials?.serviceUrl ||
+    //     process.env.NEXT_PUBLIC_BLUESKY_SERVICE_URL ||
+    //     "https://bsky.social",
+    //   credentials: credentials
+    //     ? await encryptData(JSON.stringify(credentials))
+    //     : null,
+    // });
 
     console.log("Tokens stored successfully");
 
     // Redirect back to the application
-    const redirectUrl = new URL(process.env.NEXT_PUBLIC_BASE_URL || "");
+    const redirectUrl = new URL(
+      process.env.NEXT_PUBLIC_BASE_URL ?? "/authorize",
+    );
+    redirectUrl.searchParams.set("atproto_service", "bluesky");
     redirectUrl.searchParams.set("auth", "success");
 
     return redirect(redirectUrl.toString());
@@ -97,7 +109,8 @@ export async function GET(request: NextRequest) {
     const errMessage = error instanceof Error ? error.message : "Unknown error";
 
     // Redirect to app with error
-    const errorUrl = new URL(process.env.NEXT_PUBLIC_BASE_URL || "");
+    const errorUrl = new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "/authorize");
+    errorUrl.searchParams.set("atproto_service", "bluesky");
     errorUrl.searchParams.set("error", "callback_failed");
     errorUrl.searchParams.set("error_description", errMessage);
 

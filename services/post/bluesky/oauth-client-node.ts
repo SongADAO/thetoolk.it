@@ -141,10 +141,41 @@ async function getAuthorizationUrl(
   }
 }
 
+// Handle OAuth callback and get session
+async function handleCallback(
+  params: URLSearchParams,
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+): Promise<{ session: OAuthSession; userId: string }> {
+  try {
+    console.log("Processing server OAuth callback...");
+
+    // Extract userId from state
+    const state = params.get("state");
+    if (!state) {
+      throw new Error("Missing state parameter");
+    }
+
+    const client = await getOAuthClient(sessionStore, stateStore);
+
+    // Handle the callback and get session
+    const { session } = await client.callback(params);
+
+    console.log("OAuth session created successfully on server");
+
+    return { session, userId: state };
+  } catch (err: unknown) {
+    console.error("Server callback error:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Failed to handle OAuth callback: ${errMessage}`);
+  }
+}
+
 export {
   createAgent,
   getAuthorizationUrl,
   getClientMetadata,
   getKeyset,
+  handleCallback,
   hasValidSession,
 };
