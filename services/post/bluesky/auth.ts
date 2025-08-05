@@ -155,16 +155,73 @@ async function generatePKCE() {
 }
 
 // Generate DPoP proof JWT
-async function generateDPoPProof(method: string, url: string, nonce?: string) {
-  // Generate a key pair for DPoP
-  const keyPair = await crypto.subtle.generateKey(
-    {
-      name: "ECDSA",
-      namedCurve: "P-256",
-    },
-    true,
-    ["sign", "verify"],
-  );
+async function generateDPoPProof(
+  method: string,
+  url: string,
+  nonce?: string,
+  accessToken?: string,
+) {
+  // Try to get existing key pair from storage, or generate new one
+  let keyPair;
+  const storedKeyPair = localStorage.getItem("thetoolkit_bluesky_dpop_keypair");
+
+  if (storedKeyPair) {
+    try {
+      const keyData = JSON.parse(storedKeyPair);
+      keyPair = {
+        privateKey: await crypto.subtle.importKey(
+          "jwk",
+          keyData.privateKey,
+          { name: "ECDSA", namedCurve: "P-256" },
+          true,
+          ["sign"],
+        ),
+        publicKey: await crypto.subtle.importKey(
+          "jwk",
+          keyData.publicKey,
+          { name: "ECDSA", namedCurve: "P-256" },
+          true,
+          ["verify"],
+        ),
+      };
+    } catch (error) {
+      console.warn(
+        "Failed to load stored key pair, generating new one:",
+        error,
+      );
+      keyPair = null;
+    }
+  }
+
+  if (!keyPair) {
+    // Generate a new key pair for DPoP
+    keyPair = await crypto.subtle.generateKey(
+      {
+        name: "ECDSA",
+        namedCurve: "P-256",
+      },
+      true,
+      ["sign", "verify"],
+    );
+
+    // Store the key pair for future use
+    const privateKeyJwk = await crypto.subtle.exportKey(
+      "jwk",
+      keyPair.privateKey,
+    );
+    const publicKeyJwk = await crypto.subtle.exportKey(
+      "jwk",
+      keyPair.publicKey,
+    );
+
+    localStorage.setItem(
+      "thetoolkit_bluesky_dpop_keypair",
+      JSON.stringify({
+        privateKey: privateKeyJwk,
+        publicKey: publicKeyJwk,
+      }),
+    );
+  }
 
   // Create JWK from public key
   const publicKeyJwk = await crypto.subtle.exportKey("jwk", keyPair.publicKey);
@@ -175,17 +232,34 @@ async function generateDPoPProof(method: string, url: string, nonce?: string) {
     typ: "dpop+jwt",
   };
 
-  const payload = {
+  const payload: any = {
     htm: method,
     htu: url,
     iat: Math.floor(Date.now() / 1000),
     jti: crypto.randomUUID(),
-    ...(nonce && { nonce }),
   };
 
-  // Simple JWT signing (you might want to use a proper JWT library)
-  const encodedHeader = btoa(JSON.stringify(header)).replace(/[=]/gu, "");
-  const encodedPayload = btoa(JSON.stringify(payload)).replace(/[=]/gu, "");
+  // Add nonce if provided
+  if (nonce) {
+    payload.nonce = nonce;
+  }
+
+  // Add access token hash if provided
+  if (accessToken) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(accessToken);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = new Uint8Array(hashBuffer);
+    const hashBase64 = btoa(String.fromCharCode(...hashArray))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/[=]/g, "");
+    payload.ath = hashBase64;
+  }
+
+  // Create JWT
+  const encodedHeader = btoa(JSON.stringify(header)).replace(/[=]/g, "");
+  const encodedPayload = btoa(JSON.stringify(payload)).replace(/[=]/g, "");
   const message = `${encodedHeader}.${encodedPayload}`;
 
   const signature = await crypto.subtle.sign(
@@ -197,9 +271,9 @@ async function generateDPoPProof(method: string, url: string, nonce?: string) {
   const encodedSignature = btoa(
     String.fromCharCode(...new Uint8Array(signature)),
   )
-    .replace(/\+/gu, "-")
-    .replace(/\//gu, "_")
-    .replace(/[=]/gu, "");
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/[=]/g, "");
 
   return `${message}.${encodedSignature}`;
 }
@@ -324,6 +398,9 @@ async function exchangeCodeForTokensHosted(
 ): Promise<OauthAuthorization> {
   console.log("Starting Bluesky authentication...");
 
+  // Generate DPoP proof for the token endpoint
+  const dpopProof = await generateDPoPProof("POST", tokenEndpoint);
+
   const response = await fetch("/api/hosted/bluesky/exchange-tokens", {
     body: JSON.stringify({
       code,
@@ -334,7 +411,8 @@ async function exchangeCodeForTokensHosted(
       token_endpoint: tokenEndpoint,
     }),
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+      DPoP: dpopProof,
     },
     method: "POST",
   });
@@ -363,6 +441,9 @@ async function exchangeCodeForTokens(
   console.log("Redirect URI:", redirectUri);
   console.log("Code verifier:", codeVerifier);
 
+  // Generate DPoP proof for the token endpoint
+  const dpopProof = await generateDPoPProof("POST", tokenEndpoint);
+
   const response = await fetch(tokenEndpoint, {
     body: new URLSearchParams({
       client_id: metadataUrl,
@@ -373,6 +454,7 @@ async function exchangeCodeForTokens(
     }),
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
+      DPoP: dpopProof,
     },
     method: "POST",
   });
