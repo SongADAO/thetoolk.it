@@ -244,9 +244,19 @@ async function getPDSEndpoint(did: string): Promise<string> {
 }
 
 // Get authorization server metadata
-async function getAuthServerMetadata(pdsUrl: string) {
+async function getAuthServerMetadata(pdsUrl: string, serviceUrl: string) {
+  // Check if this is a Bluesky-hosted PDS (mushroom server)
+  const isBlueskyHosted = pdsUrl.includes(".host.bsky.network");
+
+  // For Bluesky-hosted PDSs, use the entryway service as the authorization server
+  const authServerUrl = isBlueskyHosted ? serviceUrl : pdsUrl;
+
+  console.log(
+    `Fetching auth server metadata from: ${authServerUrl}/.well-known/oauth-authorization-server`,
+  );
+
   const response = await fetch(
-    `${pdsUrl}/.well-known/oauth-authorization-server`,
+    `${authServerUrl}/.well-known/oauth-authorization-server`,
   );
 
   if (!response.ok) {
@@ -266,12 +276,14 @@ async function getAuthorizationUrl(
   try {
     // 1. Resolve handle to DID
     const did = await resolveHandle(serviceUrl, username);
+    console.log(`Resolved DID: ${did}`);
 
     // 2. Get user's PDS
     const pdsUrl = await getPDSEndpoint(did);
+    console.log(`User's PDS URL: ${pdsUrl}`);
 
     // 3. Get auth server metadata
-    const metadata = await getAuthServerMetadata(pdsUrl);
+    const metadata = await getAuthServerMetadata(pdsUrl, serviceUrl);
 
     // 4. Generate PKCE
     const { codeChallenge } = await generatePKCE();
@@ -287,7 +299,7 @@ async function getAuthorizationUrl(
       scope: SCOPES.join(" "),
       state: OAUTH_STATE,
     });
-    console.log(params);
+    console.log("Authorization URL parameters:", params.toString());
 
     return `${metadata.authorization_endpoint}?${params.toString()}`;
   } catch (err: unknown) {

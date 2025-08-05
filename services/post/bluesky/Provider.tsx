@@ -227,8 +227,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       credentials.serviceUrl,
       credentials.username,
     );
-    console.log(authUrl);
-    // window.open(authUrl, "_blank");
+    window.open(authUrl, "_blank");
   }
 
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
