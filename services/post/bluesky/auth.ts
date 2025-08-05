@@ -44,7 +44,7 @@ function getClientMetadata() {
     dpop_bound_access_tokens: true,
     grant_types: ["authorization_code", "refresh_token"],
     logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
-    redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/oauth/callback`],
+    redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/authorize`],
     response_types: ["code"],
     scope: "atproto transition:generic",
     token_endpoint_auth_method: "none",
@@ -104,7 +104,7 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 
 function getRedirectUri(): string {
   const url = new URL(window.location.href);
-  return `${url.origin}/oauth/callback`;
+  return `${url.origin}/authorize`;
 }
 
 function shouldHandleAuthRedirect(
