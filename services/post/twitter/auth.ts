@@ -147,7 +147,7 @@ async function exchangeCodeForTokensHosted(
   redirectUri: string,
   codeVerifier: string,
 ): Promise<OauthAuthorization> {
-  console.log("Starting Facebook authentication...");
+  console.log("Starting Twitter authentication...");
 
   const response = await fetch("/api/hosted/twitter/exchange-tokens", {
     body: JSON.stringify({
@@ -211,7 +211,7 @@ async function exchangeCodeForTokens(
 }
 
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
-  console.log("Starting Facebook authentication...");
+  console.log("Refreshing Twitter tokens...");
 
   const response = await fetch("/api/hosted/twitter/refresh-tokens", {
     headers: {
