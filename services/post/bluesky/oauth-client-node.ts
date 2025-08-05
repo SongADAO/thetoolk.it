@@ -13,7 +13,7 @@ let oauthClient: NodeOAuthClient | null = null;
 function getClientMetadata() {
   return {
     application_type: "web",
-    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata.json`,
+    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata-node.json`,
     client_name: "The Toolk.it",
     client_uri: process.env.NEXT_PUBLIC_BASE_URL,
     dpop_bound_access_tokens: true,
@@ -28,9 +28,7 @@ function getClientMetadata() {
 }
 
 // Initialize the OAuth client
-async function getOAuthClient(
-  credentials: BlueskyCredentials,
-): Promise<NodeOAuthClient> {
+async function getOAuthClient(): Promise<NodeOAuthClient> {
   if (!oauthClient) {
     const clientMetadata = getClientMetadata();
 

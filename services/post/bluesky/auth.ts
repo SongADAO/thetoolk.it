@@ -1,8 +1,11 @@
-import { Agent } from "@atproto/api";
 import type { OAuthSession } from "@atproto/oauth-client-browser";
 
 import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
+import {
+  createAgent,
+  getOAuthClient,
+} from "@/services/post/bluesky/oauth-client-browser";
 import type {
   BlueskyCredentials,
   OauthAuthorization,
@@ -110,8 +113,6 @@ function formatTokens(tokens: OAuthSession): OauthAuthorization {
   };
 }
 
-// -----------------------------------------------------------------------------
-
 async function getAuthorizationUrl(
   credentials: BlueskyCredentials,
 ): Promise<string> {
@@ -186,30 +187,23 @@ async function refreshAccessToken(
 
 // Get user accounts using the session
 async function getAccounts(
-  // This is actually the DID in our case
-  token: string,
+  credentials: BlueskyCredentials,
+  accessToken: string,
 ): Promise<ServiceAccount[]> {
   try {
     console.log("Getting user accounts...");
 
-    if (!oauthClient) {
-      throw new Error("OAuth client not initialized");
-    }
-
-    // Restore the session using the DID
-    const session = await oauthClient.restore(token);
-
     // Create an Agent to make API calls
-    const agent = new Agent(session);
+    const agent = await createAgent(credentials, accessToken);
 
     // Get the user's profile
-    const profile = await agent.getProfile({ actor: session.sub });
+    const profile = await agent.getProfile({ actor: accessToken });
 
     console.log("User profile retrieved:", profile.data);
 
     return [
       {
-        id: session.sub,
+        id: accessToken,
         username: profile.data.handle,
       },
     ];

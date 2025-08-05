@@ -15,7 +15,7 @@ let oauthClient: BrowserOAuthClient | null = null;
 function getClientMetadata() {
   return {
     application_type: "web",
-    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata.json`,
+    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata-browser.json`,
     client_name: "The Toolk.it",
     client_uri: process.env.NEXT_PUBLIC_BASE_URL,
     dpop_bound_access_tokens: true,
@@ -47,6 +47,22 @@ async function getOAuthClient(
   return oauthClient;
 }
 
+// Check if we have a valid session
+// async function hasValidSession(
+//   credentials: BlueskyCredentials,
+//   accessToken: string,
+// ): Promise<boolean> {
+//   try {
+//     const client = await getOAuthClient(credentials);
+
+//     await client.restore(accessToken);
+
+//     return true;
+//   } catch {
+//     return false;
+//   }
+// }
+
 // Get a valid session for making API calls
 async function getValidSession(
   credentials: BlueskyCredentials,
@@ -65,20 +81,4 @@ async function createAgent(
   return new Agent(await getValidSession(credentials, accessToken));
 }
 
-// Check if we have a valid session
-async function hasValidSession(
-  credentials: BlueskyCredentials,
-  accessToken: string,
-): Promise<boolean> {
-  try {
-    const client = await getOAuthClient(credentials);
-
-    await client.restore(accessToken);
-
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export { createAgent, getClientMetadata, hasValidSession };
+export { createAgent, getClientMetadata, getOAuthClient };

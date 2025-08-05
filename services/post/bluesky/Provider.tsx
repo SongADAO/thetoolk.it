@@ -122,7 +122,10 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         );
         setAuthorization(newAuthorization);
 
-        const newAccounts = await getAccounts(newAuthorization.accessToken);
+        const newAccounts = await getAccounts(
+          credentials,
+          newAuthorization.accessToken,
+        );
         setAccounts(newAccounts);
       }
 
