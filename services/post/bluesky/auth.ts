@@ -21,7 +21,7 @@ const HOSTED_CREDENTIALS = {
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
 
-const OAUTH_STATE = "bluesky_auth";
+// const OAUTH_STATE = "bluesky_auth";
 
 // 1 minute
 const ACCESS_TOKEN_BUFFER_SECONDS = 1 * 60;
@@ -130,7 +130,7 @@ function getClientMetadata() {
     logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
     redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/authorize`],
     response_types: ["code"],
-    scope: "atproto transition:generic",
+    scope: SCOPES.join(" "),
     token_endpoint_auth_method: "none",
   };
 }
@@ -172,15 +172,6 @@ async function createAgent(
   return new Agent(await getValidSession(credentials, accessToken));
 }
 
-// Clear OAuth session
-function clearAuthSession(): void {
-  if (oauthClient) {
-    // The library manages its own storage, so we just need to clear our reference
-    oauthClient = null;
-  }
-  console.log("OAuth session cleared");
-}
-
 // Check if we have a valid session
 async function hasValidSession(
   credentials: BlueskyCredentials,
@@ -209,7 +200,7 @@ async function getAuthorizationUrl(
 
     // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
     const authUrl = await client.authorize(credentials.username, {
-      scope: "atproto transition:generic",
+      scope: SCOPES.join(" "),
     });
 
     console.log("Authorization URL generated:", authUrl.toString());

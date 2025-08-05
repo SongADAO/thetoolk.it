@@ -3,6 +3,7 @@ import type { Agent } from "@atproto/api";
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { createAgent } from "@/services/post/bluesky/auth";
+import type { BlueskyCredentials } from "@/services/post/types";
 
 // 100MB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 100;
@@ -10,6 +11,12 @@ const VIDEO_MAX_FILESIZE = 1024 * 1024 * 100;
 const VIDEO_MIN_DURATION = 3;
 // 3 minutes
 const VIDEO_MAX_DURATION = 180;
+
+interface BlueskyVideoBlobResponse {
+  ref: {
+    $link: string;
+  };
+}
 
 interface UploadVideoBlobProps {
   agent: Agent;
@@ -19,7 +26,7 @@ interface UploadVideoBlobProps {
 async function uploadVideoBlob({
   agent,
   video,
-}: Readonly<UploadVideoBlobProps>): Promise<any> {
+}: Readonly<UploadVideoBlobProps>): Promise<BlueskyVideoBlobResponse> {
   if (DEBUG_POST) {
     console.log("Test Bluesky: uploadVideoBlob");
     await sleep(6000);
@@ -50,7 +57,7 @@ interface CreateRecordProps {
   agent: Agent;
   text: string;
   title: string;
-  videoBlob: any;
+  videoBlob: BlueskyVideoBlobResponse;
 }
 
 async function createRecord({
