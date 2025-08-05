@@ -190,7 +190,6 @@ async function getAccounts(
   const accounts = [];
 
   accounts.push({
-    accessToken: "",
     id: serviceUrl,
     username,
   });
