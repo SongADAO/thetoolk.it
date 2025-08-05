@@ -27,7 +27,9 @@ function getClientMetadata() {
     grant_types: ["authorization_code", "refresh_token"],
     jwks_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/jwks.json`,
     logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
-    redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/authorize`],
+    redirect_uris: [
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/hosted/bluesky/oauth/callback`,
+    ],
     response_types: ["code"],
     scope: SCOPES.join(" "),
     token_endpoint_auth_method: "none",
