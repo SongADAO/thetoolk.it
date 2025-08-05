@@ -1,6 +1,13 @@
+/* eslint-disable max-classes-per-file */
+
 import { Agent } from "@atproto/api";
 import { JoseKey } from "@atproto/jwk-jose";
-import { NodeOAuthClient, type OAuthSession } from "@atproto/oauth-client-node";
+import {
+  NodeOAuthClient,
+  type NodeSavedSessionStore,
+  type NodeSavedStateStore,
+  type OAuthSession,
+} from "@atproto/oauth-client-node";
 
 import type { BlueskyCredentials } from "@/services/post/types";
 
@@ -28,7 +35,10 @@ function getClientMetadata() {
 }
 
 // Initialize the OAuth client
-async function getOAuthClient(): Promise<NodeOAuthClient> {
+async function getOAuthClient(
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+): Promise<NodeOAuthClient> {
   if (!oauthClient) {
     const clientMetadata = getClientMetadata();
 
@@ -47,18 +57,10 @@ async function getOAuthClient(): Promise<NodeOAuthClient> {
       ]),
 
       // Interface to store authenticated session data
-      sessionStore: {
-        async set(sub: string, session: Session): Promise<void> {},
-        async get(sub: string): Promise<Session | undefined> {},
-        async del(sub: string): Promise<void> {},
-      },
+      sessionStore,
 
       // Interface to store authorization state data (during authorization flows)
-      stateStore: {
-        async set(key: string, internalState: NodeSavedState): Promise<void> {},
-        async get(key: string): Promise<NodeSavedState | undefined> {},
-        async del(key: string): Promise<void> {},
-      },
+      stateStore,
 
       // A lock to prevent concurrent access to the session store. Optional if only one instance is running.
       // requestLock,
@@ -102,11 +104,15 @@ async function hasValidSession(
   }
 }
 
-async function getAuthorizationUrl(username: string): Promise<string> {
+async function getAuthorizationUrl(
+  username: string,
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+): Promise<string> {
   try {
     console.log("Starting OAuth flow for:", username);
 
-    const client = await getOAuthClient();
+    const client = await getOAuthClient(sessionStore, stateStore);
 
     // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
     const authUrl = await client.authorize(username, {

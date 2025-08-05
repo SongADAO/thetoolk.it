@@ -29,6 +29,9 @@ CREATE TABLE services (
   service_authorization JSON,
   service_credentials JSON,
   service_accounts JSON,
+  service_state JSON,
+  service_session JSON,
+  service_state_expires_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );

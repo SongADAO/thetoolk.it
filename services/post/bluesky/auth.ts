@@ -119,7 +119,7 @@ async function getAuthorizationUrlHosted(
   try {
     console.log("Starting OAuth flow for:", credentials.username);
 
-    const response = await fetch("/api/bluesky/oauth/authorize", {
+    const response = await fetch("/api/hosted/bluesky/oauth/authorize", {
       body: JSON.stringify({
         username: credentials.username,
       }),
@@ -202,7 +202,7 @@ async function exchangeCodeForTokens(
 async function refreshAccessTokenHosted(
   credentials: BlueskyCredentials,
 ): Promise<OauthAuthorization> {
-  const response = await fetch("/api/bluesky/tokens/refresh", {
+  const response = await fetch("/api/hosted/bluesky/tokens/refresh", {
     body: JSON.stringify({
       credentials,
     }),
