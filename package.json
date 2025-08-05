@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "atproto:generate-keys": "node scripts/generate-keys.mjs",
     "db:codegen": "supabase gen types typescript --project-id xwdeoyngusbwcwphepup > types/supabase.ts",
     "db:migrate": "supabase db push",
     "supabase": "supabase",

@@ -34,6 +34,23 @@ function getClientMetadata() {
   };
 }
 
+async function getKeyset() {
+  return await Promise.all([
+    JoseKey.fromImportable(
+      String(process.env.ATPROTO_OAUTH_PRIVATE_KEY_1 ?? ""),
+      "key1",
+    ),
+    JoseKey.fromImportable(
+      String(process.env.ATPROTO_OAUTH_PRIVATE_KEY_2 ?? ""),
+      "key2",
+    ),
+    JoseKey.fromImportable(
+      String(process.env.ATPROTO_OAUTH_PRIVATE_KEY_3 ?? ""),
+      "key3",
+    ),
+  ]);
+}
+
 // Initialize the OAuth client
 async function getOAuthClient(
   sessionStore: NodeSavedSessionStore,
@@ -50,11 +67,7 @@ async function getOAuthClient(
 
       // Used to authenticate the client to the token endpoint. Will be used to
       // build the jwks object to be exposed on the "jwks_uri" endpoint.
-      keyset: await Promise.all([
-        JoseKey.fromImportable(String(process.env.PRIVATE_KEY_1 ?? ""), "key1"),
-        JoseKey.fromImportable(String(process.env.PRIVATE_KEY_2 ?? ""), "key2"),
-        JoseKey.fromImportable(String(process.env.PRIVATE_KEY_3 ?? ""), "key3"),
-      ]),
+      keyset: await getKeyset(),
 
       // Interface to store authenticated session data
       sessionStore,
@@ -128,4 +141,10 @@ async function getAuthorizationUrl(
   }
 }
 
-export { createAgent, getAuthorizationUrl, getClientMetadata, hasValidSession };
+export {
+  createAgent,
+  getAuthorizationUrl,
+  getClientMetadata,
+  getKeyset,
+  hasValidSession,
+};
