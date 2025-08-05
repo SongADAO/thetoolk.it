@@ -98,31 +98,14 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const mode = isAuthenticated ? "hosted" : "self";
 
-  async function exchangeCode(code: string) {
+  async function exchangeCode(code: string, iss: string, state: string) {
     try {
-      const codeVerifier = String(
-        localStorage.getItem("thetoolkit_bluesky_code_verifier") ?? "",
-      );
-      const tokenEndpoint = String(
-        localStorage.getItem("thetoolkit_bluesky_token_endpoint") ?? "",
-      );
-
-      if (!codeVerifier) {
-        throw new Error(
-          "Code verifier not found. Please restart the authorization process.",
-        );
-      }
-
-      if (!tokenEndpoint) {
-        throw new Error(
-          "Token endpoint not found. Please restart the authorization process.",
-        );
-      }
-
       if (mode === "hosted") {
         throw new Error("host");
         await exchangeCodeForTokensHosted(
           code,
+          iss,
+          state,
           getRedirectUri(),
           metadataUrl,
           codeVerifier,
@@ -133,10 +116,9 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       } else {
         const newAuthorization = await exchangeCodeForTokens(
           code,
-          getRedirectUri(),
-          metadataUrl,
-          codeVerifier,
-          tokenEndpoint,
+          iss,
+          state,
+          credentials,
         );
         setAuthorization(newAuthorization);
 
@@ -228,10 +210,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   }
 
   async function authorize() {
-    const authUrl = await getAuthorizationUrl(
-      credentials.serviceUrl,
-      credentials.username,
-    );
+    const authUrl = await getAuthorizationUrl(credentials);
     window.open(authUrl, "_blank");
   }
 
@@ -241,14 +220,15 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
       const code = searchParams.get("code");
+      const iss = searchParams.get("iss");
       const state = searchParams.get("state");
       console.log("code", code);
-      console.log("state", state);
+      console.log("iss", iss);
 
-      if (code && state && shouldHandleAuthRedirect(code, state)) {
+      if (code && iss && state && shouldHandleAuthRedirect(code, iss)) {
         setIsHandlingAuth(true);
 
-        await exchangeCode(code);
+        await exchangeCode(code, iss, state);
 
         setHasCompletedAuth(true);
       }

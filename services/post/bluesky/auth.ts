@@ -88,9 +88,9 @@ function getRedirectUri(): string {
 
 function shouldHandleAuthRedirect(
   code: string | null,
-  state: string | null,
+  iss: string | null,
 ): boolean {
-  return Boolean(code); // The library handles state validation
+  return Boolean(code && iss?.includes("bsky"));
 }
 
 function formatTokens(tokens: OAuthSession): OauthAuthorization {
@@ -145,6 +145,8 @@ async function getOAuthClient(
     oauthClient = await BrowserOAuthClient.load({
       clientId: clientMetadata.client_id,
       handleResolver: credentials.serviceUrl || "https://bsky.social",
+      // Instead of 'fragment' (default)
+      responseMode: "query",
     });
   }
 
@@ -196,17 +198,19 @@ async function hasValidSession(
 // -----------------------------------------------------------------------------
 
 async function getAuthorizationUrl(
-  serviceUrl: string,
-  username: string,
+  credentials: BlueskyCredentials,
 ): Promise<string> {
   try {
-    console.log("Starting OAuth flow for:", username);
+    console.log("Starting OAuth flow for:", credentials.username);
 
-    const credentials = { appPassword: "", serviceUrl, username };
-    const client = await getOAuthClient(credentials);
+    const client = await getOAuthClient({
+      appPassword: "",
+      serviceUrl: credentials.serviceUrl,
+      username: credentials.username,
+    });
 
     // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
-    const authUrl = await client.authorize(username, {
+    const authUrl = await client.authorize(credentials.username, {
       scope: "atproto transition:generic",
     });
 
@@ -222,26 +226,23 @@ async function getAuthorizationUrl(
 // Handle OAuth callback and exchange code for tokens
 async function exchangeCodeForTokens(
   code: string,
-  redirectUri: string,
-  metadataUrl: string,
-  codeVerifier: string,
-  tokenEndpoint: string,
+  iss: string,
+  state: string,
+  credentials: BlueskyCredentials,
 ): Promise<OauthAuthorization> {
   try {
     console.log("Processing OAuth callback...");
 
-    // Get the current URL parameters
-    const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search);
-
-    if (!oauthClient) {
-      throw new Error(
-        "OAuth client not initialized. Please restart the authorization process.",
-      );
-    }
+    const client = await getOAuthClient({
+      appPassword: "",
+      serviceUrl: credentials.serviceUrl,
+      username: credentials.username,
+    });
 
     // The library handles the token exchange internally
-    const { session } = await oauthClient.callback(params);
+    const { session } = await client.callback(
+      new URLSearchParams({ code, iss, state }),
+    );
 
     console.log("OAuth session created successfully");
 
@@ -262,12 +263,14 @@ async function refreshAccessToken(
   try {
     console.log("Refreshing access token...");
 
-    if (!oauthClient) {
-      throw new Error("OAuth client not initialized");
-    }
+    const client = await getOAuthClient({
+      appPassword: "",
+      serviceUrl: credentials.serviceUrl,
+      username: credentials.username,
+    });
 
     // Try to restore the session (this will refresh tokens if needed)
-    await oauthClient.restore(authorization.accessToken);
+    await client.restore(authorization.accessToken);
 
     console.log("Access token refreshed successfully");
 
