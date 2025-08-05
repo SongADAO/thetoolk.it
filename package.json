@@ -24,6 +24,7 @@
   "dependencies": {
     "@atproto/api": "^0.16.2",
     "@atproto/oauth-client-browser": "^0.3.27",
+    "@atproto/oauth-client-node": "^0.3.3",
     "@aws-sdk/client-s3": "^3.844.0",
     "@bprogress/next": "^3.2.12",
     "@ffmpeg/core": "^0.12.10",
