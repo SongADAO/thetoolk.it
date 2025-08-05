@@ -48,7 +48,7 @@ interface Props {
 export function BlueskyProvider({ children }: Readonly<Props>) {
   const { isAuthenticated, loading } = use(AuthContext);
 
-  const metadataUrl = "https://localhost:3000/client-metadata.json";
+  const metadataUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata.json`;
 
   const label = "Bluesky";
 
