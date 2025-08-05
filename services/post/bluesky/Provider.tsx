@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, use, useMemo, useState } from "react";
+import { ReactNode, use, useEffect, useMemo, useState } from "react";
 import { FaBluesky } from "react-icons/fa6";
 
 import type {
@@ -122,10 +122,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         );
         setAuthorization(newAuthorization);
 
-        const newAccounts = await getAccounts(
-          newAuthorization.accessToken,
-          "self",
-        );
+        const newAccounts = await getAccounts(newAuthorization.accessToken);
         setAccounts(newAccounts);
       }
 
@@ -148,6 +145,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   async function refreshTokens() {
     try {
       if (mode === "hosted") {
+        throw new Error("host");
         await refreshAccessTokenHosted();
 
         // TODO: pull access token dates from supabase
@@ -155,7 +153,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         const newAuthorization = await refreshAccessToken(
           credentials,
           authorization,
-          "self",
         );
 
         setAuthorization(newAuthorization);
@@ -224,6 +221,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       const state = searchParams.get("state");
       console.log("code", code);
       console.log("iss", iss);
+      console.log("state", state);
 
       if (code && iss && state && shouldHandleAuthRedirect(code, iss)) {
         setIsHandlingAuth(true);
@@ -307,16 +305,16 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     return formState;
   }
 
-  // useEffect(() => {
-  //   if (loading) {
-  //     // Wait for user data to load.
-  //     return;
-  //   }
+  useEffect(() => {
+    if (loading) {
+      // Wait for user data to load.
+      return;
+    }
 
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   renewRefreshTokenIfNeeded();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [authorization.refreshTokenExpiresAt, loading]);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    renewRefreshTokenIfNeeded();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authorization.refreshTokenExpiresAt, loading]);
 
   const providerValues = useMemo(
     () => ({

@@ -23,11 +23,11 @@ const SCOPES: string[] = ["atproto", "transition:generic"];
 
 const OAUTH_STATE = "bluesky_auth";
 
-// 2 minutes
-const ACCESS_TOKEN_BUFFER_SECONDS = 2 * 60;
+// 1 minute
+const ACCESS_TOKEN_BUFFER_SECONDS = 1 * 60;
 
-// 1 day
-const REFRESH_TOKEN_BUFFER_SECONDS = 24 * 60 * 60;
+// 2 days
+const REFRESH_TOKEN_BUFFER_SECONDS = 2 * 24 * 60 * 60;
 
 // -----------------------------------------------------------------------------
 
@@ -142,6 +142,7 @@ async function getOAuthClient(
   if (!oauthClient) {
     const clientMetadata = getClientMetadata();
 
+    // eslint-disable-next-line require-atomic-updates
     oauthClient = await BrowserOAuthClient.load({
       clientId: clientMetadata.client_id,
       handleResolver: credentials.serviceUrl || "https://bsky.social",
@@ -243,6 +244,7 @@ async function exchangeCodeForTokens(
     const { session } = await client.callback(
       new URLSearchParams({ code, iss, state }),
     );
+    console.log("OAuth session:", session);
 
     console.log("OAuth session created successfully");
 
@@ -258,7 +260,6 @@ async function exchangeCodeForTokens(
 async function refreshAccessToken(
   credentials: BlueskyCredentials,
   authorization: OauthAuthorization,
-  mode?: string,
 ): Promise<OauthAuthorization> {
   try {
     console.log("Refreshing access token...");
@@ -270,15 +271,10 @@ async function refreshAccessToken(
     });
 
     // Try to restore the session (this will refresh tokens if needed)
-    await client.restore(authorization.accessToken);
+    const session = await client.restore(authorization.accessToken);
+    console.log("Refreshed session:", session);
 
-    console.log("Access token refreshed successfully");
-
-    // Return updated authorization (the library handles token refresh internally)
-    return {
-      ...authorization,
-      accessTokenExpiresAt: new Date(Date.now() + 2 * 60 * 1000).toISOString(),
-    };
+    return formatTokens(session);
   } catch (err: unknown) {
     console.error("Token refresh error:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";
@@ -290,7 +286,6 @@ async function refreshAccessToken(
 async function getAccounts(
   // This is actually the DID in our case
   token: string,
-  mode?: string,
 ): Promise<ServiceAccount[]> {
   try {
     console.log("Getting user accounts...");
