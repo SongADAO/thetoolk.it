@@ -267,18 +267,14 @@ async function refreshAccessToken(
     }
 
     // Try to restore the session (this will refresh tokens if needed)
-    const session = await oauthClient.restore(authorization.accessToken);
-
-    if (!session) {
-      throw new Error("Failed to restore session. Please re-authorize.");
-    }
+    await oauthClient.restore(authorization.accessToken);
 
     console.log("Access token refreshed successfully");
 
     // Return updated authorization (the library handles token refresh internally)
     return {
       ...authorization,
-      accessTokenExpiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      accessTokenExpiresAt: new Date(Date.now() + 2 * 60 * 1000).toISOString(),
     };
   } catch (err: unknown) {
     console.error("Token refresh error:", err);
@@ -289,7 +285,8 @@ async function refreshAccessToken(
 
 // Get user accounts using the session
 async function getAccounts(
-  token: string, // This is actually the DID in our case
+  // This is actually the DID in our case
+  token: string,
   mode?: string,
 ): Promise<ServiceAccount[]> {
   try {
@@ -301,10 +298,6 @@ async function getAccounts(
 
     // Restore the session using the DID
     const session = await oauthClient.restore(token);
-
-    if (!session) {
-      throw new Error("Failed to restore session");
-    }
 
     // Create an Agent to make API calls
     const agent = new Agent(session);
