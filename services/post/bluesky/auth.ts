@@ -1,3 +1,4 @@
+import { Agent } from "@atproto/api";
 import type { OAuthSession } from "@atproto/oauth-client-browser";
 
 import { hasExpired } from "@/lib/expiration";
@@ -242,15 +243,12 @@ async function refreshAccessToken(
 }
 
 // Get user accounts using the session
-async function getAccounts(
-  credentials: BlueskyCredentials,
+async function getAccountsFromAgent(
+  agent: Agent,
   accessToken: string,
 ): Promise<ServiceAccount[]> {
   try {
     console.log("Getting user accounts...");
-
-    // Create an Agent to make API calls
-    const agent = await createAgent(credentials, accessToken);
 
     // Get the user's profile
     const profile = await agent.getProfile({ actor: accessToken });
@@ -270,6 +268,25 @@ async function getAccounts(
   }
 }
 
+// Get user accounts using the session
+async function getAccounts(
+  credentials: BlueskyCredentials,
+  accessToken: string,
+): Promise<ServiceAccount[]> {
+  try {
+    console.log("Getting user accounts...");
+
+    // Create an Agent to make API calls
+    const agent = await createAgent(credentials, accessToken);
+
+    return getAccountsFromAgent(agent, accessToken);
+  } catch (err: unknown) {
+    console.error("Error getting accounts:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Failed to get accounts: ${errMessage}`);
+  }
+}
+
 // Export functions with the same signatures as before
 
 function exchangeCodeForTokensHosted() {}
@@ -278,6 +295,7 @@ export {
   exchangeCodeForTokens,
   exchangeCodeForTokensHosted,
   getAccounts,
+  getAccountsFromAgent,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getAuthorizationUrlHosted,

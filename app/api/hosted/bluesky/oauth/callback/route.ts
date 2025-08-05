@@ -1,9 +1,11 @@
 // app/api/bluesky/oauth/callback/route.ts
+import { Agent } from "@atproto/api";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
 import { handleCallback } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
@@ -71,27 +73,24 @@ export async function GET(request: NextRequest) {
 
     console.log("OAuth session created successfully");
 
-    // Extract userId from state
-    // const userId = state;
+    const agent = new Agent(session);
 
-    // Get user's credentials if they exist
-    // const credentials = await getBlueskyCredentials(userId);
+    const accounts = await getAccountsFromAgent(agent, session.sub);
 
-    // const tokenData = formatTokens(session);
+    const { error: supabaseError } = await supabase.from("services").upsert(
+      {
+        service_accounts: accounts,
+        service_id: "bluesky",
+        user_id: user.id,
+      },
+      {
+        onConflict: "user_id,service_id",
+      },
+    );
 
-    // // Store session data securely in database
-    // await storeBlueskyTokens(userId, {
-    //   sessionData: await encryptData(tokenData.sessionData),
-    //   accessTokenExpiresAt: tokenData.accessTokenExpiresAt,
-    //   refreshTokenExpiresAt: tokenData.refreshTokenExpiresAt,
-    //   serviceUrl:
-    //     credentials?.serviceUrl ||
-    //     process.env.NEXT_PUBLIC_BLUESKY_SERVICE_URL ||
-    //     "https://bsky.social",
-    //   credentials: credentials
-    //     ? await encryptData(JSON.stringify(credentials))
-    //     : null,
-    // });
+    if (supabaseError) {
+      throw new Error("Could not get accounts");
+    }
 
     console.log("Tokens stored successfully");
 
