@@ -1,28 +1,19 @@
 // app/api/bluesky/oauth/authorize/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentUserId } from "@/lib/server/auth";
-import { createAuthorizationUrl } from "@/services/post/bluesky/oauth-client-server";
+import { getAuthorizationUrl } from "@/services/post/bluesky/oauth-client-node";
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = await getCurrentUserId(request);
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const { username } = await request.json();
 
-    const { credentials } = await request.json();
+    console.log("Generating authorization URL for user:", username);
 
-    console.log("Generating authorization URL for user:", userId);
-
-    const authUrl = await createAuthorizationUrl(credentials, userId);
+    const authUrl = await getAuthorizationUrl(username);
 
     return NextResponse.json({
-      success: true,
       authUrl,
+      success: true,
     });
   } catch (error: unknown) {
     console.error("Authorization URL generation error:", error);
@@ -30,8 +21,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        success: false,
         error: `Failed to generate authorization URL: ${errMessage}`,
+        success: false,
       },
       { status: 500 },
     );

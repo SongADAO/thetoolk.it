@@ -102,4 +102,24 @@ async function hasValidSession(
   }
 }
 
-export { createAgent, getClientMetadata, hasValidSession };
+async function getAuthorizationUrl(username: string): Promise<string> {
+  try {
+    console.log("Starting OAuth flow for:", username);
+
+    const client = await getOAuthClient();
+
+    // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
+    const authUrl = await client.authorize(username, {
+      scope: SCOPES.join(" "),
+    });
+
+    console.log("Authorization URL generated:", authUrl.toString());
+    return authUrl.toString();
+  } catch (err: unknown) {
+    const errMessage = err instanceof Error ? err.message : "Auth URL failed";
+    console.error("Error creating authorization URL:", err);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`);
+  }
+}
+
+export { createAgent, getAuthorizationUrl, getClientMetadata, hasValidSession };

@@ -113,6 +113,42 @@ function formatTokens(tokens: OAuthSession): OauthAuthorization {
   };
 }
 
+async function getAuthorizationUrlHosted(
+  credentials: BlueskyCredentials,
+): Promise<string> {
+  try {
+    console.log("Starting OAuth flow for:", credentials.username);
+
+    const response = await fetch("/api/bluesky/oauth/authorize", {
+      body: JSON.stringify({
+        username: credentials.username,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error ?? "Failed to get authorization URL");
+    }
+
+    console.log("Authorization URL received from server");
+
+    return result.authUrl;
+  } catch (err: unknown) {
+    const errMessage = err instanceof Error ? err.message : "Auth URL failed";
+    console.error("Error creating authorization URL:", err);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`);
+  }
+}
+
 async function getAuthorizationUrl(
   credentials: BlueskyCredentials,
 ): Promise<string> {
@@ -161,6 +197,26 @@ async function exchangeCodeForTokens(
     const errMessage = err instanceof Error ? err.message : "Unknown error";
     throw new Error(`Failed to exchange code for tokens: ${errMessage}`);
   }
+}
+
+async function refreshAccessTokenHosted(
+  credentials: BlueskyCredentials,
+): Promise<OauthAuthorization> {
+  const response = await fetch("/api/bluesky/tokens/refresh", {
+    body: JSON.stringify({
+      credentials,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  return await response.json();
 }
 
 // Refresh access token (handled internally by the library)
@@ -217,7 +273,6 @@ async function getAccounts(
 // Export functions with the same signatures as before
 
 function exchangeCodeForTokensHosted() {}
-function refreshAccessTokenHosted() {}
 
 export {
   exchangeCodeForTokens,
@@ -225,6 +280,7 @@ export {
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
+  getAuthorizationUrlHosted,
   getCredentialsId,
   getRedirectUri,
   hasCompleteAuthorization,

@@ -16,6 +16,7 @@ import {
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
+  getAuthorizationUrlHosted,
   getCredentialsId,
   getRedirectUri,
   hasCompleteAuthorization,
@@ -148,8 +149,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   async function refreshTokens() {
     try {
       if (mode === "hosted") {
-        throw new Error("host");
-        await refreshAccessTokenHosted();
+        await refreshAccessTokenHosted(credentials);
 
         // TODO: pull access token dates from supabase
       } else {
@@ -210,7 +210,10 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   }
 
   async function authorize() {
-    const authUrl = await getAuthorizationUrl(credentials);
+    const authUrl =
+      mode === "hosted"
+        ? await getAuthorizationUrlHosted(credentials)
+        : await getAuthorizationUrl(credentials);
     window.open(authUrl, "_blank");
   }
 

@@ -7,7 +7,7 @@ import {
   getCurrentUserId,
   isTokenExpired,
 } from "@/lib/server/auth";
-import { restoreSession } from "@/services/post/bluesky/oauth-client-server";
+import { restoreSession } from "@/services/post/bluesky/oauth-client-node";
 
 export async function POST(request: NextRequest) {
   try {

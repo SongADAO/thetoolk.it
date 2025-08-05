@@ -7,7 +7,7 @@ import {
   getBlueskyCredentials,
   storeBlueskyTokens,
 } from "@/lib/server/auth";
-import { handleCallback } from "@/services/post/bluesky/oauth-client-server";
+import { handleCallback } from "@/services/post/bluesky/oauth-client-node";
 
 function formatTokens(session: any) {
   // Sessions in AT Protocol OAuth have their own expiration handling

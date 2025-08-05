@@ -2,7 +2,7 @@ import type { Agent } from "@atproto/api";
 
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import { createAgent } from "@/services/post/bluesky/auth";
+import { createAgent } from "@/services/post/bluesky/oauth-client-browser";
 import type { BlueskyCredentials } from "@/services/post/types";
 
 // 100MB
