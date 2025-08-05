@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, use, useEffect, useMemo, useState } from "react";
+import { ReactNode, use, useMemo, useState } from "react";
 import { FaBluesky } from "react-icons/fa6";
 
 import type {
@@ -15,11 +15,15 @@ import {
   exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
+  getAuthorizationUrl,
   getCredentialsId,
+  getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   needsRefreshTokenRenewal,
   refreshAccessToken,
+  refreshAccessTokenHosted,
+  shouldHandleAuthRedirect,
 } from "@/services/post/bluesky/auth";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import {
@@ -42,7 +46,9 @@ interface Props {
 }
 
 export function BlueskyProvider({ children }: Readonly<Props>) {
-  const { isAuthenticated } = use(AuthContext);
+  const { isAuthenticated, loading } = use(AuthContext);
+
+  const metadataUrl = "https://localhost:3000/client-metadata.json";
 
   const label = "Bluesky";
 
@@ -54,7 +60,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const [error, setError] = useState("");
 
-  // Replace useLocalStorage with useUserStorage
   const [isEnabled, setIsEnabled] = useUserStorage<boolean>(
     "thetoolkit-bluesky-enabled",
     false,
@@ -93,20 +98,53 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const mode = isAuthenticated ? "hosted" : "self";
 
-  async function exchangeCode(): Promise<OauthAuthorization | null> {
+  async function exchangeCode(code: string) {
     try {
-      const newAuthorization =
-        mode === "hosted"
-          ? await exchangeCodeForTokensHosted()
-          : await exchangeCodeForTokens(credentials);
+      const codeVerifier = String(
+        localStorage.getItem("thetoolkit_bluesky_code_verifier") ?? "",
+      );
+      const tokenEndpoint = String(
+        localStorage.getItem("thetoolkit_bluesky_token_endpoint") ?? "",
+      );
 
-      setAuthorization(newAuthorization);
+      if (!codeVerifier) {
+        throw new Error(
+          "Code verifier not found. Please restart the authorization process.",
+        );
+      }
+
+      if (mode === "hosted") {
+        await exchangeCodeForTokensHosted(
+          code,
+          getRedirectUri(),
+          metadataUrl,
+          codeVerifier,
+          tokenEndpoint,
+        );
+
+        // TODO: pull access token dates and accounts from supabase
+      } else {
+        const newAuthorization = await exchangeCodeForTokens(
+          code,
+          getRedirectUri(),
+          metadataUrl,
+          codeVerifier,
+          tokenEndpoint,
+        );
+        setAuthorization(newAuthorization);
+
+        const newAccounts = await getAccounts(
+          newAuthorization.accessToken,
+          "self",
+        );
+        setAccounts(newAccounts);
+      }
 
       setError("");
 
       console.log("Tokens obtained successfully");
 
-      return newAuthorization;
+      return true;
     } catch (err: unknown) {
       console.error("Token exchange error:", err);
 
@@ -114,12 +152,51 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
       setError(`Failed to exchange code for tokens: ${errMessage}`);
 
-      return null;
+      return false;
     }
   }
 
-  async function refreshTokens(): Promise<OauthAuthorization | null> {
+  async function refreshTokens() {
     try {
+      if (mode === "hosted") {
+        await refreshAccessTokenHosted();
+
+        // TODO: pull access token dates from supabase
+      } else {
+        const newAuthorization = await refreshAccessToken(
+          credentials,
+          authorization,
+          "self",
+        );
+
+        setAuthorization(newAuthorization);
+      }
+
+      setError("");
+
+      console.log("Access token refreshed successfully");
+    } catch (err: unknown) {
+      console.error("Token refresh error:", err);
+
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+
+      setError(`Failed to refresh token: ${errMessage}`);
+    }
+  }
+
+  async function renewRefreshTokenIfNeeded() {
+    if (needsRefreshTokenRenewal(authorization)) {
+      console.log(`${label}: Refresh token will expire soon, refreshing...`);
+      await refreshTokens();
+    }
+  }
+
+  async function getValidAccessToken(): Promise<string> {
+    try {
+      if (DEBUG_POST) {
+        return "test-token";
+      }
+
       const newAuthorization = await refreshAccessToken(
         credentials,
         authorization,
@@ -129,9 +206,9 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
       setError("");
 
-      console.log("Access token refreshed successfully");
+      return newAuthorization.accessToken;
 
-      return newAuthorization;
+      console.log("Access token refreshed successfully");
     } catch (err: unknown) {
       console.error("Token refresh error:", err);
 
@@ -139,72 +216,40 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
       setError(`Failed to refresh token: ${errMessage}`);
 
-      return null;
-    }
-  }
-
-  async function renewRefreshTokenIfNeeded(): Promise<OauthAuthorization | null> {
-    if (needsRefreshTokenRenewal(authorization)) {
-      console.log(`${label}: Refresh token will expire soon, refreshing...`);
-      return await refreshTokens();
-    }
-
-    return null;
-  }
-
-  async function getValidAccessToken(): Promise<string> {
-    if (DEBUG_POST) {
-      return "test-token";
-    }
-
-    const newAuthorization = await refreshTokens();
-
-    if (!newAuthorization?.accessToken) {
-      throw new Error("Failed to get valid access token");
-    }
-
-    return newAuthorization.accessToken;
-  }
-
-  async function initAccounts(accessToken: string): Promise<ServiceAccount[]> {
-    try {
-      const newAccounts = await getAccounts(
-        credentials.serviceUrl,
-        credentials.username,
-        accessToken,
-      );
-
-      setAccounts(newAccounts);
-
-      return newAccounts;
-    } catch (err: unknown) {
-      console.error("Token exchange error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to get bluesky accounts: ${errMessage}`);
-
-      setAccounts([]);
-
-      return [];
+      return "";
     }
   }
 
   async function authorize() {
-    const newAuthorization = await exchangeCode();
-    if (newAuthorization) {
-      await initAccounts(newAuthorization.accessToken);
-    }
+    const authUrl = await getAuthorizationUrl(
+      metadataUrl,
+      getRedirectUri(),
+      credentials.username,
+    );
+    window.open(authUrl, "_blank");
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function handleAuthRedirect(searchParams: URLSearchParams) {}
+  async function handleAuthRedirect(searchParams: URLSearchParams) {
+    try {
+      const code = searchParams.get("code");
+      const state = searchParams.get("state");
+      console.log("code", code);
+      console.log("state", state);
+
+      if (code && state && shouldHandleAuthRedirect(code, state)) {
+        setIsHandlingAuth(true);
+
+        await exchangeCode(code);
+
+        setHasCompletedAuth(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   const [isPosting, setIsPosting] = useState<boolean>(false);
   const [postError, setPostError] = useState<string>("");
@@ -276,11 +321,16 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     return formState;
   }
 
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    renewRefreshTokenIfNeeded();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.refreshTokenExpiresAt]);
+  // useEffect(() => {
+  //   if (loading) {
+  //     // Wait for user data to load.
+  //     return;
+  //   }
+
+  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  //   renewRefreshTokenIfNeeded();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [authorization.refreshTokenExpiresAt, loading]);
 
   const providerValues = useMemo(
     () => ({

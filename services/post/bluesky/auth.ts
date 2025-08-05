@@ -1,8 +1,8 @@
 import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
+  BlueskyCredentials,
   OauthAuthorization,
-  OauthCredentials,
   ServiceAccount,
 } from "@/services/post/types";
 
@@ -59,17 +59,20 @@ function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
 
 // -----------------------------------------------------------------------------
 
-function getCredentialsId(credentials: OauthCredentials): string {
+function getCredentialsId(credentials: BlueskyCredentials): string {
   return objectIdHash(credentials);
 }
 
-function hasCompleteCredentials(credentials: OauthCredentials): boolean {
-  return credentials.clientId !== "";
+function hasCompleteCredentials(credentials: BlueskyCredentials): boolean {
+  return (
+    credentials.appPassword !== "" &&
+    credentials.serviceUrl !== "" &&
+    credentials.username !== ""
+  );
 }
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
   return (
-    authorization.refreshToken !== "" &&
     authorization.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(authorization)
   );
@@ -240,7 +243,8 @@ async function getAuthServerMetadata(pdsUrl: string) {
 
 // Generate authorization URL for Bluesky
 async function getAuthorizationUrl(
-  clientId: string,
+  metadataUrl: string,
+  redirectUrl: string,
   handle: string,
 ): Promise<string> {
   try {
@@ -258,11 +262,11 @@ async function getAuthorizationUrl(
 
     // 5. Create authorization URL
     const params = new URLSearchParams({
-      client_id: clientId,
+      client_id: metadataUrl,
       code_challenge: codeChallenge,
       code_challenge_method: "S256",
       login_hint: handle,
-      redirect_uri: getRedirectUri(),
+      redirect_uri: redirectUrl,
       response_type: "code",
       scope: SCOPES.join(" "),
       state: OAUTH_STATE,
@@ -278,15 +282,21 @@ async function getAuthorizationUrl(
 
 async function exchangeCodeForTokensHosted(
   code: string,
+  metadataUrl: string,
   redirectUri: string,
+  codeVerifier: string,
+  tokenEndpoint: string,
 ): Promise<OauthAuthorization> {
   console.log("Starting Bluesky authentication...");
 
   const response = await fetch("/api/hosted/bluesky/exchange-tokens", {
     body: JSON.stringify({
       code,
+      code_verifier: codeVerifier,
+      metadata_url: metadataUrl,
       redirect_uri: redirectUri,
       state: OAUTH_STATE,
+      token_endpoint: tokenEndpoint,
     }),
     headers: {
       "Content-Type": "application/json",
@@ -308,31 +318,17 @@ async function exchangeCodeForTokensHosted(
 async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
-  credentials: OauthCredentials,
-  mode = "hosted",
+  metadataUrl: string,
+  codeVerifier: string,
+  tokenEndpoint: string,
 ): Promise<OauthAuthorization> {
-  if (mode === "hosted") {
-    return exchangeCodeForTokensHosted(code, redirectUri);
-  }
-
   console.log("Exchanging code for Bluesky tokens...");
 
-  // Get the stored session data from when we created the auth URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const state = urlParams.get("state") || "";
-  const storedData = JSON.parse(
-    sessionStorage.getItem(`bluesky_${state}`) || "{}",
-  );
-
-  if (!storedData.codeVerifier || !storedData.tokenEndpoint) {
-    throw new Error("Missing session data - please restart authentication");
-  }
-
-  const response = await fetch(storedData.tokenEndpoint, {
+  const response = await fetch(tokenEndpoint, {
     body: new URLSearchParams({
-      client_id: credentials.clientId,
+      client_id: metadataUrl,
       code,
-      code_verifier: storedData.codeVerifier,
+      code_verifier: codeVerifier,
       grant_type: "authorization_code",
       redirect_uri: redirectUri,
     }),
@@ -345,14 +341,11 @@ async function exchangeCodeForTokens(
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(
-      `Token exchange failed: ${errorData.error_description || errorData.error}`,
+      `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
   const tokens = await response.json();
-
-  // Clean up session storage
-  sessionStorage.removeItem(`bluesky_${state}`);
 
   return formatTokens(tokens);
 }
