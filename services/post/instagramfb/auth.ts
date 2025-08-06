@@ -90,7 +90,7 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 function getRedirectUriHosted(): string {
   const url = new URL(window.location.href);
 
-  return `${url.origin}/api/hosted/oauth/authorize`;
+  return `${url.origin}/api/hosted/oauth/callback`;
 }
 
 function getRedirectUri(): string {
