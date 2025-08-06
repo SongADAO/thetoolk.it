@@ -229,7 +229,8 @@ async function exchangeCodeForTokens(
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   console.log("Refreshing Twitter tokens...");
 
-  const response = await fetch("/api/hosted/twitter/refresh", {
+  const response = await fetch("/api/hosted/oauth/refresh", {
+    body: JSON.stringify({ service: "twitter" }),
     headers: {
       "Content-Type": "application/json",
     },

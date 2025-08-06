@@ -191,7 +191,8 @@ async function exchangeCodeForTokens(
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   console.log("Starting Facebook authentication...");
 
-  const response = await fetch("/api/hosted/instagram/refresh", {
+  const response = await fetch("/api/hosted/oauth/refresh", {
+    body: JSON.stringify({ service: "instagram" }),
     headers: {
       "Content-Type": "application/json",
     },

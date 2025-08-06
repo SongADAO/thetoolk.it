@@ -1,73 +1,86 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { NextRequest } from "next/server";
 
-import { getCurrentUserId } from "@/lib/server/auth";
+import { createClient } from "@/lib/supabase/server";
+import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
+import { createAgent } from "@/services/post/bluesky/oauth-client-node";
+import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
+import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
-// app/api/bluesky/tokens/refresh/route.ts
+async function getUser(supabase: SupabaseClient) {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  return user;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const userId = await getCurrentUserId(request);
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized", success: false },
-        { status: 401 },
-      );
+    const supabase = await createClient();
+
+    const user = await getUser(supabase);
+    const stateStore = new SupabaseStateStore(supabase, user);
+    const sessionStore = new SupabaseSessionStore(supabase, user);
+
+    const { data, error } = await supabase
+      .from("services")
+      .select("service_authorization")
+      .eq("user_id", user.id)
+      .eq("service_id", "bluesky")
+      .single();
+
+    if (error) {
+      throw new Error("Could not get tokens to refresh from DB");
     }
 
-    const { credentials } = await request.json();
+    const authorization = data.service_authorization;
 
-    const storedTokens = await getBlueskyTokens(userId, credentials);
-
-    if (!storedTokens) {
-      return NextResponse.json(
-        {
-          error: "No tokens found. Please re-authorize.",
-          success: false,
-        },
-        { status: 404 },
-      );
+    if (!authorization) {
+      throw new Error("Could not get tokens to refresh");
     }
 
-    try {
-      // Restore session (this automatically refreshes tokens if needed)
-      const sessionData = await decryptData(storedTokens.sessionData);
-      const session = await restoreSession(credentials, sessionData);
+    console.log("Authorization data:", authorization);
+    // throw new Error("This is a test error to check the flow");
 
-      // Update stored session data if it changed
-      const newTokenData = formatTokens(session);
-      await storeBlueskyTokens(userId, {
-        accessTokenExpiresAt: newTokenData.accessTokenExpiresAt,
-        credentials: storedTokens.credentials,
-        refreshTokenExpiresAt: newTokenData.refreshTokenExpiresAt,
-        serviceUrl: storedTokens.serviceUrl,
-        sessionData: await encryptData(newTokenData.sessionData),
-      });
-
-      return NextResponse.json({
-        accessToken: session.sub,
-        expiresAt: newTokenData.refreshTokenExpiresAt,
-        success: true,
-      });
-    } catch (sessionError) {
-      console.error("Session refresh failed:", sessionError);
-
-      return NextResponse.json(
-        {
-          error: "Session refresh failed. Please re-authorize.",
-          success: false,
-        },
-        { status: 401 },
-      );
-    }
-  } catch (error: unknown) {
-    console.error("Refresh token error:", error);
-    const errMessage = error instanceof Error ? error.message : "Unknown error";
-
-    return NextResponse.json(
-      {
-        error: `Failed to refresh token: ${errMessage}`,
-        success: false,
-      },
-      { status: 500 },
+    const agent = await createAgent(
+      sessionStore,
+      stateStore,
+      authorization.sub,
     );
+
+    const accounts = await getAccountsFromAgent(agent, authorization.sub);
+
+    console.log("Accounts:", accounts);
+
+    // const newAuthorization = await refreshAccessToken(authorization);
+
+    // const { error: authorizationError } = await supabase
+    //   .from("services")
+    //   .upsert(
+    //     {
+    //       service_authorization: newAuthorization,
+    //       service_id: 'bluesky',
+    //       user_id: user.id,
+    //     },
+    //     {
+    //       onConflict: "user_id,service_id",
+    //     },
+    //   );
+
+    // if (authorizationError) {
+    //   throw new Error("Could not refresh token");
+    // }
+
+    return Response.json({ success: true });
+  } catch (err: unknown) {
+    console.error(err);
+    const errMessage = err instanceof Error ? err.message : "Auth failed";
+    return Response.json({ error: errMessage }, { status: 500 });
   }
 }

@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 
     console.log("OAuth session created successfully");
 
-    const agent = await createAgent(sessionStore, stateStore, session.did);
+    const agent = await createAgent(sessionStore, stateStore, session.sub);
 
     const accounts = await getAccountsFromAgent(agent, session.sub);
 

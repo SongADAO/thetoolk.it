@@ -182,7 +182,8 @@ async function exchangeCodeForTokens(
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   console.log("Starting Facebook authentication...");
 
-  const response = await fetch("/api/hosted/threads/refresh", {
+  const response = await fetch("/api/hosted/oauth/refresh", {
+    body: JSON.stringify({ service: "threads" }),
     headers: {
       "Content-Type": "application/json",
     },

@@ -204,7 +204,7 @@ async function exchangeCodeForTokens(
 async function refreshAccessTokenHosted(
   credentials: BlueskyCredentials,
 ): Promise<OauthAuthorization> {
-  const response = await fetch("/api/hosted/bluesky/tokens/refresh", {
+  const response = await fetch("/api/hosted/bluesky/oauth/refresh", {
     body: JSON.stringify({
       credentials,
     }),
