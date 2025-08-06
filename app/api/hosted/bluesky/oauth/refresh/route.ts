@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const userId = await getCurrentUserId(request);
     if (!userId) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized" },
+        { error: "Unauthorized", success: false },
         { status: 401 },
       );
     }
@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
     if (!storedTokens) {
       return NextResponse.json(
         {
-          success: false,
           error: "No tokens found. Please re-authorize.",
+          success: false,
         },
         { status: 404 },
       );
@@ -35,25 +35,25 @@ export async function POST(request: NextRequest) {
       // Update stored session data if it changed
       const newTokenData = formatTokens(session);
       await storeBlueskyTokens(userId, {
-        sessionData: await encryptData(newTokenData.sessionData),
         accessTokenExpiresAt: newTokenData.accessTokenExpiresAt,
+        credentials: storedTokens.credentials,
         refreshTokenExpiresAt: newTokenData.refreshTokenExpiresAt,
         serviceUrl: storedTokens.serviceUrl,
-        credentials: storedTokens.credentials,
+        sessionData: await encryptData(newTokenData.sessionData),
       });
 
       return NextResponse.json({
-        success: true,
         accessToken: session.sub,
         expiresAt: newTokenData.refreshTokenExpiresAt,
+        success: true,
       });
     } catch (sessionError) {
       console.error("Session refresh failed:", sessionError);
 
       return NextResponse.json(
         {
-          success: false,
           error: "Session refresh failed. Please re-authorize.",
+          success: false,
         },
         { status: 401 },
       );
@@ -64,8 +64,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        success: false,
         error: `Failed to refresh token: ${errMessage}`,
+        success: false,
       },
       { status: 500 },
     );
