@@ -155,7 +155,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   }
 
   async function renewRefreshTokenIfNeeded() {
-    if (1 || needsRefreshTokenRenewal(authorization)) {
+    if (needsRefreshTokenRenewal(authorization)) {
       console.log(`${label}: Refresh token will expire soon, refreshing...`);
       await refreshTokens();
     }
