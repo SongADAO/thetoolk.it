@@ -12,7 +12,6 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
-  getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -126,61 +125,53 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokens() {
-    try {
-      if (mode === "hosted") {
-        await refreshAccessTokenHosted();
-
-        // TODO: pull access token dates from supabase
-      } else {
-        const newAuthorization = await refreshAccessToken(authorization);
-
-        setAuthorization(newAuthorization);
-      }
-
-      setError("");
+  async function refreshTokens(): Promise<OauthAuthorization> {
+    if (mode === "hosted") {
+      await refreshAccessTokenHosted();
 
       console.log("Access token refreshed successfully");
+
+      // TODO: pull access token dates from supabase
+
+      return authorization;
+    }
+
+    const newAuthorization = await refreshAccessToken(authorization);
+
+    setAuthorization(newAuthorization);
+
+    console.log("Access token refreshed successfully");
+
+    return newAuthorization;
+  }
+
+  async function renewRefreshTokenIfNeeded() {
+    try {
+      setError("");
+
+      if (needsRefreshTokenRenewal(authorization)) {
+        console.log(`${label}: Refresh token will expire soon, refreshing...`);
+
+        await refreshTokens();
+      }
     } catch (err: unknown) {
       console.error("Token refresh error:", err);
 
       const errMessage = err instanceof Error ? err.message : "Unknown error";
 
-      setError(`Failed to refresh token: ${errMessage}`);
-    }
-  }
-
-  async function renewRefreshTokenIfNeeded() {
-    if (needsRefreshTokenRenewal(authorization)) {
-      console.log(`${label}: Refresh token will expire soon, refreshing...`);
-      await refreshTokens();
+      setError(`Failed to auto refresh token: ${errMessage}`);
+      // Ignore errors here, will be surfaced when trying to post.
     }
   }
 
   async function getValidAccessToken(): Promise<string> {
-    try {
-      if (DEBUG_POST) {
-        return "test-token";
-      }
-
-      const newAuthorization = await refreshAccessToken(authorization);
-
-      setAuthorization(newAuthorization);
-
-      setError("");
-
-      return newAuthorization.accessToken;
-
-      console.log("Access token refreshed successfully");
-    } catch (err: unknown) {
-      console.error("Token refresh error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to refresh token: ${errMessage}`);
-
-      return "";
+    if (DEBUG_POST) {
+      return "test-token";
     }
+
+    const newAuthorization = await refreshTokens();
+
+    return newAuthorization.accessToken;
   }
 
   function authorize() {
@@ -233,19 +224,30 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       return null;
     }
 
-    return await createPost({
-      accessToken: await getAccountAccessToken(
-        await getValidAccessToken(),
+    try {
+      const accessToken = await getValidAccessToken();
+
+      return await createPost({
+        accessToken: mode === "hosted" ? "hosted" : accessToken,
+        setIsPosting,
+        setPostError,
+        setPostProgress,
+        setPostStatus,
+        text,
         userId,
-      ),
-      setIsPosting,
-      setPostError,
-      setPostProgress,
-      setPostStatus,
-      text,
-      userId,
-      videoUrl,
-    });
+        videoUrl,
+      });
+    } catch (err: unknown) {
+      console.error("Post error:", err);
+      const errMessage =
+        err instanceof Error ? err.message : "unspecified error";
+      setPostError(`Post failed: ${errMessage}`);
+      setPostStatus("Post failed");
+      setPostProgress(0);
+      setIsPosting(false);
+    }
+
+    return null;
   }
 
   const fields: ServiceFormField[] = [

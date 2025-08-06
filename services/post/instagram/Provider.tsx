@@ -126,61 +126,53 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function refreshTokens() {
-    try {
+  async function refreshTokens(): Promise<OauthAuthorization> {
       if (mode === "hosted") {
         await refreshAccessTokenHosted();
 
+      console.log("Access token refreshed successfully");
+
         // TODO: pull access token dates from supabase
-      } else {
+
+      return authorization;
+    }
+
         const newAuthorization = await refreshAccessToken(authorization);
 
         setAuthorization(newAuthorization);
+
+    console.log("Access token refreshed successfully");
+
+    return newAuthorization;
       }
 
+  async function renewRefreshTokenIfNeeded() {
+    try {
       setError("");
 
-      console.log("Access token refreshed successfully");
+      if (needsRefreshTokenRenewal(authorization)) {
+        console.log(`${label}: Refresh token will expire soon, refreshing...`);
+
+        await refreshTokens();
+      }
     } catch (err: unknown) {
       console.error("Token refresh error:", err);
 
       const errMessage = err instanceof Error ? err.message : "Unknown error";
 
-      setError(`Failed to refresh token: ${errMessage}`);
-    }
-  }
-
-  async function renewRefreshTokenIfNeeded() {
-    if (needsRefreshTokenRenewal(authorization)) {
-      console.log(`${label}: Refresh token will expire soon, refreshing...`);
-      await refreshTokens();
+      setError(`Failed to auto refresh token: ${errMessage}`);
+      // Ignore errors here, will be surfaced when trying to post.
     }
   }
 
   async function getValidAccessToken(): Promise<string> {
-    try {
       if (DEBUG_POST) {
         return "test-token";
       }
 
-      const newAuthorization = await refreshAccessToken(authorization);
-
-      setAuthorization(newAuthorization);
-
-      setError("");
+    const newAuthorization = await refreshTokens();
 
       return newAuthorization.accessToken;
-
-      console.log("Access token refreshed successfully");
-    } catch (err: unknown) {
-      console.error("Token refresh error:", err);
-
-      const errMessage = err instanceof Error ? err.message : "Unknown error";
-
-      setError(`Failed to refresh token: ${errMessage}`);
-
-      return "";
-    }
   }
 
   function authorize() {
@@ -233,16 +225,30 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       return null;
     }
 
-    return await createPost({
-      accessToken: await getValidAccessToken(),
-      setIsPosting,
-      setPostError,
-      setPostProgress,
-      setPostStatus,
-      text,
-      userId,
-      videoUrl,
-    });
+    try {
+      const accessToken = await getValidAccessToken();
+
+      return await createPost({
+        accessToken: mode === "hosted" ? "hosted" : accessToken,
+        setIsPosting,
+        setPostError,
+        setPostProgress,
+        setPostStatus,
+        text,
+        userId,
+        videoUrl,
+      });
+    } catch (err: unknown) {
+      console.error("Post error:", err);
+      const errMessage =
+        err instanceof Error ? err.message : "unspecified error";
+      setPostError(`Post failed: ${errMessage}`);
+      setPostStatus("Post failed");
+      setPostProgress(0);
+      setIsPosting(false);
+    }
+
+    return null;
   }
 
   const fields: ServiceFormField[] = [
