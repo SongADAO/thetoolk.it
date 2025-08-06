@@ -223,15 +223,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
 
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
-      const code = searchParams.get("code");
-      const state = searchParams.get("state");
-      console.log("code", code);
-      console.log("state", state);
-
-      if (code && state && shouldHandleAuthRedirect(code, state)) {
+      if (shouldHandleAuthRedirect(searchParams)) {
         setIsHandlingAuth(true);
 
-        await exchangeCode(code);
+        await exchangeCode(searchParams.get("code") ?? "");
 
         setHasCompletedAuth(true);
       }

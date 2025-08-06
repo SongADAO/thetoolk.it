@@ -94,11 +94,11 @@ function getRedirectUri(): string {
   return `${url.origin}/authorize`;
 }
 
-function shouldHandleAuthRedirect(
-  code: string | null,
-  scope: string | null,
-): boolean {
-  return Boolean(code && scope?.includes(OAUTH_SCOPE_DOMAIN));
+function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
+  return Boolean(
+    searchParams.get("code") &&
+      searchParams.get("scope")?.includes(OAUTH_SCOPE_DOMAIN),
+  );
 }
 
 function formatTokens(tokens: GoogleTokenResponse): OauthAuthorization {

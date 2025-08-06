@@ -12,13 +12,11 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
-  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getAuthorizationUrlHosted,
   getCredentialsId,
-  getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   needsRefreshTokenRenewal,
@@ -48,8 +46,6 @@ interface Props {
 
 export function BlueskyProvider({ children }: Readonly<Props>) {
   const { isAuthenticated, loading } = use(AuthContext);
-
-  const metadataUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata.json`;
 
   const label = "Bluesky";
 
@@ -101,34 +97,19 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   async function exchangeCode(code: string, iss: string, state: string) {
     try {
-      if (mode === "hosted") {
-        throw new Error("host");
-        await exchangeCodeForTokensHosted(
-          code,
-          iss,
-          state,
-          getRedirectUri(),
-          metadataUrl,
-          codeVerifier,
-          tokenEndpoint,
-        );
+      const newAuthorization = await exchangeCodeForTokens(
+        code,
+        iss,
+        state,
+        credentials,
+      );
+      setAuthorization(newAuthorization);
 
-        // TODO: pull access token dates and accounts from supabase
-      } else {
-        const newAuthorization = await exchangeCodeForTokens(
-          code,
-          iss,
-          state,
-          credentials,
-        );
-        setAuthorization(newAuthorization);
-
-        const newAccounts = await getAccounts(
-          credentials,
-          newAuthorization.accessToken,
-        );
-        setAccounts(newAccounts);
-      }
+      const newAccounts = await getAccounts(
+        credentials,
+        newAuthorization.accessToken,
+      );
+      setAccounts(newAccounts);
 
       setError("");
 
@@ -222,17 +203,14 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
-      const code = searchParams.get("code");
-      const iss = searchParams.get("iss");
-      const state = searchParams.get("state");
-      console.log("code", code);
-      console.log("iss", iss);
-      console.log("state", state);
-
-      if (code && iss && state && shouldHandleAuthRedirect(code, iss)) {
+      if (shouldHandleAuthRedirect(searchParams)) {
         setIsHandlingAuth(true);
 
-        await exchangeCode(code, iss, state);
+        await exchangeCode(
+          searchParams.get("code") ?? "",
+          searchParams.get("iss") ?? "",
+          searchParams.get("state") ?? "",
+        );
 
         setHasCompletedAuth(true);
       }

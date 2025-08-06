@@ -207,15 +207,10 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
 
   async function handleAuthRedirect(searchParams: URLSearchParams) {
     try {
-      const code = searchParams.get("code");
-      const scope = searchParams.get("scope");
-      console.log("code", code);
-      console.log("scope", scope);
-
-      if (code && scope && shouldHandleAuthRedirect(code, scope)) {
+      if (shouldHandleAuthRedirect(searchParams)) {
         setIsHandlingAuth(true);
 
-        await exchangeCode(code);
+        await exchangeCode(searchParams.get("code") ?? "");
 
         setHasCompletedAuth(true);
       }

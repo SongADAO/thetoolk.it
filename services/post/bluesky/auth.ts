@@ -87,11 +87,12 @@ function getRedirectUri(): string {
   return `${url.origin}/authorize`;
 }
 
-function shouldHandleAuthRedirect(
-  code: string | null,
-  iss: string | null,
-): boolean {
-  return Boolean(code && iss?.includes("bsky"));
+function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
+  return Boolean(
+    searchParams.get("code") &&
+      searchParams.get("state") &&
+      searchParams.get("iss")?.includes("bsky"),
+  );
 }
 
 function formatTokens(tokens: OAuthSession): OauthAuthorization {

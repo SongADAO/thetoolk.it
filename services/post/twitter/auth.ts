@@ -92,11 +92,11 @@ function getRedirectUri(): string {
   return `${url.origin}/authorize`;
 }
 
-function shouldHandleAuthRedirect(
-  code: string | null,
-  state: string | null,
-): boolean {
-  return Boolean(code && state?.includes(OAUTH_STATE));
+function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
+  return Boolean(
+    searchParams.get("code") &&
+      searchParams.get("state")?.includes(OAUTH_STATE),
+  );
 }
 
 function formatTokens(tokens: TwitterTokenResponse): OauthAuthorization {
