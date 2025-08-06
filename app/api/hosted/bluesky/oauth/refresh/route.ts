@@ -1,9 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
-import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
-import { createAgent } from "@/services/post/bluesky/oauth-client-node";
+import { getOAuthClient } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
@@ -20,7 +18,7 @@ async function getUser(supabase: SupabaseClient) {
   return user;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const supabase = await createClient();
 
@@ -48,34 +46,31 @@ export async function POST(request: NextRequest) {
     console.log("Authorization data:", authorization);
     // throw new Error("This is a test error to check the flow");
 
-    const agent = await createAgent(
-      sessionStore,
-      stateStore,
-      authorization.sub,
+    const client = await getOAuthClient(sessionStore, stateStore);
+
+    await client.restore(authorization.tokenSet.sub);
+
+    const now = new Date();
+    const refreshTokenExpiresAt = new Date(
+      now.getTime() + 7 * 24 * 60 * 60 * 1000,
     );
 
-    const accounts = await getAccountsFromAgent(agent, authorization.sub);
+    authorization.refreshTokenExpiresAt = refreshTokenExpiresAt.toISOString();
 
-    console.log("Accounts:", accounts);
+    const { error: updateError } = await supabase.from("services").upsert(
+      {
+        service_authorization: authorization,
+        service_id: "bluesky",
+        user_id: user.id,
+      },
+      {
+        onConflict: "user_id,service_id",
+      },
+    );
 
-    // const newAuthorization = await refreshAccessToken(authorization);
-
-    // const { error: authorizationError } = await supabase
-    //   .from("services")
-    //   .upsert(
-    //     {
-    //       service_authorization: newAuthorization,
-    //       service_id: 'bluesky',
-    //       user_id: user.id,
-    //     },
-    //     {
-    //       onConflict: "user_id,service_id",
-    //     },
-    //   );
-
-    // if (authorizationError) {
-    //   throw new Error("Could not refresh token");
-    // }
+    if (updateError) {
+      throw new Error("Failed to store refresh token expiration");
+    }
 
     return Response.json({ success: true });
   } catch (err: unknown) {

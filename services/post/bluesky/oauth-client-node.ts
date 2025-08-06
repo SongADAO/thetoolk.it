@@ -63,6 +63,8 @@ async function getOAuthClient(
     oauthClient = new NodeOAuthClient({
       // This object will be used to build the payload of the /client-metadata.json
       // endpoint metadata, exposing the client metadata to the OAuth server.
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       clientMetadata,
 
       // Used to authenticate the client to the token endpoint. Will be used to
@@ -181,6 +183,7 @@ export {
   getAuthorizationUrl,
   getClientMetadata,
   getKeyset,
+  getOAuthClient,
   handleCallback,
   hasValidSession,
 };
