@@ -121,6 +121,24 @@ function formatTokens(tokens: TwitterTokenResponse): OauthAuthorization {
   };
 }
 
+function getAuthorizationUrlHosted(
+  clientId: string,
+  redirectUri: string,
+  codeChallenge: string,
+): string {
+  const params = new URLSearchParams({
+    client_id: clientId,
+    code_challenge: codeChallenge,
+    code_challenge_method: "S256",
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: SCOPES.join(" "),
+    state: OAUTH_STATE,
+  });
+
+  return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+}
+
 async function getAuthorizationUrl(
   clientId: string,
   redirectUri: string,
@@ -135,17 +153,7 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  const params = new URLSearchParams({
-    client_id: clientId,
-    code_challenge: codeChallenge,
-    code_challenge_method: "S256",
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: SCOPES.join(" "),
-    state: OAUTH_STATE,
-  });
-
-  return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+  return getAuthorizationUrlHosted(clientId, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token
@@ -299,6 +307,7 @@ export {
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
+  getAuthorizationUrlHosted,
   getCredentialsId,
   getRedirectUri,
   getRedirectUriHosted,

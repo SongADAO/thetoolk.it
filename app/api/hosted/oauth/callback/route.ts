@@ -32,12 +32,6 @@ import {
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TIKTOK,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectTiktok,
 } from "@/services/post/tiktok/auth";
-import {
-  exchangeCodeForTokens as exchangeCodeForTokensTwitter,
-  getAccounts as getAccountsTwitter,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
-  shouldHandleAuthRedirect as shouldHandleAuthRedirectTwitter,
-} from "@/services/post/twitter/auth";
 import type { OauthAuthorization, ServiceAccount } from "@/services/post/types";
 import {
   exchangeCodeForTokens as exchangeCodeForTokensYoutube,
@@ -87,7 +81,7 @@ async function exchangeCodeForTokens(
   //   );
   // }
 
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+  if (shouldHandleAuthRedirectThreads(searchParams)) {
     return await exchangeCodeForTokensThreads(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -95,7 +89,7 @@ async function exchangeCodeForTokens(
     );
   }
 
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+  if (shouldHandleAuthRedirectTiktok(searchParams)) {
     return await exchangeCodeForTokensTiktok(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -103,26 +97,7 @@ async function exchangeCodeForTokens(
     );
   }
 
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
-    const codeVerifier = localStorage.getItem(
-      "thetoolkit_twitter_code_verifier",
-    );
-
-    if (!codeVerifier) {
-      throw new Error(
-        "Code verifier not found. Please restart the authorization process.",
-      );
-    }
-
-    return await exchangeCodeForTokensTwitter(
-      searchParams.get("code") ?? "",
-      redirectUri,
-      codeVerifier,
-      HOSTED_CREDENTIALS_TWITTER,
-    );
-  }
-
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+  if (shouldHandleAuthRedirectYoutube(searchParams)) {
     return await exchangeCodeForTokensYoutube(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -172,13 +147,6 @@ async function getAccounts(
     );
   }
 
-  if (shouldHandleAuthRedirectTwitter(searchParams)) {
-    return await getAccountsTwitter(
-      // HOSTED_CREDENTIALS_INSTAGRAM,
-      authorization.accessToken,
-    );
-  }
-
   if (shouldHandleAuthRedirectYoutube(searchParams)) {
     return await getAccountsYoutube(
       // HOSTED_CREDENTIALS_INSTAGRAM,
@@ -199,17 +167,17 @@ export async function POST(request: NextRequest) {
 
     const redirectUri = "";
 
-    const newAuthorization = await exchangeCodeForTokens(
+    const authorization = await exchangeCodeForTokens(
       searchParams,
       redirectUri,
     );
 
-    const accounts = await getAccounts(searchParams, newAuthorization);
+    const accounts = await getAccounts(searchParams, authorization);
 
     const { error } = await supabase.from("services").upsert(
       {
         service_accounts: accounts,
-        service_authorization: newAuthorization,
+        service_authorization: authorization,
         service_id: "facebook",
         user_id: user.id,
       },
