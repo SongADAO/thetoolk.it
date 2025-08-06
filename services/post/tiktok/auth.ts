@@ -163,7 +163,7 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   console.log("Starting Facebook authentication...");
 
   const response = await fetch("/api/hosted/oauth/refresh", {
-    body: JSON.stringify({ service: "tiktok" }),
+    body: JSON.stringify({ serviceId: "tiktok" }),
     headers: {
       "Content-Type": "application/json",
     },

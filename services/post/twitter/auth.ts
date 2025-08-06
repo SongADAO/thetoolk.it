@@ -230,7 +230,7 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   console.log("Refreshing Twitter tokens...");
 
   const response = await fetch("/api/hosted/oauth/refresh", {
-    body: JSON.stringify({ service: "twitter" }),
+    body: JSON.stringify({ serviceId: "twitter" }),
     headers: {
       "Content-Type": "application/json",
     },
