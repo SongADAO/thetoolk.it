@@ -162,7 +162,7 @@ async function exchangeCodeForTokens(
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   console.log("Starting Facebook authentication...");
 
-  const response = await fetch("/api/hosted/tiktok/refresh-tokens", {
+  const response = await fetch("/api/hosted/tiktok/refresh", {
     headers: {
       "Content-Type": "application/json",
     },

@@ -171,7 +171,7 @@ async function exchangeCodeForTokens(
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   console.log("Starting Facebook authentication...");
 
-  const response = await fetch("/api/hosted/youtube/refresh-tokens", {
+  const response = await fetch("/api/hosted/youtube/refresh", {
     headers: {
       "Content-Type": "application/json",
     },
