@@ -2,11 +2,17 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 import { OauthAuthorization } from "@/services/post/types";
 
-async function getServiceAuthorization(
-  supabase: SupabaseClient,
-  user: User,
-  serviceId: string,
-): Promise<OauthAuthorization> {
+interface GetServiceAuthorization {
+  serviceId: string;
+  supabase: SupabaseClient;
+  user: User;
+}
+
+async function getServiceAuthorization({
+  serviceId,
+  supabase,
+  user,
+}: GetServiceAuthorization): Promise<OauthAuthorization> {
   const { data, error } = await supabase
     .from("services")
     .select("service_authorization")
@@ -25,15 +31,22 @@ async function getServiceAuthorization(
   return data.service_authorization;
 }
 
-async function updateServiceAuthorization(
-  supabase: SupabaseClient,
-  user: User,
-  serviceId: string,
-  newAuthorization: OauthAuthorization,
-) {
+interface UpdateServiceAuthorization {
+  serviceAuthorization: OauthAuthorization;
+  serviceId: string;
+  supabase: SupabaseClient;
+  user: User;
+}
+
+async function updateServiceAuthorization({
+  serviceAuthorization,
+  serviceId,
+  supabase,
+  user,
+}: UpdateServiceAuthorization): Promise<void> {
   const { error } = await supabase.from("services").upsert(
     {
-      service_authorization: newAuthorization,
+      service_authorization: serviceAuthorization,
       service_id: serviceId,
       user_id: user.id,
     },

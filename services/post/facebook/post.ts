@@ -1,5 +1,6 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
+import { getAccountAccessToken } from "@/services/post/facebook/auth";
 
 // 4GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 4;
@@ -47,7 +48,7 @@ async function uploadVideo({
         })
       : await fetch(`https://graph-video.facebook.com/v23.0/${userId}/videos`, {
           body: new URLSearchParams({
-            access_token: accessToken,
+            access_token: await getAccountAccessToken(accessToken, userId),
             description: text,
             file_url: videoUrl,
             privacy: JSON.stringify({ value: "EVERYONE" }),

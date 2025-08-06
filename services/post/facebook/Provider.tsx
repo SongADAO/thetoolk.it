@@ -12,7 +12,6 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
-  getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
@@ -235,10 +234,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     }
 
     return await createPost({
-      accessToken: await getAccountAccessToken(
-        await getValidAccessToken(),
-        userId,
-      ),
+      accessToken: await getValidAccessToken(),
       setIsPosting,
       setPostError,
       setPostProgress,
