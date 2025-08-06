@@ -53,7 +53,7 @@ async function getUser(supabase: SupabaseClient) {
   return user;
 }
 
-async function getServiceId(searchParams: URLSearchParams): Promise<string> {
+function getServiceId(searchParams: URLSearchParams): string {
   if (shouldHandleAuthRedirectFacebook(searchParams)) {
     return "facebook";
   }
@@ -145,7 +145,6 @@ async function exchangeCodeForTokens(
 
 async function getAccounts(
   serviceId: string,
-  searchParams: URLSearchParams,
   authorization: OauthAuthorization,
 ): Promise<ServiceAccount[]> {
   if (serviceId === "facebook") {
@@ -214,7 +213,7 @@ export async function GET(request: NextRequest) {
 
     const redirectUri = `${baseUrl}/api/hosted/oauth/callback`;
 
-    serviceId = await getServiceId(searchParams);
+    serviceId = getServiceId(searchParams);
 
     const authorization = await exchangeCodeForTokens(
       serviceId,
@@ -222,7 +221,7 @@ export async function GET(request: NextRequest) {
       redirectUri,
     );
 
-    const accounts = await getAccounts(serviceId, searchParams, authorization);
+    const accounts = await getAccounts(serviceId, authorization);
 
     const { error } = await supabase.from("services").upsert(
       {

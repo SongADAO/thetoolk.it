@@ -56,7 +56,7 @@ export function useUserStorage<T>(
 
       /* eslint-disable @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/ban-ts-comment */
       // @ts-expect-error
-      return data?.[String(serviceField)] as T;
+      return data[String(serviceField)] as T;
       /* eslint-enable @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/ban-ts-comment */
     } catch (error) {
       console.error("Error loading from Supabase:", error);

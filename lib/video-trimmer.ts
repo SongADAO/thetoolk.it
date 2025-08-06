@@ -63,7 +63,7 @@ function getFileExtension(filename: string): string {
   return extension ?? "mp4";
 }
 
-export async function trimVideo({
+async function trimVideo({
   label,
   maxDuration,
   maxFilesize,
@@ -182,10 +182,12 @@ export async function trimVideo({
 }
 
 // Utility function to clean up FFmpeg instance if needed
-export function cleanupFFmpeg(): void {
+function cleanupFFmpeg(): void {
   if (ffmpegInstance) {
     // FFmpeg doesn't have an explicit cleanup method in the current API
     // The instance will be garbage collected
     ffmpegInstance = null;
   }
 }
+
+export { cleanupFFmpeg, trimVideo };
