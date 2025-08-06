@@ -1,7 +1,5 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
-import { OauthAuthorization } from "@/services/post/types";
-
 interface GetServiceAuthorization {
   serviceId: string;
   supabase: SupabaseClient;
@@ -12,7 +10,8 @@ async function getServiceAuthorization({
   serviceId,
   supabase,
   user,
-}: GetServiceAuthorization): Promise<OauthAuthorization> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: GetServiceAuthorization): Promise<any> {
   const { data, error } = await supabase
     .from("services")
     .select("service_authorization")
@@ -32,7 +31,8 @@ async function getServiceAuthorization({
 }
 
 interface UpdateServiceAuthorization {
-  serviceAuthorization: OauthAuthorization;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  serviceAuthorization: any;
   serviceId: string;
   supabase: SupabaseClient;
   user: User;

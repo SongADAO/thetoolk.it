@@ -1,50 +1,23 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
-import { createClient } from "@/lib/supabase/server";
+import { initServerAuth } from "@/lib/supabase/hosted-api";
+import {
+  getServiceAuthorization,
+  updateServiceAuthorization,
+} from "@/lib/supabase/service";
 import { getOAuthClient } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
-async function getUser(supabase: SupabaseClient) {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  return user;
-}
-
 export async function POST() {
   try {
-    const supabase = await createClient();
+    const serviceId = "bluesky";
+    const serverAuth = await initServerAuth();
+    const stateStore = new SupabaseStateStore({ ...serverAuth });
+    const sessionStore = new SupabaseSessionStore({ ...serverAuth });
 
-    const user = await getUser(supabase);
-    const stateStore = new SupabaseStateStore(supabase, user);
-    const sessionStore = new SupabaseSessionStore(supabase, user);
-
-    const { data, error } = await supabase
-      .from("services")
-      .select("service_authorization")
-      .eq("user_id", user.id)
-      .eq("service_id", "bluesky")
-      .single();
-
-    if (error) {
-      throw new Error("Could not get tokens to refresh from DB");
-    }
-
-    const authorization = data.service_authorization;
-
-    if (!authorization) {
-      throw new Error("Could not get tokens to refresh");
-    }
-
-    console.log("Authorization data:", authorization);
-    // throw new Error("This is a test error to check the flow");
+    const authorization = await getServiceAuthorization({
+      ...serverAuth,
+      serviceId,
+    });
 
     const client = await getOAuthClient(sessionStore, stateStore);
 
@@ -57,20 +30,11 @@ export async function POST() {
 
     authorization.refreshTokenExpiresAt = refreshTokenExpiresAt.toISOString();
 
-    const { error: updateError } = await supabase.from("services").upsert(
-      {
-        service_authorization: authorization,
-        service_id: "bluesky",
-        user_id: user.id,
-      },
-      {
-        onConflict: "user_id,service_id",
-      },
-    );
-
-    if (updateError) {
-      throw new Error("Failed to store refresh token expiration");
-    }
+    await updateServiceAuthorization({
+      ...serverAuth,
+      serviceAuthorization: authorization,
+      serviceId,
+    });
 
     return Response.json({ success: true });
   } catch (err: unknown) {

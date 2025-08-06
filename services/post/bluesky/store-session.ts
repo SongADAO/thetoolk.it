@@ -4,12 +4,17 @@ import type {
 } from "@atproto/oauth-client-node";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
+interface SupabaseSessionStoreProps {
+  supabase: SupabaseClient;
+  user: User;
+}
+
 class SupabaseSessionStore implements NodeSavedSessionStore {
   private readonly supabase: SupabaseClient;
 
   private readonly user: User;
 
-  public constructor(supabase: SupabaseClient, user: User) {
+  public constructor({ supabase, user }: SupabaseSessionStoreProps) {
     this.supabase = supabase;
     this.user = user;
   }

@@ -1,8 +1,7 @@
 // app/api/bluesky/oauth/callback/route.ts
-import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createClient } from "@/lib/supabase/server";
+import { initServerAuth } from "@/lib/supabase/hosted-api";
 import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
 import {
   createAgent,
@@ -11,30 +10,16 @@ import {
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
-async function getUser(supabase: SupabaseClient): Promise<User> {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  return user;
-}
-
 export async function GET(request: NextRequest) {
+  const serviceId = "bluesky";
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const successUrl = new URL(`${baseUrl}/authorize-success`);
   const errorUrl = new URL(`${baseUrl}/authorize-error`);
 
   try {
-    const supabase = await createClient();
-
-    const user = await getUser(supabase);
-    const stateStore = new SupabaseStateStore(supabase, user);
-    const sessionStore = new SupabaseSessionStore(supabase, user);
+    const serverAuth = await initServerAuth();
+    const stateStore = new SupabaseStateStore({ ...serverAuth });
+    const sessionStore = new SupabaseSessionStore({ ...serverAuth });
 
     const searchParams = request.nextUrl.searchParams;
     const code = searchParams.get("code");
@@ -95,7 +80,7 @@ export async function GET(request: NextRequest) {
     console.log("Tokens stored successfully");
 
     // Redirect back to the application
-    successUrl.searchParams.set("service", "bluesky");
+    successUrl.searchParams.set("service", serviceId);
     successUrl.searchParams.set("auth", "success");
 
     return NextResponse.redirect(successUrl.toString());
@@ -104,7 +89,7 @@ export async function GET(request: NextRequest) {
     const errMessage = error instanceof Error ? error.message : "Unknown error";
 
     // Redirect to app with error
-    errorUrl.searchParams.set("service", "bluesky");
+    errorUrl.searchParams.set("service", serviceId);
     errorUrl.searchParams.set("error", "callback_failed");
     errorUrl.searchParams.set("error_description", errMessage);
 
