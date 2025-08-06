@@ -234,7 +234,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
     }
 
     return await createPost({
-      accessToken: await getValidAccessToken(),
+      accessToken: mode === "hosted" ? "hosted" : await getValidAccessToken(),
       setIsPosting,
       setPostError,
       setPostProgress,
