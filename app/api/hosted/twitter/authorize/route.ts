@@ -40,9 +40,11 @@ export async function POST(request: NextRequest) {
 
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
+    const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/api/hosted/twitter/oauth/callback`;
+
     const authUrl = getAuthorizationUrlHosted(
       HOSTED_CREDENTIALS_TWITTER.clientId,
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/hosted/twitter/oauth/callback`,
+      redirectUri,
       codeChallenge,
     );
 

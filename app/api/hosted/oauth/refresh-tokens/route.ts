@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import { refreshAccessToken } from "@/services/post/facebook/auth";
@@ -16,8 +17,10 @@ async function getUser(supabase: SupabaseClient) {
   return user;
 }
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const { serviceId } = await request.json();
+
     const supabase = await createClient();
 
     const user = await getUser(supabase);
@@ -26,7 +29,7 @@ export async function POST() {
       .from("services")
       .select("service_authorization")
       .eq("user_id", user.id)
-      .eq("service_id", "facebook")
+      .eq("service_id", serviceId)
       .single();
 
     if (error) {
@@ -46,7 +49,7 @@ export async function POST() {
       .upsert(
         {
           service_authorization: newAuthorization,
-          service_id: "facebook",
+          service_id: serviceId,
           user_id: user.id,
         },
         {

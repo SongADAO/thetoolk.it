@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -53,11 +53,41 @@ async function getUser(supabase: SupabaseClient) {
   return user;
 }
 
+async function getServiceId(searchParams: URLSearchParams): Promise<string> {
+  if (shouldHandleAuthRedirectFacebook(searchParams)) {
+    return "facebook";
+  }
+
+  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+    return "instagram";
+  }
+
+  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+    return "instagramfb";
+  }
+
+  if (shouldHandleAuthRedirectThreads(searchParams)) {
+    return "threads";
+  }
+
+  if (shouldHandleAuthRedirectTiktok(searchParams)) {
+    return "tiktok";
+  }
+
+  if (shouldHandleAuthRedirectYoutube(searchParams)) {
+    return "youtube";
+  }
+
+  throw new Error("Unsupported service");
+}
+
 async function exchangeCodeForTokens(
+  serviceId: string,
   searchParams: URLSearchParams,
   redirectUri: string,
 ): Promise<OauthAuthorization> {
-  if (shouldHandleAuthRedirectFacebook(searchParams)) {
+  if (serviceId === "facebook") {
+    console.log("Handling Facebook auth redirect");
     return await exchangeCodeForTokensFacebook(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -65,7 +95,8 @@ async function exchangeCodeForTokens(
     );
   }
 
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+  if (serviceId === "instagram") {
+    console.log("Handling Instagram auth redirect");
     return await exchangeCodeForTokensInstagram(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -73,7 +104,8 @@ async function exchangeCodeForTokens(
     );
   }
 
-  // if (shouldHandleAuthRedirectInstagram(searchParams)) {
+  // if (serviceId === "instagramfb") {
+  //   console.log("Handling Instagram FB auth redirect");
   //   return await exchangeCodeForTokensInstagramfb(
   //     searchParams.get("code") ?? "",
   //     redirectUri,
@@ -81,7 +113,8 @@ async function exchangeCodeForTokens(
   //   );
   // }
 
-  if (shouldHandleAuthRedirectThreads(searchParams)) {
+  if (serviceId === "threads") {
+    console.log("Handling Threads auth redirect");
     return await exchangeCodeForTokensThreads(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -89,7 +122,8 @@ async function exchangeCodeForTokens(
     );
   }
 
-  if (shouldHandleAuthRedirectTiktok(searchParams)) {
+  if (serviceId === "tiktok") {
+    console.log("Handling TikTok auth redirect");
     return await exchangeCodeForTokensTiktok(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -97,7 +131,8 @@ async function exchangeCodeForTokens(
     );
   }
 
-  if (shouldHandleAuthRedirectYoutube(searchParams)) {
+  if (serviceId === "youtube") {
+    console.log("Handling YouTube auth redirect");
     return await exchangeCodeForTokensYoutube(
       searchParams.get("code") ?? "",
       redirectUri,
@@ -109,45 +144,52 @@ async function exchangeCodeForTokens(
 }
 
 async function getAccounts(
+  serviceId: string,
   searchParams: URLSearchParams,
   authorization: OauthAuthorization,
 ): Promise<ServiceAccount[]> {
-  if (shouldHandleAuthRedirectFacebook(searchParams)) {
+  if (serviceId === "facebook") {
+    console.log("Getting Facebook accounts");
     return await getAccountsFacebook(
       // HOSTED_CREDENTIALS_FACEBOOK,
       authorization.accessToken,
     );
   }
 
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+  if (serviceId === "instagram") {
+    console.log("Getting Instagram accounts");
     return await getAccountsInstagram(
       // HOSTED_CREDENTIALS_INSTAGRAM,
       authorization.accessToken,
     );
   }
 
-  // if (shouldHandleAuthRedirectInstagramfb(searchParams)) {
+  // if (serviceId === "instagramfb") {
+  //   console.log("Getting Instagram FB accounts");
   //   return await getAccountsInstagramfb(
   //     // HOSTED_CREDENTIALS_INSTAGRAM,
   //     authorization.accessToken,
   //   );
   // }
 
-  if (shouldHandleAuthRedirectThreads(searchParams)) {
+  if (serviceId === "threads") {
+    console.log("Getting Threads accounts");
     return await getAccountsThreads(
       // HOSTED_CREDENTIALS_INSTAGRAM,
       authorization.accessToken,
     );
   }
 
-  if (shouldHandleAuthRedirectTiktok(searchParams)) {
+  if (serviceId === "tiktok") {
+    console.log("Getting TikTok accounts");
     return await getAccountsTiktok(
       // HOSTED_CREDENTIALS_INSTAGRAM,
       authorization.accessToken,
     );
   }
 
-  if (shouldHandleAuthRedirectYoutube(searchParams)) {
+  if (serviceId === "youtube") {
+    console.log("Getting YouTube accounts");
     return await getAccountsYoutube(
       // HOSTED_CREDENTIALS_INSTAGRAM,
       authorization.accessToken,
@@ -157,7 +199,12 @@ async function getAccounts(
   throw new Error("Unsupported service");
 }
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+  const successUrl = new URL(`${baseUrl}/authorize-success`);
+  const errorUrl = new URL(`${baseUrl}/authorize-error`);
+  let serviceId = "unknown";
+
   try {
     const { searchParams } = new URL(request.url);
 
@@ -165,20 +212,23 @@ export async function POST(request: NextRequest) {
 
     const user = await getUser(supabase);
 
-    const redirectUri = "";
+    const redirectUri = `${baseUrl}/api/hosted/oauth/callback`;
+
+    serviceId = await getServiceId(searchParams);
 
     const authorization = await exchangeCodeForTokens(
+      serviceId,
       searchParams,
       redirectUri,
     );
 
-    const accounts = await getAccounts(searchParams, authorization);
+    const accounts = await getAccounts(serviceId, searchParams, authorization);
 
     const { error } = await supabase.from("services").upsert(
       {
         service_accounts: accounts,
         service_authorization: authorization,
-        service_id: "facebook",
+        service_id: serviceId,
         user_id: user.id,
       },
       {
@@ -190,10 +240,19 @@ export async function POST(request: NextRequest) {
       throw new Error("Could not get accounts");
     }
 
-    return Response.json({ success: true });
-  } catch (err: unknown) {
-    console.error(err);
-    const errMessage = err instanceof Error ? err.message : "Auth failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    successUrl.searchParams.set("service", serviceId);
+    successUrl.searchParams.set("auth", "success");
+
+    return NextResponse.redirect(successUrl.toString());
+  } catch (error: unknown) {
+    console.error("OAuth callback error:", error);
+    const errMessage = error instanceof Error ? error.message : "Unknown error";
+
+    // Redirect to app with error
+    errorUrl.searchParams.set("service", serviceId);
+    errorUrl.searchParams.set("error", "callback_failed");
+    errorUrl.searchParams.set("error_description", errMessage);
+
+    return NextResponse.redirect(errorUrl.toString());
   }
 }

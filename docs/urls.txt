@@ -21,7 +21,11 @@ https://dev.thetoolk.it/privacy-policy
 TikTok Dev Callback URL
 https://caring-annually-teal.ngrok-free.app/authorize
 
+
 Hosted Callbacks
 https://localhost:3000/api/hosted/oauth/callback
 https://dev.thetoolk.it/api/hosted/oauth/callback
 https://thetoolk-it-git-develop-songadao.vercel.app/api/hosted/oauth/callback
+
+Tiktok Hosted Callbacks
+https://caring-annually-teal.ngrok-free.app/api/hosted/oauth/callback

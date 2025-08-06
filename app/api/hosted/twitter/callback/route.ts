@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -22,6 +22,10 @@ async function getUser(supabase: SupabaseClient) {
 }
 
 export async function POST(request: NextRequest) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+  const successUrl = new URL(`${baseUrl}/authorize-success`);
+  const errorUrl = new URL(`${baseUrl}/authorize-error`);
+
   try {
     const { searchParams } = new URL(request.url);
 
@@ -29,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     const user = await getUser(supabase);
 
-    const redirectUri = "";
+    const redirectUri = `${baseUrl}/api/hosted/twitter/oauth/callback`;
 
     const codeVerifier = localStorage.getItem(
       "thetoolkit_twitter_code_verifier",
@@ -70,10 +74,20 @@ export async function POST(request: NextRequest) {
       throw new Error("Could not get accounts");
     }
 
-    return Response.json({ success: true });
-  } catch (err: unknown) {
-    console.error(err);
-    const errMessage = err instanceof Error ? err.message : "Auth failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    // Redirect back to the application
+    successUrl.searchParams.set("service", "twitter");
+    successUrl.searchParams.set("auth", "success");
+
+    return NextResponse.redirect(successUrl.toString());
+  } catch (error: unknown) {
+    console.error("OAuth callback error:", error);
+    const errMessage = error instanceof Error ? error.message : "Unknown error";
+
+    // Redirect to app with error
+    errorUrl.searchParams.set("service", "twitter");
+    errorUrl.searchParams.set("error", "callback_failed");
+    errorUrl.searchParams.set("error_description", errMessage);
+
+    return NextResponse.redirect(errorUrl.toString());
   }
 }
