@@ -12,13 +12,13 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
-  exchangeCodeForTokensHosted,
   getAccountAccessToken,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
+  getRedirectUriHosted,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,
@@ -100,21 +100,15 @@ export function FacebookProvider({ children }: Readonly<Props>) {
 
   async function exchangeCode(code: string) {
     try {
-      if (mode === "hosted") {
-        await exchangeCodeForTokensHosted(code, getRedirectUri());
+      const newAuthorization = await exchangeCodeForTokens(
+        code,
+        getRedirectUri(),
+        credentials,
+      );
+      setAuthorization(newAuthorization);
 
-        // TODO: pull access token dates and accounts from supabase
-      } else {
-        const newAuthorization = await exchangeCodeForTokens(
-          code,
-          getRedirectUri(),
-          credentials,
-        );
-        setAuthorization(newAuthorization);
-
-        const newAccounts = await getAccounts(newAuthorization.accessToken);
-        setAccounts(newAccounts);
-      }
+      const newAccounts = await getAccounts(newAuthorization.accessToken);
+      setAccounts(newAccounts);
 
       setError("");
 
@@ -190,10 +184,14 @@ export function FacebookProvider({ children }: Readonly<Props>) {
   }
 
   function authorize() {
-    const authUrl = getAuthorizationUrl(
-      mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId,
-      getRedirectUri(),
-    );
+    const authUrl =
+      mode === "hosted"
+        ? getAuthorizationUrl(
+            HOSTED_CREDENTIALS.clientId,
+            getRedirectUriHosted(),
+          )
+        : getAuthorizationUrl(credentials.clientId, getRedirectUri());
+
     window.open(authUrl, "_blank");
   }
 

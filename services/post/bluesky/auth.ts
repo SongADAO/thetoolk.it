@@ -290,11 +290,8 @@ async function getAccounts(
 
 // Export functions with the same signatures as before
 
-function exchangeCodeForTokensHosted() {}
-
 export {
   exchangeCodeForTokens,
-  exchangeCodeForTokensHosted,
   getAccounts,
   getAccountsFromAgent,
   getAuthorizationExpiresAt,

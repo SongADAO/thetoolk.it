@@ -78,6 +78,12 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 
 // -----------------------------------------------------------------------------
 
+function getRedirectUriHosted(): string {
+  const url = new URL(window.location.href);
+
+  return `${url.origin}/api/hosted/oauth/authorize`;
+}
+
 function getRedirectUri(): string {
   const url = new URL(window.location.href);
 
@@ -120,33 +126,6 @@ function getAuthorizationUrl(clientId: string, redirectUri: string): string {
   });
 
   return `https://www.instagram.com/oauth/authorize?${params.toString()}`;
-}
-
-async function exchangeCodeForTokensHosted(
-  code: string,
-  redirectUri: string,
-): Promise<OauthAuthorization> {
-  console.log("Starting Facebook authentication...");
-
-  const response = await fetch("/api/hosted/instagram/exchange-tokens", {
-    body: JSON.stringify({
-      code,
-      redirect_uri: redirectUri,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      `Authentication failed: ${errorData.message ?? errorData.error}`,
-    );
-  }
-
-  return await response.json();
 }
 
 // Exchange authorization code for access token
@@ -301,12 +280,12 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
 
 export {
   exchangeCodeForTokens,
-  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
+  getRedirectUriHosted,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,

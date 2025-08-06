@@ -12,12 +12,12 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
   exchangeCodeForTokens,
-  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
+  getRedirectUriHosted,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,
@@ -109,26 +109,20 @@ export function TwitterProvider({ children }: Readonly<Props>) {
         );
       }
 
-      if (mode === "hosted") {
-        await exchangeCodeForTokensHosted(code, getRedirectUri(), codeVerifier);
+      const newAuthorization = await exchangeCodeForTokens(
+        code,
+        getRedirectUri(),
+        codeVerifier,
+        credentials,
+        "self",
+      );
+      setAuthorization(newAuthorization);
 
-        // TODO: pull access token dates and accounts from supabase
-      } else {
-        const newAuthorization = await exchangeCodeForTokens(
-          code,
-          getRedirectUri(),
-          codeVerifier,
-          credentials,
-          "self",
-        );
-        setAuthorization(newAuthorization);
-
-        const newAccounts = await getAccounts(
-          newAuthorization.accessToken,
-          "self",
-        );
-        setAccounts(newAccounts);
-      }
+      const newAccounts = await getAccounts(
+        newAuthorization.accessToken,
+        "self",
+      );
+      setAccounts(newAccounts);
 
       setError("");
 
@@ -210,11 +204,15 @@ export function TwitterProvider({ children }: Readonly<Props>) {
     }
   }
 
-  async function authorize() {
-    const authUrl = await getAuthorizationUrl(
-      mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId,
-      getRedirectUri(),
-    );
+  function authorize() {
+    const authUrl =
+      mode === "hosted"
+        ? getAuthorizationUrl(
+            HOSTED_CREDENTIALS.clientId,
+            getRedirectUriHosted(),
+          )
+        : getAuthorizationUrl(credentials.clientId, getRedirectUri());
+
     window.open(authUrl, "_blank");
   }
 

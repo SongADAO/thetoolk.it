@@ -86,6 +86,12 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 
 // -----------------------------------------------------------------------------
 
+function getRedirectUriHosted(): string {
+  const url = new URL(window.location.href);
+
+  return `${url.origin}/api/hosted/oauth/authorize`;
+}
+
 function getRedirectUri(): string {
   const url = new URL(window.location.href);
 
@@ -140,35 +146,6 @@ async function getAuthorizationUrl(
   });
 
   return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
-}
-
-async function exchangeCodeForTokensHosted(
-  code: string,
-  redirectUri: string,
-  codeVerifier: string,
-): Promise<OauthAuthorization> {
-  console.log("Starting Twitter authentication...");
-
-  const response = await fetch("/api/hosted/twitter/exchange-tokens", {
-    body: JSON.stringify({
-      code,
-      code_verifier: codeVerifier,
-      redirect_uri: redirectUri,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      `Authentication failed: ${errorData.message ?? errorData.error}`,
-    );
-  }
-
-  return await response.json();
 }
 
 // Exchange authorization code for access token
@@ -319,12 +296,12 @@ async function getAccounts(
 
 export {
   exchangeCodeForTokens,
-  exchangeCodeForTokensHosted,
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getCredentialsId,
   getRedirectUri,
+  getRedirectUriHosted,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,
