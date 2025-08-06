@@ -121,7 +121,7 @@ function formatTokens(tokens: TwitterTokenResponse): OauthAuthorization {
   };
 }
 
-function getAuthorizationUrlHosted(
+function getTwitterAuthorizeUrl(
   clientId: string,
   redirectUri: string,
   codeChallenge: string,
@@ -139,6 +139,37 @@ function getAuthorizationUrlHosted(
   return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
 }
 
+async function getAuthorizationUrlHosted(): Promise<string> {
+  try {
+    console.log("Starting OAuth flow for Twitter");
+
+    const response = await fetch("/api/hosted/twitter/oauth/authorize", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error ?? "Failed to get authorization URL");
+    }
+
+    console.log("Authorization URL received from server");
+
+    return result.authUrl;
+  } catch (err: unknown) {
+    const errMessage = err instanceof Error ? err.message : "Auth URL failed";
+    console.error("Error creating authorization URL:", err);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`);
+  }
+}
+
 async function getAuthorizationUrl(
   clientId: string,
   redirectUri: string,
@@ -153,7 +184,7 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  return getAuthorizationUrlHosted(clientId, redirectUri, codeChallenge);
+  return getTwitterAuthorizeUrl(clientId, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token
@@ -311,6 +342,7 @@ export {
   getCredentialsId,
   getRedirectUri,
   getRedirectUriHosted,
+  getTwitterAuthorizeUrl,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,

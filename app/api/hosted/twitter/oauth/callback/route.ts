@@ -21,7 +21,7 @@ async function getUser(supabase: SupabaseClient) {
   return user;
 }
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const successUrl = new URL(`${baseUrl}/authorize-success`);
   const errorUrl = new URL(`${baseUrl}/authorize-error`);
@@ -35,21 +35,41 @@ export async function POST(request: NextRequest) {
 
     const redirectUri = `${baseUrl}/api/hosted/twitter/oauth/callback`;
 
-    const codeVerifier = localStorage.getItem(
-      "thetoolkit_twitter_code_verifier",
-    );
-    // TODO: get code verifier from database.
+    const { data: stateData, error: stateError } = await supabase
+      .from("atproto_oauth_states")
+      .select("value, expires_at")
+      .eq("user_id", user.id)
+      .eq("key", "twitter_code_verifier")
+      .single();
 
-    if (!codeVerifier) {
+    if (stateError) {
+      throw new Error("Failed to get code verifier");
+    }
+
+    // Delete the retrieved code verifier
+    await supabase
+      .from("atproto_oauth_states")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("key", "twitter_code_verifier");
+
+    if (!stateData.value.codeVerifier) {
       throw new Error(
         "Code verifier not found. Please restart the authorization process.",
+      );
+    }
+
+    // Check if expired
+    if (new Date(stateData.expires_at) < new Date()) {
+      throw new Error(
+        "Code verifier expired. Please restart the authorization process.",
       );
     }
 
     const authorization = await exchangeCodeForTokens(
       searchParams.get("code") ?? "",
       redirectUri,
-      codeVerifier,
+      stateData.value.codeVerifier,
       HOSTED_CREDENTIALS,
     );
 
@@ -62,7 +82,7 @@ export async function POST(request: NextRequest) {
       {
         service_accounts: accounts,
         service_authorization: authorization,
-        service_id: "facebook",
+        service_id: "twitter",
         user_id: user.id,
       },
       {

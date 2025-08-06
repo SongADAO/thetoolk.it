@@ -1,6 +1,6 @@
 // app/api/bluesky/oauth/authorize/route.ts
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 import {
   generateCodeChallenge,
@@ -8,7 +8,7 @@ import {
 } from "@/lib/code-verifier";
 import { createClient } from "@/lib/supabase/server";
 import {
-  getAuthorizationUrlHosted,
+  getTwitterAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
 } from "@/services/post/twitter/auth";
 
@@ -25,7 +25,7 @@ async function getUser(supabase: SupabaseClient): Promise<User> {
   return user;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const supabase = await createClient();
 
@@ -35,14 +35,31 @@ export async function POST(request: NextRequest) {
     const codeVerifier = generateCodeVerifier();
 
     // Store code verifier for later use
-    localStorage.setItem("thetoolkit_twitter_code_verifier", codeVerifier);
-    // TODO: store challenge in db. expire in 10 minutes.
+    const { error: codeVerifierError } = await supabase
+      .from("atproto_oauth_states")
+      .upsert(
+        {
+          // Expires in 10 minutes
+          expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+          key: "twitter_code_verifier",
+          updated_at: new Date().toISOString(),
+          user_id: user.id,
+          value: { codeVerifier },
+        },
+        {
+          // onConflict: "user_id,key",
+        },
+      );
+
+    if (codeVerifierError) {
+      throw new Error("Failed to store code verifier");
+    }
 
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
     const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/api/hosted/twitter/oauth/callback`;
 
-    const authUrl = getAuthorizationUrlHosted(
+    const authUrl = getTwitterAuthorizeUrl(
       HOSTED_CREDENTIALS_TWITTER.clientId,
       redirectUri,
       codeChallenge,

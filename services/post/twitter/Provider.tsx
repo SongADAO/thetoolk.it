@@ -15,12 +15,11 @@ import {
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
+  getAuthorizationUrlHosted,
   getCredentialsId,
   getRedirectUri,
-  getRedirectUriHosted,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  HOSTED_CREDENTIALS,
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
@@ -204,14 +203,11 @@ export function TwitterProvider({ children }: Readonly<Props>) {
     }
   }
 
-  function authorize() {
+  async function authorize() {
     const authUrl =
       mode === "hosted"
-        ? getAuthorizationUrl(
-            HOSTED_CREDENTIALS.clientId,
-            getRedirectUriHosted(),
-          )
-        : getAuthorizationUrl(credentials.clientId, getRedirectUri());
+        ? await getAuthorizationUrlHosted()
+        : await getAuthorizationUrl(credentials.clientId, getRedirectUri());
 
     window.open(authUrl, "_blank");
   }
