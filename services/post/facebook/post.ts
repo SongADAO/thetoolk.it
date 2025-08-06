@@ -31,22 +31,33 @@ async function uploadVideo({
     return "test";
   }
 
-  const response = await fetch(
-    `https://graph-video.facebook.com/v23.0/${userId}/videos`,
-    {
-      body: new URLSearchParams({
-        access_token: accessToken,
-        description: text,
-        file_url: videoUrl,
-        privacy: JSON.stringify({ value: "EVERYONE" }),
-        title,
-      }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
-    },
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/facebook/videos`, {
+          body: JSON.stringify({
+            text,
+            title,
+            userId,
+            videoUrl,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(`https://graph-video.facebook.com/v23.0/${userId}/videos`, {
+          body: new URLSearchParams({
+            access_token: accessToken,
+            description: text,
+            file_url: videoUrl,
+            privacy: JSON.stringify({ value: "EVERYONE" }),
+            title,
+          }),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          method: "POST",
+        });
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -92,8 +103,8 @@ interface CreatePostProps {
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
-  title: string;
   text: string;
+  title: string;
   userId: string;
   videoUrl: string;
 }
@@ -169,6 +180,7 @@ async function createPost({
 
 export {
   createPost,
+  uploadVideo,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
