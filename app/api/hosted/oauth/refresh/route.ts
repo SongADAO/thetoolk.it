@@ -5,7 +5,7 @@ import {
   getServiceAuthorization,
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
-import { refreshAccessToken } from "@/services/post/facebook/auth";
+import { refreshAccessToken } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,10 +15,10 @@ export async function POST(request: NextRequest) {
 
     const authorization = await getServiceAuthorization({
       ...serverAuth,
-      serviceId: "facebook",
+      serviceId,
     });
 
-    const newAuthorization = await refreshAccessToken(authorization);
+    const newAuthorization = await refreshAccessToken(serviceId, authorization);
 
     await updateServiceAuthorization({
       ...serverAuth,

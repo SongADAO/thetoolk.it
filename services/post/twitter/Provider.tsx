@@ -150,7 +150,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       return authorization;
     }
 
-    const newAuthorization = await refreshAccessToken(authorization);
+    const newAuthorization = await refreshAccessToken(
+      credentials,
+      authorization,
+    );
 
     setAuthorization(newAuthorization);
 
