@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
     const chunk = formData.get("chunk") as Blob;
     const mediaId = String(formData.get("mediaId"));
-    const segmentIndex = parseInt(String(formData.get("segment_index")), 10);
+    const segmentIndex = parseInt(String(formData.get("segmentIndex")), 10);
 
     const data = {
       chunk,

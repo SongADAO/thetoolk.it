@@ -64,25 +64,37 @@ async function initializeUploadVideo({
       ? "/api/twitter/2/media/upload/initialize"
       : "https://api.x.com/2/media/upload/initialize";
 
-  const initResponse = await fetch(endpoint, {
-    body: JSON.stringify({
-      media_category: "tweet_video",
-      media_type: videoType,
-      total_bytes: videoSize,
-    }),
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/twitter/initialize`, {
+          body: JSON.stringify({
+            videoSize,
+            videoType,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(endpoint, {
+          body: JSON.stringify({
+            media_category: "tweet_video",
+            media_type: videoType,
+            total_bytes: videoSize,
+          }),
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
 
-  if (!initResponse.ok) {
-    const errorData = await initResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(errorData.error);
   }
 
-  const initData = await initResponse.json();
+  const initData = await response.json();
   const mediaId = initData.data.id;
 
   console.log("Upload initialized:", initData);
@@ -119,16 +131,28 @@ async function appendUploadVideo({
       : `https://api.x.com/2/media/upload/${mediaId}/append`;
 
   const formData = new FormData();
-  formData.append("segment_index", segmentIndex.toString());
-  formData.append("media", chunk);
+  if (accessToken === "hosted") {
+    formData.append("chunk", chunk);
+    formData.append("mediaId", mediaId);
+    formData.append("segmentIndex", segmentIndex.toString());
+  } else {
+    formData.append("media", chunk);
+    formData.append("segment_index", segmentIndex.toString());
+  }
 
-  const appendResponse = await fetch(endpoint, {
-    body: formData,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    method: "POST",
-  });
+  const appendResponse =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/twitter/append`, {
+          body: formData,
+          method: "POST",
+        })
+      : await fetch(endpoint, {
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          method: "POST",
+        });
 
   if (!appendResponse.ok) {
     const errorData = await appendResponse.json();
@@ -171,14 +195,25 @@ async function finalizeUploadVideo({
       ? `/api/twitter/2/media/upload/${mediaId}/finalize`
       : `https://api.x.com/2/media/upload/${mediaId}/finalize`;
 
-  const finalizeResponse = await fetch(endpoint, {
-    body: JSON.stringify({}),
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
+  const finalizeResponse =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/twitter/finalize`, {
+          body: JSON.stringify({
+            mediaId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(endpoint, {
+          body: JSON.stringify({}),
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
 
   if (!finalizeResponse.ok) {
     const errorData = await finalizeResponse.json();
@@ -232,18 +267,29 @@ async function statusUploadVideo({
       ? `/api/twitter/2/media/upload?${params.toString()}`
       : `https://api.x.com/2/media/upload?${params.toString()}`;
 
-  const statusResponse = await fetch(endpoint, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/twitter/status`, {
+          body: JSON.stringify({
+            mediaId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(endpoint, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
-  if (!statusResponse.ok) {
-    const errorData = await statusResponse.json();
+  if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(errorData.error);
   }
 
-  const statusData = await statusResponse.json();
+  const statusData = await response.json();
   console.log("Processing status:", statusData);
 
   return statusData;
