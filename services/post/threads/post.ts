@@ -33,22 +33,32 @@ async function createMediaContainer({
 
   console.log("Creating Threads media container");
 
-  const response = await fetch(
-    `https://graph.threads.net/v1.0/${userId}/threads`,
-    {
-      body: new URLSearchParams({
-        access_token: accessToken,
-        media_type: "VIDEO",
-        text,
-        // reply_control: replyControl,
-        video_url: videoUrl,
-      }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
-    },
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/threads/media`, {
+          body: JSON.stringify({
+            text,
+            userId,
+            videoUrl,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(`https://graph.threads.net/v1.0/${userId}/threads`, {
+          body: new URLSearchParams({
+            access_token: accessToken,
+            media_type: "VIDEO",
+            text,
+            // reply_control: replyControl,
+            video_url: videoUrl,
+          }),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          method: "POST",
+        });
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -106,9 +116,20 @@ async function checkMediaStatus({
     fields: "status",
   });
 
-  const response = await fetch(
-    `https://graph.threads.net/v1.0/${creationId}?${params.toString()}`,
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/threads/media_status`, {
+          body: JSON.stringify({
+            creationId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(
+          `https://graph.threads.net/v1.0/${creationId}?${params.toString()}`,
+        );
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -143,19 +164,31 @@ async function publishMedia({
     return "test";
   }
 
-  const response = await fetch(
-    `https://graph.threads.net/v1.0/${userId}/threads_publish`,
-    {
-      body: new URLSearchParams({
-        access_token: accessToken,
-        creation_id: creationId,
-      }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
-    },
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/threads/media_publish`, {
+          body: JSON.stringify({
+            creationId,
+            userId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(
+          `https://graph.threads.net/v1.0/${userId}/threads_publish`,
+          {
+            body: new URLSearchParams({
+              access_token: accessToken,
+              creation_id: creationId,
+            }),
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            method: "POST",
+          },
+        );
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -300,7 +333,10 @@ async function createPost({
 }
 
 export {
+  checkMediaStatus,
+  createMediaContainer,
   createPost,
+  publishMedia,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
