@@ -66,7 +66,7 @@ async function initializeUploadVideo({
 
   const response =
     accessToken === "hosted"
-      ? await fetch(`/api/hosted/twitter/initialize`, {
+      ? await fetch(`/api/hosted/twitter/media/initialize`, {
           body: JSON.stringify({
             videoSize,
             videoType,
@@ -142,7 +142,7 @@ async function appendUploadVideo({
 
   const appendResponse =
     accessToken === "hosted"
-      ? await fetch(`/api/hosted/twitter/append`, {
+      ? await fetch(`/api/hosted/twitter/media/append`, {
           body: formData,
           method: "POST",
         })
@@ -197,7 +197,7 @@ async function finalizeUploadVideo({
 
   const finalizeResponse =
     accessToken === "hosted"
-      ? await fetch(`/api/hosted/twitter/finalize`, {
+      ? await fetch(`/api/hosted/twitter/media/finalize`, {
           body: JSON.stringify({
             mediaId,
           }),
@@ -269,7 +269,7 @@ async function statusUploadVideo({
 
   const response =
     accessToken === "hosted"
-      ? await fetch(`/api/hosted/twitter/status`, {
+      ? await fetch(`/api/hosted/twitter/media/status`, {
           body: JSON.stringify({
             mediaId,
           }),
