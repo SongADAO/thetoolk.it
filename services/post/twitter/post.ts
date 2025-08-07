@@ -418,11 +418,13 @@ async function uploadVideo({
 interface PublishPostProps {
   accessToken: string;
   mediaIds: string[];
+  mode: string;
   text: string;
 }
 async function publishPost({
   accessToken,
   mediaIds,
+  mode,
   text,
 }: Readonly<PublishPostProps>): Promise<string> {
   if (DEBUG_POST) {
@@ -431,14 +433,29 @@ async function publishPost({
     return "test";
   }
 
-  const response = await fetch("/api/twitter/2/posts", {
-    body: JSON.stringify({ media: { media_ids: mediaIds }, text }),
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
+  const endpoint =
+    mode === "self" ? "/api/twitter/2/posts" : "https://api.x.com/2/posts";
+
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/twitter/posts`, {
+          body: JSON.stringify({
+            mediaIds,
+            text,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(endpoint, {
+          body: JSON.stringify({ media: { media_ids: mediaIds }, text }),
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -499,6 +516,7 @@ async function createPost({
       postId = await publishPost({
         accessToken,
         mediaIds: [mediaId],
+        mode: "self",
         text,
       });
     } else {
@@ -527,6 +545,7 @@ export {
   createPost,
   finalizeUploadVideo,
   initializeUploadVideo,
+  publishPost,
   statusUploadVideo,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
