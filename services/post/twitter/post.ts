@@ -103,11 +103,14 @@ async function appendUploadVideo({
   mediaId,
   mode,
   segmentIndex,
-}: Readonly<AppendUploadVideoProps>): Promise<void> {
+}: Readonly<AppendUploadVideoProps>): Promise<Response> {
   if (DEBUG_POST) {
     console.log("Test Twitter: appendUploadVideo");
     await sleep(1000);
-    return;
+    return new Response("Test append response", {
+      status: 200,
+      statusText: "OK",
+    });
   }
 
   const endpoint =
@@ -131,6 +134,8 @@ async function appendUploadVideo({
     const errorData = await appendResponse.json();
     throw new Error(errorData.error);
   }
+
+  return appendResponse;
 }
 
 interface FinalizeUploadVideoProps {
