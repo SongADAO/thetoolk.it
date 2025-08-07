@@ -14,6 +14,7 @@ import {
 
 export async function POST() {
   try {
+    const serviceId = "twitter";
     const serverAuth = await initServerAuth();
 
     // Generate PKCE values
@@ -22,7 +23,7 @@ export async function POST() {
     await updateCodeVerifier({
       ...serverAuth,
       codeVerifier,
-      serviceId: "twitter",
+      serviceId,
     });
 
     const codeChallenge = await generateCodeChallenge(codeVerifier);
