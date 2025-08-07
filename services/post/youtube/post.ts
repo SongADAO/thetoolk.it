@@ -12,12 +12,14 @@ const VIDEO_MAX_DURATION = 60 * 24 * 12;
 interface InitiateResumableUploadProps {
   accessToken: string;
   metadata: Record<string, unknown>;
-  video: File;
+  videoSize: number;
+  videoType: string;
 }
 async function initiateResumableUpload({
   accessToken,
   metadata,
-  video,
+  videoSize,
+  videoType,
 }: Readonly<InitiateResumableUploadProps>): Promise<string> {
   if (DEBUG_POST) {
     console.log("Test YouTube: initiateResumableUpload");
@@ -30,19 +32,32 @@ async function initiateResumableUpload({
     uploadType: "resumable",
   });
 
-  const response = await fetch(
-    `https://www.googleapis.com/upload/youtube/v3/videos?${params.toString()}`,
-    {
-      body: JSON.stringify(metadata),
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "X-Upload-Content-Length": video.size.toString(),
-        "X-Upload-Content-Type": video.type,
-      },
-      method: "POST",
-    },
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/youtube/videos`, {
+          body: JSON.stringify({
+            metadata,
+            videoSize,
+            videoType,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(
+          `https://www.googleapis.com/upload/youtube/v3/videos?${params.toString()}`,
+          {
+            body: JSON.stringify(metadata),
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+              "X-Upload-Content-Length": videoSize.toString(),
+              "X-Upload-Content-Type": videoType,
+            },
+            method: "POST",
+          },
+        );
 
   if (!response.ok) {
     throw new Error(
@@ -56,6 +71,50 @@ async function initiateResumableUpload({
   }
 
   return uploadUrl;
+}
+
+interface UploadFileChunk {
+  accessToken: string;
+  chunk: Blob;
+  chunkEnd: number;
+  chunkSize: number;
+  totalBytes: number;
+  uploadUrl: string;
+  uploadedBytes: number;
+}
+async function uploadFileChunk({
+  accessToken,
+  chunk,
+  chunkEnd,
+  chunkSize,
+  totalBytes,
+  uploadUrl,
+  uploadedBytes,
+}: Readonly<UploadFileChunk>): Promise<Response> {
+  if (accessToken === "hosted") {
+    const formData = new FormData();
+    formData.append("chunk", chunk);
+    formData.append("chunkEnd", chunkEnd.toString());
+    formData.append("chunkSize", chunkSize.toString());
+    formData.append("totalBytes", totalBytes.toString());
+    formData.append("uploadUrl", uploadUrl);
+    formData.append("uploadedBytes", uploadedBytes.toString());
+
+    return await fetch(`/api/hosted/youtube/upload_chunk`, {
+      body: formData,
+      method: "POST",
+    });
+  }
+
+  return await fetch(uploadUrl, {
+    body: chunk,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Length": chunkSize.toString(),
+      "Content-Range": `bytes ${uploadedBytes}-${chunkEnd}/${totalBytes}`,
+    },
+    method: "PUT",
+  });
 }
 
 // Upload file in chunks
@@ -90,20 +149,24 @@ async function uploadFileInChunks({
       uploadedBytes,
       Math.min(uploadedBytes + CHUNK_SIZE, totalBytes),
     );
-    const chunkEnd = uploadedBytes + chunk.size - 1;
+
+    const chunkSize = chunk.size;
+
+    const chunkEnd = uploadedBytes + chunkSize - 1;
 
     try {
       // eslint-disable-next-line no-await-in-loop
-      const response = await fetch(uploadUrl, {
-        body: chunk,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Length": chunk.size.toString(),
-          "Content-Range": `bytes ${uploadedBytes}-${chunkEnd}/${totalBytes}`,
-        },
-        method: "PUT",
+      const response = await uploadFileChunk({
+        accessToken,
+        chunk,
+        chunkEnd,
+        chunkSize,
+        totalBytes,
+        uploadUrl,
+        uploadedBytes,
       });
 
+      // eslint-disable-next-line no-await-in-loop
       if (response.status === 200 || response.status === 201) {
         // Upload complete
         // eslint-disable-next-line no-await-in-loop
@@ -119,7 +182,7 @@ async function uploadFileInChunks({
       }
 
       // Continue uploading
-      uploadedBytes += chunk.size;
+      uploadedBytes += chunkSize;
       const progress = Math.round((uploadedBytes / totalBytes) * 100);
       setPostProgress(progress);
       setPostStatus(
@@ -129,37 +192,37 @@ async function uploadFileInChunks({
       console.error("Chunk upload error:", error);
 
       // Try to resume from where we left off
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        const resumeResponse = await fetch(uploadUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Range": `bytes */${totalBytes}`,
-          },
-          method: "PUT",
-        });
+      // try {
+      //   // eslint-disable-next-line no-await-in-loop
+      //   const resumeResponse = await fetch(uploadUrl, {
+      //     headers: {
+      //       Authorization: `Bearer ${accessToken}`,
+      //       "Content-Range": `bytes */${totalBytes}`,
+      //     },
+      //     method: "PUT",
+      //   });
 
-        if (resumeResponse.status === 308) {
-          const rangeHeader = resumeResponse.headers.get("Range");
-          // eslint-disable-next-line max-depth
-          if (rangeHeader) {
-            const rangeMatch = /bytes=0-(\d+)/u.exec(rangeHeader);
+      //   if (resumeResponse.status === 308) {
+      //     const rangeHeader = resumeResponse.headers.get("Range");
+      //     // eslint-disable-next-line max-depth
+      //     if (rangeHeader) {
+      //       const rangeMatch = /bytes=0-(\d+)/u.exec(rangeHeader);
 
-            // eslint-disable-next-line max-depth
-            if (rangeMatch) {
-              uploadedBytes = parseInt(rangeMatch[1], 10) + 1;
-              setPostStatus(
-                `Resuming upload from ${Math.round(uploadedBytes / 1024 / 1024)}MB...`,
-              );
+      //       // eslint-disable-next-line max-depth
+      //       if (rangeMatch) {
+      //         uploadedBytes = parseInt(rangeMatch[1], 10) + 1;
+      //         setPostStatus(
+      //           `Resuming upload from ${Math.round(uploadedBytes / 1024 / 1024)}MB...`,
+      //         );
 
-              // eslint-disable-next-line no-continue
-              continue;
-            }
-          }
-        }
-      } catch (resumeError) {
-        console.error("Resume failed:", resumeError);
-      }
+      //         // eslint-disable-next-line no-continue
+      //         continue;
+      //       }
+      //     }
+      //   }
+      // } catch (resumeError) {
+      //   console.error("Resume failed:", resumeError);
+      // }
 
       throw error;
     }
@@ -237,7 +300,8 @@ async function createPost({
       const uploadUrl = await initiateResumableUpload({
         accessToken,
         metadata,
-        video,
+        videoSize: video.size,
+        videoType: video.type,
       });
 
       clearInterval(progressInterval);
@@ -279,6 +343,8 @@ async function createPost({
 
 export {
   createPost,
+  initiateResumableUpload,
+  uploadFileChunk,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
