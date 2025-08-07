@@ -11,13 +11,13 @@ export async function POST(request: NextRequest) {
       serviceId: "twitter",
     });
 
-    const mediaId = await statusUploadVideo({
+    const statusData = await statusUploadVideo({
       ...(await request.json()),
       accessToken: authorization.accessToken,
       mode: "hosted",
     });
 
-    return Response.json({ data: { id: mediaId } });
+    return Response.json(statusData);
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Upload failed";
     return Response.json({ error: { message: errMessage } }, { status: 500 });

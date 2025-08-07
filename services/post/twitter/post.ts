@@ -391,8 +391,7 @@ async function uploadVideo({
         await new Promise((resolve) => {
           setTimeout(
             resolve,
-            (statusData.data?.processing_info?.check_after_secs ?? 0) * 1000 ||
-              5000,
+            (statusData.data?.processing_info?.check_after_secs ?? 5) * 1000,
           );
         });
       }
