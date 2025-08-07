@@ -1,7 +1,7 @@
-// app/api/bluesky/oauth/callback/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { updateServiceAccounts } from "@/lib/supabase/service";
 import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
 import {
   createAgent,
@@ -62,20 +62,11 @@ export async function GET(request: NextRequest) {
 
     const accounts = await getAccountsFromAgent(agent, session.sub);
 
-    const { error: supabaseError } = await supabase.from("services").upsert(
-      {
-        service_accounts: accounts,
-        service_id: "bluesky",
-        user_id: user.id,
-      },
-      {
-        onConflict: "user_id,service_id",
-      },
-    );
-
-    if (supabaseError) {
-      throw new Error("Could not get accounts");
-    }
+    await updateServiceAccounts({
+      ...serverAuth,
+      serviceAccounts: accounts,
+      serviceId,
+    });
 
     console.log("Tokens stored successfully");
 

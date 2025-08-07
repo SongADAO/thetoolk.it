@@ -1,4 +1,3 @@
-// app/api/bluesky/oauth/authorize/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/hosted-api";

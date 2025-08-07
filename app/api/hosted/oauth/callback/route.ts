@@ -1,7 +1,7 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createClient } from "@/lib/supabase/server";
+import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { updateServiceAuthorizationAndAccounts } from "@/lib/supabase/service";
 import {
   exchangeCodeForTokens as exchangeCodeForTokensFacebook,
   getAccounts as getAccountsFacebook,
@@ -39,19 +39,6 @@ import {
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_YOUTUBE,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectYoutube,
 } from "@/services/post/youtube/auth";
-
-async function getUser(supabase: SupabaseClient) {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  return user;
-}
 
 function getServiceId(searchParams: URLSearchParams): string {
   if (shouldHandleAuthRedirectFacebook(searchParams)) {
@@ -205,11 +192,9 @@ export async function GET(request: NextRequest) {
   let serviceId = "unknown";
 
   try {
+    const serverAuth = await initServerAuth();
+
     const { searchParams } = new URL(request.url);
-
-    const supabase = await createClient();
-
-    const user = await getUser(supabase);
 
     const redirectUri = `${baseUrl}/api/hosted/oauth/callback`;
 
@@ -223,21 +208,12 @@ export async function GET(request: NextRequest) {
 
     const accounts = await getAccounts(serviceId, authorization);
 
-    const { error } = await supabase.from("services").upsert(
-      {
-        service_accounts: accounts,
-        service_authorization: authorization,
-        service_id: serviceId,
-        user_id: user.id,
-      },
-      {
-        onConflict: "user_id,service_id",
-      },
-    );
-
-    if (error) {
-      throw new Error("Could not get accounts");
-    }
+    await updateServiceAuthorizationAndAccounts({
+      ...serverAuth,
+      serviceAccounts: accounts,
+      serviceAuthorization: authorization,
+      serviceId,
+    });
 
     successUrl.searchParams.set("service", serviceId);
     successUrl.searchParams.set("auth", "success");

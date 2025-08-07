@@ -1,44 +1,30 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createClient } from "@/lib/supabase/server";
+import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { updateServiceAuthorizationAndAccounts } from "@/lib/supabase/service";
 import {
   exchangeCodeForTokens,
   getAccounts,
   HOSTED_CREDENTIALS,
 } from "@/services/post/twitter/auth";
 
-async function getUser(supabase: SupabaseClient) {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  return user;
-}
-
 export async function GET(request: NextRequest) {
+  const serviceId = "twitter";
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   const successUrl = new URL(`${baseUrl}/authorize-success`);
   const errorUrl = new URL(`${baseUrl}/authorize-error`);
 
   try {
+    const serverAuth = await initServerAuth();
+
     const { searchParams } = new URL(request.url);
-
-    const supabase = await createClient();
-
-    const user = await getUser(supabase);
 
     const redirectUri = `${baseUrl}/api/hosted/twitter/oauth/callback`;
 
-    const { data: stateData, error: stateError } = await supabase
+    const { data: stateData, error: stateError } = await serverAuth.supabase
       .from("atproto_oauth_states")
       .select("value, expires_at")
-      .eq("user_id", user.id)
+      .eq("user_id", serverAuth.user.id)
       .eq("key", "twitter_code_verifier")
       .single();
 
@@ -47,10 +33,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Delete the retrieved code verifier
-    await supabase
+    await serverAuth.supabase
       .from("atproto_oauth_states")
       .delete()
-      .eq("user_id", user.id)
+      .eq("user_id", serverAuth.user.id)
       .eq("key", "twitter_code_verifier");
 
     if (!stateData.value.codeVerifier) {
@@ -78,24 +64,15 @@ export async function GET(request: NextRequest) {
       authorization.accessToken,
     );
 
-    const { error } = await supabase.from("services").upsert(
-      {
-        service_accounts: accounts,
-        service_authorization: authorization,
-        service_id: "twitter",
-        user_id: user.id,
-      },
-      {
-        onConflict: "user_id,service_id",
-      },
-    );
-
-    if (error) {
-      throw new Error("Could not get accounts");
-    }
+    await updateServiceAuthorizationAndAccounts({
+      ...serverAuth,
+      serviceAccounts: accounts,
+      serviceAuthorization: authorization,
+      serviceId,
+    });
 
     // Redirect back to the application
-    successUrl.searchParams.set("service", "twitter");
+    successUrl.searchParams.set("service", serviceId);
     successUrl.searchParams.set("auth", "success");
 
     return NextResponse.redirect(successUrl.toString());
@@ -104,7 +81,7 @@ export async function GET(request: NextRequest) {
     const errMessage = error instanceof Error ? error.message : "Unknown error";
 
     // Redirect to app with error
-    errorUrl.searchParams.set("service", "twitter");
+    errorUrl.searchParams.set("service", serviceId);
     errorUrl.searchParams.set("error", "callback_failed");
     errorUrl.searchParams.set("error_description", errMessage);
 

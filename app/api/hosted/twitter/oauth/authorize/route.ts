@@ -1,41 +1,24 @@
-// app/api/bluesky/oauth/authorize/route.ts
-import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 import {
   generateCodeChallenge,
   generateCodeVerifier,
 } from "@/lib/code-verifier";
-import { createClient } from "@/lib/supabase/server";
+import { initServerAuth } from "@/lib/supabase/hosted-api";
 import {
   getTwitterAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
 } from "@/services/post/twitter/auth";
 
-async function getUser(supabase: SupabaseClient): Promise<User> {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  return user;
-}
-
 export async function POST() {
   try {
-    const supabase = await createClient();
-
-    const user = await getUser(supabase);
+    const serverAuth = await initServerAuth();
 
     // Generate PKCE values
     const codeVerifier = generateCodeVerifier();
 
     // Store code verifier for later use
-    const { error: codeVerifierError } = await supabase
+    const { error: codeVerifierError } = await serverAuth.supabase
       .from("atproto_oauth_states")
       .upsert(
         {
@@ -43,7 +26,7 @@ export async function POST() {
           expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
           key: "twitter_code_verifier",
           updated_at: new Date().toISOString(),
-          user_id: user.id,
+          user_id: serverAuth.user.id,
           value: { codeVerifier },
         },
         {
