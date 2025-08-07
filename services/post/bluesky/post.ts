@@ -89,7 +89,6 @@ async function createRecord({
 
     console.log("Post created successfully:", response);
 
-    // Extract post ID from the URI (at://did:plc:abc.../app.bsky.feed.post/POST_ID)
     return response.uri;
   } catch (error) {
     console.error("Failed to create post:", error);
@@ -185,6 +184,7 @@ async function createPost({
     setPostProgress(100);
     setPostStatus("Success");
 
+    // Extract post ID from the URI (at://did:plc:abc.../app.bsky.feed.post/POST_ID)
     // const postId = postUri.split("/").pop() ?? postUri;
 
     return postUri;
