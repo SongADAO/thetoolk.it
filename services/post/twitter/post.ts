@@ -43,11 +43,15 @@ interface TwitterStatusUploadResponse {
 
 interface InitializeUploadVideoProps {
   accessToken: string;
-  video: File;
+  mode: string;
+  videoSize: number;
+  videoType: string;
 }
 async function initializeUploadVideo({
   accessToken,
-  video,
+  mode,
+  videoSize,
+  videoType,
 }: Readonly<InitializeUploadVideoProps>): Promise<string> {
   if (DEBUG_POST) {
     console.log("Test Twitter: initializeUploadVideo");
@@ -55,11 +59,16 @@ async function initializeUploadVideo({
     return "test";
   }
 
-  const initResponse = await fetch("/api/twitter/2/media/upload/initialize", {
+  const endpoint =
+    mode === "self"
+      ? "/api/twitter/2/media/upload/initialize"
+      : "https://api.x.com/2/media/upload/initialize";
+
+  const initResponse = await fetch(endpoint, {
     body: JSON.stringify({
       media_category: "tweet_video",
-      media_type: video.type,
-      total_bytes: video.size,
+      media_type: videoType,
+      total_bytes: videoSize,
     }),
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -83,17 +92,17 @@ async function initializeUploadVideo({
 
 interface AppendUploadVideoProps {
   accessToken: string;
-  chunkSize: number;
+  chunk: Blob;
   mediaId: string;
+  mode: string;
   segmentIndex: number;
-  video: File;
 }
 async function appendUploadVideo({
   accessToken,
-  chunkSize,
+  chunk,
   mediaId,
+  mode,
   segmentIndex,
-  video,
 }: Readonly<AppendUploadVideoProps>): Promise<void> {
   if (DEBUG_POST) {
     console.log("Test Twitter: appendUploadVideo");
@@ -101,24 +110,22 @@ async function appendUploadVideo({
     return;
   }
 
-  const start = segmentIndex * chunkSize;
-  const end = Math.min(start + chunkSize, video.size);
-  const chunk = video.slice(start, end);
+  const endpoint =
+    mode === "self"
+      ? `/api/twitter/2/media/upload/${mediaId}/append`
+      : `https://api.x.com/2/media/upload/${mediaId}/append`;
 
   const formData = new FormData();
   formData.append("segment_index", segmentIndex.toString());
   formData.append("media", chunk);
 
-  const appendResponse = await fetch(
-    `/api/twitter/2/media/upload/${mediaId}/append`,
-    {
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      method: "POST",
+  const appendResponse = await fetch(endpoint, {
+    body: formData,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
     },
-  );
+    method: "POST",
+  });
 
   if (!appendResponse.ok) {
     const errorData = await appendResponse.json();
@@ -129,10 +136,12 @@ async function appendUploadVideo({
 interface FinalizeUploadVideoProps {
   accessToken: string;
   mediaId: string;
+  mode: string;
 }
 async function finalizeUploadVideo({
   accessToken,
   mediaId,
+  mode,
 }: Readonly<FinalizeUploadVideoProps>): Promise<TwitterFinalizeUploadResponse> {
   if (DEBUG_POST) {
     console.log("Test Twitter: finalizeUploadVideo");
@@ -152,17 +161,19 @@ async function finalizeUploadVideo({
     };
   }
 
-  const finalizeResponse = await fetch(
-    `/api/twitter/2/media/upload/${mediaId}/finalize`,
-    {
-      body: JSON.stringify({}),
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
+  const endpoint =
+    mode === "self"
+      ? `/api/twitter/2/media/upload/${mediaId}/finalize`
+      : `https://api.x.com/2/media/upload/${mediaId}/finalize`;
+
+  const finalizeResponse = await fetch(endpoint, {
+    body: JSON.stringify({}),
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
     },
-  );
+    method: "POST",
+  });
 
   if (!finalizeResponse.ok) {
     const errorData = await finalizeResponse.json();
@@ -178,10 +189,12 @@ async function finalizeUploadVideo({
 interface StatusUploadVideoProps {
   accessToken: string;
   mediaId: string;
+  mode: string;
 }
 async function statusUploadVideo({
   accessToken,
   mediaId,
+  mode,
 }: Readonly<StatusUploadVideoProps>): Promise<TwitterStatusUploadResponse> {
   if (DEBUG_POST) {
     if (DEBUG_STATUS_STEP === 4) {
@@ -209,14 +222,16 @@ async function statusUploadVideo({
     media_id: mediaId,
   });
 
-  const statusResponse = await fetch(
-    `/api/twitter/2/media/upload?${params.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+  const endpoint =
+    mode === "self"
+      ? `/api/twitter/2/media/upload?${params.toString()}`
+      : `https://api.x.com/2/media/upload?${params.toString()}`;
+
+  const statusResponse = await fetch(endpoint, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
     },
-  );
+  });
 
   if (!statusResponse.ok) {
     const errorData = await statusResponse.json();
@@ -231,12 +246,14 @@ async function statusUploadVideo({
 
 interface UploadVideoProps {
   accessToken: string;
-  video: File;
+  mode: string;
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
+  video: File;
 }
 async function uploadVideo({
   accessToken,
+  mode,
   setPostProgress,
   setPostStatus,
   video,
@@ -246,7 +263,9 @@ async function uploadVideo({
   setPostStatus("Initializing upload...");
   const mediaId = await initializeUploadVideo({
     accessToken,
-    video,
+    mode,
+    videoSize: video.size,
+    videoType: video.type,
   });
 
   setPostProgress(20);
@@ -258,13 +277,17 @@ async function uploadVideo({
   const totalChunks = Math.ceil(video.size / chunkSize);
 
   for (let segmentIndex = 0; segmentIndex < totalChunks; segmentIndex++) {
+    const start = segmentIndex * chunkSize;
+    const end = Math.min(start + chunkSize, video.size);
+    const chunk = video.slice(start, end);
+
     // eslint-disable-next-line no-await-in-loop
     await appendUploadVideo({
       accessToken,
-      chunkSize,
+      chunk,
       mediaId,
+      mode,
       segmentIndex,
-      video,
     });
 
     const progress = 20 + ((segmentIndex + 1) / totalChunks) * 50;
@@ -278,6 +301,7 @@ async function uploadVideo({
   const finalizeData = await finalizeUploadVideo({
     accessToken,
     mediaId,
+    mode,
   });
 
   // Step 4: Check processing status if needed
@@ -302,6 +326,7 @@ async function uploadVideo({
       const statusData = await statusUploadVideo({
         accessToken,
         mediaId,
+        mode,
       });
 
       if (statusData.data?.processing_info?.state === "failed") {
@@ -411,6 +436,7 @@ async function createPost({
       // Upload video to Twitter
       const mediaId = await uploadVideo({
         accessToken,
+        mode: "self",
         setPostProgress,
         setPostStatus,
         video,
@@ -447,7 +473,11 @@ async function createPost({
 }
 
 export {
+  appendUploadVideo,
   createPost,
+  finalizeUploadVideo,
+  initializeUploadVideo,
+  statusUploadVideo,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,

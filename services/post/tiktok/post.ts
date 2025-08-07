@@ -10,17 +10,17 @@ const VIDEO_MAX_DURATION = 600;
 
 interface UploadVideoProps {
   accessToken: string;
+  mode: string;
   text: string;
   title: string;
   videoUrl: string;
-  mode: string;
 }
 async function uploadVideo({
   accessToken,
+  mode,
   text,
   title,
   videoUrl,
-  mode,
 }: Readonly<UploadVideoProps>) {
   if (DEBUG_POST) {
     console.log("Test Tiktok: uploadVideo");
