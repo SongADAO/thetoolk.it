@@ -33,6 +33,10 @@ import {
   refreshAccessToken as refreshAccessTokenTiktok,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectTiktok,
 } from "@/services/post/tiktok/auth";
+import {
+  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
+  refreshAccessToken as refreshAccessTokenTwitter,
+} from "@/services/post/twitter/auth";
 import type { OauthAuthorization, ServiceAccount } from "@/services/post/types";
 import {
   exchangeCodeForTokens as exchangeCodeForTokensYoutube,
@@ -176,35 +180,43 @@ async function refreshAccessToken(
   authorization: OauthAuthorization,
 ): Promise<OauthAuthorization> {
   if (serviceId === "facebook") {
-    console.log("Getting Facebook accounts");
+    console.log("Refreshing Facebook tokens");
     return await refreshAccessTokenFacebook(authorization);
   }
 
   if (serviceId === "instagram") {
-    console.log("Getting Instagram accounts");
+    console.log("Refreshing Instagram tokens");
     return await refreshAccessTokenInstagram(authorization);
   }
 
   // if (serviceId === "instagramfb") {
-  //   console.log("Getting Instagram FB accounts");
+  //   console.log("Refreshing InstgramFB tokens");
   //   return await refreshAccessTokenInstagramfb(authorization);
   // }
 
   if (serviceId === "threads") {
-    console.log("Getting Threads accounts");
+    console.log("Refreshing Threads tokens");
     return await refreshAccessTokenThreads(authorization);
   }
 
   if (serviceId === "tiktok") {
-    console.log("Getting TikTok accounts");
+    console.log("Refreshing TikTok tokens");
     return await refreshAccessTokenTiktok(
       HOSTED_CREDENTIALS_TIKTOK,
       authorization,
     );
   }
 
+  if (serviceId === "twitter") {
+    console.log("Refreshing Twitter tokens");
+    return await refreshAccessTokenTwitter(
+      HOSTED_CREDENTIALS_TWITTER,
+      authorization,
+    );
+  }
+
   if (serviceId === "youtube") {
-    console.log("Getting YouTube accounts");
+    console.log("Refreshing YouTube tokens");
     return await refreshAccessTokenYoutube(
       HOSTED_CREDENTIALS_YOUTUBE,
       authorization,
