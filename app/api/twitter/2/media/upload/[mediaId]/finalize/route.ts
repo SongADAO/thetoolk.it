@@ -1,13 +1,12 @@
 import { NextRequest } from "next/server";
 
-interface RouteParams {
-  params: {
-    media_id: string;
-  };
-}
-
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ mediaId: string }> },
+) {
   try {
+    const { mediaId } = await params;
+
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
       return Response.json(
@@ -17,7 +16,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     const response = await fetch(
-      `https://api.x.com/2/media/upload/${params.media_id}/finalize`,
+      `https://api.x.com/2/media/upload/${mediaId}/finalize`,
       {
         body: JSON.stringify({}),
         headers: {
