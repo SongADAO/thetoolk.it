@@ -108,16 +108,17 @@ async function appendUploadVideo({
   const formData = new FormData();
   formData.append("segment_index", segmentIndex.toString());
   formData.append("media", chunk);
-  // Include mediaId for the route
-  formData.append("mediaId", mediaId);
 
-  const appendResponse = await fetch("/api/twitter/2/media/upload/append", {
-    body: formData,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+  const appendResponse = await fetch(
+    `/api/twitter/2/media/upload/${mediaId}/append`,
+    {
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      method: "POST",
     },
-    method: "POST",
-  });
+  );
 
   if (!appendResponse.ok) {
     const errorData = await appendResponse.json();
@@ -151,16 +152,17 @@ async function finalizeUploadVideo({
     };
   }
 
-  const finalizeResponse = await fetch("/api/twitter/2/media/upload/finalize", {
-    body: JSON.stringify({
-      mediaId,
-    }),
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+  const finalizeResponse = await fetch(
+    `/api/twitter/2/media/upload/${mediaId}/finalize`,
+    {
+      body: JSON.stringify({}),
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
     },
-    method: "POST",
-  });
+  );
 
   if (!finalizeResponse.ok) {
     const errorData = await finalizeResponse.json();
@@ -203,11 +205,12 @@ async function statusUploadVideo({
   }
 
   const params = new URLSearchParams({
+    command: "STATUS",
     media_id: mediaId,
   });
 
   const statusResponse = await fetch(
-    `/api/twitter/2/media/upload/status?${params.toString()}`,
+    `/api/twitter/2/media/upload?${params.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

@@ -10,10 +10,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-
     const response = await fetch("https://api.x.com/2/posts", {
-      body: JSON.stringify(body),
+      body: JSON.stringify(await request.json()),
       headers: {
         Authorization: authHeader,
         "Content-Type": "application/json",

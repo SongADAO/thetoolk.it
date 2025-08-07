@@ -1,6 +1,12 @@
 import { NextRequest } from "next/server";
 
-export async function POST(request: NextRequest) {
+interface RouteParams {
+  params: {
+    media_id: string;
+  };
+}
+
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
@@ -10,15 +16,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { mediaId } = await request.json();
-
     const response = await fetch(
-      `https://api.x.com/2/media/upload/${mediaId}/finalize`,
+      `https://api.x.com/2/media/upload/${params.media_id}/append`,
       {
-        body: JSON.stringify({}),
+        body: await request.formData(),
         headers: {
           Authorization: authHeader,
-          "Content-Type": "application/json",
         },
         method: "POST",
       },
@@ -27,15 +30,15 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       return Response.json(
-        { error: `Upload finalization failed: ${errorText}` },
+        { error: `Chunk upload failed: ${errorText}` },
         { status: response.status },
       );
     }
 
-    const result = await response.json();
-    return Response.json(result);
+    // Twitter returns empty response for successful APPEND
+    return Response.json({ success: true });
   } catch (err: unknown) {
-    const errMessage = err instanceof Error ? err.message : "Finalize failed";
+    const errMessage = err instanceof Error ? err.message : "Append failed";
     return Response.json({ error: errMessage }, { status: 500 });
   }
 }

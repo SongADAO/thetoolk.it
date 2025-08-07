@@ -10,18 +10,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const mediaId = searchParams.get("media_id");
-
-    if (!mediaId) {
-      return Response.json(
-        { error: "media_id parameter required" },
-        { status: 400 },
-      );
-    }
-
     const response = await fetch(
-      `https://api.x.com/2/media/upload?command=STATUS&media_id=${mediaId}`,
+      `https://api.x.com/2/media/upload?${request.nextUrl.searchParams.toString()}`,
       {
         headers: {
           Authorization: authHeader,
