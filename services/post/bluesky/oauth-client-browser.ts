@@ -4,7 +4,7 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-browser";
 
-import { getHostedBaseUrl } from "@/services/post/hosted";
+import { getBaseUrl } from "@/services/post/hosted";
 import type { BlueskyCredentials } from "@/services/post/types";
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
@@ -14,7 +14,7 @@ let oauthClient: BrowserOAuthClient | null = null;
 
 // Client metadata (to be served at your client_id URL)
 function getClientMetadata() {
-  const baseURL = getHostedBaseUrl();
+  const baseURL = getBaseUrl();
 
   return {
     application_type: "web",

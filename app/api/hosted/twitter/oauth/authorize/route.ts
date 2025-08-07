@@ -6,7 +6,7 @@ import {
 } from "@/lib/code-verifier";
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import { updateCodeVerifier } from "@/lib/supabase/service";
-import { getHostedBaseUrl } from "@/services/post/hosted";
+import { getBaseUrl } from "@/services/post/hosted";
 import {
   getTwitterAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
@@ -28,7 +28,7 @@ export async function POST() {
 
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-    const redirectUri = `${getHostedBaseUrl()}/api/hosted/twitter/oauth/callback`;
+    const redirectUri = `${getBaseUrl()}/api/hosted/twitter/oauth/callback`;
 
     const authUrl = getTwitterAuthorizeUrl(
       HOSTED_CREDENTIALS_TWITTER.clientId,

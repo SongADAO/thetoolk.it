@@ -9,7 +9,7 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-node";
 
-import { getHostedBaseUrl } from "@/services/post/hosted";
+import { getBaseUrl } from "@/services/post/hosted";
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
 
@@ -18,7 +18,7 @@ let oauthClient: NodeOAuthClient | null = null;
 
 // Client metadata (to be served at your client_id URL)
 function getClientMetadata() {
-  const baseURL = getHostedBaseUrl();
+  const baseURL = getBaseUrl();
 
   return {
     application_type: "web",

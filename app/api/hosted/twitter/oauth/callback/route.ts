@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import { updateServiceAuthorizationAndAccounts } from "@/lib/supabase/service";
-import { getHostedBaseUrl, getOauthUrls } from "@/services/post/hosted";
+import { getBaseUrl, getOauthUrls } from "@/services/post/hosted";
 import {
   exchangeCodeForTokens,
   getAccounts,
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    const redirectUri = `${getHostedBaseUrl()}/api/hosted/twitter/oauth/callback`;
+    const redirectUri = `${getBaseUrl()}/api/hosted/twitter/oauth/callback`;
 
     const { data: stateData, error: stateError } = await serverAuth.supabase
       .from("atproto_oauth_states")
