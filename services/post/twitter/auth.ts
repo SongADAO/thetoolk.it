@@ -89,7 +89,7 @@ function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
 function getRedirectUriHosted(): string {
   const url = new URL(window.location.href);
 
-  return `${url.origin}/api/hosted/oauth/callback`;
+  return `${url.origin}/api/hosted/twitter/oauth/callback`;
 }
 
 function getRedirectUri(): string {
