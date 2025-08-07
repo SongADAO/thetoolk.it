@@ -13,12 +13,14 @@ interface UploadVideoProps {
   text: string;
   title: string;
   videoUrl: string;
+  mode: string;
 }
 async function uploadVideo({
   accessToken,
   text,
   title,
   videoUrl,
+  mode,
 }: Readonly<UploadVideoProps>) {
   if (DEBUG_POST) {
     console.log("Test Tiktok: uploadVideo");
@@ -26,31 +28,49 @@ async function uploadVideo({
     return "test";
   }
 
+  const endpoint =
+    mode === "self"
+      ? "/api/tiktok/v2/post/publish/video/init/"
+      : "https://open.tiktokapis.com/v2/post/publish/video/init/";
+
   // Single API call with both video source and post data
-  const response = await fetch("/api/tiktok/v2/post/publish/video/init/", {
-    body: JSON.stringify({
-      post_info: {
-        description: text,
-        disable_comment: false,
-        disable_duet: false,
-        disable_stitch: false,
-        // TODO: tiktok can only post to private accounts in sandbox
-        // privacy_level: "PUBLIC_TO_EVERYONE",
-        privacy_level: "SELF_ONLY",
-        title,
-        video_cover_timestamp_ms: 1000,
-      },
-      source_info: {
-        source: "PULL_FROM_URL",
-        video_url: videoUrl,
-      },
-    }),
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json; charset=UTF-8",
-    },
-    method: "POST",
-  });
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/tiktok/video`, {
+          body: JSON.stringify({
+            text,
+            title,
+            videoUrl,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(endpoint, {
+          body: JSON.stringify({
+            post_info: {
+              description: text,
+              disable_comment: false,
+              disable_duet: false,
+              disable_stitch: false,
+              // TODO: tiktok can only post to private accounts in sandbox
+              // privacy_level: "PUBLIC_TO_EVERYONE",
+              privacy_level: "SELF_ONLY",
+              title,
+              video_cover_timestamp_ms: 1000,
+            },
+            source_info: {
+              source: "PULL_FROM_URL",
+              video_url: videoUrl,
+            },
+          }),
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+          method: "POST",
+        });
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -113,6 +133,7 @@ async function createPost({
     if (videoUrl) {
       postId = await uploadVideo({
         accessToken,
+        mode: "self",
         text,
         title,
         videoUrl,
@@ -144,6 +165,7 @@ async function createPost({
 
 export {
   createPost,
+  uploadVideo,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
