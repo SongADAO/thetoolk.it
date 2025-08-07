@@ -90,7 +90,7 @@ async function createRecord({
     console.log("Post created successfully:", response);
 
     // Extract post ID from the URI (at://did:plc:abc.../app.bsky.feed.post/POST_ID)
-    return response.uri.split("/").pop() ?? response.uri;
+    return response.uri;
   } catch (error) {
     console.error("Failed to create post:", error);
     throw new Error(
@@ -138,7 +138,7 @@ async function createPost({
     setPostProgress(0);
     setPostStatus("");
 
-    let postId = "";
+    let postUri = "";
 
     if (video) {
       // Step 1: Upload video blob
@@ -163,7 +163,7 @@ async function createPost({
       setPostStatus("Publishing post...");
       setPostProgress(90);
 
-      postId = await createRecord({
+      postUri = await createRecord({
         agent,
         text,
         title,
@@ -179,13 +179,15 @@ async function createPost({
         text,
       });
 
-      postId = response.uri.split("/").pop() ?? response.uri;
+      postUri = response.uri;
     }
 
     setPostProgress(100);
     setPostStatus("Success");
 
-    return postId;
+    // const postId = postUri.split("/").pop() ?? postUri;
+
+    return postUri;
   } catch (err: unknown) {
     console.error("Post error:", err);
     const errMessage = err instanceof Error ? err.message : "Post failed";
