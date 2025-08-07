@@ -33,21 +33,31 @@ async function createMediaContainer({
 
   console.log("Creating Instagram media container");
 
-  const response = await fetch(
-    `https://graph.instagram.com/v23.0/${userId}/media`,
-    {
-      body: new URLSearchParams({
-        access_token: accessToken,
-        caption: text,
-        media_type: "REELS",
-        video_url: videoUrl,
-      }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
-    },
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/instagram/media`, {
+          body: JSON.stringify({
+            text,
+            userId,
+            videoUrl,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(`https://graph.instagram.com/v23.0/${userId}/media`, {
+          body: new URLSearchParams({
+            access_token: accessToken,
+            caption: text,
+            media_type: "REELS",
+            video_url: videoUrl,
+          }),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          method: "POST",
+        });
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -120,9 +130,20 @@ async function checkMediaStatus({
     fields: "status_code",
   });
 
-  const response = await fetch(
-    `https://graph.instagram.com/v23.0/${creationId}?${params.toString()}`,
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/instagram/media_status`, {
+          body: JSON.stringify({
+            creationId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(
+          `https://graph.instagram.com/v23.0/${creationId}?${params.toString()}`,
+        );
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -157,19 +178,31 @@ async function publishMedia({
     return "test";
   }
 
-  const response = await fetch(
-    `https://graph.instagram.com/v23.0/${userId}/media_publish`,
-    {
-      body: new URLSearchParams({
-        access_token: accessToken,
-        creation_id: creationId,
-      }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
-    },
-  );
+  const response =
+    accessToken === "hosted"
+      ? await fetch(`/api/hosted/instagram/media_publish`, {
+          body: JSON.stringify({
+            creationId,
+            userId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        })
+      : await fetch(
+          `https://graph.instagram.com/v23.0/${userId}/media_publish`,
+          {
+            body: new URLSearchParams({
+              access_token: accessToken,
+              creation_id: creationId,
+            }),
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            method: "POST",
+          },
+        );
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -314,7 +347,10 @@ async function createPost({
 }
 
 export {
+  checkMediaStatus,
+  createMediaContainer,
   createPost,
+  publishMedia,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
