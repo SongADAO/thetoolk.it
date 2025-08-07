@@ -214,9 +214,27 @@ async function refreshAccessToken(
   throw new Error("Unsupported service");
 }
 
+function getHostedBaseUrl() {
+  return process.env.NEXT_PUBLIC_BASE_URL ?? "";
+}
+
+function getOauthUrls() {
+  const base = getHostedBaseUrl();
+
+  const error = new URL(`${base}/authorize-error`);
+  const success = new URL(`${base}/authorize-success`);
+
+  return {
+    error,
+    success,
+  };
+}
+
 export {
   exchangeCodeForTokens,
   getAccounts,
   getAuthRedirectServiceId,
+  getHostedBaseUrl,
+  getOauthUrls,
   refreshAccessToken,
 };

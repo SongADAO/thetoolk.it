@@ -6,20 +6,20 @@ import {
   exchangeCodeForTokens,
   getAccounts,
   getAuthRedirectServiceId,
+  getHostedBaseUrl,
+  getOauthUrls,
 } from "@/services/post/hosted";
 
 export async function GET(request: NextRequest) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-  const successUrl = new URL(`${baseUrl}/authorize-success`);
-  const errorUrl = new URL(`${baseUrl}/authorize-error`);
   let serviceId = "unknown";
+  const oauthUrls = getOauthUrls();
 
   try {
     const serverAuth = await initServerAuth();
 
     const { searchParams } = new URL(request.url);
 
-    const redirectUri = `${baseUrl}/api/hosted/oauth/callback`;
+    const redirectUri = `${getHostedBaseUrl()}/api/hosted/oauth/callback`;
 
     serviceId = getAuthRedirectServiceId(searchParams);
 
@@ -38,19 +38,19 @@ export async function GET(request: NextRequest) {
       serviceId,
     });
 
-    successUrl.searchParams.set("service", serviceId);
-    successUrl.searchParams.set("auth", "success");
+    oauthUrls.success.searchParams.set("service", serviceId);
+    oauthUrls.success.searchParams.set("auth", "success");
 
-    return NextResponse.redirect(successUrl.toString());
+    return NextResponse.redirect(oauthUrls.success.toString());
   } catch (error: unknown) {
     console.error("OAuth callback error:", error);
     const errMessage = error instanceof Error ? error.message : "Unknown error";
 
     // Redirect to app with error
-    errorUrl.searchParams.set("service", serviceId);
-    errorUrl.searchParams.set("error", "callback_failed");
-    errorUrl.searchParams.set("error_description", errMessage);
+    oauthUrls.error.searchParams.set("service", serviceId);
+    oauthUrls.error.searchParams.set("error", "callback_failed");
+    oauthUrls.error.searchParams.set("error_description", errMessage);
 
-    return NextResponse.redirect(errorUrl.toString());
+    return NextResponse.redirect(oauthUrls.error.toString());
   }
 }

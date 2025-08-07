@@ -9,12 +9,11 @@ import {
 } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
+import { getOauthUrls } from "@/services/post/hosted";
 
 export async function GET(request: NextRequest) {
   const serviceId = "bluesky";
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-  const successUrl = new URL(`${baseUrl}/authorize-success`);
-  const errorUrl = new URL(`${baseUrl}/authorize-error`);
+  const oauthUrls = getOauthUrls();
 
   try {
     const serverAuth = await initServerAuth();
@@ -31,19 +30,19 @@ export async function GET(request: NextRequest) {
     // Handle OAuth errors
     if (error) {
       console.error("OAuth callback error:", error, errorDescription);
-      errorUrl.searchParams.set("service", "bluesky");
-      errorUrl.searchParams.set("error", error);
+      oauthUrls.error.searchParams.set("service", "bluesky");
+      oauthUrls.error.searchParams.set("error", error);
       if (errorDescription) {
-        errorUrl.searchParams.set("error_description", errorDescription);
+        oauthUrls.error.searchParams.set("error_description", errorDescription);
       }
-      return NextResponse.redirect(errorUrl.toString());
+      return NextResponse.redirect(oauthUrls.error.toString());
     }
 
     if (!code || !iss || !state) {
       console.error("Missing OAuth callback parameters");
-      errorUrl.searchParams.set("service", "bluesky");
-      errorUrl.searchParams.set("error", "missing_parameters");
-      return NextResponse.redirect(errorUrl.toString());
+      oauthUrls.error.searchParams.set("service", "bluesky");
+      oauthUrls.error.searchParams.set("error", "missing_parameters");
+      return NextResponse.redirect(oauthUrls.error.toString());
     }
 
     console.log("Processing OAuth callback...");
@@ -71,19 +70,19 @@ export async function GET(request: NextRequest) {
     console.log("Tokens stored successfully");
 
     // Redirect back to the application
-    successUrl.searchParams.set("service", serviceId);
-    successUrl.searchParams.set("auth", "success");
+    oauthUrls.success.searchParams.set("service", serviceId);
+    oauthUrls.success.searchParams.set("auth", "success");
 
-    return NextResponse.redirect(successUrl.toString());
+    return NextResponse.redirect(oauthUrls.success.toString());
   } catch (error: unknown) {
     console.error("OAuth callback error:", error);
     const errMessage = error instanceof Error ? error.message : "Unknown error";
 
     // Redirect to app with error
-    errorUrl.searchParams.set("service", serviceId);
-    errorUrl.searchParams.set("error", "callback_failed");
-    errorUrl.searchParams.set("error_description", errMessage);
+    oauthUrls.error.searchParams.set("service", serviceId);
+    oauthUrls.error.searchParams.set("error", "callback_failed");
+    oauthUrls.error.searchParams.set("error_description", errMessage);
 
-    return NextResponse.redirect(errorUrl.toString());
+    return NextResponse.redirect(oauthUrls.error.toString());
   }
 }

@@ -4,6 +4,7 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-browser";
 
+import { getHostedBaseUrl } from "@/services/post/hosted";
 import type { BlueskyCredentials } from "@/services/post/types";
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
@@ -13,15 +14,17 @@ let oauthClient: BrowserOAuthClient | null = null;
 
 // Client metadata (to be served at your client_id URL)
 function getClientMetadata() {
+  const baseURL = getHostedBaseUrl();
+
   return {
     application_type: "web",
-    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata-browser.json`,
+    client_id: `${baseURL}/client-metadata-browser.json`,
     client_name: "The Toolk.it",
-    client_uri: process.env.NEXT_PUBLIC_BASE_URL,
+    client_uri: baseURL,
     dpop_bound_access_tokens: true,
     grant_types: ["authorization_code", "refresh_token"],
-    logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
-    redirect_uris: [`${process.env.NEXT_PUBLIC_BASE_URL}/authorize`],
+    logo_uri: `${baseURL}/logo.png`,
+    redirect_uris: [`${baseURL}/authorize`],
     response_types: ["code"],
     scope: SCOPES.join(" "),
     token_endpoint_auth_method: "none",

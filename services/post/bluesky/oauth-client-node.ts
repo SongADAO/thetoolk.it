@@ -9,6 +9,8 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-node";
 
+import { getHostedBaseUrl } from "@/services/post/hosted";
+
 const SCOPES: string[] = ["atproto", "transition:generic"];
 
 // OAuth client instance (singleton)
@@ -16,18 +18,18 @@ let oauthClient: NodeOAuthClient | null = null;
 
 // Client metadata (to be served at your client_id URL)
 function getClientMetadata() {
+  const baseURL = getHostedBaseUrl();
+
   return {
     application_type: "web",
-    client_id: `${process.env.NEXT_PUBLIC_BASE_URL}/client-metadata-node.json`,
+    client_id: `${baseURL}/client-metadata-node.json`,
     client_name: "The Toolk.it",
-    client_uri: process.env.NEXT_PUBLIC_BASE_URL,
+    client_uri: baseURL,
     dpop_bound_access_tokens: true,
     grant_types: ["authorization_code", "refresh_token"],
-    jwks_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/jwks.json`,
-    logo_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`,
-    redirect_uris: [
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/hosted/bluesky/oauth/callback`,
-    ],
+    jwks_uri: `${baseURL}/jwks.json`,
+    logo_uri: `${baseURL}/logo.png`,
+    redirect_uris: [`${baseURL}/api/hosted/bluesky/oauth/callback`],
     response_types: ["code"],
     scope: SCOPES.join(" "),
     token_endpoint_auth_method: "none",
