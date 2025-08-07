@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
       if (errorDescription) {
         oauthUrls.error.searchParams.set("error_description", errorDescription);
       }
+
       return NextResponse.redirect(oauthUrls.error.toString());
     }
 
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest) {
       console.error("Missing OAuth callback parameters");
       oauthUrls.error.searchParams.set("service", "bluesky");
       oauthUrls.error.searchParams.set("error", "missing_parameters");
+
       return NextResponse.redirect(oauthUrls.error.toString());
     }
 

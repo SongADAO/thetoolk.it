@@ -5,6 +5,7 @@ import {
   generateCodeVerifier,
 } from "@/lib/code-verifier";
 import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { updateCodeVerifier } from "@/lib/supabase/service";
 import { getHostedBaseUrl } from "@/services/post/hosted";
 import {
   getTwitterAuthorizeUrl,
@@ -18,26 +19,11 @@ export async function POST() {
     // Generate PKCE values
     const codeVerifier = generateCodeVerifier();
 
-    // Store code verifier for later use
-    const { error: codeVerifierError } = await serverAuth.supabase
-      .from("atproto_oauth_states")
-      .upsert(
-        {
-          // Expires in 10 minutes
-          expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-          key: "twitter_code_verifier",
-          updated_at: new Date().toISOString(),
-          user_id: serverAuth.user.id,
-          value: { codeVerifier },
-        },
-        {
-          // onConflict: "user_id,key",
-        },
-      );
-
-    if (codeVerifierError) {
-      throw new Error("Failed to store code verifier");
-    }
+    await updateCodeVerifier({
+      ...serverAuth,
+      codeVerifier,
+      serviceId: "twitter",
+    });
 
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 

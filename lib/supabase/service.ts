@@ -124,8 +124,42 @@ async function updateServiceAuthorizationAndAccounts({
   }
 }
 
+interface UpdateCodeVerifier {
+  codeVerifier: string;
+  serviceId: string;
+  supabase: SupabaseClient;
+  user: User;
+}
+
+async function updateCodeVerifier({
+  codeVerifier,
+  serviceId,
+  supabase,
+  user,
+}: UpdateCodeVerifier): Promise<void> {
+  // Store code verifier for later use
+  const { error } = await supabase.from("atproto_oauth_states").upsert(
+    {
+      // Expires in 10 minutes
+      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      key: `${serviceId}_code_verifier`,
+      updated_at: new Date().toISOString(),
+      user_id: user.id,
+      value: { codeVerifier },
+    },
+    {
+      // onConflict: "user_id,key",
+    },
+  );
+
+  if (error) {
+    throw new Error("Failed to store code verifier");
+  }
+}
+
 export {
   getServiceAuthorization,
+  updateCodeVerifier,
   updateServiceAccounts,
   updateServiceAuthorization,
   updateServiceAuthorizationAndAccounts,
