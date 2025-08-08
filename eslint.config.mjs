@@ -81,8 +81,8 @@ export default tseslint.config(
       "vite-env.d.ts",
       "next-env.d.ts",
       "public/fonts/**",
-      "**/hls-converter.ts",
-      "**/video-converter-webcodecs.ts",
+      // "**/hls-converter.ts",
+      // "**/video-converter-webcodecs.ts",
     ],
   },
   {

@@ -5,7 +5,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { parseMedia } from "@remotion/media-parser";
 import { convertMedia } from "@remotion/webcodecs";
 
-export interface ConversionOptions {
+interface ConversionOptions {
   audioBitrate: number;
   audioSampleRate: number;
   crf: number;
@@ -15,7 +15,7 @@ export interface ConversionOptions {
   maxFps: number;
 }
 
-export class FFmpegAudioPreprocessor {
+class FFmpegAudioPreprocessor {
   private readonly ffmpeg: FFmpeg;
   private initialized = false;
 
@@ -105,6 +105,7 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(outputFileName);
 
       // Create audio file
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       const audioBlob = new Blob([audioData], { type: "audio/wav" });
       const audioFile = new File([audioBlob], "converted_audio.wav", {
@@ -158,6 +159,7 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(inputFileName);
       await this.ffmpeg.deleteFile(outputFileName);
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       const videoBlob = new Blob([videoData], { type: "video/mp4" });
       const videoFile = new File([videoBlob], "video_only.mp4", {
@@ -230,6 +232,7 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(audioFileName);
       await this.ffmpeg.deleteFile(outputFileName);
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       const combinedBlob = new Blob([combinedData], { type: "video/mp4" });
       const combinedFile = new File([combinedBlob], "combined_output.mp4", {
@@ -250,7 +253,7 @@ export class FFmpegAudioPreprocessor {
 }
 
 // Updated VideoConverter that uses FFmpeg preprocessing
-export class VideoConverter {
+class VideoConverter {
   private readonly ffmpegProcessor: FFmpegAudioPreprocessor;
   private initialized = false;
 
@@ -331,7 +334,8 @@ export class VideoConverter {
 
       const { width: originalWidth, height: originalHeight } =
         metadata.dimensions ?? { height: 1080, width: 1920 };
-      const originalFps = metadata.fps ?? 30;
+
+      // const originalFps = metadata.fps ?? 30;
 
       // Calculate target dimensions
       let targetWidth = originalWidth;
@@ -464,6 +468,7 @@ export class VideoConverter {
     data: Uint8Array,
     filename = "converted_video.mp4",
   ): File {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const blob = new Blob([data], { type: "video/mp4" });
     return new File([blob], filename, { type: "video/mp4" });
@@ -471,9 +476,6 @@ export class VideoConverter {
 
   // Calculate target video bitrate to stay under file size limit
   private calculateTargetBitrate(
-
-
-
     durationSeconds: number,
     maxFileSizeMB: number,
     audioBitrateKbps = 128000,
@@ -487,3 +489,5 @@ export class VideoConverter {
     return Math.max(500, Math.min(videoBitrateKbps, 25000));
   }
 }
+
+export { type ConversionOptions, VideoConverter };
