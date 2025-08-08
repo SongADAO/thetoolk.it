@@ -242,7 +242,7 @@ class HLSConverter {
           const segmentData = await this.ffmpeg.readFile(segmentName);
           segments.push(
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
+            // @ts-ignore
             new File([segmentData], segmentName, { type: "video/mp2t" }),
           );
 
@@ -293,7 +293,7 @@ ${streamPlaylist}
       );
       const streamManifestFile = new File(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+        // @ts-ignore
         [streamManifestData],
         streamPlaylist,
         {
@@ -301,7 +301,7 @@ ${streamPlaylist}
         },
       );
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      // @ts-ignore
       const thumbnail = new File([thumbnailData], thumbnailName, {
         type: "image/jpeg",
       });
