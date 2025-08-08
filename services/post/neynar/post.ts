@@ -1,6 +1,5 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { OauthCredentials } from "@/services/post/types";
 
 // 100GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 100;
@@ -10,15 +9,15 @@ const VIDEO_MIN_DURATION = 3;
 const VIDEO_MAX_DURATION = 60 * 24 * 100;
 
 interface CreateCastProps {
+  accessToken: string;
   clientSecret: string;
   text: string;
-  userId: string;
   videoHSLUrl: string;
 }
 async function createCast({
+  accessToken,
   clientSecret,
   text,
-  userId,
   videoHSLUrl,
 }: Readonly<CreateCastProps>): Promise<string> {
   if (DEBUG_POST) {
@@ -27,29 +26,40 @@ async function createCast({
     return "test";
   }
 
-  const params = {
-    // channel_id: undefined,
-    embeds: [
-      {
-        mimeType: "video/mp4",
-        type: "video",
-        url: videoHSLUrl,
-      },
-    ],
-    // mentions: [],
-    // parent_hash: undefined,
-    signer_uuid: userId,
-    text,
-  };
-
-  const response = await fetch("https://api.neynar.com/v2/farcaster/cast", {
-    body: JSON.stringify(params),
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": clientSecret,
-    },
-    method: "POST",
-  });
+  const response =
+    accessToken === "hosted"
+      ? await fetch("/api/hosted/neynar/cast", {
+          body: JSON.stringify({
+            text,
+            videoHSLUrl,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": clientSecret,
+          },
+          method: "POST",
+        })
+      : await fetch("https://api.neynar.com/v2/farcaster/cast", {
+          body: JSON.stringify({
+            // channel_id: undefined,
+            embeds: [
+              {
+                mimeType: "video/mp4",
+                type: "video",
+                url: videoHSLUrl,
+              },
+            ],
+            // mentions: [],
+            // parent_hash: undefined,
+            signer_uuid: accessToken,
+            text,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": clientSecret,
+          },
+          method: "POST",
+        });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -65,24 +75,24 @@ async function createCast({
 
 // Create a post
 interface CreatePostProps {
-  credentials: OauthCredentials;
+  accessToken: string;
+  clientSecret: string;
   setIsPosting: (isPosting: boolean) => void;
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
   title: string;
   text: string;
-  userId: string;
   videoHSLUrl: string;
 }
 async function createPost({
-  credentials,
+  accessToken,
+  clientSecret,
   setIsPosting,
   setPostError,
   setPostProgress,
   setPostStatus,
   text,
-  userId,
   videoHSLUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;
@@ -110,9 +120,9 @@ async function createPost({
       }, 2000);
 
       postId = await createCast({
-        clientSecret: credentials.clientSecret,
+        accessToken,
+        clientSecret,
         text,
-        userId,
         videoHSLUrl,
       });
 
@@ -143,6 +153,7 @@ async function createPost({
 }
 
 export {
+  createCast,
   createPost,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,

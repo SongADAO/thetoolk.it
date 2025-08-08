@@ -38,7 +38,7 @@ interface Props {
 }
 
 export function NeynarProvider({ children }: Readonly<Props>) {
-  const { isAuthenticated, loading } = use(AuthContext);
+  const { isAuthenticated } = use(AuthContext);
 
   const label = "Farcaster";
 
@@ -115,7 +115,6 @@ export function NeynarProvider({ children }: Readonly<Props>) {
   async function post({
     title,
     text,
-    userId,
     videoHSLUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
@@ -123,14 +122,14 @@ export function NeynarProvider({ children }: Readonly<Props>) {
     }
 
     return await createPost({
-      credentials,
+      accessToken: mode === "hosted" ? "hosted" : authorization.accessToken,
+      clientSecret: mode === "hosted" ? "hosted" : credentials.clientSecret,
       setIsPosting,
       setPostError,
       setPostProgress,
       setPostStatus,
       text,
       title,
-      userId,
       videoHSLUrl,
     });
   }
@@ -248,7 +247,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
               });
               setAccounts([
                 {
-                  id: user.signer_uuid,
+                  id: user.username,
                   username: user.username,
                 },
               ]);
