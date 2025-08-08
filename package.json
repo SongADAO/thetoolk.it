@@ -83,7 +83,7 @@
     "stylelint-scss": "^6.2.1",
     "supabase": "^2.33.9",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1"
   }
 }
