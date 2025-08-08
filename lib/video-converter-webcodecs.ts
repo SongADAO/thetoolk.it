@@ -23,7 +23,9 @@ export class FFmpegAudioPreprocessor {
     this.ffmpeg = new FFmpeg();
   }
 
-  public async initialize(onProgress?: (progress: number) => void): Promise<void> {
+  public async initialize(
+    onProgress?: (progress: number) => void,
+  ): Promise<void> {
     if (this.initialized) return;
 
     console.log("Initializing FFmpeg...");
@@ -54,9 +56,7 @@ export class FFmpegAudioPreprocessor {
   }
 
   // Convert 32-bit audio to 16-bit PCM stereo using FFmpeg
-  public async convertAudioTo16BitPCM(
-    file: File,
-  ): Promise<File> {
+  public async convertAudioTo16BitPCM(file: File): Promise<File> {
     if (!this.initialized) {
       throw new Error("FFmpeg not initialized. Call initialize() first.");
     }
@@ -105,6 +105,7 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(outputFileName);
 
       // Create audio file
+      // @ts-expect-error
       const audioBlob = new Blob([audioData], { type: "audio/wav" });
       const audioFile = new File([audioBlob], "converted_audio.wav", {
         type: "audio/wav",
@@ -157,6 +158,7 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(inputFileName);
       await this.ffmpeg.deleteFile(outputFileName);
 
+      // @ts-expect-error
       const videoBlob = new Blob([videoData], { type: "video/mp4" });
       const videoFile = new File([videoBlob], "video_only.mp4", {
         type: "video/mp4",
@@ -228,6 +230,7 @@ export class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(audioFileName);
       await this.ffmpeg.deleteFile(outputFileName);
 
+      // @ts-expect-error
       const combinedBlob = new Blob([combinedData], { type: "video/mp4" });
       const combinedFile = new File([combinedBlob], "combined_output.mp4", {
         type: "video/mp4",
@@ -255,7 +258,9 @@ export class VideoConverter {
     this.ffmpegProcessor = new FFmpegAudioPreprocessor();
   }
 
-  public async initialize(onProgress?: (progress: number) => void): Promise<void> {
+  public async initialize(
+    onProgress?: (progress: number) => void,
+  ): Promise<void> {
     // Check WebCodecs support
     if (!("VideoEncoder" in window) || !("VideoDecoder" in window)) {
       throw new Error("WebCodecs is not supported in this browser");
@@ -286,7 +291,9 @@ export class VideoConverter {
       );
 
       // Step 1: Preprocess audio with FFmpeg (with progress tracking)
-      setVideoConversionStatus("Encoding audio for optimal quality and size...");
+      setVideoConversionStatus(
+        "Encoding audio for optimal quality and size...",
+      );
       onProgress(0);
       const processedAudioFile =
         await this.ffmpegProcessor.convertAudioTo16BitPCM(file);
@@ -457,12 +464,16 @@ export class VideoConverter {
     data: Uint8Array,
     filename = "converted_video.mp4",
   ): File {
+    // @ts-expect-error
     const blob = new Blob([data], { type: "video/mp4" });
     return new File([blob], filename, { type: "video/mp4" });
   }
 
   // Calculate target video bitrate to stay under file size limit
   private calculateTargetBitrate(
+
+
+
     durationSeconds: number,
     maxFileSizeMB: number,
     audioBitrateKbps = 128000,
