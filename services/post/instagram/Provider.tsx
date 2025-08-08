@@ -127,24 +127,24 @@ export function InstagramProvider({ children }: Readonly<Props>) {
   }
 
   async function refreshTokens(): Promise<OauthAuthorization> {
-      if (mode === "hosted") {
-        await refreshAccessTokenHosted();
+    if (mode === "hosted") {
+      await refreshAccessTokenHosted();
 
       console.log("Access token refreshed successfully");
 
-        // TODO: pull access token dates from supabase
+      // TODO: pull access token dates from supabase
 
       return authorization;
     }
 
-        const newAuthorization = await refreshAccessToken(authorization);
+    const newAuthorization = await refreshAccessToken(authorization);
 
-        setAuthorization(newAuthorization);
+    setAuthorization(newAuthorization);
 
     console.log("Access token refreshed successfully");
 
     return newAuthorization;
-      }
+  }
 
   async function renewRefreshTokenIfNeeded() {
     try {
@@ -166,13 +166,13 @@ export function InstagramProvider({ children }: Readonly<Props>) {
   }
 
   async function getValidAccessToken(): Promise<string> {
-      if (DEBUG_POST) {
-        return "test-token";
-      }
+    if (DEBUG_POST) {
+      return "test-token";
+    }
 
     const newAuthorization = await refreshTokens();
 
-      return newAuthorization.accessToken;
+    return newAuthorization.accessToken;
   }
 
   function authorize() {
