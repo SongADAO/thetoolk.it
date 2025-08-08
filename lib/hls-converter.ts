@@ -228,6 +228,7 @@ export class HLSConverter {
         try {
           const segmentData = await this.ffmpeg.readFile(segmentName);
           segments.push(
+            // @ts-expect-error
             new File([segmentData], segmentName, { type: "video/mp2t" }),
           );
 
@@ -277,12 +278,14 @@ ${streamPlaylist}
         },
       );
       const streamManifestFile = new File(
+        // @ts-expect-error
         [streamManifestData],
         streamPlaylist,
         {
           type: "application/vnd.apple.mpegurl",
         },
       );
+      // @ts-expect-error
       const thumbnail = new File([thumbnailData], thumbnailName, {
         type: "image/jpeg",
       });
