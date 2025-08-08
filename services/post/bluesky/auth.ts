@@ -201,13 +201,9 @@ async function exchangeCodeForTokens(
   }
 }
 
-async function refreshAccessTokenHosted(
-  credentials: BlueskyCredentials,
-): Promise<OauthAuthorization> {
+async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   const response = await fetch("/api/hosted/bluesky/oauth/refresh", {
-    body: JSON.stringify({
-      credentials,
-    }),
+    body: JSON.stringify({}),
     headers: {
       "Content-Type": "application/json",
     },

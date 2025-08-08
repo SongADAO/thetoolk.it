@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       authorization.tokenSet.sub,
     );
 
-    const postId = await agentPost({
+    const result = await agentPost({
       ...(await request.json()),
       agent,
     });
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       serviceId,
     });
 
-    return Response.json({ id: postId });
+    return Response.json(result);
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Upload failed";
     return Response.json({ error: { message: errMessage } }, { status: 500 });
