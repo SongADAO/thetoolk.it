@@ -254,7 +254,7 @@ async function getAccountsFromAgent(
 
     return [
       {
-        id: accessToken,
+        id: profile.data.handle,
         username: profile.data.handle,
       },
     ];
