@@ -62,7 +62,7 @@ class HLSConverter {
       if (durationMatch) {
         const hours = parseInt(durationMatch[1], 10);
         const minutes = parseInt(durationMatch[2], 10);
-        const seconds = parseFloat(durationMatch[3], 10);
+        const seconds = parseFloat(durationMatch[3]);
         this.videoDuration = hours * 3600 + minutes * 60 + seconds;
         console.log(`Video duration detected: ${this.videoDuration}s`);
       }
