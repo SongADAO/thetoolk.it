@@ -73,16 +73,17 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async del(key: string): Promise<void> {
-    const { error } = await this.supabase
-      .from("services")
-      .delete()
-      // .eq("key", key)
-      .eq("service_id", "bluesky")
-      .eq("user_id", this.user.id);
+    // const { error } = await this.supabase
+    //   .from("services")
+    //   .delete()
+    //   // .eq("key", key)
+    //   .eq("service_id", "bluesky")
+    //   .eq("user_id", this.user.id);
 
-    if (error) {
-      throw new Error(`Failed to delete OAuth session: ${error.message}`);
-    }
+    // if (error) {
+    //   throw new Error(`Failed to delete OAuth session: ${error.message}`);
+    // }
+    throw new Error(`Bluesky tried to delete a session`);
   }
 }
 

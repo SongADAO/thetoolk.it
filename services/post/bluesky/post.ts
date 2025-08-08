@@ -13,15 +13,30 @@ const VIDEO_MIN_DURATION = 3;
 // 3 minutes
 const VIDEO_MAX_DURATION = 180;
 
-interface AgentPost {
+interface AgentPostVideo {
   agent: Agent;
-  body: Record<string, unknown>;
+  blobRef: BlobRef;
+  text: string;
+  title: string;
 }
-async function agentPost({ agent, body }: Readonly<AgentPost>): Promise<{
+async function agentPostVideo({
+  agent,
+  blobRef,
+  text,
+  title,
+}: Readonly<AgentPostVideo>): Promise<{
   uri: string;
   cid: string;
 }> {
-  return await agent.post(body);
+  return await agent.post({
+    createdAt: new Date().toISOString(),
+    embed: {
+      $type: "app.bsky.embed.video",
+      alt: title,
+      video: blobRef,
+    },
+    text,
+  });
 }
 
 interface AgentUploadBlob {
@@ -151,17 +166,11 @@ async function createRecord({
 
     const agent = await createAgent(credentials, accessToken);
 
-    const result = await agentPost({
+    const result = await agentPostVideo({
       agent,
-      body: {
-        createdAt: new Date().toISOString(),
-        embed: {
-          $type: "app.bsky.embed.video",
-          alt: title,
-          video: blobRef,
-        },
-        text,
-      },
+      blobRef,
+      text,
+      title,
     });
 
     console.log("Post created successfully:", result);
@@ -286,7 +295,7 @@ async function createPost({
 }
 
 export {
-  agentPost,
+  agentPostVideo,
   agentUploadBlob,
   createPost,
   VIDEO_MAX_DURATION,

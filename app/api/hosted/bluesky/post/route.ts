@@ -6,7 +6,7 @@ import {
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
 import { createAgent } from "@/services/post/bluesky/oauth-client-node";
-import { agentPost } from "@/services/post/bluesky/post";
+import { agentPostVideo } from "@/services/post/bluesky/post";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       authorization.tokenSet.sub,
     );
 
-    const result = await agentPost({
+    const result = await agentPostVideo({
       ...(await request.json()),
       agent,
     });
