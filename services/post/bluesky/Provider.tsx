@@ -240,17 +240,31 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       return null;
     }
 
-    return await createPost({
-      accessToken: await getValidAccessToken(),
-      credentials,
-      setIsPosting,
-      setPostError,
-      setPostProgress,
-      setPostStatus,
-      text,
-      title,
-      video,
-    });
+    try {
+      const accessToken = await getValidAccessToken();
+
+      return await createPost({
+        accessToken: mode === "hosted" ? "hosted" : accessToken,
+        credentials,
+        setIsPosting,
+        setPostError,
+        setPostProgress,
+        setPostStatus,
+        text,
+        title,
+        video,
+      });
+    } catch (err: unknown) {
+      console.error("Post error:", err);
+      const errMessage =
+        err instanceof Error ? err.message : "unspecified error";
+      setPostError(`Post failed: ${errMessage}`);
+      setPostStatus("Post failed");
+      setPostProgress(0);
+      setIsPosting(false);
+    }
+
+    return null;
   }
 
   const fields: ServiceFormField[] = [

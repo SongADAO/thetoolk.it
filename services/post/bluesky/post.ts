@@ -1,4 +1,5 @@
 import type { Agent } from "@atproto/api";
+import { BlobRef } from "@atproto/lexicon";
 
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
@@ -12,39 +13,85 @@ const VIDEO_MIN_DURATION = 3;
 // 3 minutes
 const VIDEO_MAX_DURATION = 180;
 
-interface BlueskyVideoBlobResponse {
-  ref: {
-    $link: string;
-  };
+interface AgentPost {
+  agent: Agent;
+  body: Record<string, unknown>;
+}
+async function agentPost({ agent, body }: Readonly<AgentPost>): Promise<{
+  uri: string;
+  cid: string;
+}> {
+  return await agent.post(body);
+}
+
+interface AgentUploadBlob {
+  agent: Agent;
+  video: Blob;
+  videoType: string;
+}
+
+async function agentUploadBlob({
+  agent,
+  video,
+  videoType,
+}: Readonly<AgentUploadBlob>) {
+  const videoBytes = new Uint8Array(await video.arrayBuffer());
+
+  return await agent.uploadBlob(videoBytes, {
+    encoding: videoType,
+  });
 }
 
 interface UploadVideoBlobProps {
-  agent: Agent;
-  video: File;
+  accessToken: string;
+  credentials: BlueskyCredentials;
+  video: Blob;
+  videoType: string;
 }
 
 async function uploadVideoBlob({
-  agent,
+  accessToken,
+  credentials,
   video,
-}: Readonly<UploadVideoBlobProps>): Promise<BlueskyVideoBlobResponse> {
+  videoType,
+}: Readonly<UploadVideoBlobProps>): Promise<BlobRef> {
   if (DEBUG_POST) {
     console.log("Test Bluesky: uploadVideoBlob");
     await sleep(6000);
-    return { ref: { $link: "test-blob-ref" } };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+    return { ref: { $link: "test-blob-ref" } } as BlobRef;
   }
 
   try {
-    // Convert file to Uint8Array for the Agent
-    const fileBuffer = await video.arrayBuffer();
-    const fileBytes = new Uint8Array(fileBuffer);
+    if (accessToken === "hosted") {
+      const formData = new FormData();
+      formData.append("video", video);
+      formData.append("videoType", videoType.toString());
 
-    // Use Agent's uploadBlob method - it handles OAuth authentication automatically
-    const response = await agent.uploadBlob(fileBytes, {
-      encoding: video.type,
-    });
+      const response = await fetch(`/api/hosted/bluesky/upload_blob`, {
+        body: formData,
+        method: "POST",
+      });
 
-    console.log("Video blob uploaded successfully:", response);
-    return response.data.blob;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Video upload failed: ${errorData.error_description ?? errorData.error}`,
+        );
+      }
+
+      const result = await response.json();
+      console.log("Video blob uploaded successfully:", result);
+
+      return result.data.blob;
+    }
+
+    const agent = await createAgent(credentials, accessToken);
+
+    const result = await agentUploadBlob({ agent, video, videoType });
+    console.log("Video blob uploaded successfully:", result);
+
+    return result.data.blob;
   } catch (error) {
     console.error("Failed to upload video blob:", error);
     throw new Error(
@@ -54,17 +101,19 @@ async function uploadVideoBlob({
 }
 
 interface CreateRecordProps {
-  agent: Agent;
+  accessToken: string;
+  blobRef: BlobRef;
+  credentials: BlueskyCredentials;
   text: string;
   title: string;
-  videoBlob: BlueskyVideoBlobResponse;
 }
 
 async function createRecord({
-  agent,
+  accessToken,
+  blobRef,
+  credentials,
   text,
   title,
-  videoBlob,
 }: Readonly<CreateRecordProps>): Promise<string> {
   if (DEBUG_POST) {
     console.log("Test Bluesky: createRecord");
@@ -73,23 +122,51 @@ async function createRecord({
   }
 
   try {
-    // Create the post record
-    const postRecord = {
-      createdAt: new Date().toISOString(),
-      embed: {
-        $type: "app.bsky.embed.video",
-        alt: title,
-        video: videoBlob,
+    if (accessToken === "hosted") {
+      const response = await fetch(`/api/hosted/bluesky/post`, {
+        body: JSON.stringify({
+          blobRef,
+          text,
+          title,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Token exchange failed: ${errorData.error_description ?? errorData.error}`,
+        );
+      }
+
+      const result = await response.json();
+
+      console.log("Post created successfully:", result);
+
+      return result.uri;
+    }
+
+    const agent = await createAgent(credentials, accessToken);
+
+    const result = await agentPost({
+      agent,
+      body: {
+        createdAt: new Date().toISOString(),
+        embed: {
+          $type: "app.bsky.embed.video",
+          alt: title,
+          video: blobRef,
+        },
+        text,
       },
-      text,
-    };
+    });
 
-    // Use Agent's post method - it handles authentication and repo automatically
-    const response = await agent.post(postRecord);
+    console.log("Post created successfully:", result);
 
-    console.log("Post created successfully:", response);
-
-    return response.uri;
+    return result.uri;
   } catch (error) {
     console.error("Failed to create post:", error);
     throw new Error(
@@ -130,8 +207,6 @@ async function createPost({
       video = new File(["a"], "test.mp4", { type: "video/mp4" });
     }
 
-    const agent = await createAgent(credentials, accessToken);
-
     setIsPosting(true);
     setPostError("");
     setPostProgress(0);
@@ -151,9 +226,11 @@ async function createPost({
         setPostProgress(progress);
       }, 2000);
 
-      const videoBlob = await uploadVideoBlob({
-        agent,
+      const blobRef = await uploadVideoBlob({
+        accessToken,
+        credentials,
         video,
+        videoType: video.type,
       });
 
       clearInterval(progressInterval);
@@ -163,22 +240,26 @@ async function createPost({
       setPostProgress(90);
 
       postUri = await createRecord({
-        agent,
+        accessToken,
+        blobRef,
+        credentials,
         text,
         title,
-        videoBlob,
       });
     } else {
-      // Text-only post (much simpler with Agent!)
-      setPostStatus("Publishing post...");
-      setPostProgress(50);
+      // TODO: Text only post.
+      throw new Error("Text only posts are not supported yet.");
 
-      const response = await agent.post({
-        createdAt: new Date().toISOString(),
-        text,
-      });
+      // // Text-only post (much simpler with Agent!)
+      // setPostStatus("Publishing post...");
+      // setPostProgress(50);
 
-      postUri = response.uri;
+      // const response = await agent.post({
+      //   createdAt: new Date().toISOString(),
+      //   text,
+      // });
+
+      // postUri = response.uri;
     }
 
     setPostProgress(100);
@@ -205,6 +286,8 @@ async function createPost({
 }
 
 export {
+  agentPost,
+  agentUploadBlob,
   createPost,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,

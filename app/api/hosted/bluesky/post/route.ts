@@ -1,13 +1,16 @@
+import { NextRequest } from "next/server";
+
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import {
   getServiceAuthorization,
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
-import { getOAuthClient } from "@/services/post/bluesky/oauth-client-node";
+import { createAgent } from "@/services/post/bluesky/oauth-client-node";
+import { agentPost } from "@/services/post/bluesky/post";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     const serviceId = "bluesky";
     const serverAuth = await initServerAuth();
@@ -19,9 +22,16 @@ export async function POST() {
       serviceId,
     });
 
-    const client = await getOAuthClient(sessionStore, stateStore);
+    const agent = await createAgent(
+      sessionStore,
+      stateStore,
+      authorization.tokenSet.sub,
+    );
 
-    await client.restore(authorization.tokenSet.sub);
+    const postId = await agentPost({
+      ...(await request.json()),
+      agent,
+    });
 
     // Refresh token is renewed whenever used.
     const now = new Date();
@@ -35,10 +45,9 @@ export async function POST() {
       serviceId,
     });
 
-    return Response.json({ success: true });
+    return Response.json({ id: postId });
   } catch (err: unknown) {
-    console.error(err);
-    const errMessage = err instanceof Error ? err.message : "Auth failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    const errMessage = err instanceof Error ? err.message : "Upload failed";
+    return Response.json({ error: { message: errMessage } }, { status: 500 });
   }
 }
