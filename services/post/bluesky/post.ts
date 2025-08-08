@@ -62,6 +62,7 @@ interface UploadVideoBlobProps {
   credentials: BlueskyCredentials;
   video: Blob;
   videoType: string;
+  videoUrl: string;
 }
 
 async function uploadVideoBlob({
@@ -69,6 +70,7 @@ async function uploadVideoBlob({
   credentials,
   video,
   videoType,
+  videoUrl,
 }: Readonly<UploadVideoBlobProps>): Promise<BlobRef> {
   if (DEBUG_POST) {
     console.log("Test Bluesky: uploadVideoBlob");
@@ -79,12 +81,23 @@ async function uploadVideoBlob({
 
   try {
     if (accessToken === "hosted") {
-      const formData = new FormData();
-      formData.append("video", video);
-      formData.append("videoType", videoType.toString());
+      // const formData = new FormData();
+      // formData.append("video", video);
+      // formData.append("videoType", videoType.toString());
 
-      const response = await fetch(`/api/hosted/bluesky/upload_blob`, {
-        body: formData,
+      // const response = await fetch(`/api/hosted/bluesky/upload_blob`, {
+      //   body: formData,
+      //   method: "POST",
+      // });
+
+      const response = await fetch(`/api/hosted/bluesky/upload_blob_url`, {
+        body: JSON.stringify({
+          videoType,
+          videoUrl,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
         method: "POST",
       });
 
@@ -195,6 +208,7 @@ interface CreatePostProps {
   text: string;
   title: string;
   video: File | null;
+  videoUrl: string;
 }
 
 async function createPost({
@@ -207,6 +221,7 @@ async function createPost({
   text,
   title,
   video,
+  videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 
@@ -240,6 +255,7 @@ async function createPost({
         credentials,
         video,
         videoType: video.type,
+        videoUrl,
       });
 
       clearInterval(progressInterval);

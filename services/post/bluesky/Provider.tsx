@@ -224,6 +224,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     title,
     text,
     video,
+    videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
@@ -242,6 +243,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         text,
         title,
         video,
+        videoUrl,
       });
     } catch (err: unknown) {
       console.error("Post error:", err);
