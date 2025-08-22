@@ -80,7 +80,7 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
 function hasCompleteAuthorization(authorization: OauthExpiration): boolean {
   return (
     authorization.refreshTokenExpiresAt !== "" &&
-    !needsRefreshTokenRenewal(authorization)
+    !needsRefreshTokenRenewal(expiration)
   );
 }
 

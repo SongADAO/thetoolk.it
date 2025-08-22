@@ -123,10 +123,11 @@ export function TwitterProvider({ children }: Readonly<Props>) {
         credentials,
         "self",
       );
-      setAuthorization(newAuthorization);
+      setAuthorization(newAuthorization.authorization);
+      setExpiration(newAuthorization.expiration);
 
       const newAccounts = await getAccounts(
-        newAuthorization.accessToken,
+        newAuthorization.authorization.accessToken,
         "self",
       );
       setAccounts(newAccounts);
@@ -163,18 +164,19 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       authorization,
     );
 
-    setAuthorization(newAuthorization);
+    setAuthorization(newAuthorization.authorization);
+    setExpiration(newAuthorization.expiration);
 
     console.log("Access token refreshed successfully");
 
-    return newAuthorization;
+    return newAuthorization.authorization;
   }
 
   async function renewRefreshTokenIfNeeded() {
     try {
       setError("");
 
-      if (needsRefreshTokenRenewal(authorization)) {
+      if (needsRefreshTokenRenewal(expiration)) {
         console.log(`${label}: Refresh token will expire soon, refreshing...`);
 
         await refreshTokens();

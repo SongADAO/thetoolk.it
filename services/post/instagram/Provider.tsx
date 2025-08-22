@@ -113,9 +113,12 @@ export function InstagramProvider({ children }: Readonly<Props>) {
         credentials,
         "self",
       );
-      setAuthorization(newAuthorization);
+      setAuthorization(newAuthorization.authorization);
+      setExpiration(newAuthorization.expiration);
 
-      const newAccounts = await getAccounts(newAuthorization.accessToken);
+      const newAccounts = await getAccounts(
+        newAuthorization.authorization.accessToken,
+      );
       setAccounts(newAccounts);
 
       setError("");
@@ -147,18 +150,19 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
     const newAuthorization = await refreshAccessToken(authorization);
 
-    setAuthorization(newAuthorization);
+    setAuthorization(newAuthorization.authorization);
+    setExpiration(newAuthorization.expiration);
 
     console.log("Access token refreshed successfully");
 
-    return newAuthorization;
+    return newAuthorization.authorization;
   }
 
   async function renewRefreshTokenIfNeeded() {
     try {
       setError("");
 
-      if (needsRefreshTokenRenewal(authorization)) {
+      if (needsRefreshTokenRenewal(expiration)) {
         console.log(`${label}: Refresh token will expire soon, refreshing...`);
 
         await refreshTokens();

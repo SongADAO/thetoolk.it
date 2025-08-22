@@ -245,10 +245,12 @@ export function NeynarProvider({ children }: Readonly<Props>) {
               console.log("onAuthSuccess");
               setAuthorization({
                 accessToken: user.signer_uuid,
+                refreshToken: user.signer_uuid,
+              });
+              setExpiration({
                 accessTokenExpiresAt: new Date(
                   Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
                 ).toISOString(),
-                refreshToken: user.signer_uuid,
                 refreshTokenExpiresAt: new Date(
                   Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
                 ).toISOString(),
@@ -263,6 +265,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
             onSignout: () => () => {
               console.log("onSignout");
               setAuthorization(defaultOauthAuthorization);
+              setExpiration(defaultOauthExpiration);
               setAccounts([]);
             },
           },

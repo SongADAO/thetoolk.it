@@ -69,7 +69,7 @@ function hasCompleteCredentials(credentials: BlueskyCredentials): boolean {
 function hasCompleteAuthorization(authorization: OauthExpiration): boolean {
   return (
     authorization.refreshTokenExpiresAt !== "" &&
-    !needsRefreshTokenRenewal(authorization)
+    !needsRefreshTokenRenewal(expiration)
   );
 }
 
