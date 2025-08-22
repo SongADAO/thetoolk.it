@@ -1,7 +1,7 @@
 import { objectIdHash } from "@/lib/hash";
 import type {
-  OauthAuthorization,
   OauthCredentials,
+  OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
 
@@ -20,14 +20,11 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
   return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
 
-function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
-  return (
-    authorization.refreshToken !== "" &&
-    authorization.refreshTokenExpiresAt !== ""
-  );
+function hasCompleteAuthorization(authorization: OauthExpiration): boolean {
+  return authorization.refreshTokenExpiresAt !== "";
 }
 
-function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
+function getAuthorizationExpiresAt(authorization: OauthExpiration): string {
   return authorization.refreshTokenExpiresAt;
 }
 

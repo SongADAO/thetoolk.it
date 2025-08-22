@@ -15,8 +15,11 @@ interface PostProps {
 
 interface OauthAuthorization {
   accessToken: string;
-  accessTokenExpiresAt: string;
   refreshToken: string;
+}
+
+interface OauthExpiration {
+  accessTokenExpiresAt: string;
   refreshTokenExpiresAt: string;
 }
 
@@ -32,8 +35,11 @@ interface BlueskyCredentials {
 
 const defaultOauthAuthorization: OauthAuthorization = {
   accessToken: "",
-  accessTokenExpiresAt: "",
   refreshToken: "",
+};
+
+const defaultOauthExpiration: OauthExpiration = {
+  accessTokenExpiresAt: "",
   refreshTokenExpiresAt: "",
 };
 
@@ -52,8 +58,10 @@ export {
   defaultBlueskyCredentials,
   defaultOauthAuthorization,
   defaultOauthCredentials,
+  defaultOauthExpiration,
   type OauthAuthorization,
   type OauthCredentials,
+  type OauthExpiration,
   type PostProps,
   type ServiceAccount,
 };

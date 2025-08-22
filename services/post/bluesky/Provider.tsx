@@ -35,7 +35,9 @@ import {
   type BlueskyCredentials,
   defaultBlueskyCredentials,
   defaultOauthAuthorization,
+  defaultOauthExpiration,
   type OauthAuthorization,
+  type OauthExpiration,
   type PostProps,
   type ServiceAccount,
 } from "@/services/post/types";
@@ -75,6 +77,12 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     { initializeWithValue: false },
   );
 
+  const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
+    "thetoolkit-bluesky-expiration",
+    defaultOauthExpiration,
+    { initializeWithValue: false },
+  );
+
   const [accounts, setAccounts] = useUserStorage<ServiceAccount[]>(
     "thetoolkit-bluesky-accounts",
     [],
@@ -87,9 +95,9 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
 
   const isComplete = isAuthenticated || isCompleteOwnCredentials;
 
-  const isAuthorized = hasCompleteAuthorization(authorization);
+  const isAuthorized = hasCompleteAuthorization(expiration);
 
-  const authorizationExpiresAt = getAuthorizationExpiresAt(authorization);
+  const authorizationExpiresAt = getAuthorizationExpiresAt(expiration);
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 
@@ -294,7 +302,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     renewRefreshTokenIfNeeded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authorization.refreshTokenExpiresAt, loading]);
+  }, [expiration.refreshTokenExpiresAt, loading]);
 
   const providerValues = useMemo(
     () => ({

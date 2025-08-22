@@ -7,6 +7,7 @@ import { objectIdHash } from "@/lib/hash";
 import type {
   OauthAuthorization,
   OauthCredentials,
+  OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
 
@@ -41,7 +42,7 @@ const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
 
 // -----------------------------------------------------------------------------
 
-function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
+function needsAccessTokenRenewal(authorization: OauthExpiration): boolean {
   if (!authorization.accessTokenExpiresAt) {
     return false;
   }
@@ -52,7 +53,7 @@ function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
   );
 }
 
-function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
+function needsRefreshTokenRenewal(authorization: OauthExpiration): boolean {
   if (!authorization.refreshTokenExpiresAt) {
     return false;
   }
@@ -73,14 +74,14 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
   return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
 
-function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
+function hasCompleteAuthorization(authorization: OauthExpiration): boolean {
   return (
     authorization.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(authorization)
   );
 }
 
-function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
+function getAuthorizationExpiresAt(authorization: OauthExpiration): string {
   return authorization.refreshTokenExpiresAt;
 }
 
@@ -106,6 +107,13 @@ function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
 }
 
 function formatTokens(tokens: TwitterTokenResponse): OauthAuthorization {
+  return {
+    accessToken: tokens.access_token,
+    refreshToken: tokens.refresh_token,
+  };
+}
+
+function formatExpiration(tokens: TwitterTokenResponse): OauthExpiration {
   const expiresIn = tokens.expires_in * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
 
@@ -114,9 +122,7 @@ function formatTokens(tokens: TwitterTokenResponse): OauthAuthorization {
   const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {
-    accessToken: tokens.access_token,
     accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.refresh_token,
     refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }

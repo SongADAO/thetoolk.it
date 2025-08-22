@@ -10,6 +10,7 @@ import {
 import type {
   BlueskyCredentials,
   OauthAuthorization,
+  OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
 
@@ -32,7 +33,7 @@ const REFRESH_TOKEN_BUFFER_SECONDS = 2 * 24 * 60 * 60;
 
 // -----------------------------------------------------------------------------
 
-function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
+function needsAccessTokenRenewal(authorization: OauthExpiration): boolean {
   if (!authorization.accessTokenExpiresAt) {
     return false;
   }
@@ -43,7 +44,7 @@ function needsAccessTokenRenewal(authorization: OauthAuthorization): boolean {
   );
 }
 
-function needsRefreshTokenRenewal(authorization: OauthAuthorization): boolean {
+function needsRefreshTokenRenewal(authorization: OauthExpiration): boolean {
   if (!authorization.refreshTokenExpiresAt) {
     return false;
   }
@@ -64,14 +65,14 @@ function hasCompleteCredentials(credentials: BlueskyCredentials): boolean {
   return credentials.serviceUrl !== "" && credentials.username !== "";
 }
 
-function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {
+function hasCompleteAuthorization(authorization: OauthExpiration): boolean {
   return (
     authorization.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(authorization)
   );
 }
 
-function getAuthorizationExpiresAt(authorization: OauthAuthorization): string {
+function getAuthorizationExpiresAt(authorization: OauthExpiration): string {
   return authorization.refreshTokenExpiresAt;
 }
 
@@ -92,6 +93,13 @@ function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
 }
 
 function formatTokens(tokens: OAuthSession): OauthAuthorization {
+  return {
+    accessToken: tokens.sub,
+    refreshToken: tokens.sub,
+  };
+}
+
+function formatExpiration(tokens: OAuthSession): OauthExpiration {
   // Tokens have a 2 minutes lifespan (TODO: verify expiration)
   const expiresIn = 2 * 60 * 60 * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
@@ -104,9 +112,7 @@ function formatTokens(tokens: OAuthSession): OauthAuthorization {
   // It is just the session DID.
 
   return {
-    accessToken: tokens.sub,
     accessTokenExpiresAt: expiryTime.toISOString(),
-    refreshToken: tokens.sub,
     refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
   };
 }
