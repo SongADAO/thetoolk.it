@@ -20,7 +20,7 @@ class SupabaseStateStore implements NodeSavedStateStore {
   }
 
   public async set(key: string, internalState: NodeSavedState): Promise<void> {
-    const { error } = await this.supabase.from("atproto_oauth_states").upsert(
+    const { error } = await this.supabase.from("service_oauth_states").upsert(
       {
         // 10 minutes
         expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
@@ -41,7 +41,7 @@ class SupabaseStateStore implements NodeSavedStateStore {
 
   public async get(key: string): Promise<NodeSavedState | undefined> {
     const { data, error } = await this.supabase
-      .from("atproto_oauth_states")
+      .from("service_oauth_states")
       .select("value, expires_at")
       .eq("key", key)
       .eq("user_id", this.user.id)
@@ -66,7 +66,7 @@ class SupabaseStateStore implements NodeSavedStateStore {
 
   public async del(key: string): Promise<void> {
     const { error } = await this.supabase
-      .from("atproto_oauth_states")
+      .from("service_oauth_states")
       .delete()
       .eq("key", key)
       .eq("user_id", this.user.id);

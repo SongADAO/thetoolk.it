@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${getBaseUrl()}/api/hosted/twitter/oauth/callback`;
 
     const { data: stateData, error: stateError } = await serverAuth.supabase
-      .from("atproto_oauth_states")
+      .from("service_oauth_states")
       .select("value, expires_at")
       .eq("user_id", serverAuth.user.id)
       .eq("key", "twitter_code_verifier")
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     // Delete the retrieved code verifier
     await serverAuth.supabase
-      .from("atproto_oauth_states")
+      .from("service_oauth_states")
       .delete()
       .eq("user_id", serverAuth.user.id)
       .eq("key", "twitter_code_verifier");

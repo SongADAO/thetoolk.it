@@ -13,30 +13,45 @@ interface GetServiceAuthorization {
   user: User;
 }
 
-async function getServiceAuthorization({
+async function getServiceAuthorizationAndExpiration({
   serviceId,
   supabase,
   user,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: GetServiceAuthorization): Promise<ServiceAuthorization> {
-  const { data, error } = await supabase
-    .from("services")
-    .select("service_authorization, service_expiration")
+  const { data: dataAuthorization, error: errorAuthorization } = await supabase
+    .from("authorizations")
+    .select("service_authorization")
     .eq("user_id", user.id)
     .eq("service_id", serviceId)
     .single();
 
-  if (error) {
+  if (errorAuthorization) {
     throw new Error("Error fetching service authorization");
   }
 
-  if (!data.service_authorization) {
+  if (!dataAuthorization.service_authorization) {
+    throw new Error("Could not find service authorization");
+  }
+
+  const { data: dataExpiration, error: errorExpiration } = await supabase
+    .from("services")
+    .select("service_expiration")
+    .eq("user_id", user.id)
+    .eq("service_id", serviceId)
+    .single();
+
+  if (errorExpiration) {
+    throw new Error("Error fetching service authorization");
+  }
+
+  if (!dataExpiration.service_expiration) {
     throw new Error("Could not find service authorization");
   }
 
   return {
-    authorization: data.service_authorization,
-    expiration: data.service_expiration,
+    authorization: dataAuthorization.service_authorization,
+    expiration: dataExpiration.service_expiration,
   };
 }
 
@@ -57,9 +72,25 @@ async function updateServiceAuthorization({
   supabase,
   user,
 }: UpdateServiceAuthorization): Promise<void> {
-  const { error } = await supabase.from("services").upsert(
+  const { error: errorAuthorizations } = await supabase
+    .from("authorizations")
+    .upsert(
+      {
+        service_authorization: serviceAuthorization,
+        service_id: serviceId,
+        user_id: user.id,
+      },
+      {
+        onConflict: "user_id,service_id",
+      },
+    );
+
+  if (errorAuthorizations) {
+    throw new Error("Could not update service authorization");
+  }
+
+  const { error: errorServices } = await supabase.from("services").upsert(
     {
-      service_authorization: serviceAuthorization,
       service_expiration: serviceExpiration,
       service_id: serviceId,
       user_id: user.id,
@@ -69,7 +100,7 @@ async function updateServiceAuthorization({
     },
   );
 
-  if (error) {
+  if (errorServices) {
     throw new Error("Could not update service authorization");
   }
 }
@@ -156,7 +187,7 @@ async function updateCodeVerifier({
   user,
 }: UpdateCodeVerifier): Promise<void> {
   // Store code verifier for later use
-  const { error } = await supabase.from("atproto_oauth_states").upsert(
+  const { error } = await supabase.from("service_oauth_states").upsert(
     {
       // Expires in 10 minutes
       expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
@@ -176,7 +207,7 @@ async function updateCodeVerifier({
 }
 
 export {
-  getServiceAuthorization,
+  getServiceAuthorizationAndExpiration,
   updateCodeVerifier,
   updateServiceAccounts,
   updateServiceAuthorization,

@@ -1,46 +1,17 @@
--- Create the function to update updated_at column
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Helper function to add updated_at trigger to any table
-CREATE OR REPLACE FUNCTION add_updated_at_trigger(table_name TEXT)
-RETURNS VOID AS $$
-BEGIN
-  EXECUTE format('
-    CREATE TRIGGER update_%I_updated_at
-      BEFORE UPDATE ON %I
-      FOR EACH ROW
-      EXECUTE FUNCTION update_updated_at_column();
-  ', table_name, table_name);
-END;
-$$ language 'plpgsql';
-
 -- Create services table with updated_at column
 CREATE TABLE services (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id),
   service_id VARCHAR NOT NULL,
   service_enabled BOOLEAN,
-  service_authorization JSON,
   service_credentials JSON,
   service_accounts JSON,
-  service_state JSON,
-  service_session JSON,
-  service_state_expires_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
 ALTER TABLE services
 ADD CONSTRAINT unique_user_service UNIQUE (user_id, service_id);
-
--- Add updated_at triggers to both tables using our helper function
-SELECT add_updated_at_trigger('services');
 
 -- Enable RLS on both tables
 ALTER TABLE services ENABLE ROW LEVEL SECURITY;
@@ -57,3 +28,33 @@ CREATE POLICY "Users can update own services" ON services
 
 CREATE POLICY "Users can delete own services" ON services
   FOR DELETE USING (auth.uid() = user_id);
+
+
+-- Create services table with updated_at column
+CREATE TABLE service_authorizations (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  service_id VARCHAR NOT NULL,
+  service_authorization JSON,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+ALTER TABLE authorizations
+ADD CONSTRAINT unique_user_service UNIQUE (user_id, service_id);
+
+ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+
+
+-- OAuth states table (for temporary auth flow state)
+CREATE TABLE service_oauth_states (
+  key TEXT PRIMARY KEY,
+  value JSON NOT NULL,
+  user_id UUID REFERENCES auth.users(id),
+  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_service_oauth_states_user ON service_oauth_states(user_id);
+
+ALTER TABLE service_oauth_states ENABLE ROW LEVEL SECURITY;

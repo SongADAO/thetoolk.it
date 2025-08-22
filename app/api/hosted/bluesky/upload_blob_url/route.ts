@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import {
-  getServiceAuthorization,
+  getServiceAuthorizationAndExpiration,
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
 import { createAgent } from "@/services/post/bluesky/oauth-client-node";
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       videoType,
     };
 
-    const authorization = await getServiceAuthorization({
+    const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
       serviceId,
     });

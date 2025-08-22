@@ -1,6 +1,6 @@
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import {
-  getServiceAuthorization,
+  getServiceAuthorizationAndExpiration,
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
 import { getOAuthClient } from "@/services/post/bluesky/oauth-client-node";
@@ -14,7 +14,7 @@ export async function POST() {
     const stateStore = new SupabaseStateStore({ ...serverAuth });
     const sessionStore = new SupabaseSessionStore({ ...serverAuth });
 
-    const authorization = await getServiceAuthorization({
+    const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
       serviceId,
     });

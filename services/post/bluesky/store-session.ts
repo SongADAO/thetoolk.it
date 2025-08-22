@@ -4,6 +4,8 @@ import type {
 } from "@atproto/oauth-client-node";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
+import { updateServiceAuthorization } from "@/lib/supabase/service";
+
 interface SupabaseSessionStoreProps {
   supabase: SupabaseClient;
   user: User;
@@ -21,26 +23,24 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
   public async set(key: string, session: NodeSavedSession): Promise<void> {
     const now = new Date();
+    const accessTokenExpiresAt = new Date(
+      now.getTime() + 7 * 24 * 60 * 60 * 1000,
+    );
     const refreshTokenExpiresAt = new Date(
       now.getTime() + 7 * 24 * 60 * 60 * 1000,
     );
 
-    const savedSession = { ...session, key, refreshTokenExpiresAt };
+    const serviceAuthorization = { ...session, key };
 
-    const { error } = await this.supabase.from("services").upsert(
-      {
-        service_authorization: savedSession,
-        service_id: "bluesky",
-        user_id: this.user.id,
-      },
-      {
-        onConflict: "user_id,service_id",
-      },
-    );
+    const serviceExpiration = { accessTokenExpiresAt, refreshTokenExpiresAt };
 
-    if (error) {
-      throw new Error(`Failed to store OAuth session: ${error.message}`);
-    }
+    await updateServiceAuthorization({
+      serviceAuthorization,
+      serviceExpiration,
+      serviceId: "bluesky",
+      supabase: this.supabase,
+      user: this.user,
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

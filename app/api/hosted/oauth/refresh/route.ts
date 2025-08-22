@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import {
-  getServiceAuthorization,
+  getServiceAuthorizationAndExpiration,
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
 import { refreshAccessToken } from "@/services/post/hosted";
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     const serverAuth = await initServerAuth();
 
-    const authorization = await getServiceAuthorization({
+    const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
       serviceId,
     });

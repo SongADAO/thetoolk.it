@@ -1,12 +1,12 @@
 import { NextRequest } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/hosted-api";
-import { getServiceAuthorization } from "@/lib/supabase/service";
+import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { finalizeUploadVideo } from "@/services/post/twitter/post";
 
 export async function POST(request: NextRequest) {
   try {
-    const authorization = await getServiceAuthorization({
+    const authorization = await getServiceAuthorizationAndExpiration({
       ...(await initServerAuth()),
       serviceId: "twitter",
     });

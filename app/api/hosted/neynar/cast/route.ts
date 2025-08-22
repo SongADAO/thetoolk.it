@@ -1,13 +1,13 @@
 import { NextRequest } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/hosted-api";
-import { getServiceAuthorization } from "@/lib/supabase/service";
+import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { HOSTED_CREDENTIALS } from "@/services/post/neynar/auth";
 import { createCast } from "@/services/post/neynar/post";
 
 export async function POST(request: NextRequest) {
   try {
-    const authorization = await getServiceAuthorization({
+    const authorization = await getServiceAuthorizationAndExpiration({
       ...(await initServerAuth()),
       serviceId: "neynar",
     });
