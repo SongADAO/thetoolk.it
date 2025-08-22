@@ -40,10 +40,10 @@ CREATE TABLE service_authorizations (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
-ALTER TABLE authorizations
-ADD CONSTRAINT unique_user_service UNIQUE (user_id, service_id);
+ALTER TABLE service_authorizations
+ADD CONSTRAINT unique_service_authorization UNIQUE (user_id, service_id);
 
-ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE service_authorizations ENABLE ROW LEVEL SECURITY;
 
 
 -- OAuth states table (for temporary auth flow state)

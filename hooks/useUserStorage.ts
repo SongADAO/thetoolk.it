@@ -38,8 +38,13 @@ export function useUserStorage<T>(
     if (!user?.id) return null;
 
     try {
+      const table =
+        serviceField === "service_authorization"
+          ? "service_authorizations"
+          : "services";
+
       const { data, error } = await supabase
-        .from("services")
+        .from(table)
         .select(serviceField)
         .eq("user_id", user.id)
         .eq("service_id", serviceId)
@@ -75,7 +80,13 @@ export function useUserStorage<T>(
           service_id: serviceId,
           user_id: user.id,
         });
-        const { error } = await supabase.from("services").upsert(
+
+        const table =
+          serviceField === "service_authorization"
+            ? "service_authorizations"
+            : "services";
+
+        const { error } = await supabase.from(table).upsert(
           {
             [serviceField]: newValue,
             service_id: serviceId,

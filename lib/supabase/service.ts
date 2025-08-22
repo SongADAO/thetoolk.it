@@ -10,21 +10,24 @@ interface ServiceAuthorization {
 interface GetServiceAuthorization {
   serviceId: string;
   supabase: SupabaseClient;
+  supabaseAdmin: SupabaseClient;
   user: User;
 }
 
 async function getServiceAuthorizationAndExpiration({
   serviceId,
   supabase,
+  supabaseAdmin,
   user,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: GetServiceAuthorization): Promise<ServiceAuthorization> {
-  const { data: dataAuthorization, error: errorAuthorization } = await supabase
-    .from("authorizations")
-    .select("service_authorization")
-    .eq("user_id", user.id)
-    .eq("service_id", serviceId)
-    .single();
+  const { data: dataAuthorization, error: errorAuthorization } =
+    await supabaseAdmin
+      .from("service_authorizations")
+      .select("service_authorization")
+      .eq("user_id", user.id)
+      .eq("service_id", serviceId)
+      .single();
 
   if (errorAuthorization) {
     throw new Error("Error fetching service authorization");
@@ -62,6 +65,7 @@ interface UpdateServiceAuthorization {
   serviceExpiration: any;
   serviceId: string;
   supabase: SupabaseClient;
+  supabaseAdmin: SupabaseClient;
   user: User;
 }
 
@@ -70,10 +74,11 @@ async function updateServiceAuthorization({
   serviceExpiration,
   serviceId,
   supabase,
+  supabaseAdmin,
   user,
 }: UpdateServiceAuthorization): Promise<void> {
-  const { error: errorAuthorizations } = await supabase
-    .from("authorizations")
+  const { error: errorAuthorizations } = await supabaseAdmin
+    .from("service_authorizations")
     .upsert(
       {
         service_authorization: serviceAuthorization,
@@ -101,7 +106,7 @@ async function updateServiceAuthorization({
   );
 
   if (errorServices) {
-    throw new Error("Could not update service authorization");
+    throw new Error("Could not update service data");
   }
 }
 
@@ -131,7 +136,7 @@ async function updateServiceAccounts({
   );
 
   if (error) {
-    throw new Error("Could not update service authorization");
+    throw new Error("Could not update service accounts");
   }
 }
 
@@ -144,6 +149,7 @@ interface UpdateServiceAuthorizationAndAccounts {
   serviceExpiration: any;
   serviceId: string;
   supabase: SupabaseClient;
+  supabaseAdmin: SupabaseClient;
   user: User;
 }
 
@@ -153,12 +159,29 @@ async function updateServiceAuthorizationAndAccounts({
   serviceExpiration,
   serviceId,
   supabase,
+  supabaseAdmin,
   user,
 }: UpdateServiceAuthorizationAndAccounts): Promise<void> {
-  const { error } = await supabase.from("services").upsert(
+  const { error: errorAuthorization } = await supabaseAdmin
+    .from("service_authorizations")
+    .upsert(
+      {
+        service_authorization: serviceAuthorization,
+        service_id: serviceId,
+        user_id: user.id,
+      },
+      {
+        onConflict: "user_id,service_id",
+      },
+    );
+
+  if (errorAuthorization) {
+    throw new Error("Could not update service authorization");
+  }
+
+  const { error: errorServices } = await supabase.from("services").upsert(
     {
       service_accounts: serviceAccounts,
-      service_authorization: serviceAuthorization,
       service_expiration: serviceExpiration,
       service_id: serviceId,
       user_id: user.id,
@@ -168,26 +191,26 @@ async function updateServiceAuthorizationAndAccounts({
     },
   );
 
-  if (error) {
-    throw new Error("Could not update service authorization");
+  if (errorServices) {
+    throw new Error("Could not update service data");
   }
 }
 
 interface UpdateCodeVerifier {
   codeVerifier: string;
   serviceId: string;
-  supabase: SupabaseClient;
+  supabaseAdmin: SupabaseClient;
   user: User;
 }
 
 async function updateCodeVerifier({
   codeVerifier,
   serviceId,
-  supabase,
+  supabaseAdmin,
   user,
 }: UpdateCodeVerifier): Promise<void> {
   // Store code verifier for later use
-  const { error } = await supabase.from("service_oauth_states").upsert(
+  const { error } = await supabaseAdmin.from("service_oauth_states").upsert(
     {
       // Expires in 10 minutes
       expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
