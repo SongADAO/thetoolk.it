@@ -2,6 +2,7 @@ import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
   ServiceAccount,
@@ -137,7 +138,7 @@ async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
   credentials: OauthCredentials,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   const response = await fetch("https://open.tiktokapis.com/v2/oauth/token/", {
     body: new URLSearchParams({
       client_key: credentials.clientId,
@@ -162,7 +163,10 @@ async function exchangeCodeForTokens(
   const tokens = await response.json();
   console.log(tokens);
 
-  return formatTokens(tokens);
+  return {
+    authorization: formatTokens(tokens),
+    expiration: formatExpiration(tokens),
+  };
 }
 
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
@@ -190,7 +194,7 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
 async function refreshAccessToken(
   credentials: OauthCredentials,
   authorization: OauthAuthorization,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
@@ -218,7 +222,10 @@ async function refreshAccessToken(
   const tokens = await response.json();
   console.log(tokens);
 
-  return formatTokens(tokens);
+  return {
+    authorization: formatTokens(tokens),
+    expiration: formatExpiration(tokens),
+  };
 }
 
 // -----------------------------------------------------------------------------

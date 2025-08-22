@@ -3,6 +3,7 @@ import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
   ServiceAccount,
@@ -112,6 +113,7 @@ function formatTokens(tokens: FacebookTokenResponse): OauthAuthorization {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatExpiration(tokens: FacebookTokenResponse): OauthExpiration {
   // Tokens have a 10 minutes lifespan (TODO: verify expiration)
   const expiresIn = 10 * 60 * 60 * 1000;
@@ -146,7 +148,7 @@ async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
   credentials: OauthCredentials,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   const response = await fetch(
     "https://graph.facebook.com/v23.0/oauth/access_token",
     {
@@ -195,7 +197,10 @@ async function exchangeCodeForTokens(
   const longLivedTokens = await longLivedTokenResponse.json();
   console.log(longLivedTokens);
 
-  return formatTokens(longLivedTokens);
+  return {
+    authorization: formatTokens(longLivedTokens),
+    expiration: formatExpiration(longLivedTokens),
+  };
 }
 
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
@@ -222,7 +227,8 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
 // Refresh tokens are automatically refreshed by Facebook when any API is called.
 async function refreshAccessToken(
   authorization: OauthAuthorization,
-): Promise<OauthAuthorization> {
+  expiration: OauthExpiration,
+): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
@@ -251,10 +257,14 @@ async function refreshAccessToken(
   const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {
-    accessToken: authorization.accessToken,
-    accessTokenExpiresAt: authorization.accessTokenExpiresAt,
-    refreshToken: authorization.refreshToken,
-    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
+    authorization: {
+      accessToken: authorization.accessToken,
+      refreshToken: authorization.refreshToken,
+    },
+    expiration: {
+      accessTokenExpiresAt: expiration.accessTokenExpiresAt,
+      refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
+    },
   };
 }
 

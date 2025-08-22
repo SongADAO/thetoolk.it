@@ -6,6 +6,7 @@ import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
   ServiceAccount,
@@ -200,7 +201,7 @@ async function exchangeCodeForTokens(
   codeVerifier: string,
   credentials: OauthCredentials,
   mode = "hosted",
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   const endpoint =
     mode === "hosted"
       ? "https://api.twitter.com/2/oauth2/token"
@@ -229,7 +230,10 @@ async function exchangeCodeForTokens(
   const tokens = await response.json();
   console.log(tokens);
 
-  return formatTokens(tokens);
+  return {
+    authorization: formatTokens(tokens),
+    expiration: formatExpiration(tokens),
+  };
 }
 
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
@@ -258,7 +262,7 @@ async function refreshAccessToken(
   credentials: OauthCredentials,
   authorization: OauthAuthorization,
   mode = "hosted",
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
@@ -289,7 +293,10 @@ async function refreshAccessToken(
   const tokens = await response.json();
   console.log(tokens);
 
-  return formatTokens(tokens);
+  return {
+    authorization: formatTokens(tokens),
+    expiration: formatExpiration(tokens),
+  };
 }
 
 // -----------------------------------------------------------------------------

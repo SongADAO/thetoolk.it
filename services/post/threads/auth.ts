@@ -2,6 +2,7 @@ import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
   ServiceAccount,
@@ -102,6 +103,7 @@ function formatTokens(tokens: ThreadsTokenResponse): OauthAuthorization {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatExpiration(tokens: ThreadsTokenResponse): OauthExpiration {
   // Tokens have a 10 minutes lifespan (TODO: verify expiration)
   const expiresIn = 10 * 60 * 60 * 1000;
@@ -136,7 +138,7 @@ async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
   credentials: OauthCredentials,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   const response = await fetch("https://graph.threads.net/oauth/access_token", {
     body: new URLSearchParams({
       client_id: credentials.clientId,
@@ -182,7 +184,10 @@ async function exchangeCodeForTokens(
   const longLivedTokens = await longLivedTokenResponse.json();
   console.log(longLivedTokens);
 
-  return formatTokens(longLivedTokens);
+  return {
+    authorization: formatTokens(longLivedTokens),
+    expiration: formatExpiration(longLivedTokens),
+  };
 }
 
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
@@ -209,7 +214,7 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
 // Refresh access token using refresh token
 async function refreshAccessToken(
   authorization: OauthAuthorization,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
@@ -233,7 +238,10 @@ async function refreshAccessToken(
   const tokens = await response.json();
   console.log(tokens);
 
-  return formatTokens(tokens);
+  return {
+    authorization: formatTokens(tokens),
+    expiration: formatExpiration(tokens),
+  };
 }
 
 // -----------------------------------------------------------------------------

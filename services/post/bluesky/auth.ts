@@ -10,6 +10,7 @@ import {
 import type {
   BlueskyCredentials,
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
@@ -99,6 +100,7 @@ function formatTokens(tokens: OAuthSession): OauthAuthorization {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatExpiration(tokens: OAuthSession): OauthExpiration {
   // Tokens have a 2 minutes lifespan (TODO: verify expiration)
   const expiresIn = 2 * 60 * 60 * 1000;
@@ -181,7 +183,7 @@ async function exchangeCodeForTokens(
   iss: string,
   state: string,
   credentials: BlueskyCredentials,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Processing OAuth callback...");
 
@@ -195,7 +197,10 @@ async function exchangeCodeForTokens(
 
     console.log("OAuth session created successfully");
 
-    return formatTokens(session);
+    return {
+      authorization: formatTokens(session),
+      expiration: formatExpiration(session),
+    };
   } catch (err: unknown) {
     console.error("Token exchange error:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";
@@ -223,7 +228,7 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
 async function refreshAccessToken(
   credentials: BlueskyCredentials,
   authorization: OauthAuthorization,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Refreshing access token...");
 
@@ -233,7 +238,10 @@ async function refreshAccessToken(
     const session = await client.restore(authorization.accessToken);
     console.log("Refreshed session:", session);
 
-    return formatTokens(session);
+    return {
+      authorization: formatTokens(session),
+      expiration: formatExpiration(session),
+    };
   } catch (err: unknown) {
     console.error("Token refresh error:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";

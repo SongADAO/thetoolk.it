@@ -2,6 +2,7 @@ import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
   ServiceAccount,
@@ -105,6 +106,7 @@ function formatTokens(tokens: InstagramTokenResponse): OauthAuthorization {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatExpiration(tokens: InstagramTokenResponse): OauthExpiration {
   // Tokens have a 10 minutes lifespan (TODO: verify expiration)
   const expiresIn = 10 * 60 * 60 * 1000;
@@ -140,7 +142,7 @@ async function exchangeCodeForTokens(
   redirectUri: string,
   credentials: OauthCredentials,
   mode = "hosted",
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   const endpoint =
     mode === "hosted"
       ? "https://api.instagram.com/oauth/access_token"
@@ -191,7 +193,10 @@ async function exchangeCodeForTokens(
   const longLivedTokens = await longLivedTokenResponse.json();
   console.log(longLivedTokens);
 
-  return formatTokens(longLivedTokens);
+  return {
+    authorization: formatTokens(longLivedTokens),
+    expiration: formatExpiration(longLivedTokens),
+  };
 }
 
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
@@ -218,7 +223,7 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
 // Refresh access token using refresh token
 async function refreshAccessToken(
   authorization: OauthAuthorization,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
@@ -242,7 +247,10 @@ async function refreshAccessToken(
   const tokens = await response.json();
   console.log(tokens);
 
-  return formatTokens(tokens);
+  return {
+    authorization: formatTokens(tokens),
+    expiration: formatExpiration(tokens),
+  };
 }
 
 // -----------------------------------------------------------------------------

@@ -28,6 +28,11 @@ interface OauthCredentials {
   clientSecret: string;
 }
 
+interface OauthAuthorizationAndExpiration {
+  authorization: OauthAuthorization;
+  expiration: OauthExpiration;
+}
+
 interface BlueskyCredentials {
   serviceUrl: string;
   username: string;
@@ -60,6 +65,7 @@ export {
   defaultOauthCredentials,
   defaultOauthExpiration,
   type OauthAuthorization,
+  type OauthAuthorizationAndExpiration,
   type OauthCredentials,
   type OauthExpiration,
   type PostProps,
