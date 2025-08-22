@@ -71,7 +71,7 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
     return data.service_authorization;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/class-methods-use-this, @typescript-eslint/require-await
   public async del(key: string): Promise<void> {
     // const { error } = await this.supabase
     //   .from("services")
