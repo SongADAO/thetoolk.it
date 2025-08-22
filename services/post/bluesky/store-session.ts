@@ -76,7 +76,7 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
     // if (error) {
     //   throw new Error(`Failed to delete OAuth session: ${error.message}`);
     // }
-    // throw new Error(`Bluesky tried to delete a session`);
+    throw new Error(`Bluesky tried to delete a session`);
   }
 }
 
