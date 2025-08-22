@@ -1,4 +1,4 @@
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 import { AuthContext } from "@/contexts/AuthContext";
@@ -6,13 +6,16 @@ import { createClient } from "@/lib/supabase/client";
 
 /**
  * Custom hook that uses Supabase database when user is authenticated,
- * falls back to localStorage when not authenticated
+ * falls back to localStorage when not authenticated.
+ * Automatically refreshes data when:
+ * - User returns to the page (visibility change)
+ * - User changes (different user logs in)
  */
 export function useUserStorage<T>(
   key: string,
   defaultValue: T,
   options?: { initializeWithValue?: boolean },
-): [T, (value: T | ((prevValue: T) => T)) => void] {
+): [T, (value: T | ((prevValue: T) => T)) => void, () => Promise<void>] {
   const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const supabase = createClient();
@@ -28,6 +31,9 @@ export function useUserStorage<T>(
   const [value, setValue] = useState<T>(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Track the current user ID to detect user changes
+  const previousUserIdRef = useRef<string | null>(null);
 
   const keyParts = key.split("-");
   const serviceId = keyParts[1];
@@ -67,7 +73,7 @@ export function useUserStorage<T>(
       console.error("Error loading from Supabase:", error);
       return null;
     }
-  }, [user?.id, key, supabase]);
+  }, [user?.id, serviceField, serviceId, supabase]);
 
   // Save data to Supabase
   const saveToSupabase = useCallback(
@@ -90,7 +96,6 @@ export function useUserStorage<T>(
           {
             [serviceField]: newValue,
             service_id: serviceId,
-            // updated_at: new Date().toISOString(),
             user_id: user.id,
           },
           {
@@ -109,28 +114,22 @@ export function useUserStorage<T>(
         return false;
       }
     },
-    [user?.id, key, supabase],
+    [user?.id, serviceField, serviceId, supabase],
   );
 
-  // Migrate data from localStorage to Supabase when user logs in
-  // const migrateToSupabase = useCallback(async () => {
-  //   if (!user?.id) return;
+  // Manual refresh function
+  const refreshFromSupabase = useCallback(async (): Promise<void> => {
+    if (!isAuthenticated || !user) return;
 
-  //   try {
-  //     // Check if data already exists in Supabase
-  //     const existingData = await loadFromSupabase();
-
-  //     if (existingData === null) {
-  //       // No data in Supabase, migrate from localStorage
-  //       const success = await saveToSupabase(localValue);
-  //       if (success) {
-  //         console.log(`Migrated ${key} to Supabase`);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during migration:", error);
-  //   }
-  // }, [user?.id, localValue, key, loadFromSupabase, saveToSupabase]);
+    try {
+      const supabaseValue = await loadFromSupabase();
+      if (supabaseValue !== null) {
+        setValue(supabaseValue);
+      }
+    } catch (error) {
+      console.error("Error refreshing from Supabase:", error);
+    }
+  }, [isAuthenticated, user, loadFromSupabase]);
 
   // Initialize data
   useEffect(() => {
@@ -146,13 +145,17 @@ export function useUserStorage<T>(
         if (supabaseValue === null) {
           // No data in Supabase, use localStorage value and migrate
           // setValue(localValue);
-          // await migrateToSupabase();
         } else {
+          // User logged out - use localStorage value
           setValue(supabaseValue);
         }
+
+        // Track the current user ID
+        previousUserIdRef.current = user.id;
       } else {
         // Not authenticated, use localStorage
         setValue(localValue);
+        previousUserIdRef.current = null;
       }
 
       setIsLoading(false);
@@ -168,39 +171,95 @@ export function useUserStorage<T>(
     hasInitialized,
     localValue,
     loadFromSupabase,
-    // migrateToSupabase,
   ]);
 
-  // Handle auth state changes
-  // useEffect(() => {
-  //   if (!hasInitialized || authLoading) return;
+  // Handle user changes (different user logs in)
+  useEffect(() => {
+    if (!hasInitialized || authLoading) return;
 
-  //   const handleAuthChange = async () => {
-  //     if (isAuthenticated && user) {
-  //       // User just logged in - migrate data if needed
-  //       await migrateToSupabase();
+    const currentUserId = user?.id ?? null;
+    const previousUserId = previousUserIdRef.current;
+    console.log("Current user ID:", currentUserId);
+    console.log("Previous user ID:", previousUserId);
+    // Check if user has changed (different user ID)
+    if (currentUserId !== previousUserId) {
+      const handleUserChange = async () => {
+        if (isAuthenticated && user) {
+          // Different user logged in - load their data from Supabase
+          const supabaseValue = await loadFromSupabase();
+          if (supabaseValue === null) {
+            // No data in Supabase, use localStorage value and migrate
+            // setValue(localValue);
+          } else {
+            // User logged out - use localStorage value
+            setValue(supabaseValue);
+          }
+        } else {
+          // User logged out - use localStorage value
+          setValue(localValue);
+        }
 
-  //       // Load fresh data from Supabase
-  //       const supabaseValue = await loadFromSupabase();
-  //       if (supabaseValue !== null) {
-  //         setValue(supabaseValue);
-  //       }
-  //     } else {
-  //       // User logged out - use localStorage value
-  //       setValue(localValue);
-  //     }
-  //   };
+        // Update the tracked user ID
+        previousUserIdRef.current = currentUserId;
+      };
 
-  //   handleAuthChange();
-  // }, [
-  //   isAuthenticated,
-  //   user,
-  //   hasInitialized,
-  //   authLoading,
-  //   localValue,
-  //   loadFromSupabase,
-  //   migrateToSupabase,
-  // ]);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      handleUserChange();
+    }
+  }, [
+    isAuthenticated,
+    user,
+    hasInitialized,
+    authLoading,
+    localValue,
+    loadFromSupabase,
+    defaultValue,
+  ]);
+
+  // Handle page visibility changes (user returns to tab)
+  useEffect(() => {
+    if (!hasInitialized) return;
+
+    const handleVisibilityChange = () => {
+      // Only refresh when page becomes visible and user is authenticated
+      if (!document.hidden && isAuthenticated && user) {
+        // Small delay to ensure any auth state is stable
+        setTimeout(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          refreshFromSupabase();
+        }, 100);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // eslint-disable-next-line @typescript-eslint/consistent-return
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase]);
+
+  // Handle window focus (additional safety for when user returns)
+  useEffect(() => {
+    if (!hasInitialized) return;
+
+    const handleFocus = () => {
+      if (isAuthenticated && user) {
+        // Small delay to avoid excessive calls
+        setTimeout(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          refreshFromSupabase();
+        }, 100);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    // eslint-disable-next-line @typescript-eslint/consistent-return
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase]);
 
   // Update function
   const updateValue = useCallback(
@@ -217,11 +276,6 @@ export function useUserStorage<T>(
       if (isAuthenticated && user) {
         // Save to Supabase
         await saveToSupabase(newValue);
-        // const success = await saveToSupabase(newValue);
-        // if (!success) {
-        //   // If Supabase save fails, at least save to localStorage as backup
-        //   setLocalValue(newValue);
-        // }
       } else {
         // Save to localStorage
         setLocalValue(newValue);
@@ -232,8 +286,8 @@ export function useUserStorage<T>(
 
   // Return the loading state during initialization
   if (isLoading && !hasInitialized) {
-    return [defaultValue, updateValue];
+    return [defaultValue, updateValue, refreshFromSupabase];
   }
 
-  return [value, updateValue];
+  return [value, updateValue, refreshFromSupabase];
 }
