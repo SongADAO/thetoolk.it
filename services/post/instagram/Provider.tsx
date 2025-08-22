@@ -80,7 +80,7 @@ export function InstagramProvider({ children }: Readonly<Props>) {
   );
 
   const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
-    "thetoolkit-bluesky-expiration",
+    "thetoolkit-instagram-expiration",
     defaultOauthExpiration,
     { initializeWithValue: false },
   );

@@ -80,7 +80,7 @@ export function TiktokProvider({ children }: Readonly<Props>) {
   );
 
   const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
-    "thetoolkit-bluesky-expiration",
+    "thetoolkit-tiktok-expiration",
     defaultOauthExpiration,
     { initializeWithValue: false },
   );

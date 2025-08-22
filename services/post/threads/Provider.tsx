@@ -80,7 +80,7 @@ export function ThreadsProvider({ children }: Readonly<Props>) {
   );
 
   const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
-    "thetoolkit-bluesky-expiration",
+    "thetoolkit-threads-expiration",
     defaultOauthExpiration,
     { initializeWithValue: false },
   );

@@ -79,7 +79,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
   );
 
   const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
-    "thetoolkit-bluesky-expiration",
+    "thetoolkit-twitter-expiration",
     defaultOauthExpiration,
     { initializeWithValue: false },
   );

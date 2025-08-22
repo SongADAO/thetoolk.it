@@ -72,7 +72,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
   );
 
   const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
-    "thetoolkit-bluesky-expiration",
+    "thetoolkit-neynar-expiration",
     defaultOauthExpiration,
     { initializeWithValue: false },
   );

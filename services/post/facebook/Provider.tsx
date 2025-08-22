@@ -80,7 +80,7 @@ export function FacebookProvider({ children }: Readonly<Props>) {
   );
 
   const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
-    "thetoolkit-bluesky-expiration",
+    "thetoolkit-facebook-expiration",
     defaultOauthExpiration,
     { initializeWithValue: false },
   );
