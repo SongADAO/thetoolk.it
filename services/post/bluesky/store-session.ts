@@ -58,15 +58,9 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
         // Not found
         return undefined;
       }
+
       throw new Error(`Failed to get OAuth session: ${error.message}`);
     }
-
-    // Check if expired
-    // if (new Date(data.expires_at) < new Date()) {
-    //   await this.del(key);
-    //   return undefined;
-    // }
-    console.log(data.service_authorization);
 
     return data.service_authorization;
   }
@@ -79,11 +73,10 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
     //   // .eq("key", key)
     //   .eq("service_id", "bluesky")
     //   .eq("user_id", this.user.id);
-
     // if (error) {
     //   throw new Error(`Failed to delete OAuth session: ${error.message}`);
     // }
-    throw new Error(`Bluesky tried to delete a session`);
+    // throw new Error(`Bluesky tried to delete a session`);
   }
 }
 
