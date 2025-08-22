@@ -5,6 +5,7 @@ CREATE TABLE services (
   service_id VARCHAR NOT NULL,
   service_enabled BOOLEAN,
   service_credentials JSON,
+  service_expiration JSON,
   service_accounts JSON,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
