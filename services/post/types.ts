@@ -26,7 +26,6 @@ interface OauthCredentials {
 }
 
 interface BlueskyCredentials {
-  appPassword: string;
   serviceUrl: string;
   username: string;
 }
@@ -44,7 +43,6 @@ const defaultOauthCredentials: OauthCredentials = {
 };
 
 const defaultBlueskyCredentials: BlueskyCredentials = {
-  appPassword: "",
   serviceUrl: "",
   username: "",
 };

@@ -61,11 +61,7 @@ function getCredentialsId(credentials: BlueskyCredentials): string {
 }
 
 function hasCompleteCredentials(credentials: BlueskyCredentials): boolean {
-  return (
-    credentials.appPassword !== "" &&
-    credentials.serviceUrl !== "" &&
-    credentials.username !== ""
-  );
+  return credentials.serviceUrl !== "" && credentials.username !== "";
 }
 
 function hasCompleteAuthorization(authorization: OauthAuthorization): boolean {

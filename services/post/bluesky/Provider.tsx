@@ -269,22 +269,15 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       name: "username",
       placeholder: "johndoe.bsky.social",
     },
-    {
-      label: "App Password",
-      name: "appPassword",
-      placeholder: "xxxx-xxxx-xxxx-xxxx",
-    },
   ];
 
   const initial: ServiceFormState = {
-    appPassword: credentials.appPassword,
     serviceUrl: credentials.serviceUrl,
     username: credentials.username,
   };
 
   function saveData(formState: ServiceFormState): ServiceFormState {
     setCredentials({
-      appPassword: formState.appPassword,
       serviceUrl: formState.serviceUrl,
       username: formState.username,
     });
