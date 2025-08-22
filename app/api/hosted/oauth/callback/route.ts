@@ -29,12 +29,13 @@ export async function GET(request: NextRequest) {
       redirectUri,
     );
 
-    const accounts = await getAccounts(serviceId, authorization);
+    const accounts = await getAccounts(serviceId, authorization.authorization);
 
     await updateServiceAuthorizationAndAccounts({
       ...serverAuth,
       serviceAccounts: accounts,
-      serviceAuthorization: authorization,
+      serviceAuthorization: authorization.authorization,
+      serviceExpiration: authorization.expiration,
       serviceId,
     });
 

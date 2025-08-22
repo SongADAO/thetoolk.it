@@ -63,7 +63,8 @@ export async function GET(request: NextRequest) {
     await updateServiceAuthorizationAndAccounts({
       ...serverAuth,
       serviceAccounts: accounts,
-      serviceAuthorization: authorization,
+      serviceAuthorization: authorization.authorization,
+      serviceExpiration: authorization.expiration,
       serviceId,
     });
 
