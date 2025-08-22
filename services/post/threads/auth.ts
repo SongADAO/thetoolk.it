@@ -64,15 +64,15 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
   return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
 
-function hasCompleteAuthorization(authorization: OauthExpiration): boolean {
+function hasCompleteAuthorization(expiration: OauthExpiration): boolean {
   return (
-    authorization.refreshTokenExpiresAt !== "" &&
+    expiration.refreshTokenExpiresAt !== "" &&
     !needsRefreshTokenRenewal(expiration)
   );
 }
 
-function getAuthorizationExpiresAt(authorization: OauthExpiration): string {
-  return authorization.refreshTokenExpiresAt;
+function getAuthorizationExpiresAt(expiration: OauthExpiration): string {
+  return expiration.refreshTokenExpiresAt;
 }
 
 // -----------------------------------------------------------------------------

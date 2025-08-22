@@ -37,7 +37,10 @@ import {
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
   refreshAccessToken as refreshAccessTokenTwitter,
 } from "@/services/post/twitter/auth";
-import type { OauthAuthorization, ServiceAccount } from "@/services/post/types";
+import type {
+  OauthAuthorizationAndExpiration,
+  ServiceAccount,
+} from "@/services/post/types";
 import {
   exchangeCodeForTokens as exchangeCodeForTokensYoutube,
   getAccounts as getAccountsYoutube,
@@ -78,7 +81,7 @@ async function exchangeCodeForTokens(
   serviceId: string,
   searchParams: URLSearchParams,
   redirectUri: string,
-): Promise<OauthAuthorization> {
+): Promise<OauthAuthorizationAndExpiration> {
   if (serviceId === "facebook") {
     console.log("Handling Facebook auth redirect");
     return await exchangeCodeForTokensFacebook(

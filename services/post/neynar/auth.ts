@@ -20,12 +20,12 @@ function hasCompleteCredentials(credentials: OauthCredentials): boolean {
   return credentials.clientId !== "" && credentials.clientSecret !== "";
 }
 
-function hasCompleteAuthorization(authorization: OauthExpiration): boolean {
-  return authorization.refreshTokenExpiresAt !== "";
+function hasCompleteAuthorization(expiration: OauthExpiration): boolean {
+  return expiration.refreshTokenExpiresAt !== "";
 }
 
-function getAuthorizationExpiresAt(authorization: OauthExpiration): string {
-  return authorization.refreshTokenExpiresAt;
+function getAuthorizationExpiresAt(expiration: OauthExpiration): string {
+  return expiration.refreshTokenExpiresAt;
 }
 
 // -----------------------------------------------------------------------------
