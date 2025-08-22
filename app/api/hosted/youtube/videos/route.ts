@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     const uploadUrl = await initiateResumableUpload({
       ...(await request.json()),
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
     });
 
     return new Response(null, {

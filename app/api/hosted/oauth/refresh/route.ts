@@ -18,11 +18,16 @@ export async function POST(request: NextRequest) {
       serviceId,
     });
 
-    const newAuthorization = await refreshAccessToken(serviceId, authorization);
+    const newAuthorization = await refreshAccessToken(
+      serviceId,
+      authorization.authorization,
+      authorization.expiration,
+    );
 
     await updateServiceAuthorization({
       ...serverAuth,
-      serviceAuthorization: newAuthorization,
+      serviceAuthorization: newAuthorization.authorization,
+      serviceExpiration: newAuthorization.expiration,
       serviceId,
     });
 

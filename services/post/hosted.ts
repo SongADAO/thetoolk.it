@@ -38,7 +38,9 @@ import {
   refreshAccessToken as refreshAccessTokenTwitter,
 } from "@/services/post/twitter/auth";
 import type {
+  OauthAuthorization,
   OauthAuthorizationAndExpiration,
+  OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
 import {
@@ -181,10 +183,11 @@ async function getAccounts(
 async function refreshAccessToken(
   serviceId: string,
   authorization: OauthAuthorization,
-): Promise<OauthAuthorization> {
+  expiration: OauthExpiration,
+): Promise<OauthAuthorizationAndExpiration> {
   if (serviceId === "facebook") {
     console.log("Refreshing Facebook tokens");
-    return await refreshAccessTokenFacebook(authorization);
+    return await refreshAccessTokenFacebook(authorization, expiration);
   }
 
   if (serviceId === "instagram") {
@@ -194,7 +197,7 @@ async function refreshAccessToken(
 
   // if (serviceId === "instagramfb") {
   //   console.log("Refreshing InstgramFB tokens");
-  //   return await refreshAccessTokenInstagramfb(authorization);
+  //   return await refreshAccessTokenInstagramfb(authorization, expiration);
   // }
 
   if (serviceId === "threads") {

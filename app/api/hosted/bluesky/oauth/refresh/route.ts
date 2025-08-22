@@ -21,17 +21,19 @@ export async function POST() {
 
     const client = await getOAuthClient(sessionStore, stateStore);
 
-    await client.restore(authorization.tokenSet.sub);
+    await client.restore(authorization.authorization.tokenSet.sub);
 
     // Refresh token is renewed whenever used.
     const now = new Date();
     const refreshTokenExpiresAt = new Date(
       now.getTime() + 7 * 24 * 60 * 60 * 1000,
     );
-    authorization.refreshTokenExpiresAt = refreshTokenExpiresAt.toISOString();
+    authorization.expiration.refreshTokenExpiresAt =
+      refreshTokenExpiresAt.toISOString();
     await updateServiceAuthorization({
       ...serverAuth,
-      serviceAuthorization: authorization,
+      serviceAuthorization: authorization.authorization,
+      serviceExpiration: authorization.expiration,
       serviceId,
     });
 

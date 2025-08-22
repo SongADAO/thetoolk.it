@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     const postId = await publishMedia({
       ...(await request.json()),
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
     });
 
     return Response.json({ id: postId });

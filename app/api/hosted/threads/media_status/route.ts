@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     const status = await checkMediaStatus({
       ...(await request.json()),
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
     });
 
     return Response.json({ status });

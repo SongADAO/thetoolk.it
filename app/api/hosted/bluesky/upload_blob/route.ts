@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const agent = await createAgent(
       sessionStore,
       stateStore,
-      authorization.tokenSet.sub,
+      authorization.authorization.tokenSet.sub,
     );
 
     const result = await agentUploadBlob({
@@ -51,10 +51,12 @@ export async function POST(request: NextRequest) {
     const refreshTokenExpiresAt = new Date(
       now.getTime() + 7 * 24 * 60 * 60 * 1000,
     );
-    authorization.refreshTokenExpiresAt = refreshTokenExpiresAt.toISOString();
+    authorization.expiration.refreshTokenExpiresAt =
+      refreshTokenExpiresAt.toISOString();
     await updateServiceAuthorization({
       ...serverAuth,
-      serviceAuthorization: authorization,
+      serviceAuthorization: authorization.authorization,
+      serviceExpiration: authorization.expiration,
       serviceId,
     });
 

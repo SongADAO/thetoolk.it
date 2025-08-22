@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     const mediaId = await createMediaContainer({
       ...(await request.json()),
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
     });
 
     return Response.json({ id: mediaId });

@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
       HOSTED_CREDENTIALS,
     );
 
-    const accounts = await getAccounts(authorization.accessToken);
+    const accounts = await getAccounts(authorization.authorization.accessToken);
 
     await updateServiceAuthorizationAndAccounts({
       ...serverAuth,

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     const castHash = await createCast({
       ...(await request.json()),
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
       clientSecret: HOSTED_CREDENTIALS.clientSecret,
     });
 

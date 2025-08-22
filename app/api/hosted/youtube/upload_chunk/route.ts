@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     const response = await uploadFileChunk({
       ...data,
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
     });
 
     return new Response(response.body, {

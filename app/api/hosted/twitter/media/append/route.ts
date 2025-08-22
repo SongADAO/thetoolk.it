@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     const response = await appendUploadVideo({
       ...data,
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
       mode: "hosted",
     });
 

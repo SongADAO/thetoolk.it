@@ -1,5 +1,12 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
+interface ServiceAuthorization {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  authorization: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  expiration: any;
+}
+
 interface GetServiceAuthorization {
   serviceId: string;
   supabase: SupabaseClient;
@@ -11,10 +18,10 @@ async function getServiceAuthorization({
   supabase,
   user,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}: GetServiceAuthorization): Promise<any> {
+}: GetServiceAuthorization): Promise<ServiceAuthorization> {
   const { data, error } = await supabase
     .from("services")
-    .select("service_authorization")
+    .select("service_authorization, service_expiration")
     .eq("user_id", user.id)
     .eq("service_id", serviceId)
     .single();
@@ -27,12 +34,17 @@ async function getServiceAuthorization({
     throw new Error("Could not find service authorization");
   }
 
-  return data.service_authorization;
+  return {
+    authorization: data.service_authorization,
+    expiration: data.service_expiration,
+  };
 }
 
 interface UpdateServiceAuthorization {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceAuthorization: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  serviceExpiration: any;
   serviceId: string;
   supabase: SupabaseClient;
   user: User;
@@ -40,6 +52,7 @@ interface UpdateServiceAuthorization {
 
 async function updateServiceAuthorization({
   serviceAuthorization,
+  serviceExpiration,
   serviceId,
   supabase,
   user,
@@ -47,6 +60,7 @@ async function updateServiceAuthorization({
   const { error } = await supabase.from("services").upsert(
     {
       service_authorization: serviceAuthorization,
+      service_expiration: serviceExpiration,
       service_id: serviceId,
       user_id: user.id,
     },
@@ -95,6 +109,8 @@ interface UpdateServiceAuthorizationAndAccounts {
   serviceAccounts: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceAuthorization: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  serviceExpiration: any;
   serviceId: string;
   supabase: SupabaseClient;
   user: User;
@@ -103,6 +119,7 @@ interface UpdateServiceAuthorizationAndAccounts {
 async function updateServiceAuthorizationAndAccounts({
   serviceAccounts,
   serviceAuthorization,
+  serviceExpiration,
   serviceId,
   supabase,
   user,
@@ -111,6 +128,7 @@ async function updateServiceAuthorizationAndAccounts({
     {
       service_accounts: serviceAccounts,
       service_authorization: serviceAuthorization,
+      service_expiration: serviceExpiration,
       service_id: serviceId,
       user_id: user.id,
     },

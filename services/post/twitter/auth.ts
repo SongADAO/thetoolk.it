@@ -43,24 +43,24 @@ const REFRESH_TOKEN_BUFFER_SECONDS = 30 * 24 * 60 * 60;
 
 // -----------------------------------------------------------------------------
 
-function needsAccessTokenRenewal(authorization: OauthExpiration): boolean {
-  if (!authorization.accessTokenExpiresAt) {
+function needsAccessTokenRenewal(expiration: OauthExpiration): boolean {
+  if (!expiration.accessTokenExpiresAt) {
     return false;
   }
 
   return hasExpired(
-    authorization.accessTokenExpiresAt,
+    expiration.accessTokenExpiresAt,
     ACCESS_TOKEN_BUFFER_SECONDS,
   );
 }
 
-function needsRefreshTokenRenewal(authorization: OauthExpiration): boolean {
-  if (!authorization.refreshTokenExpiresAt) {
+function needsRefreshTokenRenewal(expiration: OauthExpiration): boolean {
+  if (!expiration.refreshTokenExpiresAt) {
     return false;
   }
 
   return hasExpired(
-    authorization.refreshTokenExpiresAt,
+    expiration.refreshTokenExpiresAt,
     REFRESH_TOKEN_BUFFER_SECONDS,
   );
 }

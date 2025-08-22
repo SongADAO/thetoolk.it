@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     const finalizeData = await finalizeUploadVideo({
       ...(await request.json()),
-      accessToken: authorization.accessToken,
+      accessToken: authorization.authorization.accessToken,
       mode: "hosted",
     });
 
