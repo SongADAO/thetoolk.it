@@ -385,24 +385,6 @@ export function PostProvider({ children }: Readonly<Props>) {
       setVideoTrimStatus("Trimming videos for platform constraints...");
       setVideoTrimProgress(0);
 
-      if (DEBUG_MEDIA) {
-        console.log("DEBUG MODE: Skipping video trimming.");
-        await sleep(1);
-        setVideoTrimProgress(100);
-        // await sleep(1000);
-        // setVideoTrimProgress(20);
-        // await sleep(1000);
-        // setVideoTrimProgress(40);
-        // await sleep(1000);
-        // setVideoTrimProgress(60);
-        // await sleep(1000);
-        // setVideoTrimProgress(80);
-        // await sleep(1000);
-        // setVideoTrimProgress(100);
-
-        return videos;
-      }
-
       if (videos.full.video === null) {
         throw new Error("Base video is missing.");
       }
