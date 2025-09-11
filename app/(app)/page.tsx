@@ -20,9 +20,11 @@ export default function Home() {
       <div className="px-2 pt-2 lg:hidden">
         <div className="flex items-end justify-end rounded bg-gray-200 px-4 py-2">
           <div className="flex gap-4">
-            <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
-              <StorageSettings />
-            </ServiceSettingsMenu>
+            {isAuthenticated ? null : (
+              <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
+                <StorageSettings />
+              </ServiceSettingsMenu>
+            )}
             <ServiceSettingsMenu icon={<FaUsersGear />} label="Post Settings">
               <PostSettings />
             </ServiceSettingsMenu>
