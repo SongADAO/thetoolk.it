@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, use, useMemo, useState } from "react";
 import { FaAws } from "react-icons/fa6";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -8,6 +8,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
+import { AuthContext } from "@/contexts/AuthContext";
 import type { HLSFiles } from "@/lib/hls-converter";
 import {
   getCredentialsId,
@@ -31,6 +32,8 @@ interface Props {
 }
 
 export function AmazonS3Provider({ children }: Readonly<Props>) {
+  const { isAuthenticated } = use(AuthContext);
+
   const label = "AmazonS3";
 
   const brandColor = "amazons3";
@@ -54,13 +57,17 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const credentialsId = getCredentialsId(credentials);
 
-  const isComplete = hasCompleteCredentials(credentials);
+  const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
+
+  const isComplete = isAuthenticated || isCompleteOwnCredentials;
 
   const hasAuthorizationStep = false;
 
   const isAuthorized = isComplete;
 
   const isUsable = isEnabled && isComplete && isAuthorized;
+
+  const mode = isAuthenticated ? "hosted" : "self";
 
   const authorizationExpiresAt = "0";
 
