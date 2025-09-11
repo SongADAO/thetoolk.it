@@ -462,14 +462,16 @@ export function PostProvider({ children }: Readonly<Props>) {
       if (neynarIsEnabled) {
         setVideoTrimStatus("Trimming farcaster video if needed...");
         videos.neynar = {
-          // video: await trimVideo({
-          //   label: "neynar",
-          //   maxDuration: NEYNAR_VIDEO_MAX_DURATION,
-          //   maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
-          //   minDuration: NEYNAR_VIDEO_MIN_DURATION,
-          //   onProgress: setVideoTrimProgress,
-          //   video: videos.full.video,
-          // }),
+          // video: DEBUG_MEDIA
+          //   ? videos.full.video
+          //   : await trimVideo({
+          //       label: "neynar",
+          //       maxDuration: NEYNAR_VIDEO_MAX_DURATION,
+          //       maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
+          //       minDuration: NEYNAR_VIDEO_MIN_DURATION,
+          //       onProgress: setVideoTrimProgress,
+          //       video: videos.full.video,
+          //     }),
           video: null,
           videoHSLUrl: "",
           videoUrl: "",
