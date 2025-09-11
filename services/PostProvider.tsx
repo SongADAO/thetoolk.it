@@ -260,16 +260,18 @@ export function PostProvider({ children }: Readonly<Props>) {
 
       if (DEBUG_MEDIA) {
         console.log("DEBUG MODE: Skipping video conversion.");
-        await sleep(1000);
-        setVideoConversionProgress(20);
-        await sleep(1000);
-        setVideoConversionProgress(40);
-        await sleep(1000);
-        setVideoConversionProgress(60);
-        await sleep(1000);
-        setVideoConversionProgress(80);
-        await sleep(1000);
+        await sleep(1);
         setVideoConversionProgress(100);
+        // await sleep(1000);
+        // setVideoConversionProgress(20);
+        // await sleep(1000);
+        // setVideoConversionProgress(40);
+        // await sleep(1000);
+        // setVideoConversionProgress(60);
+        // await sleep(1000);
+        // setVideoConversionProgress(80);
+        // await sleep(1000);
+        // setVideoConversionProgress(100);
 
         return video;
       }
@@ -332,16 +334,18 @@ export function PostProvider({ children }: Readonly<Props>) {
 
       if (DEBUG_MEDIA) {
         console.log("DEBUG MODE: Skipping HLS conversion.");
-        await sleep(1000);
-        setHLSConversionProgress(20);
-        await sleep(1000);
-        setHLSConversionProgress(40);
-        await sleep(1000);
-        setHLSConversionProgress(60);
-        await sleep(1000);
-        setHLSConversionProgress(80);
-        await sleep(1000);
+        await sleep(1);
         setHLSConversionProgress(100);
+        // await sleep(1000);
+        // setHLSConversionProgress(20);
+        // await sleep(1000);
+        // setHLSConversionProgress(40);
+        // await sleep(1000);
+        // setHLSConversionProgress(60);
+        // await sleep(1000);
+        // setHLSConversionProgress(80);
+        // await sleep(1000);
+        // setHLSConversionProgress(100);
 
         return {
           masterManifest: video,
@@ -383,16 +387,18 @@ export function PostProvider({ children }: Readonly<Props>) {
 
       if (DEBUG_MEDIA) {
         console.log("DEBUG MODE: Skipping video trimming.");
-        await sleep(1000);
-        setVideoTrimProgress(20);
-        await sleep(1000);
-        setVideoTrimProgress(40);
-        await sleep(1000);
-        setVideoTrimProgress(60);
-        await sleep(1000);
-        setVideoTrimProgress(80);
-        await sleep(1000);
+        await sleep(1);
         setVideoTrimProgress(100);
+        // await sleep(1000);
+        // setVideoTrimProgress(20);
+        // await sleep(1000);
+        // setVideoTrimProgress(40);
+        // await sleep(1000);
+        // setVideoTrimProgress(60);
+        // await sleep(1000);
+        // setVideoTrimProgress(80);
+        // await sleep(1000);
+        // setVideoTrimProgress(100);
 
         return videos;
       }
