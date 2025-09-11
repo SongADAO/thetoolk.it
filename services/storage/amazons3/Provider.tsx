@@ -65,7 +65,9 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const isAuthorized = isComplete;
 
-  const isUsable = isEnabled && isComplete && isAuthorized;
+  const isHostedOrEnabled = !isAuthenticated && isEnabled;
+
+  const isUsable = isHostedOrEnabled && isComplete && isAuthorized;
 
   const mode = isAuthenticated ? "hosted" : "self";
 
@@ -131,7 +133,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   }
 
   async function storeFile(file: File, serviceLabel: string): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 
@@ -150,7 +152,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     data: object,
     serviceLabel: string,
   ): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 
@@ -166,7 +168,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   }
 
   async function storeVideo(file: File, serviceLabel: string): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 
@@ -186,7 +188,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     folderName: string,
     serviceLabel: string,
   ): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 
