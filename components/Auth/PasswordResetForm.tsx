@@ -37,7 +37,7 @@ export default function PasswordResetForm() {
           Email
         </label>
         <input
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -47,7 +47,7 @@ export default function PasswordResetForm() {
       </div>
 
       <button
-        className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
         disabled={loading}
         type="submit"
       >

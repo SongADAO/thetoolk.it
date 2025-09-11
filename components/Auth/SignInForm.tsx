@@ -25,14 +25,14 @@ export default function SignInForm() {
       setError(signInError.message);
     } else {
       // Redirect after successful login
-      router.push("/dashboard");
+      router.push("/");
     }
 
     setLoading(false);
   };
 
   return (
-    <form className="mx-auto max-w-md space-y-4" onSubmit={handleSubmit}>
+    <form className="mx-auto w-full max-w-md space-y-4" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-bold">Sign In</h2>
 
       <div>
@@ -40,7 +40,7 @@ export default function SignInForm() {
           Email
         </label>
         <input
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -54,7 +54,7 @@ export default function SignInForm() {
           Password
         </label>
         <input
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           id="password"
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -64,7 +64,7 @@ export default function SignInForm() {
       </div>
 
       <button
-        className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
         disabled={loading}
         type="submit"
       >

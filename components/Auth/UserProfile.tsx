@@ -39,7 +39,7 @@ export default function UserProfile() {
         </p>
       </div>
       <button
-        className="mt-4 rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+        className="mt-4 cursor-pointer rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
         onClick={handleSignOut}
         type="button"
       >

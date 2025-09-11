@@ -9,16 +9,34 @@ function AppHeaderUser() {
   const { user, signOut } = use(AuthContext);
 
   if (!user) {
-    return <Link href="/auth/signin">Sign in</Link>;
+    return (
+      <div className="flex flex-row items-end gap-1">
+        <Link
+          className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
+          href="/auth/signup"
+        >
+          Create Account
+        </Link>
+        <Link
+          className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
+          href="/auth/signin"
+        >
+          Sign in
+        </Link>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <div>{user.id}</div>
-      <div>{user.email}</div>
-      <button onClick={signOut} type="button">
+    <div className="flex flex-col items-end gap-1">
+      <button
+        className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
+        onClick={signOut}
+        type="button"
+      >
         Sign out
       </button>
+      <div className="text-xs">{user.email}</div>
     </div>
   );
 }
