@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { initServerAuth } from "@/lib/supabase/hosted-api";
 import { createSignedHLSFolderURL } from "@/services/storage/pinata/store";
 
 export async function POST() {
   try {
+    await initServerAuth();
+
     const url = await createSignedHLSFolderURL();
 
     return NextResponse.json({ url });

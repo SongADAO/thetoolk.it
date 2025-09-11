@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { initServerAuth } from "@/lib/supabase/hosted-api";
 import { createSignedVideoURL } from "@/services/storage/pinata/store";
 
 export async function POST() {
   try {
+    await initServerAuth();
+
     const url = await createSignedVideoURL();
 
     return NextResponse.json({ url });
