@@ -120,7 +120,7 @@ class FFmpegAudioPreprocessor {
       const errMessage =
         err instanceof Error ? err.message : "Audio conversion failed";
       console.error("FFmpeg audio conversion error:", err);
-      throw new Error(`Audio conversion failed: ${errMessage}`);
+      throw new Error(`Audio conversion failed: ${errMessage}`, { cause: err });
     }
   }
 
@@ -174,7 +174,7 @@ class FFmpegAudioPreprocessor {
       const errMessage =
         err instanceof Error ? err.message : "Extract video failed";
       console.error("FFmpeg video extraction error:", err);
-      throw new Error(`Video extraction failed: ${errMessage}`);
+      throw new Error(`Video extraction failed: ${errMessage}`, { cause: err });
     }
   }
 
@@ -247,7 +247,7 @@ class FFmpegAudioPreprocessor {
       const errMessage =
         err instanceof Error ? err.message : "combine Audio Video failed";
       console.error("FFmpeg combine error:", err);
-      throw new Error(`Combining failed: ${errMessage}`);
+      throw new Error(`Combining failed: ${errMessage}`, { cause: err });
     }
   }
 }
@@ -447,7 +447,7 @@ class VideoConverter {
         "WebCodecs conversion after FFmpeg preprocessing failed:",
         err,
       );
-      throw new Error(`Video conversion failed: ${errMessage}`);
+      throw new Error(`Video conversion failed: ${errMessage}`, { cause: err });
     }
   }
 

@@ -364,7 +364,7 @@ ${streamPlaylist}
         console.warn("Cleanup failed:", cleanupErr);
       }
 
-      throw new Error(`HLS conversion failed: ${errorMessage}`);
+      throw new Error(`HLS conversion failed: ${errorMessage}`, { cause: err });
     }
   }
 

@@ -177,6 +177,7 @@ async function trimVideo({
 
     throw new Error(
       `Video trimming failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      { cause: error },
     );
   }
 }
