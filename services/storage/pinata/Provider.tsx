@@ -18,6 +18,7 @@ import { PinataContext } from "@/services/storage/pinata/Context";
 import {
   uploadFile,
   uploadHLSFolder,
+  uploadHLSFolderWithPresignedURL,
   uploadJson,
   uploadVideo,
   uploadVideoWithPresignedURL,
@@ -200,6 +201,18 @@ export function PinataProvider({ children }: Readonly<Props>) {
   ): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
+    }
+
+    if (mode === "hosted") {
+      return await uploadHLSFolderWithPresignedURL({
+        folderName,
+        hlsFiles,
+        serviceLabel,
+        setIsStoring,
+        setStoreError,
+        setStoreProgress,
+        setStoreStatus,
+      });
     }
 
     return await uploadHLSFolder({

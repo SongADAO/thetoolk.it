@@ -44,6 +44,33 @@ async function createSignedJsonURL(): Promise<string> {
   });
 }
 
+async function createSignedHLSFolderURL(): Promise<string> {
+  const pinata = new PinataSDK({
+    pinataJwt: HOSTED_CREDENTIALS.jwt,
+  });
+
+  // Create a signed upload URL for multiple files (folder structure)
+  return await pinata.upload.public.createSignedURL({
+    expires: 60,
+    maxFileSize: 500 * 1024 * 1024,
+    // Allow video segments, manifests, and thumbnails
+    mimeTypes: [
+      "video/mp4",
+      // .ts files
+      "video/MP2T",
+      // .m3u8 files
+      "application/vnd.apple.mpegurl",
+      // alternative for .m3u8
+      "application/x-mpegURL",
+      // sometimes .m3u8 files are served as text/plain
+      "text/plain",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ],
+  });
+}
+
 interface UploadFileWithPresignedProps {
   file: File;
   serviceLabel: string;
@@ -160,6 +187,183 @@ async function uploadVideoWithPresignedURL({
     const errMessage = err instanceof Error ? err.message : "Upload failed";
     setStoreError(`Upload failed for ${serviceLabel}: ${errMessage}`);
     setStoreStatus(`Upload failed for ${serviceLabel}`);
+
+    return "";
+  } finally {
+    setIsStoring(false);
+  }
+}
+
+interface UploadHLSFolderWithPresignedProps {
+  folderName?: string;
+  hlsFiles: HLSFiles;
+  serviceLabel: string;
+  setIsStoring: (isStoring: boolean) => void;
+  setStoreError: (error: string) => void;
+  setStoreProgress: (progress: number) => void;
+  setStoreStatus: (status: string) => void;
+}
+
+async function uploadHLSFolderWithPresignedURL({
+  folderName,
+  hlsFiles,
+  serviceLabel,
+  setIsStoring,
+  setStoreError,
+  setStoreProgress,
+  setStoreStatus,
+}: Readonly<UploadHLSFolderWithPresignedProps>): Promise<string> {
+  try {
+    setIsStoring(true);
+    setStoreError("");
+    setStoreProgress(0);
+    setStoreStatus("Preparing HLS files for upload...");
+
+    if (DEBUG_STORAGE) {
+      console.log("Test Presigned HLS Upload: uploadHLSFolderWithPresignedURL");
+      await sleep(2000);
+      setStoreProgress(50);
+      setStoreStatus("Getting upload URL...");
+      await sleep(2000);
+      setStoreProgress(100);
+      setStoreStatus("Success");
+      return `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
+    }
+
+    // Step 1: Get presigned upload URL for folder
+    setStoreStatus("Getting upload authorization...");
+    setStoreProgress(10);
+
+    const presignedResponse = await fetch(
+      "/api/hosted/pinata/upload/presigned-hls",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      },
+    );
+
+    if (!presignedResponse.ok) {
+      const errorData = await presignedResponse.json();
+      throw new Error(errorData.error ?? "Failed to get upload authorization");
+    }
+
+    const { url } = await presignedResponse.json();
+
+    setStoreProgress(25);
+    setStoreStatus(`Uploading ${serviceLabel} HLS files...`);
+
+    // Step 2: Prepare all files for upload
+    const files: File[] = [];
+
+    // Add master manifest file (this is what will be referenced)
+    files.push(hlsFiles.masterManifest);
+
+    // Add manifest file
+    files.push(hlsFiles.streamManifest);
+
+    // Add thumbnail
+    files.push(hlsFiles.thumbnail);
+
+    // Add all segment files
+    files.push(...hlsFiles.segments);
+
+    console.log(`Uploading HLS folder with ${files.length} files:`, {
+      masterManifest: hlsFiles.masterManifest.name,
+      segments: hlsFiles.segments.length,
+      streamManifest: hlsFiles.streamManifest.name,
+      thumbnail: hlsFiles.thumbnail.name,
+    });
+
+    // Step 3: Create FormData with all files
+    const formData = new FormData();
+
+    // Add each file to the form data
+    files.forEach((file) => {
+      formData.append("file", file);
+    });
+
+    // Add metadata for the folder upload
+    if (folderName) {
+      formData.append("name", folderName);
+    } else {
+      formData.append("name", `hls-video-${Date.now()}`);
+    }
+
+    // Add key-value metadata
+    formData.append(
+      "keyvalues",
+      JSON.stringify({
+        files: files.length.toString(),
+        segments: hlsFiles.segments.length.toString(),
+        type: "hls-video",
+      }),
+    );
+
+    // Step 4: Calculate total file size for progress estimation
+    const totalFileSize = files.reduce((total, file) => total + file.size, 0);
+    const startTime = Date.now();
+
+    // Start progress simulation
+    const progressInterval = setInterval(() => {
+      const elapsedTime = Date.now() - startTime;
+      // Estimate based on total file size
+      // Slower for multiple files
+      const estimatedTime = Math.max(10000, totalFileSize / 50000);
+      // 25% to 90%
+      const progress = Math.min((elapsedTime / estimatedTime) * 65, 65);
+      setStoreProgress(25 + Math.round(progress));
+      setStoreStatus(
+        `Uploading ${serviceLabel} HLS files... ${25 + Math.round(progress)}%`,
+      );
+    }, 500);
+
+    const uploadResponse = await fetch(url, {
+      body: formData,
+      method: "POST",
+    });
+
+    clearInterval(progressInterval);
+
+    if (!uploadResponse.ok) {
+      throw new Error(
+        `HLS Upload failed with status ${uploadResponse.status}: ${uploadResponse.statusText}`,
+      );
+    }
+
+    setStoreProgress(95);
+    setStoreStatus("Finalizing HLS upload...");
+
+    // Parse response to get CID
+    const response = await uploadResponse.json();
+
+    if (!response.data.cid) {
+      throw new Error("No CID returned from HLS upload response");
+    }
+
+    const { cid } = response.data;
+
+    // Construct the playlist URL (same as original function)
+    const baseUrl = `https://${sanitizeGateway(HOSTED_CREDENTIALS.gateway)}/ipfs/${cid}`;
+    const playlistUrl = `${baseUrl}/${hlsFiles.masterManifest.name}`;
+
+    console.log("HLS folder uploaded successfully:", {
+      baseUrl,
+      cid,
+      playlistUrl,
+    });
+
+    setStoreProgress(100);
+    setStoreStatus("Success");
+
+    return playlistUrl;
+  } catch (err: unknown) {
+    console.error("Presigned HLS upload error:", err);
+
+    const errMessage = err instanceof Error ? err.message : "HLS Upload failed";
+    setStoreError(`HLS Upload failed for ${serviceLabel}: ${errMessage}`);
+    setStoreStatus(`HLS Upload failed for ${serviceLabel}`);
 
     return "";
   } finally {
@@ -478,11 +682,13 @@ async function uploadHLSFolder({
 }
 
 export {
+  createSignedHLSFolderURL,
   createSignedJsonURL,
   createSignedVideoURL,
   HOSTED_CREDENTIALS,
   uploadFile,
   uploadHLSFolder,
+  uploadHLSFolderWithPresignedURL,
   uploadJson,
   uploadVideo,
   uploadVideoWithPresignedURL,
