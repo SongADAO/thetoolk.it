@@ -62,6 +62,7 @@ async function createSignedHLSFolderURL(): Promise<string> {
     maxFileSize: 500 * 1024 * 1024,
     // Allow video segments, manifests, and thumbnails
     mimeTypes: [
+      "directory",
       "video/mp4",
       // .ts files
       "video/MP2T",
