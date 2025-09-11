@@ -55,6 +55,8 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
+  const hasAuthenticatedCredentials = false;
+
   const credentialsId = getCredentialsId(credentials);
 
   const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
@@ -214,6 +216,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       credentialsId,
       error,
       fields,
+      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       icon,
       initial,
@@ -243,6 +246,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       credentials,
       credentialsId,
       error,
+      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       icon,
       initial,

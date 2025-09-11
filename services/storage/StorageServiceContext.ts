@@ -15,6 +15,7 @@ interface StorageServiceContextType {
   credentialsId: string;
   error: string;
   fields: ServiceFormField[];
+  hasAuthenticatedCredentials: boolean;
   hasAuthorizationStep: boolean;
   icon: ReactNode;
   initial: ServiceFormState;
@@ -49,6 +50,7 @@ const storageServiceContextDefault = {
   credentialsId: "",
   error: "",
   fields: [],
+  hasAuthenticatedCredentials: false,
   hasAuthorizationStep: false,
   icon: null,
   initial: {},

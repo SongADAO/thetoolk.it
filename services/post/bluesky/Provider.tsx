@@ -89,11 +89,14 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     { initializeWithValue: false },
   );
 
+  const hasAuthenticatedCredentials = true;
+
   const credentialsId = getCredentialsId(credentials);
 
   const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
 
-  const isComplete = isAuthenticated || isCompleteOwnCredentials;
+  // const isComplete = isAuthenticated || isCompleteOwnCredentials;
+  const isComplete = isCompleteOwnCredentials;
 
   const isAuthorized = hasCompleteAuthorization(expiration);
 
@@ -319,6 +322,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       hasCompletedAuth,
       icon,
@@ -349,6 +353,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       credentials,
       credentialsId,
       error,
+      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       hasCompletedAuth,
       icon,

@@ -18,6 +18,7 @@ interface PostServiceContextType {
   error: string;
   fields: ServiceFormField[];
   handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
+  hasAuthenticatedCredentials: boolean;
   hasAuthorizationStep: boolean;
   hasCompletedAuth: boolean;
   icon: ReactNode;
@@ -51,6 +52,7 @@ const postServiceContextDefault = {
   error: "",
   fields: [],
   handleAuthRedirect: async () => {},
+  hasAuthenticatedCredentials: false,
   hasAuthorizationStep: false,
   hasCompletedAuth: false,
   icon: null,

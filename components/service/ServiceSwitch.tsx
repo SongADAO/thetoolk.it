@@ -2,9 +2,10 @@
 
 import { NeynarAuthButton } from "@neynar/react";
 import { Checkbox, Collapsible } from "radix-ui";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, use, useEffect, useState } from "react";
 import { FaCheck, FaGear } from "react-icons/fa6";
 
+import { AuthContext } from "@/contexts/AuthContext";
 import type { ServiceAccount } from "@/services/post/types";
 
 interface Props {
@@ -14,12 +15,13 @@ interface Props {
   brandColor: string;
   credentialsId: string;
   form: ReactNode;
+  hasAuthenticatedCredentials: boolean;
+  hasAuthorizationStep: boolean;
   icon: ReactNode;
   isAuthorized: boolean;
   isComplete: boolean;
   isEnabled: boolean;
   label: string;
-  hasAuthorizationStep: boolean;
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
@@ -30,14 +32,17 @@ function ServiceSwitch({
   brandColor,
   credentialsId,
   form,
+  hasAuthenticatedCredentials,
+  hasAuthorizationStep,
   icon,
   isAuthorized,
   isComplete,
   isEnabled,
   label,
-  hasAuthorizationStep,
   setIsEnabled,
 }: Readonly<Props>) {
+  const { isAuthenticated } = use(AuthContext);
+
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -87,7 +92,8 @@ function ServiceSwitch({
             {icon} {label}
           </span>
 
-          {needsCredentials ? null : (
+          {(isAuthenticated && !hasAuthenticatedCredentials) ||
+          needsCredentials ? null : (
             <FaGear
               aria-hidden
               className="transition-transform duration-300 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"

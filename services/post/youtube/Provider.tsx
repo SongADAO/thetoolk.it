@@ -91,6 +91,8 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
+  const hasAuthenticatedCredentials = false;
+
   const credentialsId = getCredentialsId(credentials);
 
   const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
@@ -316,6 +318,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
+      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       hasCompletedAuth,
       icon,
@@ -346,6 +349,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       credentials,
       credentialsId,
       error,
+      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       hasCompletedAuth,
       icon,
