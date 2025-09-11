@@ -20,6 +20,7 @@ import {
   uploadHLSFolder,
   uploadJson,
   uploadVideo,
+  uploadVideoWithPresignedURL,
 } from "@/services/storage/pinata/store";
 import {
   defaultPinataCredentials,
@@ -168,6 +169,17 @@ export function PinataProvider({ children }: Readonly<Props>) {
   async function storeVideo(file: File, serviceLabel: string): Promise<string> {
     if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
+    }
+
+    if (mode === "hosted") {
+      return await uploadVideoWithPresignedURL({
+        file,
+        serviceLabel,
+        setIsStoring,
+        setStoreError,
+        setStoreProgress,
+        setStoreStatus,
+      });
     }
 
     return await uploadVideo({

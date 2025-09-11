@@ -240,26 +240,26 @@ export function useUserStorage<T>(
   }, [hasInitialized, isAuthenticated, user, refreshFromSupabase]);
 
   // Handle window focus (additional safety for when user returns)
-  useEffect(() => {
-    if (!hasInitialized) return;
+  // useEffect(() => {
+  //   if (!hasInitialized) return;
 
-    const handleFocus = () => {
-      if (isAuthenticated && user) {
-        // Small delay to avoid excessive calls
-        setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          refreshFromSupabase();
-        }, 100);
-      }
-    };
+  //   const handleFocus = () => {
+  //     if (isAuthenticated && user) {
+  //       // Small delay to avoid excessive calls
+  //       setTimeout(() => {
+  //         // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  //         refreshFromSupabase();
+  //       }, 100);
+  //     }
+  //   };
 
-    window.addEventListener("focus", handleFocus);
+  //   window.addEventListener("focus", handleFocus);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-return
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase]);
+  //   // eslint-disable-next-line @typescript-eslint/consistent-return
+  //   return () => {
+  //     window.removeEventListener("focus", handleFocus);
+  //   };
+  // }, [hasInitialized, isAuthenticated, user, refreshFromSupabase]);
 
   // Update function
   const updateValue = useCallback(

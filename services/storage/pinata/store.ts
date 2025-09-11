@@ -5,10 +5,166 @@ import type { HLSFiles } from "@/lib/hls-converter";
 import { sleep } from "@/lib/utils";
 import type { PinataCredentials } from "@/services/storage/types";
 
+const HOSTED_CREDENTIALS = {
+  apiKey: String(process.env.PINATA_API_KEY ?? ""),
+  apiSecret: String(process.env.PINATA_API_SECRET ?? ""),
+  gateway: String(process.env.PINATA_API_GATEWAY ?? ""),
+  jwt: String(process.env.PINATA_API_JWT ?? ""),
+};
+
 // Ensure the gateway URL is sanitized
 function sanitizeGateway(gateway: string): string {
   // Remove https:// prefix and trailing slash
   return gateway.replace(/^https:\/\//u, "").replace(/\/$/u, "");
+}
+
+async function createSignedVideoURL(): Promise<string> {
+  const pinata = new PinataSDK({
+    pinataJwt: HOSTED_CREDENTIALS.jwt,
+  });
+
+  // Create a signed upload URL using Pinata's signed upload functionality
+  return await pinata.upload.public.createSignedURL({
+    expires: 60,
+    maxFileSize: 500 * 1024 * 1024,
+    mimeTypes: ["video/mp4"],
+  });
+}
+
+async function createSignedJsonURL(): Promise<string> {
+  const pinata = new PinataSDK({
+    pinataJwt: HOSTED_CREDENTIALS.jwt,
+  });
+
+  // Create a signed upload URL using Pinata's signed upload functionality
+  return await pinata.upload.public.createSignedURL({
+    expires: 60,
+    maxFileSize: 1 * 1024,
+    mimeTypes: ["application/json"],
+  });
+}
+
+interface UploadFileWithPresignedProps {
+  file: File;
+  serviceLabel: string;
+  setIsStoring: (isStoring: boolean) => void;
+  setStoreError: (error: string) => void;
+  setStoreProgress: (progress: number) => void;
+  setStoreStatus: (status: string) => void;
+}
+
+async function uploadVideoWithPresignedURL({
+  file,
+  serviceLabel,
+  setIsStoring,
+  setStoreError,
+  setStoreProgress,
+  setStoreStatus,
+}: Readonly<UploadFileWithPresignedProps>): Promise<string> {
+  try {
+    setIsStoring(true);
+    setStoreError("");
+    setStoreProgress(0);
+    setStoreStatus("Preparing media for upload...");
+
+    if (DEBUG_STORAGE) {
+      console.log("Test Presigned Upload (Fetch): uploadFileWithPresigned");
+      await sleep(2000);
+      setStoreProgress(50);
+      setStoreStatus("Getting upload URL...");
+      await sleep(2000);
+      setStoreProgress(100);
+      setStoreStatus("Success");
+      return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
+    }
+
+    // Step 1: Get presigned upload URL
+    setStoreStatus("Getting upload authorization...");
+    setStoreProgress(10);
+
+    const presignedResponse = await fetch(
+      "/api/hosted/pinata/upload/presigned-video",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      },
+    );
+
+    if (!presignedResponse.ok) {
+      const errorData = await presignedResponse.json();
+      throw new Error(errorData.error ?? "Failed to get upload authorization");
+    }
+
+    const { url } = await presignedResponse.json();
+
+    setStoreProgress(25);
+    setStoreStatus(`Uploading ${serviceLabel} media...`);
+
+    // Step 2: Upload using fetch
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // Since fetch doesn't provide upload progress natively, we'll simulate it
+    const startTime = Date.now();
+    const fileSize = file.size;
+
+    // Start progress simulation
+    const progressInterval = setInterval(() => {
+      const elapsedTime = Date.now() - startTime;
+      // Rough estimate
+      const estimatedTime = Math.max(5000, fileSize / 100000);
+      // 25% to 90%
+      const progress = Math.min((elapsedTime / estimatedTime) * 65, 65);
+      setStoreProgress(25 + Math.round(progress));
+      setStoreStatus(
+        `Uploading ${serviceLabel} media... ${25 + Math.round(progress)}%`,
+      );
+    }, 500);
+
+    const uploadResponse = await fetch(url, {
+      body: formData,
+      method: "POST",
+    });
+
+    clearInterval(progressInterval);
+
+    if (!uploadResponse.ok) {
+      throw new Error(
+        `Upload failed with status ${uploadResponse.status}: ${uploadResponse.statusText}`,
+      );
+    }
+
+    setStoreProgress(95);
+    setStoreStatus("Finalizing upload...");
+
+    // Parse response to get CID
+    const response = await uploadResponse.json();
+
+    if (!response.data.cid) {
+      throw new Error("No CID returned from upload response");
+    }
+
+    const { cid } = response.data;
+
+    const contentUri = `https://${sanitizeGateway(HOSTED_CREDENTIALS.gateway)}/ipfs/${cid}`;
+
+    setStoreProgress(100);
+    setStoreStatus("Success");
+
+    return contentUri;
+  } catch (err: unknown) {
+    console.error("Presigned upload error:", err);
+
+    const errMessage = err instanceof Error ? err.message : "Upload failed";
+    setStoreError(`Upload failed for ${serviceLabel}: ${errMessage}`);
+    setStoreStatus(`Upload failed for ${serviceLabel}`);
+
+    return "";
+  } finally {
+    setIsStoring(false);
+  }
 }
 
 interface UploadFileProps {
@@ -321,4 +477,13 @@ async function uploadHLSFolder({
   return "";
 }
 
-export { uploadFile, uploadHLSFolder, uploadJson, uploadVideo };
+export {
+  createSignedJsonURL,
+  createSignedVideoURL,
+  HOSTED_CREDENTIALS,
+  uploadFile,
+  uploadHLSFolder,
+  uploadJson,
+  uploadVideo,
+  uploadVideoWithPresignedURL,
+};
