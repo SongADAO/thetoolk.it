@@ -43,7 +43,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useLocalStorage<boolean>(
+  const [isClientEnabled, setIsEnabled] = useLocalStorage<boolean>(
     "thetoolkit-amazons3-enabled",
     false,
     { initializeWithValue: false },
@@ -65,9 +65,9 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const isAuthorized = isComplete;
 
-  const isHostedOrEnabled = !isAuthenticated && isEnabled;
+  const isEnabled = isAuthenticated || isClientEnabled;
 
-  const isUsable = isHostedOrEnabled && isComplete && isAuthorized;
+  const isUsable = isEnabled && isComplete && isAuthorized;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const mode = isAuthenticated ? "hosted" : "self";
@@ -134,7 +134,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   }
 
   async function storeFile(file: File, serviceLabel: string): Promise<string> {
-    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 
@@ -153,7 +153,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     data: object,
     serviceLabel: string,
   ): Promise<string> {
-    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 
@@ -169,7 +169,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   }
 
   async function storeVideo(file: File, serviceLabel: string): Promise<string> {
-    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 
@@ -189,7 +189,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     folderName: string,
     serviceLabel: string,
   ): Promise<string> {
-    if (!isHostedOrEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
       return "";
     }
 

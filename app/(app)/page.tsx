@@ -1,3 +1,6 @@
+"use client";
+
+import { use } from "react";
 import { FaServer, FaUsersGear } from "react-icons/fa6";
 
 import { PostForm } from "@/components/PostForm";
@@ -6,9 +9,12 @@ import { PostSettings } from "@/components/service/post/PostSettings";
 import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
 import { StorageSettings } from "@/components/service/storage/StorageSettings";
 import { StoreProgress } from "@/components/service/storage/StoreProgress";
+import { AuthContext } from "@/contexts/AuthContext";
 import { PostProvider } from "@/services/PostProvider";
 
 export default function Home() {
+  const { isAuthenticated } = use(AuthContext);
+
   return (
     <div>
       <div className="px-2 pt-2 lg:hidden">
@@ -67,12 +73,14 @@ export default function Home() {
 
         <div className="hidden 2xl:block">
           <div className="flex flex-col gap-4">
-            <section className="rounded bg-gray-100 p-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h3>Storage Service Settings</h3>
-              </div>
-              <StorageSettings />
-            </section>
+            {isAuthenticated ? null : (
+              <section className="rounded bg-gray-100 p-4">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3>Storage Service Settings</h3>
+                </div>
+                <StorageSettings />
+              </section>
+            )}
             <section className="rounded bg-gray-100 p-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Posting Service Settings</h3>
