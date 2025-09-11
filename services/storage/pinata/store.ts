@@ -12,13 +12,6 @@ const HOSTED_CREDENTIALS = {
   jwt: String(process.env.PINATA_API_JWT ?? ""),
 };
 
-const HOSTED_ADMIN_CREDENTIALS = {
-  apiKey: String(process.env.PINATA_ADMIN_API_KEY ?? ""),
-  apiSecret: String(process.env.PINATA_ADMIN_API_SECRET ?? ""),
-  gateway: String(process.env.PINATA_ADMIN_API_GATEWAY ?? ""),
-  jwt: String(process.env.PINATA_ADMIN_API_JWT ?? ""),
-};
-
 // Ensure the gateway URL is sanitized
 function sanitizeGateway(gateway: string): string {
   // Remove https:// prefix and trailing slash
@@ -379,172 +372,6 @@ async function uploadHLSFolderWithPresignedURL({
   }
 }
 
-interface TempCredentials {
-  JWT: string;
-  pinata_api_key: string;
-  pinata_api_secret: string;
-}
-
-// Add this function to get temporary credentials
-async function getTempCredentials(): Promise<TempCredentials> {
-  const response = await fetch("/api/hosted/pinata/temp-credentials", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error ?? "Failed to get temporary credentials");
-  }
-
-  const data = await response.json();
-  console.log("Got temporary credentials:", data);
-
-  return data;
-}
-
-interface UploadHLSFolderWithTempCredsProps {
-  folderName?: string;
-  hlsFiles: HLSFiles;
-  serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
-}
-
-async function uploadHLSFolderWithTempCredentials({
-  folderName,
-  hlsFiles,
-  serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
-}: Readonly<UploadHLSFolderWithTempCredsProps>): Promise<string> {
-  let progressInterval = null;
-
-  try {
-    setIsStoring(true);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("Getting temporary upload credentials...");
-
-    if (DEBUG_STORAGE) {
-      console.log(
-        "Test Pinata with temp credentials: uploadHLSFolderWithTempCredentials",
-      );
-      await sleep(2000);
-      setStoreProgress(25);
-      setStoreStatus("Got temp credentials...");
-      await sleep(1000);
-      setStoreProgress(100);
-      setStoreStatus("Success");
-      return `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
-    }
-
-    // Step 1: Get temporary credentials
-    const tempCredentials = await getTempCredentials();
-    setStoreProgress(15);
-    setStoreStatus("Preparing HLS files for upload...");
-
-    // Step 2: Set up progress tracking
-    const startTime = Date.now();
-    const fileSize =
-      hlsFiles.masterManifest.size +
-      hlsFiles.streamManifest.size +
-      hlsFiles.thumbnail.size +
-      hlsFiles.segments
-        .map((segment) => segment.size)
-        .reduce((a, b) => a + b, 0);
-
-    // Start progress simulation
-    progressInterval = setInterval(() => {
-      const elapsedTime = Date.now() - startTime;
-      const estimatedTime = Math.max(5000, fileSize / 100000);
-      // Progress from 15% to 95%
-      const progress = Math.min((elapsedTime / estimatedTime) * 80, 80);
-      setStoreProgress(15 + Math.round(progress));
-      setStoreStatus(
-        `Uploading ${serviceLabel} media... ${15 + Math.round(progress)}%`,
-      );
-    }, 500);
-
-    // Step 3: Use temporary credentials with Pinata SDK
-    const pinata = new PinataSDK({
-      pinataJwt: tempCredentials.JWT,
-    });
-
-    // Step 4: Create folder structure for upload
-    const files: File[] = [];
-
-    // Add master manifest file (this is what will be referenced)
-    files.push(hlsFiles.masterManifest);
-
-    // Add manifest file
-    files.push(hlsFiles.streamManifest);
-
-    // Add thumbnail
-    files.push(hlsFiles.thumbnail);
-
-    // Add all segment files
-    files.push(...hlsFiles.segments);
-
-    console.log(
-      `Uploading HLS folder with ${files.length} files using temp credentials:`,
-      {
-        masterManifest: hlsFiles.masterManifest.name,
-        segments: hlsFiles.segments.length,
-        streamManifest: hlsFiles.streamManifest.name,
-        thumbnail: hlsFiles.thumbnail.name,
-      },
-    );
-
-    // Step 5: Upload folder to Pinata using temporary credentials
-    const uploadResult = await pinata.upload.public
-      .fileArray(files)
-      .name(folderName ?? `hls-video-${Date.now()}`)
-      .keyvalues({
-        files: files.length.toString(),
-        segments: hlsFiles.segments.length.toString(),
-        type: "hls-video",
-        uploadMethod: "temp-credentials",
-      });
-
-    // Clear the progress interval
-    clearInterval(progressInterval);
-
-    console.log(
-      "HLS folder uploaded successfully with temp credentials:",
-      uploadResult,
-    );
-
-    const baseUrl = `https://${sanitizeGateway(HOSTED_CREDENTIALS.gateway)}/ipfs/${uploadResult.cid}`;
-    const playlistUrl = `${baseUrl}/${hlsFiles.masterManifest.name}`;
-
-    setStoreProgress(100);
-    setStoreStatus("Success");
-
-    return playlistUrl;
-  } catch (err: unknown) {
-    console.error("Temp credentials HLS Upload error:", err);
-
-    const errMessage = err instanceof Error ? err.message : "HLS Upload failed";
-    setStoreError(`HLS Upload failed for ${serviceLabel}: ${errMessage}`);
-    setStoreStatus(`HLS Upload failed for ${serviceLabel}`);
-  } finally {
-    setIsStoring(false);
-    // Clear progress interval
-    if (progressInterval) {
-      clearInterval(progressInterval);
-    }
-  }
-
-  return "";
-}
-
 interface UploadFileProps {
   credentials: PinataCredentials;
   file: File;
@@ -859,12 +686,10 @@ export {
   createSignedHLSFolderURL,
   createSignedJsonURL,
   createSignedVideoURL,
-  HOSTED_ADMIN_CREDENTIALS,
   HOSTED_CREDENTIALS,
   uploadFile,
   uploadHLSFolder,
   uploadHLSFolderWithPresignedURL,
-  uploadHLSFolderWithTempCredentials,
   uploadJson,
   uploadVideo,
   uploadVideoWithPresignedURL,
