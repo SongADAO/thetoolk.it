@@ -87,7 +87,16 @@ function ServiceSwitch({
           </Checkbox.Indicator>
         </Checkbox.Root>
 
-        <Collapsible.Trigger className="group flex min-h-[36px] flex-1 cursor-pointer items-center justify-between rounded bg-[#fff2] px-2 py-1 outline-none hover:bg-[#fff4]">
+        <Collapsible.Trigger
+          className="group flex min-h-[36px] flex-1 items-center justify-between rounded bg-[#fff2] px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
+          data-clickable={
+            !isAuthenticated || hasAuthenticatedCredentials ? "true" : "false"
+          }
+          disabled={
+            Boolean(isAuthenticated && !hasAuthenticatedCredentials) ||
+            needsCredentials
+          }
+        >
           <span className="flex items-center gap-x-2">
             {icon} {label}
           </span>
@@ -102,9 +111,11 @@ function ServiceSwitch({
         </Collapsible.Trigger>
       </div>
 
-      <Collapsible.Content className="overflow-hidden">
-        <div className="m-2 mt-0 rounded bg-[#fff2] p-2">{form}</div>
-      </Collapsible.Content>
+      {!isAuthenticated || hasAuthenticatedCredentials ? (
+        <Collapsible.Content className="overflow-hidden">
+          <div className="m-2 mt-0 rounded bg-[#fff2] p-2">{form}</div>
+        </Collapsible.Content>
+      ) : null}
 
       {isClient && hasAuthorizationStep && isComplete ? (
         <div className="flex items-center justify-between gap-2 bg-[#fff2] p-2">
