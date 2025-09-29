@@ -10,11 +10,11 @@ export async function POST() {
     const url = await createSignedVideoURL();
 
     return NextResponse.json({ url });
-  } catch (error: unknown) {
-    console.error("Error creating presigned video upload URL:", error);
+  } catch (err: unknown) {
+    console.error("Error creating presigned video upload URL:", err);
     const errMessage =
-      error instanceof Error
-        ? error.message
+      err instanceof Error
+        ? err.message
         : "Failed to create presigned video URL";
 
     return NextResponse.json({ error: errMessage }, { status: 500 });

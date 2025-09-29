@@ -27,8 +27,8 @@ export async function GET() {
         delete jwk.d;
 
         keys.push(jwk);
-      } catch (error) {
-        console.error(`Error processing JoseKey:`, error);
+      } catch (err: unknown) {
+        console.error(`Error processing JoseKey:`, err);
       }
     }
 
@@ -49,8 +49,8 @@ export async function GET() {
         "Content-Type": "application/json",
       },
     });
-  } catch (error) {
-    console.error("JWKS generation error:", error);
+  } catch (err: unknown) {
+    console.error("JWKS generation error:", err);
     return NextResponse.json(
       { error: "Failed to generate JWKS" },
       { status: 500 },

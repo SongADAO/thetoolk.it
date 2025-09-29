@@ -25,9 +25,9 @@ export async function POST(request: NextRequest) {
       authUrl,
       success: true,
     });
-  } catch (error: unknown) {
-    console.error("Authorization URL generation error:", error);
-    const errMessage = error instanceof Error ? error.message : "Unknown error";
+  } catch (err: unknown) {
+    console.error("Authorization URL generation error:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
 
     return NextResponse.json(
       {

@@ -10,11 +10,11 @@ export async function POST() {
     const url = await createSignedJsonURL();
 
     return NextResponse.json({ url });
-  } catch (error: unknown) {
-    console.error("Error creating presigned json upload URL:", error);
+  } catch (err: unknown) {
+    console.error("Error creating presigned json upload URL:", err);
     const errMessage =
-      error instanceof Error
-        ? error.message
+      err instanceof Error
+        ? err.message
         : "Failed to create presigned json URL";
 
     return NextResponse.json({ error: errMessage }, { status: 500 });

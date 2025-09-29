@@ -74,9 +74,9 @@ export async function GET(request: NextRequest) {
     oauthUrls.success.searchParams.set("auth", "success");
 
     return NextResponse.redirect(oauthUrls.success.toString());
-  } catch (error: unknown) {
-    console.error("OAuth callback error:", error);
-    const errMessage = error instanceof Error ? error.message : "Unknown error";
+  } catch (err: unknown) {
+    console.error("OAuth callback error:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
 
     // Redirect to app with error
     oauthUrls.error.searchParams.set("service", serviceId);
