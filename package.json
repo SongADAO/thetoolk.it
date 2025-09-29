@@ -7,7 +7,6 @@
     "dev-https": "next dev --experimental-https --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "atproto:generate-keys": "node scripts/generate-keys.mjs",
     "db:codegen": "supabase gen types typescript --project-id xwdeoyngusbwcwphepup > types/supabase.ts",
     "db:migrate": "supabase db push",
@@ -17,6 +16,7 @@
     "format:misc": "prettier --write \"./**/*.{htm,html,json,md,yml,yaml}\"",
     "format:css": "stylelint --fix \"./**/*.{css,sass,scss,less}\"",
     "format:js": "eslint --ext .js,.ts,.jsx,.tsx,.vue --cache --fix \".\"",
+    "lint": "run-s -c lint:*",
     "lint:css": "stylelint \"./**/*.{css,sass,scss,less}\"",
     "lint:js": "eslint --ext .js,.ts,.jsx,.tsx,.vue --cache \".\""
   },
