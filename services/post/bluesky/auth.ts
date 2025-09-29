@@ -16,7 +16,6 @@ import type {
 } from "@/services/post/types";
 
 const HOSTED_CREDENTIALS = {
-  clientId: String(process.env.NEXT_PUBLIC_BLUESKY_METADATA_URL ?? ""),
   serviceUrl: String(process.env.NEXT_PUBLIC_BLUESKY_SERVICE_URL ?? ""),
 };
 
