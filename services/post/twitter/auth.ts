@@ -173,7 +173,9 @@ async function getAuthorizationUrlHosted(): Promise<string> {
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Auth URL failed";
     console.error("Error creating authorization URL:", err);
-    throw new Error(`Failed to create authorization URL: ${errMessage}`);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`, {
+      cause: err,
+    });
   }
 }
 

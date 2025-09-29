@@ -124,6 +124,7 @@ async function uploadVideoBlob({
     console.error("Failed to upload video blob:", error);
     throw new Error(
       `Failed to upload video: ${error instanceof Error ? error.message : "Unknown error"}`,
+      { cause: error },
     );
   }
 }
@@ -193,6 +194,7 @@ async function createRecord({
     console.error("Failed to create post:", error);
     throw new Error(
       `Failed to create post: ${error instanceof Error ? error.message : "Unknown error"}`,
+      { cause: error },
     );
   }
 }

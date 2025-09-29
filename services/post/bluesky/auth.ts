@@ -150,7 +150,9 @@ async function getAuthorizationUrlHosted(
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Auth URL failed";
     console.error("Error creating authorization URL:", err);
-    throw new Error(`Failed to create authorization URL: ${errMessage}`);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`, {
+      cause: err,
+    });
   }
 }
 
@@ -172,7 +174,9 @@ async function getAuthorizationUrl(
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Auth URL failed";
     console.error("Error creating authorization URL:", err);
-    throw new Error(`Failed to create authorization URL: ${errMessage}`);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`, {
+      cause: err,
+    });
   }
 }
 
@@ -203,7 +207,9 @@ async function exchangeCodeForTokens(
   } catch (err: unknown) {
     console.error("Token exchange error:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";
-    throw new Error(`Failed to exchange code for tokens: ${errMessage}`);
+    throw new Error(`Failed to exchange code for tokens: ${errMessage}`, {
+      cause: err,
+    });
   }
 }
 
@@ -244,7 +250,7 @@ async function refreshAccessToken(
   } catch (err: unknown) {
     console.error("Token refresh error:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";
-    throw new Error(`Failed to refresh token: ${errMessage}`);
+    throw new Error(`Failed to refresh token: ${errMessage}`, { cause: err });
   }
 }
 
@@ -270,7 +276,7 @@ async function getAccountsFromAgent(
   } catch (err: unknown) {
     console.error("Error getting accounts:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";
-    throw new Error(`Failed to get accounts: ${errMessage}`);
+    throw new Error(`Failed to get accounts: ${errMessage}`, { cause: err });
   }
 }
 
@@ -289,7 +295,7 @@ async function getAccounts(
   } catch (err: unknown) {
     console.error("Error getting accounts:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";
-    throw new Error(`Failed to get accounts: ${errMessage}`);
+    throw new Error(`Failed to get accounts: ${errMessage}`, { cause: err });
   }
 }
 

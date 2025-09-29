@@ -83,6 +83,7 @@ export default tseslint.config(
       "next-env.d.ts",
       "public/fonts/**",
       "types/supabase.ts",
+      "scripts/generate-keys.mjs",
       // "**/hls-converter.ts",
       // "**/video-converter-webcodecs.ts",
     ],

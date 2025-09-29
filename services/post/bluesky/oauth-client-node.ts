@@ -146,7 +146,9 @@ async function getAuthorizationUrl(
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Auth URL failed";
     console.error("Error creating authorization URL:", err);
-    throw new Error(`Failed to create authorization URL: ${errMessage}`);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`, {
+      cause: err,
+    });
   }
 }
 
@@ -176,7 +178,9 @@ async function handleCallback(
   } catch (err: unknown) {
     console.error("Server callback error:", err);
     const errMessage = err instanceof Error ? err.message : "Unknown error";
-    throw new Error(`Failed to handle OAuth callback: ${errMessage}`);
+    throw new Error(`Failed to handle OAuth callback: ${errMessage}`, {
+      cause: err,
+    });
   }
 }
 

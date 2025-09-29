@@ -102,22 +102,25 @@ async function uploadFile({
       if (errName === "CredentialsError") {
         throw new Error(
           "Invalid AWS credentials. Please check your Access Key ID and Secret Access Key.",
+          { cause: err },
         );
       }
 
       if (errName === "NoSuchBucket") {
         throw new Error(
           `S3 bucket "${credentials.bucket}" does not exist or is not accessible.`,
+          { cause: err },
         );
       }
 
       if (errName === "AccessDenied") {
         throw new Error(
           "Access denied. Please check your AWS permissions and bucket policy.",
+          { cause: err },
         );
       }
 
-      throw new Error(`Failed to upload to S3: ${errMessage}`);
+      throw new Error(`Failed to upload to S3: ${errMessage}`, { cause: err });
     }
 
     // Clear the progress interval
