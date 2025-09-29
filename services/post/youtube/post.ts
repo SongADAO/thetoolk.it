@@ -188,8 +188,8 @@ async function uploadFileInChunks({
       setPostStatus(
         `Uploading... ${progress}% (${Math.round(uploadedBytes / 1024 / 1024)}MB / ${Math.round(totalBytes / 1024 / 1024)}MB)`,
       );
-    } catch (error) {
-      console.error("Chunk upload error:", error);
+    } catch (err: unknown) {
+      console.error("Chunk upload error:", err);
 
       // Try to resume from where we left off
       // try {
@@ -224,7 +224,7 @@ async function uploadFileInChunks({
       //   console.error("Resume failed:", resumeError);
       // }
 
-      throw error;
+      throw err;
     }
   }
 

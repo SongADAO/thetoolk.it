@@ -120,11 +120,11 @@ async function uploadVideoBlob({
     console.log("Video blob uploaded successfully:", result);
 
     return result.data.blob;
-  } catch (error) {
-    console.error("Failed to upload video blob:", error);
+  } catch (err: unknown) {
+    console.error("Failed to upload video blob:", err);
     throw new Error(
-      `Failed to upload video: ${error instanceof Error ? error.message : "Unknown error"}`,
-      { cause: error },
+      `Failed to upload video: ${err instanceof Error ? err.message : "Unknown error"}`,
+      { cause: err },
     );
   }
 }
@@ -190,11 +190,11 @@ async function createRecord({
     console.log("Post created successfully:", result);
 
     return result.uri;
-  } catch (error) {
-    console.error("Failed to create post:", error);
+  } catch (err: unknown) {
+    console.error("Failed to create post:", err);
     throw new Error(
-      `Failed to create post: ${error instanceof Error ? error.message : "Unknown error"}`,
-      { cause: error },
+      `Failed to create post: ${err instanceof Error ? err.message : "Unknown error"}`,
+      { cause: err },
     );
   }
 }

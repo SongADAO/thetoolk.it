@@ -314,10 +314,10 @@ export function PostProvider({ children }: Readonly<Props>) {
       // converter.downloadFile(convertedVideo);
 
       return convertedVideo;
-    } catch (error) {
-      console.error("Video conversion failed:", error);
+    } catch (err: unknown) {
+      console.error("Video conversion failed:", err);
       setVideoConversionError("Failed to convert video.");
-      throw error;
+      throw err;
     } finally {
       setIsVideoConverting(false);
       setVideoConversionProgress(0);
@@ -367,10 +367,10 @@ export function PostProvider({ children }: Readonly<Props>) {
       console.log("HLS conversion successful");
 
       return hlsFiles;
-    } catch (error) {
-      console.error("HLS conversion/upload failed:", error);
+    } catch (err: unknown) {
+      console.error("HLS conversion/upload failed:", err);
       setHLSConversionError("Failed to convert video to HLS format.");
-      throw error;
+      throw err;
     } finally {
       setIsHLSConverting(false);
       setHLSConversionProgress(0);
@@ -532,10 +532,10 @@ export function PostProvider({ children }: Readonly<Props>) {
       cleanupFFmpegTrim();
 
       return videos;
-    } catch (error) {
-      console.error("Platform video trimming failed:", error);
+    } catch (err: unknown) {
+      console.error("Platform video trimming failed:", err);
       setVideoTrimError("Failed to trim some videos.");
-      throw error;
+      throw err;
     } finally {
       setIsVideoTrimming(false);
       setVideoTrimProgress(0);

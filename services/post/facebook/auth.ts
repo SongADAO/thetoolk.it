@@ -343,8 +343,8 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
       const account = await getUserInfoFromPage(page);
 
       accounts.push(account);
-    } catch (error) {
-      console.error("Error getting Facebook account:", error);
+    } catch (err: unknown) {
+      console.error("Error getting Facebook account:", err);
     }
   }
 

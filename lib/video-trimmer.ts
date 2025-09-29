@@ -164,8 +164,8 @@ async function trimVideo({
     }
 
     return trimmedFile;
-  } catch (error) {
-    console.error("Video trimming failed:", error);
+  } catch (err: unknown) {
+    console.error("Video trimming failed:", err);
 
     // If trimming fails, return original video if it meets minimum requirements
     if (video.size <= maxFilesize) {
@@ -176,8 +176,8 @@ async function trimVideo({
     }
 
     throw new Error(
-      `Video trimming failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      { cause: error },
+      `Video trimming failed: ${err instanceof Error ? err.message : "Unknown error"}`,
+      { cause: err },
     );
   }
 }

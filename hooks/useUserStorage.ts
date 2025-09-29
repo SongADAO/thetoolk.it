@@ -69,8 +69,8 @@ export function useUserStorage<T>(
       // @ts-expect-error
       return data[String(serviceField)] as T;
       /* eslint-enable @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/ban-ts-comment */
-    } catch (error) {
-      console.error("Error loading from Supabase:", error);
+    } catch (err: unknown) {
+      console.error("Error loading from Supabase:", err);
       return null;
     }
   }, [user?.id, serviceField, serviceId, supabase]);
@@ -109,8 +109,8 @@ export function useUserStorage<T>(
         }
 
         return true;
-      } catch (error) {
-        console.error("Error saving to Supabase:", error);
+      } catch (err: unknown) {
+        console.error("Error saving to Supabase:", err);
         return false;
       }
     },
@@ -126,8 +126,8 @@ export function useUserStorage<T>(
       if (supabaseValue !== null) {
         setValue(supabaseValue);
       }
-    } catch (error) {
-      console.error("Error refreshing from Supabase:", error);
+    } catch (err: unknown) {
+      console.error("Error refreshing from Supabase:", err);
     }
   }, [isAuthenticated, user, loadFromSupabase]);
 

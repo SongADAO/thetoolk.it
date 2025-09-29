@@ -26,8 +26,8 @@ async function generateOAuthKeys() {
 
       console.log(`ATPROTO_OAUTH_PRIVATE_KEY_${i}="${privateKey.replace(/\n/g, '\\n')}"`);
       console.log('');
-    } catch (error) {
-      console.error(`Error generating key ${i}:`, error);
+    } catch (err) {
+      console.error(`Error generating key ${i}:`, err);
     }
   }
 
@@ -55,8 +55,8 @@ async function generateES256Keys() {
 
       console.log(`ATPROTO_OAUTH_PRIVATE_KEY_${i}="${privateKey.replace(/\n/g, '\\n')}"`);
       console.log('');
-    } catch (error) {
-      console.error(`Error generating ES256 key ${i}:`, error);
+    } catch (err) {
+      console.error(`Error generating ES256 key ${i}:`, err);
     }
   }
 }
@@ -67,7 +67,7 @@ try {
 
   // Uncomment to use ES256 instead:
   // await generateES256Keys();
-} catch (error) {
-  console.error('Failed to generate keys:', error);
+} catch (err) {
+  console.error('Failed to generate keys:', err);
   process.exit(1);
 }

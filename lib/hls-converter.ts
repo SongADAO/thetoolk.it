@@ -382,9 +382,9 @@ ${streamPlaylist}
       try {
         // eslint-disable-next-line no-await-in-loop
         await this.ffmpeg.deleteFile(filename);
-      } catch (error) {
+      } catch (err: unknown) {
         // Ignore cleanup errors for individual files
-        console.warn(`Failed to cleanup file ${filename}:`, error);
+        console.warn(`Failed to cleanup file ${filename}:`, err);
       }
     }
   }
