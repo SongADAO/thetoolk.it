@@ -62,6 +62,7 @@ export default tseslint.config(
     ignores: [
       ".git/**",
       ".next/**",
+      ".vscode/**",
       "node_modules/**",
       "vendor/**",
       "storage/**",
@@ -81,6 +82,7 @@ export default tseslint.config(
       "vite-env.d.ts",
       "next-env.d.ts",
       "public/fonts/**",
+      "types/supabase.ts",
       // "**/hls-converter.ts",
       // "**/video-converter-webcodecs.ts",
     ],
