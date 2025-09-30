@@ -33,7 +33,12 @@ export function useUserStorage<T>(
     throw new Error("useUserStorage must be used within UserStorageProvider");
   }
 
-  const { getValue, setValue, refresh, subscribersRef } = context;
+  const { getValue, setValue, refresh, requestInit, subscribersRef } = context;
+
+  // Request initialization in an effect, not during render
+  useEffect(() => {
+    requestInit(key, defaultValue);
+  }, [key, defaultValue, requestInit]);
 
   // Subscribe to changes for this key
   useEffect(() => {

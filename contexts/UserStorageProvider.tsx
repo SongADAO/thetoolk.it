@@ -32,16 +32,17 @@ export function UserStorageProvider({
   } = React.use(AuthContext);
   const supabase = createClient();
 
-  // Store all values in a Map
   const [storage, setStorage] = useState<Map<string, any>>(new Map());
   const [loadingKeys, setLoadingKeys] = useState<Set<string>>(new Set());
   const [initializedKeys, setInitializedKeys] = useState<Set<string>>(
     new Set(),
   );
+
+  const pendingKeysRef = useRef<Map<string, any>>(new Map());
   const previousUserIdRef = useRef<string | null>(null);
   const subscribersRef = useRef<Map<string, Set<() => void>>>(new Map());
+  const [initTrigger, setInitTrigger] = useState(0);
 
-  // Parse key to get service info
   const parseKey = (key: string) => {
     const keyParts = key.split("-");
     return {
@@ -50,7 +51,6 @@ export function UserStorageProvider({
     };
   };
 
-  // Load from Supabase
   const loadFromSupabase = useCallback(
     async <T,>(key: string): Promise<T | null> => {
       if (!user?.id) return null;
@@ -85,7 +85,6 @@ export function UserStorageProvider({
     [user?.id, supabase],
   );
 
-  // Save to Supabase
   const saveToSupabase = useCallback(
     async <T,>(key: string, value: T): Promise<boolean> => {
       if (!user?.id) return false;
@@ -121,45 +120,64 @@ export function UserStorageProvider({
     [user?.id, supabase],
   );
 
-  // Notify all subscribers of a key
-  const notifySubscribers = (key: string) => {
+  const notifySubscribers = useCallback((key: string) => {
     const subscribers = subscribersRef.current.get(key);
     if (subscribers) {
       subscribers.forEach((callback) => callback());
     }
-  };
+  }, []);
 
-  // Initialize a key
-  const initializeKey = useCallback(
-    async <T,>(key: string, defaultValue: T) => {
-      if (initializedKeys.has(key)) return;
+  // Handle pending key initialization
+  useEffect(() => {
+    if (authLoading || pendingKeysRef.current.size === 0) return;
 
-      setLoadingKeys((prev) => new Set(prev).add(key));
+    const initializePendingKeys = async () => {
+      const keysToInit = Array.from(pendingKeysRef.current.entries());
+      pendingKeysRef.current.clear();
 
-      if (isAuthenticated && user) {
-        const supabaseValue = await loadFromSupabase<T>(key);
-        setStorage((prev) =>
-          new Map(prev).set(key, supabaseValue ?? defaultValue),
-        );
-        previousUserIdRef.current = user.id;
-      } else {
-        const localValue = localStorage.getItem(key);
-        const parsedValue = localValue ? JSON.parse(localValue) : defaultValue;
-        setStorage((prev) => new Map(prev).set(key, parsedValue));
-        previousUserIdRef.current = null;
+      for (const [key, defaultValue] of keysToInit) {
+        if (initializedKeys.has(key)) continue;
+
+        setLoadingKeys((prev) => new Set(prev).add(key));
+
+        if (isAuthenticated && user) {
+          const supabaseValue = await loadFromSupabase(key);
+          setStorage((prev) =>
+            new Map(prev).set(key, supabaseValue ?? defaultValue),
+          );
+          if (!previousUserIdRef.current) {
+            previousUserIdRef.current = user.id;
+          }
+        } else {
+          const localValue = localStorage.getItem(key);
+          const parsedValue = localValue
+            ? JSON.parse(localValue)
+            : defaultValue;
+          setStorage((prev) => new Map(prev).set(key, parsedValue));
+          previousUserIdRef.current = null;
+        }
+
+        setLoadingKeys((prev) => {
+          const next = new Set(prev);
+          next.delete(key);
+          return next;
+        });
+
+        setInitializedKeys((prev) => new Set(prev).add(key));
+        notifySubscribers(key);
       }
+    };
 
-      setLoadingKeys((prev) => {
-        const next = new Set(prev);
-        next.delete(key);
-        return next;
-      });
-
-      setInitializedKeys((prev) => new Set(prev).add(key));
-      notifySubscribers(key);
-    },
-    [isAuthenticated, user, loadFromSupabase, initializedKeys],
-  );
+    initializePendingKeys();
+  }, [
+    authLoading,
+    initTrigger,
+    isAuthenticated,
+    user,
+    loadFromSupabase,
+    notifySubscribers,
+    initializedKeys,
+  ]);
 
   // Handle user changes
   useEffect(() => {
@@ -192,7 +210,14 @@ export function UserStorageProvider({
 
       handleUserChange();
     }
-  }, [isAuthenticated, user, authLoading, initializedKeys, loadFromSupabase]);
+  }, [
+    isAuthenticated,
+    user,
+    authLoading,
+    initializedKeys,
+    loadFromSupabase,
+    notifySubscribers,
+  ]);
 
   // Handle visibility changes
   useEffect(() => {
@@ -213,20 +238,30 @@ export function UserStorageProvider({
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [isAuthenticated, user, initializedKeys, loadFromSupabase]);
+  }, [
+    isAuthenticated,
+    user,
+    initializedKeys,
+    loadFromSupabase,
+    notifySubscribers,
+  ]);
 
   const getValue = useCallback(
-    <T,>(key: string, defaultValue: T): StorageValue<T> => {
-      if (!initializedKeys.has(key)) {
-        initializeKey(key, defaultValue);
-      }
+    <T,>(key: string, defaultValue: T): StorageValue<T> => ({
+      isLoading: loadingKeys.has(key) || !initializedKeys.has(key),
+      value: storage.get(key) ?? defaultValue,
+    }),
+    [storage, loadingKeys, initializedKeys],
+  );
 
-      return {
-        isLoading: loadingKeys.has(key),
-        value: storage.get(key) ?? defaultValue,
-      };
+  const requestInit = useCallback(
+    (key: string, defaultValue: any) => {
+      if (!initializedKeys.has(key) && !pendingKeysRef.current.has(key)) {
+        pendingKeysRef.current.set(key, defaultValue);
+        setInitTrigger((prev) => prev + 1);
+      }
     },
-    [storage, loadingKeys, initializedKeys, initializeKey],
+    [initializedKeys],
   );
 
   const setValue = useCallback(
@@ -246,7 +281,7 @@ export function UserStorageProvider({
         localStorage.setItem(key, JSON.stringify(newValue));
       }
     },
-    [storage, isAuthenticated, user, saveToSupabase],
+    [storage, isAuthenticated, user, saveToSupabase, notifySubscribers],
   );
 
   const refresh = useCallback(
@@ -259,18 +294,18 @@ export function UserStorageProvider({
         notifySubscribers(key);
       }
     },
-    [isAuthenticated, user, loadFromSupabase],
+    [isAuthenticated, user, loadFromSupabase, notifySubscribers],
   );
 
   const providerValues: UserStorageContextType = useMemo(
     () => ({
       getValue,
       refresh,
+      requestInit,
       setValue,
       subscribersRef,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [getValue, setValue, refresh, requestInit],
   );
 
   return (
