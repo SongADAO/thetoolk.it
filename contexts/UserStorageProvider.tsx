@@ -333,33 +333,50 @@ export function UserStorageProvider({
   // Handle visibility changes
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (
-        !document.hidden &&
-        isAuthenticated &&
-        user &&
-        initializedKeys.size > 0
-      ) {
+      if (!document.hidden && initializedKeys.size > 0) {
         setTimeout(async () => {
-          const keysToRefresh = new Map<string, any>();
-          initializedKeys.forEach((key) => {
-            keysToRefresh.set(key, storage.get(key));
-          });
-
-          const batchData = await loadAllFromSupabase(keysToRefresh);
-          setStorage((prev) => {
-            const next = new Map(prev);
-            batchData.forEach((value, key) => {
-              next.set(key, value);
+          if (isAuthenticated && user) {
+            // Refresh from Supabase
+            const keysToRefresh = new Map<string, any>();
+            initializedKeys.forEach((key) => {
+              keysToRefresh.set(key, storage.get(key));
             });
-            return next;
-          });
 
-          // Notify subscribers AFTER state update completes
-          queueMicrotask(() => {
-            batchData.forEach((_, key) => {
-              notifySubscribers(key);
+            const batchData = await loadAllFromSupabase(keysToRefresh);
+            setStorage((prev) => {
+              const next = new Map(prev);
+              batchData.forEach((value, key) => {
+                next.set(key, value);
+              });
+              return next;
             });
-          });
+
+            // Notify subscribers AFTER state update completes
+            queueMicrotask(() => {
+              batchData.forEach((_, key) => {
+                notifySubscribers(key);
+              });
+            });
+          } else {
+            // Refresh from localStorage
+            setStorage((prev) => {
+              const next = new Map(prev);
+              initializedKeys.forEach((key) => {
+                const localValue = localStorage.getItem(key);
+                if (localValue) {
+                  next.set(key, JSON.parse(localValue));
+                }
+              });
+              return next;
+            });
+
+            // Notify subscribers AFTER state update completes
+            queueMicrotask(() => {
+              initializedKeys.forEach((key) => {
+                notifySubscribers(key);
+              });
+            });
+          }
         }, 100);
       }
     };
