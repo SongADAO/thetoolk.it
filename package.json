@@ -43,7 +43,7 @@
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.53.0",
     "@tanstack/react-query": "^5.81.5",
-    "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "babel-plugin-react-compiler": "^19.1.0-rc.3",
     "next": "^15.3.4",
     "pinata": "^2.4.9",
     "radix-ui": "^1.4.2",
