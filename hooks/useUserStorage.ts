@@ -15,7 +15,12 @@ export function useUserStorage<T>(
   key: string,
   defaultValue: T,
   options?: { initializeWithValue?: boolean },
-): [T, (value: T | ((prevValue: T) => T)) => void, () => Promise<void>] {
+): [
+  T,
+  (value: T | ((prevValue: T) => T)) => void,
+  boolean,
+  () => Promise<void>,
+] {
   const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const supabase = createClient();
@@ -286,8 +291,8 @@ export function useUserStorage<T>(
 
   // Return the loading state during initialization
   if (isLoading && !hasInitialized) {
-    return [defaultValue, updateValue, refreshFromSupabase];
+    return [defaultValue, updateValue, isLoading, refreshFromSupabase];
   }
 
-  return [value, updateValue, refreshFromSupabase];
+  return [value, updateValue, isLoading, refreshFromSupabase];
 }

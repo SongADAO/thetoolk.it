@@ -30,6 +30,7 @@ interface PostServiceContextType {
   isPosting: boolean;
   isUsable: boolean;
   label: string;
+  loading: boolean;
   post: (props: PostProps) => Promise<string | null>;
   postError: string;
   postProgress: number;
@@ -64,6 +65,7 @@ const postServiceContextDefault = {
   isPosting: false,
   isUsable: false,
   label: "",
+  loading: true,
   post: async (props: PostProps) => Promise.resolve(null),
   postError: "",
   postProgress: 0,

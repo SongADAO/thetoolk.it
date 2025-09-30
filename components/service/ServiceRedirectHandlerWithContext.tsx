@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import { Context, ReactNode, use, useEffect } from "react";
 
 import { Spinner } from "@/components/Spinner";
-import { AuthContext } from "@/contexts/AuthContext";
 
 interface ServiceRedirectHandlerProps {
   readonly error: string;
@@ -13,6 +12,7 @@ interface ServiceRedirectHandlerProps {
   readonly icon: ReactNode;
   readonly isHandlingAuth: boolean;
   readonly label: string;
+  readonly loading: boolean;
 }
 
 interface Props<T extends ServiceRedirectHandlerProps> {
@@ -22,8 +22,6 @@ interface Props<T extends ServiceRedirectHandlerProps> {
 export function ServiceRedirectHandlerWithContext<
   T extends ServiceRedirectHandlerProps,
 >({ context }: Props<T>) {
-  const { loading } = use(AuthContext);
-
   const {
     error,
     handleAuthRedirect,
@@ -31,6 +29,7 @@ export function ServiceRedirectHandlerWithContext<
     icon,
     isHandlingAuth,
     label,
+    loading,
   } = use(context);
 
   const searchParams = useSearchParams();
@@ -39,6 +38,7 @@ export function ServiceRedirectHandlerWithContext<
     if (loading) {
       return;
     }
+    console.log("Loading", loading);
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleAuthRedirect(searchParams);

@@ -32,7 +32,7 @@ interface Props {
 }
 
 export function AmazonS3Provider({ children }: Readonly<Props>) {
-  const { isAuthenticated } = use(AuthContext);
+  const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "AmazonS3";
 
@@ -46,7 +46,9 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   const [isClientEnabled, setIsEnabled] = useLocalStorage<boolean>(
     "thetoolkit-amazons3-enabled",
     false,
-    { initializeWithValue: false },
+    {
+      initializeWithValue: false,
+    },
   );
 
   const [credentials, setCredentials] = useLocalStorage<AmazonS3Credentials>(
@@ -54,6 +56,8 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     defaultAmazonS3Credentials,
     { initializeWithValue: true },
   );
+
+  const loading = authLoading;
 
   const hasAuthenticatedCredentials = false;
 
@@ -226,6 +230,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       isStoring,
       isUsable,
       label,
+      loading,
       resetStoreState,
       saveData,
       setIsEnabled,
@@ -256,6 +261,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       isStoring,
       isUsable,
       label,
+      loading,
       resetStoreState,
       storeError,
       storeProgress,

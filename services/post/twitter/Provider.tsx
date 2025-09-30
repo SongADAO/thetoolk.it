@@ -48,7 +48,7 @@ interface Props {
 }
 
 export function TwitterProvider({ children }: Readonly<Props>) {
-  const { isAuthenticated, loading } = use(AuthContext);
+  const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "Twitter";
 
@@ -60,35 +60,44 @@ export function TwitterProvider({ children }: Readonly<Props>) {
 
   const [error, setError] = useState("");
 
-  const [isEnabled, setIsEnabled] = useUserStorage<boolean>(
+  const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
     "thetoolkit-twitter-enabled",
     false,
     { initializeWithValue: false },
   );
 
-  const [credentials, setCredentials] = useUserStorage<OauthCredentials>(
-    "thetoolkit-twitter-credentials",
-    defaultOauthCredentials,
-    { initializeWithValue: true },
-  );
+  const [credentials, setCredentials, isCredentialsLoading] =
+    useUserStorage<OauthCredentials>(
+      "thetoolkit-twitter-credentials",
+      defaultOauthCredentials,
+      { initializeWithValue: true },
+    );
 
-  const [authorization, setAuthorization] = useUserStorage<OauthAuthorization>(
-    "thetoolkit-twitter-authorization",
-    defaultOauthAuthorization,
-    { initializeWithValue: true },
-  );
+  const [authorization, setAuthorization, isAuthorizationLoading] =
+    useUserStorage<OauthAuthorization>(
+      "thetoolkit-twitter-authorization",
+      defaultOauthAuthorization,
+      { initializeWithValue: true },
+    );
 
-  const [expiration, setExpiration] = useUserStorage<OauthExpiration>(
-    "thetoolkit-twitter-expiration",
-    defaultOauthExpiration,
-    { initializeWithValue: false },
-  );
+  const [expiration, setExpiration, isExpirationLoading] =
+    useUserStorage<OauthExpiration>(
+      "thetoolkit-twitter-expiration",
+      defaultOauthExpiration,
+      { initializeWithValue: false },
+    );
 
-  const [accounts, setAccounts] = useUserStorage<ServiceAccount[]>(
-    "thetoolkit-twitter-accounts",
-    [],
-    { initializeWithValue: true },
-  );
+  const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
+    ServiceAccount[]
+  >("thetoolkit-twitter-accounts", [], { initializeWithValue: true });
+
+  const loading =
+    authLoading ||
+    isEnabledLoading ||
+    isCredentialsLoading ||
+    isAuthorizationLoading ||
+    isExpirationLoading ||
+    isAccountsLoading;
 
   const hasAuthenticatedCredentials = false;
 
@@ -337,6 +346,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       isPosting,
       isUsable,
       label,
+      loading,
       post,
       postError,
       postProgress,
@@ -368,6 +378,7 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       isPosting,
       isUsable,
       label,
+      loading,
       postError,
       postProgress,
       postStatus,

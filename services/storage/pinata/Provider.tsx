@@ -34,7 +34,7 @@ interface Props {
 }
 
 export function PinataProvider({ children }: Readonly<Props>) {
-  const { isAuthenticated } = use(AuthContext);
+  const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "Pinata";
 
@@ -48,7 +48,9 @@ export function PinataProvider({ children }: Readonly<Props>) {
   const [isClientEnabled, setIsEnabled] = useLocalStorage<boolean>(
     "thetoolkit-pinata-enabled",
     false,
-    { initializeWithValue: false },
+    {
+      initializeWithValue: false,
+    },
   );
 
   const [credentials, setCredentials] = useLocalStorage<PinataCredentials>(
@@ -56,6 +58,8 @@ export function PinataProvider({ children }: Readonly<Props>) {
     defaultPinataCredentials,
     { initializeWithValue: true },
   );
+
+  const loading = authLoading;
 
   const hasAuthenticatedCredentials = false;
 
@@ -250,6 +254,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
       isStoring,
       isUsable,
       label,
+      loading,
       resetStoreState,
       saveData,
       setIsEnabled,
@@ -280,6 +285,7 @@ export function PinataProvider({ children }: Readonly<Props>) {
       isStoring,
       isUsable,
       label,
+      loading,
       resetStoreState,
       storeError,
       storeProgress,
