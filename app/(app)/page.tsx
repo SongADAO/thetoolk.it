@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { use } from "react";
-import { FaQuestion, FaServer, FaUsersGear } from "react-icons/fa6";
+import { FaCircleQuestion, FaServer, FaUsersGear } from "react-icons/fa6";
 
 import { PostForm } from "@/components/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";
@@ -28,7 +28,7 @@ export default function Home() {
                 target="_blank"
                 title="Instructions"
               >
-                <FaQuestion />
+                <FaCircleQuestion />
               </Link>
             )}
             {isAuthenticated ? null : (
@@ -64,7 +64,7 @@ export default function Home() {
                       target="_blank"
                       title="Instructions"
                     >
-                      <FaQuestion />
+                      <FaCircleQuestion />
                     </Link>
                   )}
                   <ServiceSettingsMenu
@@ -88,7 +88,7 @@ export default function Home() {
                       target="_blank"
                       title="Instructions"
                     >
-                      <FaQuestion />
+                      <FaCircleQuestion />
                     </Link>
                   )}
                   <ServiceSettingsMenu
@@ -116,7 +116,7 @@ export default function Home() {
                     target="_blank"
                     title="Instructions"
                   >
-                    <FaQuestion />
+                    <FaCircleQuestion />
                   </Link>
                 </div>
                 <StorageSettings />
@@ -131,7 +131,7 @@ export default function Home() {
                   target="_blank"
                   title="Instructions"
                 >
-                  <FaQuestion />
+                  <FaCircleQuestion />
                 </Link>
               </div>
               <PostSettings />
