@@ -1,299 +1,53 @@
-import { use, useCallback, useEffect, useRef, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { useCallback, useContext, useEffect, useState } from "react";
 
-import { AuthContext } from "@/contexts/AuthContext";
-import { createClient } from "@/lib/supabase/client";
+import { UserStorageContext } from "@/contexts/UserStorageContext";
 
 /**
  * Custom hook that uses Supabase database when user is authenticated,
  * falls back to localStorage when not authenticated.
- * Automatically refreshes data when:
- * - User returns to the page (visibility change)
- * - User changes (different user logs in)
+ *
+ * Must be used within a UserStorageProvider.
+ *
+ * @param key - Storage key (format: "prefix-serviceId-field")
+ * @param defaultValue - Default value if no stored value exists
+ * @returns Tuple of [value, setValue, isLoading, refresh]
  */
 export function useUserStorage<T>(
   key: string,
   defaultValue: T,
-  options?: { initializeWithValue?: boolean },
 ): [
   T,
-  (value: T | ((prevValue: T) => T)) => void,
+  (value: T | ((prevValue: T) => T)) => Promise<void>,
   boolean,
   () => Promise<void>,
 ] {
-  const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
+  const context = useContext(UserStorageContext);
+  const [, forceUpdate] = useState({});
 
-  const supabase = createClient();
+  const { getValue, setValue, refresh, subscribersRef } = context;
 
-  // Use localStorage as fallback
-  const [localValue, setLocalValue] = useLocalStorage(
-    key,
-    defaultValue,
-    options,
-  );
-
-  // State for the current value and loading state
-  const [value, setValue] = useState<T>(defaultValue);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasInitialized, setHasInitialized] = useState(false);
-
-  // Track the current user ID to detect user changes
-  const previousUserIdRef = useRef<string | null>(null);
-
-  const keyParts = key.split("-");
-  const serviceId = keyParts[1];
-  const serviceField = `service_${keyParts[2]}`;
-
-  // Load data from Supabase
-  const loadFromSupabase = useCallback(async (): Promise<T | null> => {
-    if (!user?.id) return null;
-
-    try {
-      const table =
-        serviceField === "service_authorization"
-          ? "service_authorizations"
-          : "services";
-
-      const { data, error } = await supabase
-        .from(table)
-        .select(serviceField)
-        .eq("user_id", user.id)
-        .eq("service_id", serviceId)
-        .single();
-
-      if (error) {
-        if (error.code === "PGRST116") {
-          // No rows found - this is fine, return null
-          return null;
-        }
-        console.error("Error loading from Supabase:", error);
-        return null;
-      }
-
-      /* eslint-disable @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/ban-ts-comment */
-      // @ts-expect-error
-      return data[String(serviceField)] as T;
-      /* eslint-enable @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/ban-ts-comment */
-    } catch (err: unknown) {
-      console.error("Error loading from Supabase:", err);
-      return null;
-    }
-  }, [user?.id, serviceField, serviceId, supabase]);
-
-  // Save data to Supabase
-  const saveToSupabase = useCallback(
-    async (newValue: T): Promise<boolean> => {
-      if (!user?.id) return false;
-
-      try {
-        console.log({
-          [serviceField]: newValue,
-          service_id: serviceId,
-          user_id: user.id,
-        });
-
-        const table =
-          serviceField === "service_authorization"
-            ? "service_authorizations"
-            : "services";
-
-        const { error } = await supabase.from(table).upsert(
-          {
-            [serviceField]: newValue,
-            service_id: serviceId,
-            user_id: user.id,
-          },
-          {
-            onConflict: "user_id,service_id",
-          },
-        );
-
-        if (error) {
-          console.error("Error saving to Supabase:", error);
-          return false;
-        }
-
-        return true;
-      } catch (err: unknown) {
-        console.error("Error saving to Supabase:", err);
-        return false;
-      }
-    },
-    [user?.id, serviceField, serviceId, supabase],
-  );
-
-  // Manual refresh function
-  const refreshFromSupabase = useCallback(async (): Promise<void> => {
-    if (!isAuthenticated || !user) return;
-
-    try {
-      const supabaseValue = await loadFromSupabase();
-      if (supabaseValue !== null) {
-        setValue(supabaseValue);
-      }
-    } catch (err: unknown) {
-      console.error("Error refreshing from Supabase:", err);
-    }
-  }, [isAuthenticated, user, loadFromSupabase]);
-
-  // Initialize data
+  // Subscribe to changes for this key
   useEffect(() => {
-    if (authLoading || hasInitialized) return;
+    const callback = () => forceUpdate({});
 
-    const initializeData = async () => {
-      setIsLoading(true);
-
-      if (isAuthenticated && user) {
-        // Load from Supabase
-        const supabaseValue = await loadFromSupabase();
-        if (supabaseValue !== null) {
-          setValue(supabaseValue);
-        }
-
-        // Track the current user ID
-        previousUserIdRef.current = user.id;
-      } else {
-        // Not authenticated, use localStorage
-        setValue(localValue);
-
-        // Track the current user ID
-        previousUserIdRef.current = null;
-      }
-
-      setIsLoading(false);
-      setHasInitialized(true);
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    initializeData();
-  }, [
-    isAuthenticated,
-    user,
-    authLoading,
-    hasInitialized,
-    localValue,
-    loadFromSupabase,
-  ]);
-
-  // Handle user changes (different user logs in)
-  useEffect(() => {
-    if (!hasInitialized || authLoading) return;
-    console.log("User Change");
-
-    const currentUserId = user?.id ?? null;
-    const previousUserId = previousUserIdRef.current;
-    console.log("Current user ID:", currentUserId);
-    console.log("Previous user ID:", previousUserId);
-
-    // Check if user has changed (different user ID)
-    if (currentUserId !== previousUserId) {
-      const handleUserChange = async () => {
-        if (isAuthenticated && user) {
-          // Different user logged in - load their data from Supabase
-          const supabaseValue = await loadFromSupabase();
-          if (supabaseValue !== null) {
-            setValue(supabaseValue);
-          }
-        } else {
-          // User logged out - use localStorage value
-          setValue(localValue);
-        }
-
-        // Update the tracked user ID
-        previousUserIdRef.current = currentUserId;
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleUserChange();
+    if (!subscribersRef.current.has(key)) {
+      subscribersRef.current.set(key, new Set());
     }
-  }, [
-    isAuthenticated,
-    user,
-    hasInitialized,
-    authLoading,
-    localValue,
-    loadFromSupabase,
-    defaultValue,
-  ]);
+    subscribersRef.current.get(key)!.add(callback);
 
-  // Handle page visibility changes (user returns to tab)
-  useEffect(() => {
-    if (!hasInitialized) return;
-
-    const handleVisibilityChange = () => {
-      // Only refresh when page becomes visible and user is authenticated
-      if (!document.hidden) {
-        if (isAuthenticated && user) {
-          // Small delay to ensure any auth state is stable
-          setTimeout(() => {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            refreshFromSupabase();
-          }, 100);
-        } else {
-          setValue(localValue);
-        }
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    // eslint-disable-next-line @typescript-eslint/consistent-return
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      subscribersRef.current.get(key)?.delete(callback);
     };
-  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase, localValue]);
+  }, [key, subscribersRef]);
 
-  // Handle window focus (additional safety for when user returns)
-  useEffect(() => {
-    if (!hasInitialized) return;
+  const { value, isLoading } = getValue<T>(key, defaultValue);
 
-    const handleFocus = () => {
-      if (isAuthenticated && user) {
-        // Small delay to avoid excessive calls
-        setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          refreshFromSupabase();
-        }, 100);
-      } else {
-        setValue(localValue);
-      }
-    };
-
-    window.addEventListener("focus", handleFocus);
-
-    // eslint-disable-next-line @typescript-eslint/consistent-return
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase, localValue]);
-
-  // Update function
   const updateValue = useCallback(
-    async (newValueOrUpdater: T | ((prevValue: T) => T)) => {
-      const newValue =
-        typeof newValueOrUpdater === "function"
-          ? // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            (newValueOrUpdater as (prevValue: T) => T)(value)
-          : newValueOrUpdater;
-
-      // Update local state immediately for responsive UI
-      setValue(newValue);
-
-      if (isAuthenticated && user) {
-        // Save to Supabase
-        await saveToSupabase(newValue);
-      } else {
-        // Save to localStorage
-        setLocalValue(newValue);
-      }
-    },
-    [value, isAuthenticated, user, saveToSupabase, setLocalValue],
+    async (newValue: T | ((prevValue: T) => T)) => setValue<T>(key, newValue),
+    [key, setValue],
   );
 
-  // Return the loading state during initialization
-  if (isLoading && !hasInitialized) {
-    return [defaultValue, updateValue, isLoading, refreshFromSupabase];
-  }
+  const refreshValue = useCallback(async () => refresh(key), [key, refresh]);
 
-  return [value, updateValue, isLoading, refreshFromSupabase];
+  return [value, updateValue, isLoading, refreshValue];
 }
