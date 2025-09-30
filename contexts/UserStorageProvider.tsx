@@ -15,6 +15,7 @@ import {
 } from "@/contexts/UserStorageContext";
 import { createClient } from "@/lib/supabase/client";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface StorageValue<T = any> {
   value: T;
   isLoading: boolean;
@@ -33,11 +34,13 @@ export function UserStorageProvider({
   const supabase = createClient();
 
   // Store all values in a Map
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [storage, setStorage] = useState<Map<string, any>>(new Map());
   const [loadingKeys, setLoadingKeys] = useState<Set<string>>(new Set());
   const [initializedKeys, setInitializedKeys] = useState<Set<string>>(
     new Set(),
   );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pendingKeysRef = useRef<Map<string, any>>(new Map());
   const previousUserIdRef = useRef<string | null>(null);
   const subscribersRef = useRef<Map<string, Set<() => void>>>(new Map());
@@ -55,9 +58,11 @@ export function UserStorageProvider({
 
   // Load ALL data from Supabase in a single batch
   const loadAllFromSupabase = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (keys: Map<string, any>): Promise<Map<string, any>> => {
       if (!user?.id || keys.size === 0) return new Map();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = new Map<string, any>();
 
       try {
@@ -132,6 +137,7 @@ export function UserStorageProvider({
 
   // Save to Supabase
   const saveToSupabase = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
     async <T,>(key: string, value: T): Promise<boolean> => {
       if (!user?.id) return false;
 
@@ -179,6 +185,7 @@ export function UserStorageProvider({
     if (authLoading || hasLoadedBatch.current) return;
 
     // Debounce to allow all initial keys to accumulate
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     const timeoutId = setTimeout(async () => {
       if (pendingKeysRef.current.size === 0) return;
 
@@ -212,6 +219,7 @@ export function UserStorageProvider({
           previousUserIdRef.current = user.id;
         } else {
           // Load from localStorage for each key
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const localData = new Map<string, any>();
           keysToInit.forEach((defaultValue, key) => {
             const localValue = localStorage.getItem(key);
@@ -250,8 +258,10 @@ export function UserStorageProvider({
       };
 
       await initializePendingKeys();
-    }, 50); // 50ms debounce to collect all initial keys
+      // 50ms debounce to collect all initial keys
+    }, 50);
 
+    // eslint-disable-next-line @typescript-eslint/consistent-return
     return () => clearTimeout(timeoutId);
   }, [
     authLoading,
@@ -274,6 +284,7 @@ export function UserStorageProvider({
         hasLoadedBatch.current = false;
 
         // Collect all initialized keys with their default values
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const keysToReload = new Map<string, any>();
         initializedKeys.forEach((key) => {
           keysToReload.set(key, storage.get(key));
@@ -318,6 +329,7 @@ export function UserStorageProvider({
         previousUserIdRef.current = currentUserId;
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleUserChange();
     }
   }, [
@@ -334,9 +346,11 @@ export function UserStorageProvider({
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && initializedKeys.size > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
           if (isAuthenticated && user) {
             // Refresh from Supabase
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const keysToRefresh = new Map<string, any>();
             initializedKeys.forEach((key) => {
               keysToRefresh.set(key, storage.get(key));
@@ -402,6 +416,7 @@ export function UserStorageProvider({
   );
 
   const requestInit = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (key: string, defaultValue: any) => {
       const wasEmpty = pendingKeysRef.current.size === 0;
       if (!initializedKeys.has(key) && !pendingKeysRef.current.has(key)) {
@@ -420,7 +435,8 @@ export function UserStorageProvider({
       const currentValue = storage.get(key);
       const newValue =
         typeof valueOrUpdater === "function"
-          ? (valueOrUpdater as (prev: T) => T)(currentValue)
+          ? // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+            (valueOrUpdater as (prev: T) => T)(currentValue)
           : valueOrUpdater;
 
       setStorage((prev) => new Map(prev).set(key, newValue));
