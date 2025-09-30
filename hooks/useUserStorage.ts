@@ -227,12 +227,16 @@ export function useUserStorage<T>(
 
     const handleVisibilityChange = () => {
       // Only refresh when page becomes visible and user is authenticated
-      if (!document.hidden && isAuthenticated && user) {
-        // Small delay to ensure any auth state is stable
-        setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          refreshFromSupabase();
-        }, 100);
+      if (!document.hidden) {
+        if (isAuthenticated && user) {
+          // Small delay to ensure any auth state is stable
+          setTimeout(() => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            refreshFromSupabase();
+          }, 100);
+        } else {
+          setValue(localValue);
+        }
       }
     };
 
@@ -242,29 +246,31 @@ export function useUserStorage<T>(
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase]);
+  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase, localValue]);
 
   // Handle window focus (additional safety for when user returns)
-  // useEffect(() => {
-  //   if (!hasInitialized) return;
+  useEffect(() => {
+    if (!hasInitialized) return;
 
-  //   const handleFocus = () => {
-  //     if (isAuthenticated && user) {
-  //       // Small delay to avoid excessive calls
-  //       setTimeout(() => {
-  //         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //         refreshFromSupabase();
-  //       }, 100);
-  //     }
-  //   };
+    const handleFocus = () => {
+      if (isAuthenticated && user) {
+        // Small delay to avoid excessive calls
+        setTimeout(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          refreshFromSupabase();
+        }, 100);
+      } else {
+        setValue(localValue);
+      }
+    };
 
-  //   window.addEventListener("focus", handleFocus);
+    window.addEventListener("focus", handleFocus);
 
-  //   // eslint-disable-next-line @typescript-eslint/consistent-return
-  //   return () => {
-  //     window.removeEventListener("focus", handleFocus);
-  //   };
-  // }, [hasInitialized, isAuthenticated, user, refreshFromSupabase]);
+    // eslint-disable-next-line @typescript-eslint/consistent-return
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [hasInitialized, isAuthenticated, user, refreshFromSupabase, localValue]);
 
   // Update function
   const updateValue = useCallback(
