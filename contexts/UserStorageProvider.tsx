@@ -285,9 +285,15 @@ export function UserStorageProvider({
             const next = new Map(prev);
             batchData.forEach((value, key) => {
               next.set(key, value);
-              notifySubscribers(key);
             });
             return next;
+          });
+
+          // Notify subscribers AFTER state update completes
+          queueMicrotask(() => {
+            batchData.forEach((_, key) => {
+              notifySubscribers(key);
+            });
           });
         } else {
           initializedKeys.forEach((key) => {
@@ -298,8 +304,14 @@ export function UserStorageProvider({
                 next.set(key, JSON.parse(localValue));
                 return next;
               });
-              notifySubscribers(key);
             }
+          });
+
+          // Notify subscribers AFTER state update completes
+          queueMicrotask(() => {
+            initializedKeys.forEach((key) => {
+              notifySubscribers(key);
+            });
           });
         }
 
@@ -338,9 +350,15 @@ export function UserStorageProvider({
             const next = new Map(prev);
             batchData.forEach((value, key) => {
               next.set(key, value);
-              notifySubscribers(key);
             });
             return next;
+          });
+
+          // Notify subscribers AFTER state update completes
+          queueMicrotask(() => {
+            batchData.forEach((_, key) => {
+              notifySubscribers(key);
+            });
           });
         }, 100);
       }
