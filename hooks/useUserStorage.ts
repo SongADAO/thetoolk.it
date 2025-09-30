@@ -22,7 +22,7 @@ export function useUserStorage<T>(
   options?: { initializeWithValue?: boolean },
 ): [
   T,
-  (value: T | ((prevValue: T) => T)) => Promise<void>,
+  (value: T | ((prevValue: T) => T)) => void,
   boolean,
   () => Promise<void>,
 ] {
@@ -52,7 +52,10 @@ export function useUserStorage<T>(
   const { value, isLoading } = getValue<T>(key, defaultValue);
 
   const updateValue = useCallback(
-    async (newValue: T | ((prevValue: T) => T)) => setValue<T>(key, newValue),
+    (newValue: T | ((prevValue: T) => T)) => {
+      // Fire and forget - explicitly mark promise as ignored
+      void setValue<T>(key, newValue);
+    },
     [key, setValue],
   );
 
