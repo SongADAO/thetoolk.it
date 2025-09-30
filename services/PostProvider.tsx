@@ -298,9 +298,7 @@ export function PostProvider({ children }: Readonly<Props>) {
 
       // Convert Uint8Array back to File object
       const convertedVideo = new File(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        [convertedData],
+        [convertedData as BlobPart],
         `converted_${video.name}`,
         { type: "video/mp4" },
       );

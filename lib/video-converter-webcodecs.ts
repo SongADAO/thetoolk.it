@@ -105,9 +105,9 @@ class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(outputFileName);
 
       // Create audio file
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const audioBlob = new Blob([audioData], { type: "audio/wav" });
+      const audioBlob = new Blob([audioData as BlobPart], {
+        type: "audio/wav",
+      });
       const audioFile = new File([audioBlob], "converted_audio.wav", {
         type: "audio/wav",
       });
@@ -159,9 +159,9 @@ class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(inputFileName);
       await this.ffmpeg.deleteFile(outputFileName);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const videoBlob = new Blob([videoData], { type: "video/mp4" });
+      const videoBlob = new Blob([videoData as BlobPart], {
+        type: "video/mp4",
+      });
       const videoFile = new File([videoBlob], "video_only.mp4", {
         type: "video/mp4",
       });
@@ -232,9 +232,9 @@ class FFmpegAudioPreprocessor {
       await this.ffmpeg.deleteFile(audioFileName);
       await this.ffmpeg.deleteFile(outputFileName);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const combinedBlob = new Blob([combinedData], { type: "video/mp4" });
+      const combinedBlob = new Blob([combinedData as BlobPart], {
+        type: "video/mp4",
+      });
       const combinedFile = new File([combinedBlob], "combined_output.mp4", {
         type: "video/mp4",
       });
@@ -468,9 +468,7 @@ class VideoConverter {
     data: Uint8Array,
     filename = "converted_video.mp4",
   ): File {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const blob = new Blob([data], { type: "video/mp4" });
+    const blob = new Blob([data as BlobPart], { type: "video/mp4" });
     return new File([blob], filename, { type: "video/mp4" });
   }
 

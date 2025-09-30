@@ -241,9 +241,9 @@ class HLSConverter {
           // eslint-disable-next-line no-await-in-loop
           const segmentData = await this.ffmpeg.readFile(segmentName);
           segments.push(
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            new File([segmentData], segmentName, { type: "video/mp2t" }),
+            new File([segmentData as BlobPart], segmentName, {
+              type: "video/mp2t",
+            }),
           );
 
           // Update progress for segment reading
@@ -292,17 +292,13 @@ ${streamPlaylist}
         },
       );
       const streamManifestFile = new File(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        [streamManifestData],
+        [streamManifestData as BlobPart],
         streamPlaylist,
         {
           type: "application/vnd.apple.mpegurl",
         },
       );
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const thumbnail = new File([thumbnailData], thumbnailName, {
+      const thumbnail = new File([thumbnailData as BlobPart], thumbnailName, {
         type: "image/jpeg",
       });
 
