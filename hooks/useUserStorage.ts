@@ -36,8 +36,8 @@ export function useUserStorage<T>(
   // Request initialization in an effect, not during render
   useEffect(() => {
     requestInit(key, defaultValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // Only re-init if key changes, not defaultValue
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   // Subscribe to changes for this key
@@ -51,6 +51,7 @@ export function useUserStorage<T>(
     subscribersRef.current.get(key)!.add(callback);
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       subscribersRef.current.get(key)?.delete(callback);
     };
   }, [key, subscribersRef]);
