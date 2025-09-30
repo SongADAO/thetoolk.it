@@ -27,11 +27,9 @@ export function useUserStorage<T>(
   () => Promise<void>,
 ] {
   const context: UserStorageContextType = useContext(UserStorageContext);
-  const [, forceUpdate] = useState({});
 
-  if (!context) {
-    throw new Error("useUserStorage must be used within UserStorageProvider");
-  }
+  // eslint-disable-next-line react/hook-use-state
+  const [, forceUpdate] = useState({});
 
   const { getValue, setValue, refresh, requestInit, subscribersRef } = context;
 
@@ -39,7 +37,8 @@ export function useUserStorage<T>(
   useEffect(() => {
     requestInit(key, defaultValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]); // Only re-init if key changes, not defaultValue
+    // Only re-init if key changes, not defaultValue
+  }, [key]);
 
   // Subscribe to changes for this key
   useEffect(() => {
@@ -48,6 +47,7 @@ export function useUserStorage<T>(
     if (!subscribersRef.current.has(key)) {
       subscribersRef.current.set(key, new Set());
     }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     subscribersRef.current.get(key)!.add(callback);
 
     return () => {
@@ -60,6 +60,7 @@ export function useUserStorage<T>(
   const updateValue = useCallback(
     (newValue: T | ((prevValue: T) => T)) => {
       // Fire and forget - explicitly mark promise as ignored
+      // eslint-disable-next-line no-void
       void setValue<T>(key, newValue);
     },
     [key, setValue],
