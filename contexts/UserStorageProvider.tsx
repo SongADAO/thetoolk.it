@@ -56,22 +56,27 @@ export function UserStorageProvider({
   // Load ALL data from Supabase in a single batch
   const loadAllFromSupabase = useCallback(
     async (keys: Map<string, any>): Promise<Map<string, any>> => {
-      if (!user?.id) return new Map();
+      if (!user?.id || keys.size === 0) return new Map();
 
       const result = new Map<string, any>();
 
       try {
         // Get all unique service IDs from keys
-        const serviceIds = new Set(
-          Array.from(keys.keys()).map((key) => parseKey(key).serviceId),
+        const serviceIds = Array.from(
+          new Set(
+            Array.from(keys.keys()).map((key) => parseKey(key).serviceId),
+          ),
         );
+
+        // Don't query if there are no service IDs
+        if (serviceIds.length === 0) return new Map();
 
         // Fetch all services data in one query
         const { data: servicesData, error: servicesError } = await supabase
           .from("services")
           .select("*")
           .eq("user_id", user.id)
-          .in("service_id", Array.from(serviceIds));
+          .in("service_id", serviceIds);
 
         if (servicesError) {
           console.error("Error loading services from Supabase:", servicesError);
@@ -82,7 +87,7 @@ export function UserStorageProvider({
           .from("service_authorizations")
           .select("*")
           .eq("user_id", user.id)
-          .in("service_id", Array.from(serviceIds));
+          .in("service_id", serviceIds);
 
         if (authError) {
           console.error(
@@ -169,81 +174,85 @@ export function UserStorageProvider({
     }
   }, []);
 
-  // Handle pending key initialization - batch fetch all at once
+  // Handle pending key initialization - batch fetch all at once with debounce
   useEffect(() => {
-    if (
-      authLoading ||
-      pendingKeysRef.current.size === 0 ||
-      hasLoadedBatch.current
-    )
-      return;
+    if (authLoading || hasLoadedBatch.current) return;
 
-    const initializePendingKeys = async () => {
-      const keysToInit = new Map(pendingKeysRef.current);
-      pendingKeysRef.current.clear();
-      hasLoadedBatch.current = true;
+    // Debounce to allow all initial keys to accumulate
+    const timeoutId = setTimeout(async () => {
+      if (pendingKeysRef.current.size === 0) return;
 
-      // Mark all keys as loading
-      setLoadingKeys((prev) => {
-        const next = new Set(prev);
-        keysToInit.forEach((_, key) => next.add(key));
-        return next;
-      });
+      const initializePendingKeys = async () => {
+        const keysToInit = new Map(pendingKeysRef.current);
+        pendingKeysRef.current.clear();
+        hasLoadedBatch.current = true;
 
-      if (isAuthenticated && user) {
-        // Batch fetch all data at once
-        const batchData = await loadAllFromSupabase(keysToInit);
+        console.log(`Batch loading ${keysToInit.size} keys from Supabase`);
 
-        // Update storage with all fetched data
-        setStorage((prev) => {
-          const next = new Map(prev);
-          batchData.forEach((value, key) => {
-            next.set(key, value);
-          });
+        // Mark all keys as loading
+        setLoadingKeys((prev) => {
+          const next = new Set(prev);
+          keysToInit.forEach((_, key) => next.add(key));
           return next;
         });
 
-        previousUserIdRef.current = user.id;
-      } else {
-        // Load from localStorage for each key
-        const localData = new Map<string, any>();
-        keysToInit.forEach((defaultValue, key) => {
-          const localValue = localStorage.getItem(key);
-          localData.set(
-            key,
-            localValue ? JSON.parse(localValue) : defaultValue,
-          );
-        });
+        if (isAuthenticated && user) {
+          // Batch fetch all data at once
+          const batchData = await loadAllFromSupabase(keysToInit);
 
-        setStorage((prev) => {
-          const next = new Map(prev);
-          localData.forEach((value, key) => {
-            next.set(key, value);
+          // Update storage with all fetched data
+          setStorage((prev) => {
+            const next = new Map(prev);
+            batchData.forEach((value, key) => {
+              next.set(key, value);
+            });
+            return next;
           });
+
+          previousUserIdRef.current = user.id;
+        } else {
+          // Load from localStorage for each key
+          const localData = new Map<string, any>();
+          keysToInit.forEach((defaultValue, key) => {
+            const localValue = localStorage.getItem(key);
+            localData.set(
+              key,
+              localValue ? JSON.parse(localValue) : defaultValue,
+            );
+          });
+
+          setStorage((prev) => {
+            const next = new Map(prev);
+            localData.forEach((value, key) => {
+              next.set(key, value);
+            });
+            return next;
+          });
+
+          previousUserIdRef.current = null;
+        }
+
+        // Clear loading state and mark as initialized
+        setLoadingKeys((prev) => {
+          const next = new Set(prev);
+          keysToInit.forEach((_, key) => next.delete(key));
           return next;
         });
 
-        previousUserIdRef.current = null;
-      }
+        setInitializedKeys((prev) => {
+          const next = new Set(prev);
+          keysToInit.forEach((_, key) => next.add(key));
+          return next;
+        });
 
-      // Clear loading state and mark as initialized
-      setLoadingKeys((prev) => {
-        const next = new Set(prev);
-        keysToInit.forEach((_, key) => next.delete(key));
-        return next;
-      });
+        // Notify all subscribers
+        keysToInit.forEach((_, key) => notifySubscribers(key));
+      };
 
-      setInitializedKeys((prev) => {
-        const next = new Set(prev);
-        keysToInit.forEach((_, key) => next.add(key));
-        return next;
-      });
+      await initializePendingKeys();
+    }, 50); // 50ms debounce to collect all initial keys
 
-      // Notify all subscribers
-      keysToInit.forEach((_, key) => notifySubscribers(key));
-    };
-
-    initializePendingKeys();
+    return () => clearTimeout(timeoutId);
   }, [
     authLoading,
     initTrigger,
@@ -359,9 +368,13 @@ export function UserStorageProvider({
 
   const requestInit = useCallback(
     (key: string, defaultValue: any) => {
+      const wasEmpty = pendingKeysRef.current.size === 0;
       if (!initializedKeys.has(key) && !pendingKeysRef.current.has(key)) {
         pendingKeysRef.current.set(key, defaultValue);
-        setInitTrigger((prev) => prev + 1);
+        // Only trigger once when going from empty to having keys
+        if (wasEmpty) {
+          setInitTrigger((prev) => prev + 1);
+        }
       }
     },
     [initializedKeys],
