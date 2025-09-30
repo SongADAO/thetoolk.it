@@ -1,6 +1,9 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 
-import { UserStorageContext } from "@/contexts/UserStorageContext";
+import {
+  UserStorageContext,
+  type UserStorageContextType,
+} from "@/contexts/UserStorageContext";
 
 /**
  * Custom hook that uses Supabase database when user is authenticated,
@@ -15,14 +18,20 @@ import { UserStorageContext } from "@/contexts/UserStorageContext";
 export function useUserStorage<T>(
   key: string,
   defaultValue: T,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  options?: { initializeWithValue?: boolean },
 ): [
   T,
   (value: T | ((prevValue: T) => T)) => Promise<void>,
   boolean,
   () => Promise<void>,
 ] {
-  const context = useContext(UserStorageContext);
+  const context: UserStorageContextType = useContext(UserStorageContext);
   const [, forceUpdate] = useState({});
+
+  if (!context) {
+    throw new Error("useUserStorage must be used within UserStorageProvider");
+  }
 
   const { getValue, setValue, refresh, subscribersRef } = context;
 
