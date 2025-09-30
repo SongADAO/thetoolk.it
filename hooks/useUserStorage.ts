@@ -144,14 +144,9 @@ export function useUserStorage<T>(
       setIsLoading(true);
 
       if (isAuthenticated && user) {
-        // Try to load from Supabase first
+        // Load from Supabase
         const supabaseValue = await loadFromSupabase();
-
-        if (supabaseValue === null) {
-          // No data in Supabase, use localStorage value and migrate
-          // setValue(localValue);
-        } else {
-          // User logged out - use localStorage value
+        if (supabaseValue !== null) {
           setValue(supabaseValue);
         }
 
@@ -160,6 +155,8 @@ export function useUserStorage<T>(
       } else {
         // Not authenticated, use localStorage
         setValue(localValue);
+
+        // Track the current user ID
         previousUserIdRef.current = null;
       }
 
@@ -181,22 +178,20 @@ export function useUserStorage<T>(
   // Handle user changes (different user logs in)
   useEffect(() => {
     if (!hasInitialized || authLoading) return;
+    console.log("User Change");
 
     const currentUserId = user?.id ?? null;
     const previousUserId = previousUserIdRef.current;
     console.log("Current user ID:", currentUserId);
     console.log("Previous user ID:", previousUserId);
+
     // Check if user has changed (different user ID)
     if (currentUserId !== previousUserId) {
       const handleUserChange = async () => {
         if (isAuthenticated && user) {
           // Different user logged in - load their data from Supabase
           const supabaseValue = await loadFromSupabase();
-          if (supabaseValue === null) {
-            // No data in Supabase, use localStorage value and migrate
-            // setValue(localValue);
-          } else {
-            // User logged out - use localStorage value
+          if (supabaseValue !== null) {
             setValue(supabaseValue);
           }
         } else {
