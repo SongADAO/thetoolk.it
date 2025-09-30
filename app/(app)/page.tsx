@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { FaServer, FaUsersGear } from "react-icons/fa6";
+import Link from "next/link";
 
 import { PostForm } from "@/components/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";
@@ -16,21 +16,21 @@ export default function Home() {
         <div className="flex items-center justify-between bg-gray-200 p-2">
           <h1>TheToolk.it</h1>
           <div className="flex items-center gap-4">
-            <Link
-              className="text-blue-600 underline hover:text-blue-800"
-              href="/instructions"
-              rel="noopener noreferrer"
+            <Link 
+              href="/instructions" 
               target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline"
             >
               Instructions
             </Link>
             <div className="flex gap-4 lg:hidden">
-              <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
-                <StorageSettings />
-              </ServiceSettingsMenu>
-              <ServiceSettingsMenu icon={<FaUsersGear />} label="Post Settings">
-                <PostSettings />
-              </ServiceSettingsMenu>
+            <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
+              <StorageSettings />
+            </ServiceSettingsMenu>
+            <ServiceSettingsMenu icon={<FaUsersGear />} label="Post Settings">
+              <PostSettings />
+            </ServiceSettingsMenu>
             </div>
           </div>
         </div>
