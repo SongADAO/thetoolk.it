@@ -32,17 +32,19 @@ export function UserStorageProvider({
   } = React.use(AuthContext);
   const supabase = createClient();
 
+  // Store all values in a Map
   const [storage, setStorage] = useState<Map<string, any>>(new Map());
   const [loadingKeys, setLoadingKeys] = useState<Set<string>>(new Set());
   const [initializedKeys, setInitializedKeys] = useState<Set<string>>(
     new Set(),
   );
-
   const pendingKeysRef = useRef<Map<string, any>>(new Map());
   const previousUserIdRef = useRef<string | null>(null);
   const subscribersRef = useRef<Map<string, Set<() => void>>>(new Map());
   const [initTrigger, setInitTrigger] = useState(0);
+  const hasLoadedBatch = useRef(false);
 
+  // Parse key to get service info
   const parseKey = (key: string) => {
     const keyParts = key.split("-");
     return {
@@ -51,40 +53,79 @@ export function UserStorageProvider({
     };
   };
 
-  const loadFromSupabase = useCallback(
-    async <T,>(key: string): Promise<T | null> => {
-      if (!user?.id) return null;
+  // Load ALL data from Supabase in a single batch
+  const loadAllFromSupabase = useCallback(
+    async (keys: Map<string, any>): Promise<Map<string, any>> => {
+      if (!user?.id) return new Map();
 
-      const { serviceId, serviceField } = parseKey(key);
+      const result = new Map<string, any>();
 
       try {
-        const table =
-          serviceField === "service_authorization"
-            ? "service_authorizations"
-            : "services";
+        // Get all unique service IDs from keys
+        const serviceIds = new Set(
+          Array.from(keys.keys()).map((key) => parseKey(key).serviceId),
+        );
 
-        const { data, error } = await supabase
-          .from(table)
-          .select(serviceField)
+        // Fetch all services data in one query
+        const { data: servicesData, error: servicesError } = await supabase
+          .from("services")
+          .select("*")
           .eq("user_id", user.id)
-          .eq("service_id", serviceId)
-          .single();
+          .in("service_id", Array.from(serviceIds));
 
-        if (error) {
-          if (error.code === "PGRST116") return null;
-          console.error("Error loading from Supabase:", error);
-          return null;
+        if (servicesError) {
+          console.error("Error loading services from Supabase:", servicesError);
         }
 
-        return data[serviceField] as T;
+        // Fetch all service authorizations in one query
+        const { data: authData, error: authError } = await supabase
+          .from("service_authorizations")
+          .select("*")
+          .eq("user_id", user.id)
+          .in("service_id", Array.from(serviceIds));
+
+        if (authError) {
+          console.error(
+            "Error loading authorizations from Supabase:",
+            authError,
+          );
+        }
+
+        // Map the fetched data back to keys
+        for (const [key, defaultValue] of keys.entries()) {
+          const { serviceId, serviceField } = parseKey(key);
+
+          let value = defaultValue;
+
+          if (serviceField === "service_authorization") {
+            const authRecord = authData?.find(
+              (record) => record.service_id === serviceId,
+            );
+            if (authRecord && authRecord[serviceField] !== undefined) {
+              value = authRecord[serviceField];
+            }
+          } else {
+            const serviceRecord = servicesData?.find(
+              (record) => record.service_id === serviceId,
+            );
+            if (serviceRecord && serviceRecord[serviceField] !== undefined) {
+              value = serviceRecord[serviceField];
+            }
+          }
+
+          result.set(key, value);
+        }
+
+        return result;
       } catch (err) {
         console.error("Error loading from Supabase:", err);
-        return null;
+        return new Map();
       }
     },
     [user?.id, supabase],
   );
 
+  // Save to Supabase
   const saveToSupabase = useCallback(
     async <T,>(key: string, value: T): Promise<boolean> => {
       if (!user?.id) return false;
@@ -120,6 +161,7 @@ export function UserStorageProvider({
     [user?.id, supabase],
   );
 
+  // Notify all subscribers of a key
   const notifySubscribers = useCallback((key: string) => {
     const subscribers = subscribersRef.current.get(key);
     if (subscribers) {
@@ -127,45 +169,78 @@ export function UserStorageProvider({
     }
   }, []);
 
-  // Handle pending key initialization
+  // Handle pending key initialization - batch fetch all at once
   useEffect(() => {
-    if (authLoading || pendingKeysRef.current.size === 0) return;
+    if (
+      authLoading ||
+      pendingKeysRef.current.size === 0 ||
+      hasLoadedBatch.current
+    )
+      return;
 
     const initializePendingKeys = async () => {
-      const keysToInit = Array.from(pendingKeysRef.current.entries());
+      const keysToInit = new Map(pendingKeysRef.current);
       pendingKeysRef.current.clear();
+      hasLoadedBatch.current = true;
 
-      for (const [key, defaultValue] of keysToInit) {
-        if (initializedKeys.has(key)) continue;
+      // Mark all keys as loading
+      setLoadingKeys((prev) => {
+        const next = new Set(prev);
+        keysToInit.forEach((_, key) => next.add(key));
+        return next;
+      });
 
-        setLoadingKeys((prev) => new Set(prev).add(key));
+      if (isAuthenticated && user) {
+        // Batch fetch all data at once
+        const batchData = await loadAllFromSupabase(keysToInit);
 
-        if (isAuthenticated && user) {
-          const supabaseValue = await loadFromSupabase(key);
-          setStorage((prev) =>
-            new Map(prev).set(key, supabaseValue ?? defaultValue),
-          );
-          if (!previousUserIdRef.current) {
-            previousUserIdRef.current = user.id;
-          }
-        } else {
-          const localValue = localStorage.getItem(key);
-          const parsedValue = localValue
-            ? JSON.parse(localValue)
-            : defaultValue;
-          setStorage((prev) => new Map(prev).set(key, parsedValue));
-          previousUserIdRef.current = null;
-        }
-
-        setLoadingKeys((prev) => {
-          const next = new Set(prev);
-          next.delete(key);
+        // Update storage with all fetched data
+        setStorage((prev) => {
+          const next = new Map(prev);
+          batchData.forEach((value, key) => {
+            next.set(key, value);
+          });
           return next;
         });
 
-        setInitializedKeys((prev) => new Set(prev).add(key));
-        notifySubscribers(key);
+        previousUserIdRef.current = user.id;
+      } else {
+        // Load from localStorage for each key
+        const localData = new Map<string, any>();
+        keysToInit.forEach((defaultValue, key) => {
+          const localValue = localStorage.getItem(key);
+          localData.set(
+            key,
+            localValue ? JSON.parse(localValue) : defaultValue,
+          );
+        });
+
+        setStorage((prev) => {
+          const next = new Map(prev);
+          localData.forEach((value, key) => {
+            next.set(key, value);
+          });
+          return next;
+        });
+
+        previousUserIdRef.current = null;
       }
+
+      // Clear loading state and mark as initialized
+      setLoadingKeys((prev) => {
+        const next = new Set(prev);
+        keysToInit.forEach((_, key) => next.delete(key));
+        return next;
+      });
+
+      setInitializedKeys((prev) => {
+        const next = new Set(prev);
+        keysToInit.forEach((_, key) => next.add(key));
+        return next;
+      });
+
+      // Notify all subscribers
+      keysToInit.forEach((_, key) => notifySubscribers(key));
     };
 
     initializePendingKeys();
@@ -174,9 +249,8 @@ export function UserStorageProvider({
     initTrigger,
     isAuthenticated,
     user,
-    loadFromSupabase,
+    loadAllFromSupabase,
     notifySubscribers,
-    initializedKeys,
   ]);
 
   // Handle user changes
@@ -188,23 +262,38 @@ export function UserStorageProvider({
 
     if (currentUserId !== previousUserId) {
       const handleUserChange = async () => {
-        for (const key of initializedKeys) {
-          if (isAuthenticated && user) {
-            const supabaseValue = await loadFromSupabase(key);
-            if (supabaseValue !== null) {
-              setStorage((prev) => new Map(prev).set(key, supabaseValue));
+        hasLoadedBatch.current = false;
+
+        // Collect all initialized keys with their default values
+        const keysToReload = new Map<string, any>();
+        initializedKeys.forEach((key) => {
+          keysToReload.set(key, storage.get(key));
+        });
+
+        if (isAuthenticated && user) {
+          const batchData = await loadAllFromSupabase(keysToReload);
+          setStorage((prev) => {
+            const next = new Map(prev);
+            batchData.forEach((value, key) => {
+              next.set(key, value);
               notifySubscribers(key);
-            }
-          } else {
+            });
+            return next;
+          });
+        } else {
+          initializedKeys.forEach((key) => {
             const localValue = localStorage.getItem(key);
             if (localValue) {
-              setStorage((prev) =>
-                new Map(prev).set(key, JSON.parse(localValue)),
-              );
+              setStorage((prev) => {
+                const next = new Map(prev);
+                next.set(key, JSON.parse(localValue));
+                return next;
+              });
               notifySubscribers(key);
             }
-          }
+          });
         }
+
         previousUserIdRef.current = currentUserId;
       };
 
@@ -215,22 +304,35 @@ export function UserStorageProvider({
     user,
     authLoading,
     initializedKeys,
-    loadFromSupabase,
+    storage,
+    loadAllFromSupabase,
     notifySubscribers,
   ]);
 
   // Handle visibility changes
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden && isAuthenticated && user) {
+      if (
+        !document.hidden &&
+        isAuthenticated &&
+        user &&
+        initializedKeys.size > 0
+      ) {
         setTimeout(async () => {
-          for (const key of initializedKeys) {
-            const supabaseValue = await loadFromSupabase(key);
-            if (supabaseValue !== null) {
-              setStorage((prev) => new Map(prev).set(key, supabaseValue));
+          const keysToRefresh = new Map<string, any>();
+          initializedKeys.forEach((key) => {
+            keysToRefresh.set(key, storage.get(key));
+          });
+
+          const batchData = await loadAllFromSupabase(keysToRefresh);
+          setStorage((prev) => {
+            const next = new Map(prev);
+            batchData.forEach((value, key) => {
+              next.set(key, value);
               notifySubscribers(key);
-            }
-          }
+            });
+            return next;
+          });
         }, 100);
       }
     };
@@ -242,7 +344,8 @@ export function UserStorageProvider({
     isAuthenticated,
     user,
     initializedKeys,
-    loadFromSupabase,
+    storage,
+    loadAllFromSupabase,
     notifySubscribers,
   ]);
 
@@ -288,13 +391,16 @@ export function UserStorageProvider({
     async (key: string) => {
       if (!isAuthenticated || !user) return;
 
-      const supabaseValue = await loadFromSupabase(key);
-      if (supabaseValue !== null) {
-        setStorage((prev) => new Map(prev).set(key, supabaseValue));
+      const keysToRefresh = new Map([[key, storage.get(key)]]);
+      const batchData = await loadAllFromSupabase(keysToRefresh);
+
+      const value = batchData.get(key);
+      if (value !== undefined) {
+        setStorage((prev) => new Map(prev).set(key, value));
         notifySubscribers(key);
       }
     },
-    [isAuthenticated, user, loadFromSupabase, notifySubscribers],
+    [isAuthenticated, user, storage, loadAllFromSupabase, notifySubscribers],
   );
 
   const providerValues: UserStorageContextType = useMemo(
