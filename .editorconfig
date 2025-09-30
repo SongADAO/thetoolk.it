@@ -36,3 +36,4 @@ trim_trailing_whitespace = true
 
 [{constants.ts,constants.tsx}]
 max_line_length = 500
+//
