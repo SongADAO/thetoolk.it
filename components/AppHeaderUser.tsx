@@ -10,7 +10,7 @@ function AppHeaderUser() {
 
   if (!user) {
     return (
-      <div className="flex flex-row items-end gap-1">
+      <div className="flex flex-row items-end gap-2">
         <Link
           className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
           href="/auth/signup"
@@ -28,7 +28,7 @@ function AppHeaderUser() {
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-end gap-2">
       <button
         className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
         onClick={signOut}

@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { use } from "react";
-import { FaServer, FaUsersGear } from "react-icons/fa6";
+import { FaQuestion, FaServer, FaUsersGear } from "react-icons/fa6";
 
 import { PostForm } from "@/components/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";
@@ -19,7 +20,17 @@ export default function Home() {
     <div>
       <div className="px-2 pt-2 lg:hidden">
         <div className="flex items-end justify-end rounded bg-gray-200 px-4 py-2">
-          <div className="flex gap-4">
+          <div className="flex gap-2">
+            {isAuthenticated ? null : (
+              <Link
+                className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
+                href="/instructions"
+                target="_blank"
+                title="Instructions"
+              >
+                <FaQuestion />
+              </Link>
+            )}
             {isAuthenticated ? null : (
               <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
                 <StorageSettings />
@@ -45,7 +56,17 @@ export default function Home() {
             <section className="rounded bg-gray-100 p-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Storage Services</h3>
-                <div className="hidden lg:block 2xl:hidden">
+                <div className="hidden gap-2 lg:flex 2xl:hidden">
+                  {isAuthenticated ? null : (
+                    <Link
+                      className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
+                      href="/instructions"
+                      target="_blank"
+                      title="Instructions"
+                    >
+                      <FaQuestion />
+                    </Link>
+                  )}
                   <ServiceSettingsMenu
                     icon={<FaServer />}
                     label="Storage Settings"
@@ -59,7 +80,17 @@ export default function Home() {
             <section className="rounded bg-gray-100 p-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Posting Services</h3>
-                <div className="hidden lg:block 2xl:hidden">
+                <div className="hidden gap-2 lg:flex 2xl:hidden">
+                  {isAuthenticated ? null : (
+                    <Link
+                      className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
+                      href="/instructions"
+                      target="_blank"
+                      title="Instructions"
+                    >
+                      <FaQuestion />
+                    </Link>
+                  )}
                   <ServiceSettingsMenu
                     icon={<FaUsersGear />}
                     label="Post Settings"
@@ -74,11 +105,19 @@ export default function Home() {
         </div>
 
         <div className="hidden 2xl:block">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {isAuthenticated ? null : (
               <section className="rounded bg-gray-100 p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <h3>Storage Service Settings</h3>
+                  <Link
+                    className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 2xl:flex"
+                    href="/instructions"
+                    target="_blank"
+                    title="Instructions"
+                  >
+                    <FaQuestion />
+                  </Link>
                 </div>
                 <StorageSettings />
               </section>
@@ -86,6 +125,14 @@ export default function Home() {
             <section className="rounded bg-gray-100 p-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Posting Service Settings</h3>
+                <Link
+                  className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 2xl:flex"
+                  href="/instructions"
+                  target="_blank"
+                  title="Instructions"
+                >
+                  <FaQuestion />
+                </Link>
               </div>
               <PostSettings />
             </section>
