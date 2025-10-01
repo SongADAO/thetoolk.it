@@ -1,38 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TheToolk.it
 
-## Getting Started
+## Self Hosting
 
-First, run the development server:
+If you want to host TheToolk.it yourself you can checkout the project from this git repo, install node.js v22, and run the following commands to run it locally.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+All services will work locally by just running the app in dev mode with the exceptions of BlueSky and TikTok which requires `ngrok` to run because localhost urls are not support by their apis.  If you need BlueSky and TikTok support be sure to follow the extra setup steps in the ngrok section below.
+
+If you want you can also deploy the application to any node.js webhost of your choosing that supports next.js projects. In that case no extra steps are required for BlueSky or TikTok.
+
+### How to Run the Self Hosted Version
+
+1. Install dependencies
+```
+npm ci
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Start the application in local dev mode.
+```
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Go to the running application's url
+Open `http://localhost:3000` in your browser and use the app as you would the hosted version.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ngrok - BlueSky & TikTok Local Self Hosted Support
 
-## Learn More
+To support BlueSky and TikTok when running the app on localhost you will need to install `ngrok` <https://ngrok.com/> .   This will create a public https url at an ngrok domain which is usable by the BlueSky and TikTok apis.
 
-To learn more about Next.js, take a look at the following resources:
+1. Setup your ngrok account.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Find your unique ngrok url
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Start the local application as usual.
 
-## Deploy on Vercel
+4. Run the following command to start ngrok and route it to your local application.  Replace `YOUR_UNIQUE_NGROK_URL` with your url from step 2.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-test
+```
+ngrok http --url=YOUR_UNIQUE_NGROK_URL http://localhost:3000
+```
