@@ -1,5 +1,16 @@
 # TheToolk.it
 
+TheToolk.it is a multi service video posting service. It supports simultaneous posting to the following services:
+
+- BlueSky
+- Facebook
+- Farcaster
+- Instagram
+- Threads
+- TikTok (coming soon)
+- X (formerly Twitter)
+- YouTube
+
 ## Self Hosting
 
 If you want to host TheToolk.it yourself you can checkout the project from this git repo, install node.js v22, and run the following commands to run it locally.
