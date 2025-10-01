@@ -9,11 +9,11 @@ import {
 } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
-import { getOauthUrls } from "@/services/post/hosted";
+import { getBaseUrlFromRequest, getOauthUrls } from "@/services/post/hosted";
 
 export async function GET(request: NextRequest) {
   const serviceId = "bluesky";
-  const oauthUrls = getOauthUrls();
+  const oauthUrls = getOauthUrls(getBaseUrlFromRequest(request));
 
   try {
     const serverAuth = await initServerAuth();
@@ -54,12 +54,18 @@ export async function GET(request: NextRequest) {
       searchParams,
       sessionStore,
       stateStore,
+      getBaseUrlFromRequest(request),
     );
     console.log("OAuth session created successfully:", session);
 
     console.log("OAuth session created successfully");
 
-    const agent = await createAgent(sessionStore, stateStore, session.sub);
+    const agent = await createAgent(
+      sessionStore,
+      stateStore,
+      session.sub,
+      getBaseUrlFromRequest(request),
+    );
 
     const accounts = await getAccountsFromAgent(agent, session.sub);
 

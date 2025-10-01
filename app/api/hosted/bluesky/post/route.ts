@@ -9,6 +9,7 @@ import { createAgent } from "@/services/post/bluesky/oauth-client-node";
 import { agentPostVideo } from "@/services/post/bluesky/post";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
+import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,6 +27,7 @@ export async function POST(request: NextRequest) {
       sessionStore,
       stateStore,
       authorization.authorization.tokenSet.sub,
+      getBaseUrlFromRequest(request),
     );
 
     const result = await agentPostVideo({

@@ -1,3 +1,5 @@
+import { NextRequest } from "next/server";
+
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import {
   getServiceAuthorizationAndExpiration,
@@ -6,8 +8,9 @@ import {
 import { getOAuthClient } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
+import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     const serviceId = "bluesky";
     const serverAuth = await initServerAuth();
@@ -19,7 +22,11 @@ export async function POST() {
       serviceId,
     });
 
-    const client = await getOAuthClient(sessionStore, stateStore);
+    const client = await getOAuthClient(
+      sessionStore,
+      stateStore,
+      getBaseUrlFromRequest(request),
+    );
 
     await client.restore(authorization.authorization.tokenSet.sub);
 

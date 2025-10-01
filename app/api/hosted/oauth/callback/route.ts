@@ -6,20 +6,21 @@ import {
   exchangeCodeForTokens,
   getAccounts,
   getAuthRedirectServiceId,
-  getBaseUrl,
+  getBaseUrlFromRequest,
   getOauthUrls,
 } from "@/services/post/hosted";
 
 export async function GET(request: NextRequest) {
   let serviceId = "unknown";
-  const oauthUrls = getOauthUrls();
+  const oauthUrls = getOauthUrls(getBaseUrlFromRequest(request));
 
   try {
     const serverAuth = await initServerAuth();
 
     const { searchParams } = new URL(request.url);
 
-    const redirectUri = `${getBaseUrl()}/api/hosted/oauth/callback`;
+    const url = new URL(getBaseUrlFromRequest(request));
+    const redirectUri = `${url.protocol}//${url.host}/api/hosted/oauth/callback`;
 
     serviceId = getAuthRedirectServiceId(searchParams);
 

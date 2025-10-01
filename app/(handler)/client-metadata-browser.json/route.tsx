@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getClientMetadata } from "@/services/post/bluesky/oauth-client-browser";
+import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
-export function GET() {
-  const metadata = getClientMetadata();
+export function GET(request: NextRequest) {
+  const metadata = getClientMetadata(getBaseUrlFromRequest(request));
 
   return NextResponse.json(metadata);
 }

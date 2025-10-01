@@ -158,11 +158,12 @@ async function getAuthorizationUrlHosted(
 
 async function getAuthorizationUrl(
   credentials: BlueskyCredentials,
+  requestUrl: string,
 ): Promise<string> {
   try {
     console.log("Starting OAuth flow for:", credentials.username);
 
-    const client = await getOAuthClient(credentials);
+    const client = await getOAuthClient(credentials, requestUrl);
 
     // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
     const authUrl = await client.authorize(credentials.username, {
@@ -186,11 +187,12 @@ async function exchangeCodeForTokens(
   iss: string,
   state: string,
   credentials: BlueskyCredentials,
+  requestUrl: string,
 ): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Processing OAuth callback...");
 
-    const client = await getOAuthClient(credentials);
+    const client = await getOAuthClient(credentials, requestUrl);
 
     // The library handles the token exchange internally
     const { session } = await client.callback(
@@ -233,11 +235,12 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
 async function refreshAccessToken(
   credentials: BlueskyCredentials,
   authorization: OauthAuthorization,
+  requestUrl: string,
 ): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Refreshing access token...");
 
-    const client = await getOAuthClient(credentials);
+    const client = await getOAuthClient(credentials, requestUrl);
 
     // Try to restore the session (this will refresh tokens if needed)
     const session = await client.restore(authorization.accessToken);
@@ -284,12 +287,13 @@ async function getAccountsFromAgent(
 async function getAccounts(
   credentials: BlueskyCredentials,
   accessToken: string,
+  requestUrl: string,
 ): Promise<ServiceAccount[]> {
   try {
     console.log("Getting user accounts...");
 
     // Create an Agent to make API calls
-    const agent = await createAgent(credentials, accessToken);
+    const agent = await createAgent(credentials, accessToken, requestUrl);
 
     return getAccountsFromAgent(agent, accessToken);
   } catch (err: unknown) {

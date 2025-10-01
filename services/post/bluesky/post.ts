@@ -60,6 +60,7 @@ async function agentUploadBlob({
 interface UploadVideoBlobProps {
   accessToken: string;
   credentials: BlueskyCredentials;
+  requestUrl: string;
   video: Blob;
   videoType: string;
   videoUrl: string;
@@ -68,6 +69,7 @@ interface UploadVideoBlobProps {
 async function uploadVideoBlob({
   accessToken,
   credentials,
+  requestUrl,
   video,
   videoType,
   videoUrl,
@@ -114,7 +116,7 @@ async function uploadVideoBlob({
       return result.data.blob;
     }
 
-    const agent = await createAgent(credentials, accessToken);
+    const agent = await createAgent(credentials, accessToken, requestUrl);
 
     const result = await agentUploadBlob({ agent, video, videoType });
     console.log("Video blob uploaded successfully:", result);
@@ -133,6 +135,7 @@ interface CreateRecordProps {
   accessToken: string;
   blobRef: BlobRef;
   credentials: BlueskyCredentials;
+  requestUrl: string;
   text: string;
   title: string;
 }
@@ -141,6 +144,7 @@ async function createRecord({
   accessToken,
   blobRef,
   credentials,
+  requestUrl,
   text,
   title,
 }: Readonly<CreateRecordProps>): Promise<string> {
@@ -178,7 +182,7 @@ async function createRecord({
       return result.uri;
     }
 
-    const agent = await createAgent(credentials, accessToken);
+    const agent = await createAgent(credentials, accessToken, requestUrl);
 
     const result = await agentPostVideo({
       agent,
@@ -203,6 +207,7 @@ async function createRecord({
 interface CreatePostProps {
   accessToken: string;
   credentials: BlueskyCredentials;
+  requestUrl: string;
   setIsPosting: (isPosting: boolean) => void;
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
@@ -216,6 +221,7 @@ interface CreatePostProps {
 async function createPost({
   accessToken,
   credentials,
+  requestUrl,
   setIsPosting,
   setPostError,
   setPostProgress,
@@ -255,6 +261,7 @@ async function createPost({
       const blobRef = await uploadVideoBlob({
         accessToken,
         credentials,
+        requestUrl,
         video,
         videoType: video.type,
         videoUrl,
@@ -270,6 +277,7 @@ async function createPost({
         accessToken,
         blobRef,
         credentials,
+        requestUrl,
         text,
         title,
       });

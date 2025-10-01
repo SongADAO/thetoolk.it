@@ -9,16 +9,15 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-node";
 
-import { getBaseUrl } from "@/services/post/hosted";
-
 const SCOPES: string[] = ["atproto", "transition:generic"];
 
 // OAuth client instance (singleton)
 let oauthClient: NodeOAuthClient | null = null;
 
 // Client metadata (to be served at your client_id URL)
-function getClientMetadata() {
-  const baseURL = getBaseUrl();
+function getClientMetadata(requestUrl: string) {
+  const url = new URL(requestUrl);
+  const baseURL = `${url.protocol}//${url.host}`;
 
   return {
     application_type: "web",
@@ -57,9 +56,10 @@ async function getKeyset() {
 async function getOAuthClient(
   sessionStore: NodeSavedSessionStore,
   stateStore: NodeSavedStateStore,
+  requestUrl: string,
 ): Promise<NodeOAuthClient> {
   if (!oauthClient) {
-    const clientMetadata = getClientMetadata();
+    const clientMetadata = getClientMetadata(requestUrl);
 
     // eslint-disable-next-line require-atomic-updates
     oauthClient = new NodeOAuthClient({
@@ -92,8 +92,9 @@ async function getValidSession(
   sessionStore: NodeSavedSessionStore,
   stateStore: NodeSavedStateStore,
   accessToken: string,
+  requestUrl: string,
 ): Promise<OAuthSession> {
-  const client = await getOAuthClient(sessionStore, stateStore);
+  const client = await getOAuthClient(sessionStore, stateStore, requestUrl);
 
   return await client.restore(accessToken);
 }
@@ -103,9 +104,10 @@ async function createAgent(
   sessionStore: NodeSavedSessionStore,
   stateStore: NodeSavedStateStore,
   accessToken: string,
+  requestUrl: string,
 ): Promise<Agent> {
   return new Agent(
-    await getValidSession(sessionStore, stateStore, accessToken),
+    await getValidSession(sessionStore, stateStore, accessToken, requestUrl),
   );
 }
 
@@ -114,9 +116,10 @@ async function hasValidSession(
   sessionStore: NodeSavedSessionStore,
   stateStore: NodeSavedStateStore,
   accessToken: string,
+  requestUrl: string,
 ): Promise<boolean> {
   try {
-    const client = await getOAuthClient(sessionStore, stateStore);
+    const client = await getOAuthClient(sessionStore, stateStore, requestUrl);
 
     await client.restore(accessToken);
 
@@ -130,11 +133,12 @@ async function getAuthorizationUrl(
   username: string,
   sessionStore: NodeSavedSessionStore,
   stateStore: NodeSavedStateStore,
+  requestUrl: string,
 ): Promise<string> {
   try {
     console.log("Starting OAuth flow for:", username);
 
-    const client = await getOAuthClient(sessionStore, stateStore);
+    const client = await getOAuthClient(sessionStore, stateStore, requestUrl);
 
     // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
     const authUrl = await client.authorize(username, {
@@ -157,6 +161,7 @@ async function handleCallback(
   params: URLSearchParams,
   sessionStore: NodeSavedSessionStore,
   stateStore: NodeSavedStateStore,
+  requestUrl: string,
 ): Promise<{ session: OAuthSession; userId: string }> {
   try {
     console.log("Processing server OAuth callback...");
@@ -167,7 +172,7 @@ async function handleCallback(
       throw new Error("Missing state parameter");
     }
 
-    const client = await getOAuthClient(sessionStore, stateStore);
+    const client = await getOAuthClient(sessionStore, stateStore, requestUrl);
 
     // Handle the callback and get session
     const { session } = await client.callback(params);

@@ -17,7 +17,7 @@ If you want to host TheToolk.it yourself you can checkout the project from this 
 
 All services will work locally by just running the app in dev mode with the exceptions of BlueSky and TikTok which requires `ngrok` to run because localhost urls are not support by their apis.  If you need BlueSky and TikTok support be sure to follow the extra setup steps in the ngrok section below.
 
-If you want to host the app on your own dedicated domain name you can deploy the application to any node.js webhost of your choosing that supports next.js projects. In that case no extra steps are required for BlueSky or TikTok.  When hosting on your own domain you will need to change the `NEXT_PUBLIC_BASE_URL` variable in your `.env` to match your domain name.
+If you want to host the app on your own dedicated domain name you can deploy the application to any node.js webhost of your choosing that supports next.js projects. In that case no extra steps are required for BlueSky or TikTok.
 
 ### How to Run the Self Hosted Version
 

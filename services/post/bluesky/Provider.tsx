@@ -122,6 +122,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
         iss,
         state,
         credentials,
+        window.location.origin,
       );
       setAuthorization(newAuthorization.authorization);
       setExpiration(newAuthorization.expiration);
@@ -129,6 +130,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       const newAccounts = await getAccounts(
         credentials,
         newAuthorization.authorization.accessToken,
+        window.location.origin,
       );
       setAccounts(newAccounts);
 
@@ -162,6 +164,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     const newAuthorization = await refreshAccessToken(
       credentials,
       authorization,
+      window.location.origin,
     );
 
     setAuthorization(newAuthorization.authorization);
@@ -205,7 +208,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     const authUrl =
       mode === "hosted"
         ? await getAuthorizationUrlHosted(credentials)
-        : await getAuthorizationUrl(credentials);
+        : await getAuthorizationUrl(credentials, window.location.origin);
     window.open(authUrl, "_blank");
   }
 
@@ -258,6 +261,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       return await createPost({
         accessToken: mode === "hosted" ? "hosted" : accessToken,
         credentials,
+        requestUrl: window.location.origin,
         setIsPosting,
         setPostError,
         setPostProgress,

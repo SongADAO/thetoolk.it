@@ -1,3 +1,5 @@
+import { NextRequest } from "next/server";
+
 import {
   exchangeCodeForTokens as exchangeCodeForTokensFacebook,
   getAccounts as getAccountsFacebook,
@@ -232,15 +234,30 @@ async function refreshAccessToken(
   throw new Error("Unsupported service");
 }
 
-function getBaseUrl() {
-  return process.env.NEXT_PUBLIC_BASE_URL ?? "";
+function getBaseUrlFromRequest(request: NextRequest) {
+  // Check for forwarded host (set by ngrok and other proxies)
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+  const host = forwardedHost || request.headers.get("host");
+
+  // Check for forwarded protocol
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+  const protocol = forwardedProto || "https";
+
+  if (!host) {
+    throw new Error("Host header is missing");
+  }
+
+  return `${protocol}://${host}`;
 }
 
-function getOauthUrls() {
-  const base = getBaseUrl();
+function getOauthUrls(requestUrl: string) {
+  const url = new URL(requestUrl);
+  const baseURL = `${url.protocol}//${url.host}`;
 
-  const error = new URL(`${base}/authorize-error`);
-  const success = new URL(`${base}/authorize-success`);
+  const error = new URL(`${baseURL}/authorize-error`);
+  const success = new URL(`${baseURL}/authorize-success`);
 
   return {
     error,
@@ -252,7 +269,7 @@ export {
   exchangeCodeForTokens,
   getAccounts,
   getAuthRedirectServiceId,
-  getBaseUrl,
+  getBaseUrlFromRequest,
   getOauthUrls,
   refreshAccessToken,
 };

@@ -4,7 +4,6 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-browser";
 
-import { getBaseUrl } from "@/services/post/hosted";
 import type { BlueskyCredentials } from "@/services/post/types";
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
@@ -13,8 +12,9 @@ const SCOPES: string[] = ["atproto", "transition:generic"];
 let oauthClient: BrowserOAuthClient | null = null;
 
 // Client metadata (to be served at your client_id URL)
-function getClientMetadata() {
-  const baseURL = getBaseUrl();
+function getClientMetadata(requestUrl: string) {
+  const url = new URL(requestUrl);
+  const baseURL = `${url.protocol}//${url.host}`;
 
   return {
     application_type: "web",
@@ -34,9 +34,10 @@ function getClientMetadata() {
 // Initialize the OAuth client
 async function getOAuthClient(
   credentials: BlueskyCredentials,
+  requestUrl: string,
 ): Promise<BrowserOAuthClient> {
   if (!oauthClient) {
-    const clientMetadata = getClientMetadata();
+    const clientMetadata = getClientMetadata(requestUrl);
 
     // eslint-disable-next-line require-atomic-updates
     oauthClient = await BrowserOAuthClient.load({
@@ -70,8 +71,9 @@ async function getOAuthClient(
 async function getValidSession(
   credentials: BlueskyCredentials,
   accessToken: string,
+  requestUrl: string,
 ): Promise<OAuthSession> {
-  const client = await getOAuthClient(credentials);
+  const client = await getOAuthClient(credentials, requestUrl);
 
   return await client.restore(accessToken);
 }
@@ -80,8 +82,9 @@ async function getValidSession(
 async function createAgent(
   credentials: BlueskyCredentials,
   accessToken: string,
+  requestUrl: string,
 ): Promise<Agent> {
-  return new Agent(await getValidSession(credentials, accessToken));
+  return new Agent(await getValidSession(credentials, accessToken, requestUrl));
 }
 
 export { createAgent, getClientMetadata, getOAuthClient };
