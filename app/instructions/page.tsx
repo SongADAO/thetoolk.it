@@ -2,8 +2,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
+
+import { AppFooter } from "@/components/AppFooter";
+import { AppLogo } from "@/components/AppLogo";
 
 interface AccordionSectionProps {
   readonly title: string;
@@ -124,12 +126,12 @@ export default function InstructionsPage() {
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       {/* Fixed Header */}
-      <header className="fixed top-0 right-0 left-0 z-40 bg-gray-200 shadow-md">
-        <div className="flex items-center justify-between p-2">
-          <Link className="text-xl font-bold hover:text-blue-600" href="/">
-            TheToolk.it
-          </Link>
-          <span className="text-sm text-gray-600">
+      <header className="fixed top-0 right-0 left-0 z-40">
+        <div className="flex items-center justify-between bg-gray-200 p-2">
+          <h1>
+            <AppLogo />
+          </h1>
+          <span className="text-md text-gray-600">
             Self-Hosting Instructions
           </span>
         </div>
@@ -1235,40 +1237,7 @@ export default function InstructionsPage() {
 
       {/* Fixed Footer */}
       <footer className="fixed right-0 bottom-0 left-0 z-40 bg-gray-200 shadow-md">
-        <div className="flex flex-col items-center justify-center gap-1 p-2 text-center">
-          <div className="flex items-center gap-2">
-            <span>TheToolk.it</span> <span>&copy;2025</span>
-          </div>
-          <div className="text-xs text-gray-600">
-            Created by{" "}
-            <a
-              className="text-blue-600 underline hover:text-blue-800"
-              href="https://x.com/Alan_Purring"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              @Alan_Purring
-            </a>{" "}
-            &{" "}
-            <a
-              className="text-blue-600 underline hover:text-blue-800"
-              href="https://x.com/songadaymann"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              @songadaymann
-            </a>{" "}
-            | Executive produced by{" "}
-            <a
-              className="text-blue-600 underline hover:text-blue-800"
-              href="https://x.com/cxy"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              @cxy
-            </a>
-          </div>
-        </div>
+        <AppFooter />
       </footer>
     </div>
   );
