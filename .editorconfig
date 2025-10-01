@@ -18,7 +18,7 @@ trim_trailing_whitespace = false
 [{*.css, *.scss}]
 max_line_length = 120
 
-[{package.json,package-lock.json,yarn.lock}]
+[{package.json,package-lock.json,yarn.lock,eslint.config.mjs,.scss.stylelintrc.json,.stylelintrc}]
 charset = utf-8
 end_of_line = lf
 indent_size = 2

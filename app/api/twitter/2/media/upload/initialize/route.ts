@@ -10,12 +10,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await request.json();
-
     const response = await fetch(
       "https://api.x.com/2/media/upload/initialize",
       {
-        body: JSON.stringify(data),
+        body: JSON.stringify(await request.json()),
         headers: {
           Authorization: authHeader,
           "Content-Type": "application/json",

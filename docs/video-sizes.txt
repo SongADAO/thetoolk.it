@@ -1,0 +1,47 @@
+https://support.vistasocial.com/hc/en-us/articles/5231863512987-Video-specs-and-guidelines-per-social-network#h_01GSTVKXP3PT1BNYTPC1MT7Z8G
+
+farcaster
+hls streaming format
+
+bluesky
+100MB
+180 sec max (3 min)
+0 sec min
+
+facebook
+4GB
+14400 sec max (240 min)
+3 sec min
+
+facebook reels/stories
+4GB
+90 sec max (1.5 min)
+3 sec min
+24-60 fps
+
+instagram
+300MB
+900 sec max (15 min)
+3 sec min
+24-60 fps
+
+threads
+1GB
+300 sec max (5 min)
+0 sec min
+24-60 fps
+
+tiktok
+1GB
+600 sec max (10 min)
+3 sec min
+
+twitter
+512MB
+140 sec max (2.33333333 min)
+0.5 sec min
+
+youtube
+128GB
+12 hour max
+12 sec min

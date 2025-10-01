@@ -1,0 +1,195 @@
+/* eslint-disable max-classes-per-file */
+
+import { Agent } from "@atproto/api";
+import { JoseKey } from "@atproto/jwk-jose";
+import {
+  NodeOAuthClient,
+  type NodeSavedSessionStore,
+  type NodeSavedStateStore,
+  type OAuthSession,
+} from "@atproto/oauth-client-node";
+
+import { getBaseUrl } from "@/services/post/hosted";
+
+const SCOPES: string[] = ["atproto", "transition:generic"];
+
+// OAuth client instance (singleton)
+let oauthClient: NodeOAuthClient | null = null;
+
+// Client metadata (to be served at your client_id URL)
+function getClientMetadata() {
+  const baseURL = getBaseUrl();
+
+  return {
+    application_type: "web",
+    client_id: `${baseURL}/client-metadata-node.json`,
+    client_name: "The Toolk.it",
+    client_uri: baseURL,
+    dpop_bound_access_tokens: true,
+    grant_types: ["authorization_code", "refresh_token"],
+    jwks_uri: `${baseURL}/jwks.json`,
+    logo_uri: `${baseURL}/logo.png`,
+    redirect_uris: [`${baseURL}/api/hosted/bluesky/oauth/callback`],
+    response_types: ["code"],
+    scope: SCOPES.join(" "),
+    token_endpoint_auth_method: "none",
+  };
+}
+
+async function getKeyset() {
+  return await Promise.all([
+    JoseKey.fromImportable(
+      String(process.env.ATPROTO_OAUTH_PRIVATE_KEY_1 ?? ""),
+      "key1",
+    ),
+    JoseKey.fromImportable(
+      String(process.env.ATPROTO_OAUTH_PRIVATE_KEY_2 ?? ""),
+      "key2",
+    ),
+    JoseKey.fromImportable(
+      String(process.env.ATPROTO_OAUTH_PRIVATE_KEY_3 ?? ""),
+      "key3",
+    ),
+  ]);
+}
+
+// Initialize the OAuth client
+async function getOAuthClient(
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+): Promise<NodeOAuthClient> {
+  if (!oauthClient) {
+    const clientMetadata = getClientMetadata();
+
+    // eslint-disable-next-line require-atomic-updates
+    oauthClient = new NodeOAuthClient({
+      // This object will be used to build the payload of the /client-metadata.json
+      // endpoint metadata, exposing the client metadata to the OAuth server.
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      clientMetadata,
+
+      // Used to authenticate the client to the token endpoint. Will be used to
+      // build the jwks object to be exposed on the "jwks_uri" endpoint.
+      keyset: await getKeyset(),
+
+      // Interface to store authenticated session data
+      sessionStore,
+
+      // Interface to store authorization state data (during authorization flows)
+      stateStore,
+
+      // A lock to prevent concurrent access to the session store. Optional if only one instance is running.
+      // requestLock,
+    });
+  }
+
+  return oauthClient;
+}
+
+// Get a valid session for making API calls
+async function getValidSession(
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+  accessToken: string,
+): Promise<OAuthSession> {
+  const client = await getOAuthClient(sessionStore, stateStore);
+
+  return await client.restore(accessToken);
+}
+
+// Create an Agent for making API calls
+async function createAgent(
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+  accessToken: string,
+): Promise<Agent> {
+  return new Agent(
+    await getValidSession(sessionStore, stateStore, accessToken),
+  );
+}
+
+// Check if we have a valid session
+async function hasValidSession(
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+  accessToken: string,
+): Promise<boolean> {
+  try {
+    const client = await getOAuthClient(sessionStore, stateStore);
+
+    await client.restore(accessToken);
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function getAuthorizationUrl(
+  username: string,
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+): Promise<string> {
+  try {
+    console.log("Starting OAuth flow for:", username);
+
+    const client = await getOAuthClient(sessionStore, stateStore);
+
+    // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
+    const authUrl = await client.authorize(username, {
+      scope: SCOPES.join(" "),
+    });
+
+    console.log("Authorization URL generated:", authUrl.toString());
+    return authUrl.toString();
+  } catch (err: unknown) {
+    const errMessage = err instanceof Error ? err.message : "Auth URL failed";
+    console.error("Error creating authorization URL:", err);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`, {
+      cause: err,
+    });
+  }
+}
+
+// Handle OAuth callback and get session
+async function handleCallback(
+  params: URLSearchParams,
+  sessionStore: NodeSavedSessionStore,
+  stateStore: NodeSavedStateStore,
+): Promise<{ session: OAuthSession; userId: string }> {
+  try {
+    console.log("Processing server OAuth callback...");
+
+    // Extract userId from state
+    const state = params.get("state");
+    if (!state) {
+      throw new Error("Missing state parameter");
+    }
+
+    const client = await getOAuthClient(sessionStore, stateStore);
+
+    // Handle the callback and get session
+    const { session } = await client.callback(params);
+
+    console.log("OAuth session created successfully on server");
+
+    return { session, userId: state };
+  } catch (err: unknown) {
+    console.error("Server callback error:", err);
+    const errMessage = err instanceof Error ? err.message : "Unknown error";
+    throw new Error(`Failed to handle OAuth callback: ${errMessage}`, {
+      cause: err,
+    });
+  }
+}
+
+export {
+  createAgent,
+  getAuthorizationUrl,
+  getClientMetadata,
+  getKeyset,
+  getOAuthClient,
+  handleCallback,
+  hasValidSession,
+};

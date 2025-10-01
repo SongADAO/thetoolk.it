@@ -107,9 +107,9 @@ class VideoValidator {
 
       // Cleanup
       await this.ffmpeg.deleteFile("input.mov");
-    } catch (error) {
-      console.error("Video validation error:", error);
-      throw error;
+    } catch (err: unknown) {
+      console.error("Video validation error:", err);
+      throw err;
     }
 
     return result;
@@ -152,8 +152,8 @@ class VideoValidator {
       // This is a simplified version - in production you'd want more robust parsing
       const basicInfo = await this.getBasicVideoInfo(filename);
       return basicInfo;
-    } catch (error) {
-      console.error("Error getting media info:", error);
+    } catch (err: unknown) {
+      console.error("Error getting media info:", err);
       return mediaInfo;
     }
   }
@@ -185,7 +185,7 @@ class VideoValidator {
 
       // Remove the log listener
       this.ffmpeg.off("log");
-    } catch (error) {
+    } catch (err: unknown) {
       // FFmpeg throws an error when no output is specified, but we can still get info
       console.log("Expected FFmpeg error when probing file");
     }
@@ -349,8 +349,8 @@ class VideoValidator {
         containerInfo.hasEditLists = fileAnalysis.hasEditLists;
         containerInfo.moovAtFront = fileAnalysis.moovAtFront;
       }
-    } catch (error) {
-      console.error("Container analysis failed:", error);
+    } catch (err: unknown) {
+      console.error("Container analysis failed:", err);
       // Try direct file analysis as final fallback
       try {
         const fileAnalysis = await this.analyzeFileStructure(filename);
@@ -598,7 +598,7 @@ class VideoValidator {
         // Fallback: try different approach
         return await this.getGopInfoFallback(filename);
       }
-    } catch (error) {
+    } catch (err: unknown) {
       console.log("GOP analysis failed, using simplified detection");
       return "I,1,0\nP,0,1\nP,0,2\nI,1,3\n"; // Basic closed GOP pattern
     }
@@ -945,9 +945,9 @@ async function validateVideoFile(file) {
     const result = await validator.validateVideoFile(file);
     console.log("Validation Result:", result);
     return result;
-  } catch (error) {
-    console.error("Validation failed:", error);
-    throw error;
+  } catch (err: unknown) {
+    console.error("Validation failed:", err);
+    throw err;
   }
 }
 

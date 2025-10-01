@@ -1,0 +1,28 @@
+import { createContext } from "react";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface StorageValue<T = any> {
+  value: T;
+  isLoading: boolean;
+}
+
+interface UserStorageContextType {
+  getValue: <T>(key: string, defaultValue: T) => StorageValue<T>;
+  refresh: (key: string) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  requestInit: (key: string, defaultValue: any) => void;
+  setValue: <T>(key: string, value: T | ((prev: T) => T)) => Promise<void>;
+  subscribersRef: { current: Map<string, Set<() => void>> };
+}
+
+const UserStorageContext = createContext<UserStorageContextType>({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getValue: (key, defaultValue) => ({ isLoading: true, value: defaultValue }),
+  refresh: async () => Promise.resolve(),
+  requestInit: () => {},
+  setValue: async () => Promise.resolve(),
+  subscribersRef: { current: new Map() },
+});
+
+export { UserStorageContext };
+export type { UserStorageContextType };

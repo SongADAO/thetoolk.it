@@ -182,9 +182,9 @@ class VideoConverter {
       await this.ffmpeg.deleteFile(inputFileName);
 
       return outputData;
-    } catch (error) {
-      console.error("Error converting video:", error);
-      throw error;
+    } catch (err: unknown) {
+      console.error("Error converting video:", err);
+      throw err;
     } finally {
       try {
         await this.ffmpeg.deleteFile(outputFileName);

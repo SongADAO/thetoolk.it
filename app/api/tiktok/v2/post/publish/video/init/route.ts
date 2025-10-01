@@ -10,13 +10,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-
     // Make the call to TikTok's API from the server
-    const publishResponse = await fetch(
+    const response = await fetch(
       "https://open.tiktokapis.com/v2/post/publish/video/init/",
       {
-        body: JSON.stringify(body),
+        body: JSON.stringify(await request.json()),
         headers: {
           Authorization: authHeader,
           "Content-Type": "application/json; charset=UTF-8",
@@ -25,24 +23,19 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    if (!publishResponse.ok) {
-      const errorData = await publishResponse.json();
+    if (!response.ok) {
+      const errorData = await response.json();
       return Response.json(
         {
           details: errorData,
-          error: `TikTok API Error: ${errorData.error?.message ?? publishResponse.statusText}`,
+          error: `TikTok API Error: ${errorData.error?.message ?? response.statusText}`,
         },
-        { status: publishResponse.status },
+        { status: response.status },
       );
     }
 
-    const publishData = await publishResponse.json();
-
-    return Response.json({
-      data: publishData.data,
-      publish_id: publishData.data.publish_id,
-      success: true,
-    });
+    const result = await response.json();
+    return Response.json(result);
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Post failed";
     return Response.json({ error: errMessage }, { status: 500 });
