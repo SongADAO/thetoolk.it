@@ -14,8 +14,8 @@ interface FormState {
 
 function fromInitial(): FormState {
   return {
-    text: "This is a test.",
-    title: "Test Title",
+    text: "",
+    title: "",
   };
 }
 
