@@ -3,7 +3,7 @@ function AppFooter() {
     <div className="flex items-center justify-center gap-2 bg-gray-200">
       <div className="flex flex-col items-center justify-center gap-1 p-2 text-center">
         <div className="flex items-center gap-2">
-          <span>TheToolk.it</span> <span>&copy;2025</span>
+          <span>TheToolk.it</span> <span>🅭🅯🄎 BY-SA 4.0</span>
         </div>
         <div className="text-xs text-gray-600">
           Created by{" "}

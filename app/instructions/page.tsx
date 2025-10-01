@@ -112,9 +112,7 @@ function AccordionSection({
 }
 
 export default function InstructionsPage() {
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    storage: true, // Storage section open by default
-  });
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({
@@ -131,9 +129,7 @@ export default function InstructionsPage() {
           <h1>
             <AppLogo />
           </h1>
-          <span className="text-md text-gray-600">
-            Self-Hosting Instructions
-          </span>
+          <span className="text-md text-gray-600">Setup Instructions</span>
         </div>
       </header>
 
@@ -142,35 +138,87 @@ export default function InstructionsPage() {
         <div className="mx-auto max-w-4xl px-4 py-8">
           <div className="rounded-lg bg-white p-8 shadow-lg">
             <h1 className="mb-6 text-3xl font-bold text-gray-900">
-              TheToolkit Self-Hosting Instructions
+              TheToolkit Setup Instructions
             </h1>
-            <p className="mb-8 text-lg text-gray-600">
-              Follow these instructions to self-host TheToolkit app and
-              configure all the necessary API keys and credentials.
-            </p>
 
-            {/* Overview Section */}
+            {/* Welcome Section */}
             <section className="mb-8">
               <div className="space-y-4">
                 <p className="text-gray-700">
-                  TheToolkit is a self-hosted social media management tool that
-                  allows you to post to multiple platforms simultaneously. This
-                  guide will walk you through setting up all the required API
-                  keys and services.
+                  Welcome to thetoolk.it! This is a completely free app for
+                  cross-posting across social media. You can use this web
+                  version or{" "}
+                  <a
+                    className="text-blue-600 underline hover:text-blue-800"
+                    href="https://github.com/SongADAO/thetoolk.it"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    self-host it via GitHub
+                  </a>
+                  .
                 </p>
+                <p className="text-gray-700">
+                  The setup instructions below are the same for both. I&apos;ve
+                  tried to make them as clear as possible, but every service has
+                  its own quirks!
+                </p>
+              </div>
+            </section>
+
+            {/* Roadmap Section */}
+            <section className="mb-8">
+              <h2 className="mb-4 text-2xl font-semibold text-gray-800">
+                Roadmap
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="mb-2 font-medium text-gray-700">
+                    Paid Version
+                  </h3>
+                  <p className="text-gray-600">
+                    If there&apos;s enough demand, we may offer a paid version
+                    that handles all API credentials for you—no setup required.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-medium text-gray-700">TikTok</h3>
+                  <p className="text-gray-600">
+                    We&apos;re waiting for TikTok API access approval. Once
+                    approved, we&apos;ll update these instructions with steps to
+                    get your own access.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-medium text-gray-700">
+                    Web3 Integration
+                  </h3>
+                  <p className="text-gray-600">
+                    Coming soon: Manifold minting, Zora coins, Rodeo, NFT
+                    auctions, GBM auctions, InProcess, Forever Library, and
+                    more.
+                  </p>
+                </div>
 
                 <div className="rounded border border-blue-200 bg-blue-50 p-4">
-                  <p className="font-medium text-blue-800">
-                    📋 What You&apos;ll Need:
+                  <p className="text-gray-700">
+                    Want to request a web2 or web3 integration?{" "}
+                    <a
+                      className="text-blue-600 underline hover:text-blue-800"
+                      href="http://x.com/songadaymann"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Send me a DM
+                    </a>{" "}
+                    and I&apos;ll add it to the list (no guarantees though!).
                   </p>
-                  <ul className="mt-2 space-y-1 text-blue-700">
-                    <li>• Developer accounts for each social platform</li>
-                    <li>• AWS or Pinata for media storage</li>
-                    <li>
-                      • Basic computer knowledge (clicking buttons, copying and
-                      pasting)
-                    </li>
-                  </ul>
+                  <p className="mt-2 text-gray-700">
+                    Since this project is open source, you&apos;re always
+                    welcome to add features yourself!
+                  </p>
                 </div>
               </div>
             </section>
