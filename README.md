@@ -28,7 +28,7 @@ git clone https://github.com/SongADAO/thetoolk.it.git
 
 2. Create the secrets file from the template.
 ```
-Copy the file `.env.example` and name it `.env`
+cp .env.example .env
 ```
 
 3. Install dependencies
