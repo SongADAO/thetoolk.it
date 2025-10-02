@@ -145,7 +145,7 @@ export default function InstructionsPage() {
             <section className="mb-8">
               <div className="space-y-4">
                 <p className="text-gray-700">
-                  Welcome to thetoolk.it! This is a completely free app for
+                  Welcome to www.thetoolk.it! This is a completely free app for
                   cross-posting across social media. You can use this web
                   version or{" "}
                   <a
@@ -162,6 +162,11 @@ export default function InstructionsPage() {
                   The setup instructions below are the same for both. I&apos;ve
                   tried to make them as clear as possible, but every service has
                   its own quirks!
+                </p>
+                <p className="text-gray-700">
+                  Keep in mind, we don&apos;t get access to any of your API keys
+                  or credentials for any of these sites; they are saved locally
+                  on your browser.
                 </p>
               </div>
             </section>
@@ -330,7 +335,7 @@ export default function InstructionsPage() {
                       Connect to TheToolkit:
                     </h4>
                     <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                      <li>Head to thetoolk.it</li>
+                      <li>Head to www.thetoolk.it</li>
                       <li>
                         Click on <strong>Pinata</strong>
                       </li>
@@ -372,7 +377,7 @@ export default function InstructionsPage() {
                     Setup steps:
                   </h4>
                   <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                    <li>Head to thetoolk.it</li>
+                    <li>Head to www.thetoolk.it</li>
                     <li>
                       Click on <strong>Bluesky</strong>
                     </li>
@@ -438,6 +443,20 @@ export default function InstructionsPage() {
                   </li>
                   <li>Copy the Client ID and save it somewhere safe</li>
                   <li>Copy the API Key and save it somewhere safe</li>
+                  <li className="font-medium text-red-600">
+                    NEVER SHARE THESE WITH ANYONE
+                  </li>
+                  <li>
+                    Click on <strong>SIWN</strong> and enter{" "}
+                    <code className="rounded bg-gray-100 px-2 py-1 text-sm">
+                      https://www.thetoolk.it
+                    </code>{" "}
+                    under <strong>Authorized origins</strong>
+                    <ScreenshotButton
+                      altText="Click on SIWN and enter authorized origins"
+                      imagePath="/screenshots/Farcaster.png"
+                    />
+                  </li>
                 </ol>
               </div>
 
@@ -446,7 +465,7 @@ export default function InstructionsPage() {
                   Connect to TheToolkit:
                 </h4>
                 <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                  <li>Head to thetoolk.it</li>
+                  <li>Head to www.thetoolk.it</li>
                   <li>
                     Click on <strong>Farcaster</strong>
                   </li>
@@ -571,6 +590,22 @@ export default function InstructionsPage() {
                       <li>
                         Click <strong>Set up</strong> in the Instagram tile
                       </li>
+                    </ol>
+                  </div>
+
+                  <div className="mb-6">
+                    <h4 className="text-md mb-3 font-medium text-gray-700">
+                      API Setup:
+                    </h4>
+                    <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
+                      <li>
+                        Click on <strong>Instagram</strong>, then{" "}
+                        <strong>API setup with Instagram Login</strong>
+                        <ScreenshotButton
+                          altText="Click on Instagram, then API setup with Instagram Login"
+                          imagePath="/screenshots/INSTAGRAM/Instagram13.png"
+                        />
+                      </li>
                       <li>
                         Copy and save the Instagram app ID and Instagram app
                         secret
@@ -578,6 +613,19 @@ export default function InstructionsPage() {
                           altText="Copy and save the Instagram app ID and Instagram app secret"
                           imagePath="/screenshots/INSTAGRAM/Instagram6.png"
                         />
+                      </li>
+                      <li className="font-medium text-red-600">
+                        NEVER SHARE THESE WITH ANYONE
+                      </li>
+                      <li>
+                        Click <strong>Setup</strong> at step 3
+                      </li>
+                      <li>
+                        Enter the redirect url:{" "}
+                        <code className="rounded bg-gray-100 px-2 py-1 text-sm">
+                          https://www.thetoolk.it/authorize
+                        </code>{" "}
+                        and hit <strong>Save</strong>
                       </li>
                     </ol>
                   </div>
@@ -647,7 +695,7 @@ export default function InstructionsPage() {
                           <li>
                             Set App domains to:{" "}
                             <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                              https://thetoolk.it
+                              https://www.thetoolk.it
                             </code>
                           </li>
                           <li>
@@ -655,7 +703,7 @@ export default function InstructionsPage() {
                             <strong>Data deletion callback URL</strong>, then
                             set it to:{" "}
                             <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                              https://thetoolk.it/data-delete
+                              https://www.thetoolk.it/data-delete
                             </code>
                             <ScreenshotButton
                               altText="Switch User data deletion to Data deletion callback URL"
@@ -672,7 +720,7 @@ export default function InstructionsPage() {
                       Connect to TheToolkit:
                     </h4>
                     <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                      <li>Head to thetoolk.it</li>
+                      <li>Head to www.thetoolk.it</li>
                       <li>
                         Click on <strong>Instagram</strong>
                       </li>
@@ -807,23 +855,26 @@ export default function InstructionsPage() {
                           imagePath="/screenshots/THREADS/Threads6.png"
                         />
                       </li>
+                      <li className="font-medium text-red-600">
+                        NEVER SHARE THESE WITH ANYONE
+                      </li>
                       <li>
                         Set Redirect Callback URLs to:{" "}
                         <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                          http://thetoolk.it/authorize
+                          https://www.thetoolk.it/authorize
                         </code>{" "}
                         (make sure to hit Enter)
                       </li>
                       <li>
                         Set Uninstall Callback URL to:{" "}
                         <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                          https://thetoolk.it/deauthorize
+                          https://www.thetoolk.it/deauthorize
                         </code>
                       </li>
                       <li>
                         Set Delete Callback URL to:{" "}
                         <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                          https://thetoolk.it/delete-data
+                          https://www.thetoolk.it/delete-data
                         </code>
                       </li>
                       <li>
@@ -878,7 +929,7 @@ export default function InstructionsPage() {
                       Connect to TheToolkit:
                     </h4>
                     <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                      <li>Head to thetoolk.it</li>
+                      <li>Head to www.thetoolk.it</li>
                       <li>
                         Click on <strong>Threads</strong>
                       </li>
@@ -970,14 +1021,19 @@ export default function InstructionsPage() {
                       <li>
                         Copy and save the App ID and App Secret from the top of
                         the page
+                      </li>
+                      <li className="font-medium text-red-600">
+                        NEVER SHARE THESE WITH ANYONE
+                      </li>
+                      <li>
                         <ul className="mt-2 ml-6 list-inside list-disc space-y-1">
                           <li>
                             Set App domains to:{" "}
                             <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                              https://thetoolk.it
+                              https://www.thetoolk.it
                             </code>
                             <ScreenshotButton
-                              altText="Set App domains to thetoolk.it"
+                              altText="Set App domains to www.thetoolk.it"
                               imagePath="/screenshots/FACEBOOK-PAGES/FBPAGES6.png"
                             />
                           </li>
@@ -986,10 +1042,22 @@ export default function InstructionsPage() {
                             <strong>Data deletion callback URL</strong>, then
                             set it to:{" "}
                             <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                              https://thetoolk.it/data-delete
+                              https://www.thetoolk.it/data-delete
                             </code>
                           </li>
                         </ul>
+                      </li>
+                      <li>
+                        Click <strong>Facebook Login for Business</strong> and
+                        then <strong>Settings</strong>. Under{" "}
+                        <strong>Valid OAuth Redirect URIs</strong> enter:{" "}
+                        <code className="rounded bg-gray-100 px-2 py-1 text-sm">
+                          https://www.thetoolk.it/authorize
+                        </code>
+                        <ScreenshotButton
+                          altText="Click Facebook Login for Business and enter Valid OAuth Redirect URIs"
+                          imagePath="/screenshots/FACEBOOK-PAGES/FBPAGES7.png"
+                        />
                       </li>
                     </ol>
                   </div>
@@ -999,7 +1067,7 @@ export default function InstructionsPage() {
                       Connect to TheToolkit:
                     </h4>
                     <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                      <li>Head to thetoolk.it</li>
+                      <li>Head to www.thetoolk.it</li>
                       <li>
                         Click on <strong>Facebook</strong>
                       </li>
@@ -1083,13 +1151,13 @@ export default function InstructionsPage() {
                       <li>
                         Callback URL:{" "}
                         <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                          https://thetoolk.it/authorize
+                          https://www.thetoolk.it/authorize
                         </code>
                       </li>
                       <li>
                         Website URL:{" "}
                         <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                          https://thetoolk.it
+                          https://www.thetoolk.it
                         </code>
                       </li>
                     </ul>
@@ -1099,6 +1167,9 @@ export default function InstructionsPage() {
                     will pop up
                   </li>
                   <li>Save these in a safe place</li>
+                  <li className="font-medium text-red-600">
+                    NEVER SHARE THESE WITH ANYONE
+                  </li>
                 </ol>
               </div>
 
@@ -1107,7 +1178,7 @@ export default function InstructionsPage() {
                   Connect to TheToolkit:
                 </h4>
                 <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                  <li>Head to thetoolk.it</li>
+                  <li>Head to www.thetoolk.it</li>
                   <li>
                     Click on <strong>Twitter</strong>
                   </li>
@@ -1218,14 +1289,14 @@ export default function InstructionsPage() {
                     Click <strong>+Add URI</strong> for Authorized JavaScript
                     origins and enter:{" "}
                     <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                      https://thetoolk.it
+                      https://www.thetoolk.it
                     </code>
                   </li>
                   <li>
                     Click <strong>+Add URI</strong> for Authorized redirect URIs
                     and enter:{" "}
                     <code className="rounded bg-gray-100 px-2 py-1 text-sm">
-                      https://thetoolk.it/authorize
+                      https://www.thetoolk.it/authorize
                     </code>
                   </li>
                   <li>
@@ -1236,6 +1307,9 @@ export default function InstructionsPage() {
                     these and save them in a safe place. Press{" "}
                     <strong>OK</strong> when you&apos;re done to close the
                     popup.
+                  </li>
+                  <li className="font-medium text-red-600">
+                    NEVER SHARE THESE WITH ANYONE
                   </li>
                   <li>
                     Click on <strong>Audience</strong> in the sidebar
@@ -1253,6 +1327,16 @@ export default function InstructionsPage() {
                       imagePath="/screenshots/YOUTUBE/YOUTUBE6.png"
                     />
                   </li>
+                  <li>
+                    Click in the search bar at the top of the screen and search
+                    for <strong>youtube API</strong> and then click on{" "}
+                    <strong>YouTube Data API v3</strong>. On the screen that
+                    pops up, click to enable it.
+                    <ScreenshotButton
+                      altText="Search for YouTube Data API v3 and enable it"
+                      imagePath="/screenshots/YOUTUBE/YOUTUBE7.png"
+                    />
+                  </li>
                 </ol>
               </div>
 
@@ -1261,7 +1345,7 @@ export default function InstructionsPage() {
                   Connect to TheToolkit:
                 </h4>
                 <ol className="ml-4 list-inside list-decimal space-y-2 text-gray-600">
-                  <li>Head to thetoolk.it</li>
+                  <li>Head to www.thetoolk.it</li>
                   <li>
                     Click on <strong>YouTube</strong>
                   </li>
