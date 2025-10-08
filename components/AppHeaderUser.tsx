@@ -1,6 +1,6 @@
 "use client";
 
-// import Link from "next/link";
+import Link from "next/link";
 import { use } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
@@ -11,7 +11,7 @@ function AppHeaderUser() {
   if (!user) {
     return (
       <div className="flex flex-row items-end gap-2">
-        {/* <Link
+        <Link
           className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
           href="/auth/signup"
         >
@@ -22,7 +22,7 @@ function AppHeaderUser() {
           href="/auth/signin"
         >
           Sign in
-        </Link> */}
+        </Link>
       </div>
     );
   }
