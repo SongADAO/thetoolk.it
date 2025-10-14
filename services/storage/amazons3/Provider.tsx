@@ -71,9 +71,10 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
 
   const isAuthorized = isComplete;
 
-  const isEnabled = isAuthenticated || isClientEnabled;
+  // const isEnabled = isAuthenticated || isClientEnabled;
+  const isEnabled = !isAuthenticated || isClientEnabled;
 
-  const isUsable = isEnabled && isComplete && !isAuthorized;
+  const isUsable = isEnabled && isComplete && isAuthorized;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const mode = isAuthenticated ? "hosted" : "self";
