@@ -6,15 +6,12 @@ import {
 } from "@/lib/code-verifier";
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import { updateCodeVerifier } from "@/lib/supabase/service";
-import { getBaseUrlFromRequest } from "@/services/post/hosted";
-import {
-  getTwitterAuthorizeUrl,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
-} from "@/services/post/twitter/auth";
+import { getAuthorizeUrl, getBaseUrlFromRequest } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
   try {
-    const serviceId = "twitter";
+    const { serviceId } = await request.json();
+
     const serverAuth = await initServerAuth();
 
     // Generate PKCE values
@@ -29,13 +26,9 @@ export async function POST(request: NextRequest) {
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
     const url = new URL(getBaseUrlFromRequest(request));
-    const redirectUri = `${url.protocol}//${url.host}/api/hosted/twitter/oauth/callback`;
+    const redirectUri = `${url.protocol}//${url.host}/api/hosted/oauth/callback`;
 
-    const authUrl = getTwitterAuthorizeUrl(
-      HOSTED_CREDENTIALS_TWITTER.clientId,
-      redirectUri,
-      codeChallenge,
-    );
+    const authUrl = getAuthorizeUrl(serviceId, redirectUri, codeChallenge);
 
     return NextResponse.json({
       authUrl,

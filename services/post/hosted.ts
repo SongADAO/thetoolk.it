@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import {
   exchangeCodeForTokens as exchangeCodeForTokensFacebook,
   getAccounts as getAccountsFacebook,
+  getAuthorizeUrl as getFacebookAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_FACEBOOK,
   refreshAccessToken as refreshAccessTokenFacebook,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectFacebook,
@@ -10,6 +11,7 @@ import {
 import {
   exchangeCodeForTokens as exchangeCodeForTokensInstagram,
   getAccounts as getAccountsInstagram,
+  getAuthorizeUrl as getInstagramAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_INSTAGRAM,
   refreshAccessToken as refreshAccessTokenInstagram,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectInstagram,
@@ -24,6 +26,7 @@ import {
 import {
   exchangeCodeForTokens as exchangeCodeForTokensThreads,
   getAccounts as getAccountsThreads,
+  getAuthorizeUrl as getThreadsAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_THREADS,
   refreshAccessToken as refreshAccessTokenThreads,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectThreads,
@@ -31,13 +34,18 @@ import {
 import {
   exchangeCodeForTokens as exchangeCodeForTokensTiktok,
   getAccounts as getAccountsTiktok,
+  getAuthorizeUrl as getTiktokAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TIKTOK,
   refreshAccessToken as refreshAccessTokenTiktok,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectTiktok,
 } from "@/services/post/tiktok/auth";
 import {
+  exchangeCodeForTokens as exchangeCodeForTokensTwitter,
+  getAccounts as getAccountsTwitter,
+  getAuthorizeUrl as getTwitterAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
   refreshAccessToken as refreshAccessTokenTwitter,
+  shouldHandleAuthRedirect as shouldHandleAuthRedirectTwitter,
 } from "@/services/post/twitter/auth";
 import type {
   OauthAuthorization,
@@ -48,6 +56,7 @@ import type {
 import {
   exchangeCodeForTokens as exchangeCodeForTokensYoutube,
   getAccounts as getAccountsYoutube,
+  getAuthorizeUrl as getYoutubeAuthorizeUrl,
   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_YOUTUBE,
   refreshAccessToken as refreshAccessTokenYoutube,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectYoutube,
@@ -78,6 +87,81 @@ function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
     return "youtube";
   }
 
+  if (shouldHandleAuthRedirectTwitter(searchParams)) {
+    return "twitter";
+  }
+
+  throw new Error("Unsupported service");
+}
+
+function getAuthorizeUrl(
+  serviceId: string,
+  redirectUri: string,
+  codeChallenge: string,
+): string {
+  if (serviceId === "facebook") {
+    console.log("Handling Facebook auth redirect");
+    return getFacebookAuthorizeUrl(
+      HOSTED_CREDENTIALS_FACEBOOK.clientId,
+      redirectUri,
+      codeChallenge,
+    );
+  }
+
+  if (serviceId === "instagram") {
+    console.log("Handling Instagram auth redirect");
+    return getInstagramAuthorizeUrl(
+      HOSTED_CREDENTIALS_INSTAGRAM.clientId,
+      redirectUri,
+      codeChallenge,
+    );
+  }
+
+  if (serviceId === "instagramfb") {
+    console.log("Handling Instagram FB auth redirect");
+    // return getInstagramfbAuthorizeUrl(
+    //   HOSTED_CREDENTIALS_INSTAGRAMFB.clientId,
+    //   redirectUri,
+    //   codeChallenge,
+    // );
+  }
+
+  if (serviceId === "threads") {
+    console.log("Handling Threads auth redirect");
+    return getThreadsAuthorizeUrl(
+      HOSTED_CREDENTIALS_THREADS.clientId,
+      redirectUri,
+      codeChallenge,
+    );
+  }
+
+  if (serviceId === "tiktok") {
+    console.log("Handling TikTok auth redirect");
+    return getTiktokAuthorizeUrl(
+      HOSTED_CREDENTIALS_TIKTOK.clientId,
+      redirectUri,
+      codeChallenge,
+    );
+  }
+
+  if (serviceId === "youtube") {
+    console.log("Get YouTube auth URL");
+    return getYoutubeAuthorizeUrl(
+      HOSTED_CREDENTIALS_YOUTUBE.clientId,
+      redirectUri,
+      codeChallenge,
+    );
+  }
+
+  if (serviceId === "twitter") {
+    console.log("Get Twitter auth URL");
+    return getTwitterAuthorizeUrl(
+      HOSTED_CREDENTIALS_TWITTER.clientId,
+      redirectUri,
+      codeChallenge,
+    );
+  }
+
   throw new Error("Unsupported service");
 }
 
@@ -85,12 +169,15 @@ async function exchangeCodeForTokens(
   serviceId: string,
   searchParams: URLSearchParams,
   redirectUri: string,
+  codeVerifier: string,
 ): Promise<OauthAuthorizationAndExpiration> {
   if (serviceId === "facebook") {
     console.log("Handling Facebook auth redirect");
     return await exchangeCodeForTokensFacebook(
       searchParams.get("code") ?? "",
       redirectUri,
+      codeVerifier,
+      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_FACEBOOK,
     );
   }
@@ -100,6 +187,8 @@ async function exchangeCodeForTokens(
     return await exchangeCodeForTokensInstagram(
       searchParams.get("code") ?? "",
       redirectUri,
+      codeVerifier,
+      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_INSTAGRAM,
     );
   }
@@ -109,6 +198,8 @@ async function exchangeCodeForTokens(
   //   return await exchangeCodeForTokensInstagramfb(
   //     searchParams.get("code") ?? "",
   //     redirectUri,
+  //     codeVerifier,
+  //     searchParams.get("state") ?? "",
   //     HOSTED_CREDENTIALS_INSTAGRAMFB,
   //   );
   // }
@@ -118,6 +209,8 @@ async function exchangeCodeForTokens(
     return await exchangeCodeForTokensThreads(
       searchParams.get("code") ?? "",
       redirectUri,
+      codeVerifier,
+      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_THREADS,
     );
   }
@@ -127,6 +220,8 @@ async function exchangeCodeForTokens(
     return await exchangeCodeForTokensTiktok(
       searchParams.get("code") ?? "",
       redirectUri,
+      codeVerifier,
+      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_TIKTOK,
     );
   }
@@ -136,7 +231,20 @@ async function exchangeCodeForTokens(
     return await exchangeCodeForTokensYoutube(
       searchParams.get("code") ?? "",
       redirectUri,
+      codeVerifier,
+      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_YOUTUBE,
+    );
+  }
+
+  if (serviceId === "twitter") {
+    console.log("Handling Twitter auth redirect");
+    return await exchangeCodeForTokensTwitter(
+      searchParams.get("code") ?? "",
+      redirectUri,
+      codeVerifier,
+      searchParams.get("state") ?? "",
+      HOSTED_CREDENTIALS_TWITTER,
     );
   }
 
@@ -177,6 +285,11 @@ async function getAccounts(
   if (serviceId === "youtube") {
     console.log("Getting YouTube accounts");
     return await getAccountsYoutube(authorization.accessToken);
+  }
+
+  if (serviceId === "twitter") {
+    console.log("Getting Twitter accounts");
+    return await getAccountsTwitter(authorization.accessToken);
   }
 
   throw new Error("Unsupported service");
@@ -268,6 +381,7 @@ function getOauthUrls(requestUrl: string) {
 export {
   exchangeCodeForTokens,
   getAccounts,
+  getAuthorizeUrl,
   getAuthRedirectServiceId,
   getBaseUrlFromRequest,
   getOauthUrls,
