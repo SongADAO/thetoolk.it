@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, use, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
@@ -59,6 +60,34 @@ export default function SignUpForm() {
           type="password"
           value={password}
         />
+      </div>
+
+      <div className="flex items-start gap-2">
+        <input
+          className="size-[24px] rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          id="agree"
+          required
+          type="checkbox"
+          value="1"
+        />
+        <label className="mb-1 block text-sm font-medium" htmlFor="agree">
+          I agree to the{" "}
+          <Link
+            className="text-blue-600 underline hover:text-blue-800"
+            href="/terms-of-service"
+            target="_blank"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            className="text-blue-600 underline hover:text-blue-800"
+            href="/privacy-policy"
+            target="_blank"
+          >
+            Privacy Policy
+          </Link>
+        </label>
       </div>
 
       <button
