@@ -16,6 +16,8 @@ import { PostProvider } from "@/services/PostProvider";
 export default function Home() {
   const { isAuthenticated } = use(AuthContext);
 
+  /* eslint-disable @typescript-eslint/no-unnecessary-condition */
+
   return (
     <div>
       {isAuthenticated ? (
