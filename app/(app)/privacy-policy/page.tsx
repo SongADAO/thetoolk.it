@@ -8,11 +8,11 @@ export default function PrivacyPolicy() {
 
       <h2>1. Introduction</h2>
       <p>
-        Welcome to <strong>TheToolk.it</strong> ("we," "our," or "us"). We
-        respect your privacy and are committed to protecting your personal
-        information. This Privacy Policy explains how we collect, use, disclose,
-        and safeguard your information when you use our video posting service
-        (the "Service").
+        Welcome to <strong>TheToolk.it</strong> (&quot;we,&quot;
+        &quot;our,&quot; or &quot;us&quot;). We respect your privacy and are
+        committed to protecting your personal information. This Privacy Policy
+        explains how we collect, use, disclose, and safeguard your information
+        when you use our video posting service (the &quot;Service&quot;).
       </p>
 
       <h2>2. Information We Collect</h2>
@@ -132,7 +132,7 @@ export default function PrivacyPolicy() {
         <li>You grant us limited permissions to post content on your behalf</li>
         <li>
           You can revoke access at any time through your account settings or the
-          respective platform's security settings
+          respective platform&apos;s security settings
         </li>
         <li>Access tokens are stored securely and encrypted</li>
       </ul>
@@ -179,7 +179,7 @@ export default function PrivacyPolicy() {
         <li>Export your data</li>
       </ul>
 
-      <h2>9. Children's Privacy</h2>
+      <h2>9. Children&apos;s Privacy</h2>
       <p>
         Our Service is not intended for users under the age of 13 (or the
         applicable age of digital consent in your jurisdiction). We do not
@@ -198,7 +198,7 @@ export default function PrivacyPolicy() {
       <p>
         We may update this Privacy Policy from time to time. We will notify you
         of any changes by posting the new Privacy Policy on this page and
-        updating the "Last Updated" date.
+        updating the &quot;Last Updated&quot; date.
       </p>
 
       <h2>12. Contact Us</h2>
