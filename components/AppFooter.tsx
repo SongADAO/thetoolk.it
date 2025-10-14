@@ -1,3 +1,7 @@
+"use client";
+
+import Link from "next/link";
+
 function AppFooter() {
   return (
     <div className="flex items-center justify-center gap-2 bg-gray-200">
@@ -24,6 +28,20 @@ function AppFooter() {
               GitHub
             </a>
           </span>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link
+            className="text-blue-600 underline hover:text-blue-800"
+            href="/terms-of-service"
+          >
+            Terms of Service
+          </Link>
+          <Link
+            className="text-blue-600 underline hover:text-blue-800"
+            href="/privacy-policy"
+          >
+            Privacy Policy
+          </Link>
         </div>
         <div className="text-xs text-gray-600">
           Created by{" "}
