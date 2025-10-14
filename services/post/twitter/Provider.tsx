@@ -115,22 +115,16 @@ export function TwitterProvider({ children }: Readonly<Props>) {
 
   const mode = isAuthenticated ? "hosted" : "self";
 
-  async function exchangeCode(code: string) {
+  async function exchangeCode(code: string, state: string) {
     try {
-      const codeVerifier = localStorage.getItem(
-        "thetoolkit_twitter_code_verifier",
-      );
-
-      if (!codeVerifier) {
-        throw new Error(
-          "Code verifier not found. Please restart the authorization process.",
-        );
-      }
+      const codeVerifier =
+        localStorage.getItem("thetoolkit_twitter_code_verifier") ?? "";
 
       const newAuthorization = await exchangeCodeForTokens(
         code,
         getRedirectUri(),
         codeVerifier,
+        state,
         credentials,
         "self",
       );
@@ -230,7 +224,10 @@ export function TwitterProvider({ children }: Readonly<Props>) {
       if (shouldHandleAuthRedirect(searchParams)) {
         setIsHandlingAuth(true);
 
-        await exchangeCode(searchParams.get("code") ?? "");
+        await exchangeCode(
+          searchParams.get("code") ?? "",
+          searchParams.get("state") ?? "",
+        );
 
         setHasCompletedAuth(true);
       }

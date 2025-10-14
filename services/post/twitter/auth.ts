@@ -128,7 +128,7 @@ function formatExpiration(tokens: TwitterTokenResponse): OauthExpiration {
   };
 }
 
-function getTwitterAuthorizeUrl(
+function getAuthorizeUrl(
   clientId: string,
   redirectUri: string,
   codeChallenge: string,
@@ -140,7 +140,7 @@ function getTwitterAuthorizeUrl(
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(" "),
-    state: OAUTH_STATE,
+    state: `${OAUTH_STATE}----${codeChallenge}`,
   });
 
   return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
@@ -150,7 +150,8 @@ async function getAuthorizationUrlHosted(): Promise<string> {
   try {
     console.log("Starting OAuth flow for Twitter");
 
-    const response = await fetch("/api/hosted/twitter/oauth/authorize", {
+    const response = await fetch("/api/hosted/oauth/authorize", {
+      body: JSON.stringify({ serviceId: "twitter" }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -193,7 +194,7 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  return getTwitterAuthorizeUrl(clientId, redirectUri, codeChallenge);
+  return getAuthorizeUrl(clientId, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token
@@ -201,9 +202,29 @@ async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
   codeVerifier: string,
+  state: string,
   credentials: OauthCredentials,
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
+  if (!codeVerifier) {
+    throw new Error(
+      "Code verifier not found. Please restart the authorization process.",
+    );
+  }
+
+  if (!state) {
+    throw new Error(
+      "Code challenge not found. Please restart the authorization process.",
+    );
+  }
+
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  if (`${OAUTH_STATE}----${codeChallenge}` !== state) {
+    throw new Error(
+      "Code verifier does not match code challenge. Please restart the authorization process.",
+    );
+  }
+
   const endpoint =
     mode === "hosted"
       ? "https://api.twitter.com/2/oauth2/token"
@@ -355,10 +376,10 @@ export {
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getAuthorizationUrlHosted,
+  getAuthorizeUrl,
   getCredentialsId,
   getRedirectUri,
   getRedirectUriHosted,
-  getTwitterAuthorizeUrl,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,

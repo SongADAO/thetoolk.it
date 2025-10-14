@@ -72,7 +72,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   const isAuthorized = isComplete;
 
   // const isEnabled = isAuthenticated || isClientEnabled;
-  const isEnabled = !isAuthenticated || isClientEnabled;
+  const isEnabled = !isAuthenticated && isClientEnabled;
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 

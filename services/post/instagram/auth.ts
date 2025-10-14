@@ -1,3 +1,7 @@
+import {
+  generateCodeChallenge,
+  generateCodeVerifier,
+} from "@/lib/code-verifier";
 import { hasExpired } from "@/lib/expiration";
 import { objectIdHash } from "@/lib/hash";
 import type {
@@ -124,25 +128,101 @@ function formatExpiration(tokens: InstagramTokenResponse): OauthExpiration {
   };
 }
 
-function getAuthorizationUrl(clientId: string, redirectUri: string): string {
+function getAuthorizeUrl(
+  clientId: string,
+  redirectUri: string,
+  codeChallenge: string,
+): string {
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
-    state: OAUTH_STATE,
+    state: `${OAUTH_STATE}----${codeChallenge}`,
   });
 
   return `https://www.instagram.com/oauth/authorize?${params.toString()}`;
+}
+
+async function getAuthorizationUrlHosted(): Promise<string> {
+  try {
+    console.log("Starting OAuth flow for Instagram");
+
+    const response = await fetch("/api/hosted/oauth/authorize", {
+      body: JSON.stringify({ serviceId: "instagram" }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error ?? "Failed to get authorization URL");
+    }
+
+    console.log("Authorization URL received from server");
+
+    return result.authUrl;
+  } catch (err: unknown) {
+    const errMessage = err instanceof Error ? err.message : "Auth URL failed";
+    console.error("Error creating authorization URL:", err);
+    throw new Error(`Failed to create authorization URL: ${errMessage}`, {
+      cause: err,
+    });
+  }
+}
+
+async function getAuthorizationUrl(
+  clientId: string,
+  redirectUri: string,
+): Promise<string> {
+  console.log("Starting Instagram authorization...");
+
+  // Generate PKCE values
+  const codeVerifier = generateCodeVerifier();
+
+  // Store code verifier for later use
+  localStorage.setItem("thetoolkit_instagram_code_verifier", codeVerifier);
+
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+  return getAuthorizeUrl(clientId, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
   redirectUri: string,
+  codeVerifier: string,
+  state: string,
   credentials: OauthCredentials,
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
+  if (!codeVerifier) {
+    throw new Error(
+      "Code verifier not found. Please restart the authorization process.",
+    );
+  }
+
+  if (!state) {
+    throw new Error(
+      "Code challenge not found. Please restart the authorization process.",
+    );
+  }
+
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  if (`${OAUTH_STATE}----${codeChallenge}` !== state) {
+    throw new Error(
+      "Code verifier does not match code challenge. Please restart the authorization process.",
+    );
+  }
+
   const endpoint =
     mode === "hosted"
       ? "https://api.instagram.com/oauth/access_token"
@@ -298,6 +378,8 @@ export {
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
+  getAuthorizationUrlHosted,
+  getAuthorizeUrl,
   getCredentialsId,
   getRedirectUri,
   getRedirectUriHosted,

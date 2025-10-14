@@ -15,12 +15,11 @@ import {
   getAccounts,
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
+  getAuthorizationUrlHosted,
   getCredentialsId,
   getRedirectUri,
-  getRedirectUriHosted,
   hasCompleteAuthorization,
   hasCompleteCredentials,
-  HOSTED_CREDENTIALS,
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
@@ -116,11 +115,16 @@ export function InstagramProvider({ children }: Readonly<Props>) {
 
   const mode = isAuthenticated ? "hosted" : "self";
 
-  async function exchangeCode(code: string) {
+  async function exchangeCode(code: string, state: string) {
     try {
+      const codeVerifier =
+        localStorage.getItem("thetoolkit_instagram_code_verifier") ?? "";
+
       const newAuthorization = await exchangeCodeForTokens(
         code,
         getRedirectUri(),
+        codeVerifier,
+        state,
         credentials,
         "self",
       );
@@ -198,14 +202,11 @@ export function InstagramProvider({ children }: Readonly<Props>) {
     return newAuthorization.accessToken;
   }
 
-  function authorize() {
+  async function authorize() {
     const authUrl =
       mode === "hosted"
-        ? getAuthorizationUrl(
-            HOSTED_CREDENTIALS.clientId,
-            getRedirectUriHosted(),
-          )
-        : getAuthorizationUrl(credentials.clientId, getRedirectUri());
+        ? await getAuthorizationUrlHosted()
+        : await getAuthorizationUrl(credentials.clientId, getRedirectUri());
 
     window.open(authUrl, "_blank");
   }
@@ -218,7 +219,10 @@ export function InstagramProvider({ children }: Readonly<Props>) {
       if (shouldHandleAuthRedirect(searchParams)) {
         setIsHandlingAuth(true);
 
-        await exchangeCode(searchParams.get("code") ?? "");
+        await exchangeCode(
+          searchParams.get("code") ?? "",
+          searchParams.get("state") ?? "",
+        );
 
         setHasCompletedAuth(true);
       }
