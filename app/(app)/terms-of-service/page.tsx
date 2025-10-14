@@ -8,10 +8,11 @@ export default function TermsOfService() {
 
       <h2>1. Acceptance of Terms</h2>
       <p>
-        Welcome to <strong>TheToolk.it</strong> ("Service," "we," "us," or
-        "our"). By accessing or using our Service, you agree to be bound by
-        these Terms of Service ("Terms"). If you do not agree to these Terms, do
-        not use the Service.
+        Welcome to <strong>TheToolk.it</strong> (&quot;Service,&quot;
+        &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). By accessing or
+        using our Service, you agree to be bound by these Terms of Service
+        (&quot;Terms&quot;). If you do not agree to these Terms, do not use the
+        Service.
       </p>
 
       <h2>2. Description of Service</h2>
@@ -180,8 +181,9 @@ export default function TermsOfService() {
 
       <h3>8.1 Service Availability</h3>
       <p>
-        We strive to maintain the Service's availability but do not guarantee
-        uninterrupted access. The Service may be temporarily unavailable due to:
+        We strive to maintain the Service&apos;s availability but do not
+        guarantee uninterrupted access. The Service may be temporarily
+        unavailable due to:
       </p>
       <ul>
         <li>Scheduled maintenance</li>
@@ -201,10 +203,10 @@ export default function TermsOfService() {
       <h2>9. Disclaimer of Warranties</h2>
       <div>
         <strong>
-          THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES
-          OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-          WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-          NON-INFRINGEMENT.
+          THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot;
+          WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+          BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+          PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
         </strong>
       </div>
       <p>We do not warrant that:</p>
@@ -240,7 +242,7 @@ export default function TermsOfService() {
         You agree to indemnify, defend, and hold harmless{" "}
         <strong>TheToolk.it</strong>, its officers, directors, employees, and
         agents from any claims, liabilities, damages, losses, and expenses,
-        including reasonable attorneys' fees, arising out of or in any way
+        including reasonable attorneys&apos; fees, arising out of or in any way
         connected with:
       </p>
       <ul>
@@ -263,7 +265,7 @@ export default function TermsOfService() {
       <p>
         You may stop using the Service at any time and revoke OAuth access to
         your connected accounts through your account settings or the respective
-        platform's security settings.
+        platform&apos;s security settings.
       </p>
 
       <h3>13.2 Termination by Us</h3>
