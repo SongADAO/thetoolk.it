@@ -271,8 +271,13 @@
 }
 
 /* Force Brand Color Styles in CSS Output */
+/* prettier-ignore */
 @source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}bg-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
+
+/* prettier-ignore */
 @source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
+
+/* prettier-ignore */
 @source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}-inverse");
 
 /* :root {
