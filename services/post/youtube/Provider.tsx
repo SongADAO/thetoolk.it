@@ -213,6 +213,12 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     window.open(authUrl, "_blank");
   }
 
+  function disconnect() {
+    setAuthorization(defaultOauthAuthorization);
+    setExpiration(defaultOauthExpiration);
+    setAccounts([]);
+  }
+
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
   const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
 
@@ -328,6 +334,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       authorize,
       brandColor,
       credentialsId,
+      disconnect,
       error,
       fields,
       handleAuthRedirect,
@@ -362,6 +369,7 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
       brandColor,
       credentials,
       credentialsId,
+      disconnect,
       error,
       hasAuthenticatedCredentials,
       hasAuthorizationStep,

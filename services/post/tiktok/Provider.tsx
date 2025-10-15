@@ -213,6 +213,12 @@ export function TiktokProvider({ children }: Readonly<Props>) {
     window.open(authUrl, "_blank");
   }
 
+  function disconnect() {
+    setAuthorization(defaultOauthAuthorization);
+    setExpiration(defaultOauthExpiration);
+    setAccounts([]);
+  }
+
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
   const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
 
@@ -328,6 +334,8 @@ export function TiktokProvider({ children }: Readonly<Props>) {
       authorize,
       brandColor,
       credentialsId,
+      disconnect,
+      disconnect,
       error,
       fields,
       handleAuthRedirect,
@@ -362,6 +370,8 @@ export function TiktokProvider({ children }: Readonly<Props>) {
       brandColor,
       credentials,
       credentialsId,
+      disconnect,
+      disconnect,
       error,
       hasAuthenticatedCredentials,
       hasAuthorizationStep,

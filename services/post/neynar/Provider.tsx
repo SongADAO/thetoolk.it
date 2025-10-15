@@ -110,6 +110,8 @@ export function NeynarProvider({ children }: Readonly<Props>) {
 
   async function authorize() {}
 
+  function disconnect() {}
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
 
@@ -193,6 +195,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       authorize,
       brandColor,
       credentialsId,
+      disconnect,
       error,
       fields,
       handleAuthRedirect,
@@ -227,6 +230,7 @@ export function NeynarProvider({ children }: Readonly<Props>) {
       brandColor,
       credentials,
       credentialsId,
+      disconnect,
       error,
       hasAuthenticatedCredentials,
       hasAuthorizationStep,

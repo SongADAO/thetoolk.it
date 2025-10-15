@@ -24,6 +24,7 @@ export function ServiceSwitchWithContext<T extends ServiceSwitchContextProps>({
     authorize: contextValue.authorize,
     brandColor: contextValue.brandColor,
     credentialsId: contextValue.credentialsId,
+    disconnect: contextValue.disconnect,
     form,
     hasAuthenticatedCredentials: contextValue.hasAuthenticatedCredentials,
     hasAuthorizationStep: contextValue.hasAuthorizationStep,
