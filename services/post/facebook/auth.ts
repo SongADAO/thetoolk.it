@@ -31,6 +31,7 @@ const HOSTED_CREDENTIALS = {
 // -----------------------------------------------------------------------------
 
 const SCOPES: string[] = [
+  "business_management",
   "pages_manage_posts",
   "pages_read_engagement",
   "pages_show_list",
