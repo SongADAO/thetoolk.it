@@ -87,19 +87,20 @@ export function UserStorageProvider({
           console.error("Error loading services from Supabase:", servicesError);
         }
 
+        // Disabled: Service authorizations are server side only.
         // Fetch all service authorizations in one query
-        const { data: authData, error: authError } = await supabase
-          .from("service_authorizations")
-          .select("*")
-          .eq("user_id", user.id)
-          .in("service_id", serviceIds);
+        // const { data: authData, error: authError } = await supabase
+        //   .from("service_authorizations")
+        //   .select("*")
+        //   .eq("user_id", user.id)
+        //   .in("service_id", serviceIds);
 
-        if (authError) {
-          console.error(
-            "Error loading authorizations from Supabase:",
-            authError,
-          );
-        }
+        // if (authError) {
+        //   console.error(
+        //     "Error loading authorizations from Supabase:",
+        //     authError,
+        //   );
+        // }
 
         // Map the fetched data back to keys
         for (const [key, defaultValue] of keys.entries()) {
@@ -108,12 +109,13 @@ export function UserStorageProvider({
           let value = defaultValue;
 
           if (serviceField === "service_authorization") {
-            const authRecord = authData?.find(
-              (record) => record.service_id === serviceId,
-            );
-            if (authRecord?.[serviceField] !== undefined) {
-              value = authRecord[serviceField];
-            }
+            // Disabled: Service authorizations are server side only.
+            // const authRecord = authData?.find(
+            //   (record) => record.service_id === serviceId,
+            // );
+            // if (authRecord?.[serviceField] !== undefined) {
+            //   value = authRecord[serviceField];
+            // }
           } else {
             const serviceRecord = servicesData?.find(
               (record) => record.service_id === serviceId,
