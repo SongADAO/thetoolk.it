@@ -4,9 +4,9 @@ CREATE TABLE services (
   user_id UUID REFERENCES auth.users(id),
   service_id VARCHAR NOT NULL,
   service_enabled BOOLEAN,
-  service_credentials JSON,
-  service_expiration JSON,
-  service_accounts JSON,
+  service_credentials JSONB,
+  service_expiration JSONB,
+  service_accounts JSONB,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -36,7 +36,7 @@ CREATE TABLE service_authorizations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id),
   service_id VARCHAR NOT NULL,
-  service_authorization JSON,
+  service_authorization JSONB,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -50,7 +50,7 @@ ALTER TABLE service_authorizations ENABLE ROW LEVEL SECURITY;
 -- OAuth states table (for temporary auth flow state)
 CREATE TABLE service_oauth_states (
   key TEXT PRIMARY KEY,
-  value JSON NOT NULL,
+  value JSONB NOT NULL,
   user_id UUID REFERENCES auth.users(id),
   expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

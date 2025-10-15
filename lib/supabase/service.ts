@@ -1,5 +1,11 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
+import {
+  decryptServiceAuthorization,
+  encryptServiceAuthorization,
+  getEncryptionKey,
+} from "@/lib/crypto";
+
 interface ServiceAuthorization {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authorization: any;
@@ -37,6 +43,18 @@ async function getServiceAuthorizationAndExpiration({
     throw new Error("Could not find service authorization");
   }
 
+  // Decrypt the service authorization
+  let decryptedAuthorization;
+  try {
+    const encryptionKey = getEncryptionKey();
+    decryptedAuthorization = decryptServiceAuthorization(
+      dataAuthorization.service_authorization,
+      encryptionKey,
+    );
+  } catch (error) {
+    throw new Error("Failed to decrypt service authorization");
+  }
+
   const { data: dataExpiration, error: errorExpiration } = await supabase
     .from("services")
     .select("service_expiration")
@@ -53,7 +71,7 @@ async function getServiceAuthorizationAndExpiration({
   }
 
   return {
-    authorization: dataAuthorization.service_authorization,
+    authorization: decryptedAuthorization,
     expiration: dataExpiration.service_expiration,
   };
 }
@@ -77,11 +95,23 @@ async function updateServiceAuthorization({
   supabaseAdmin,
   user,
 }: UpdateServiceAuthorization): Promise<void> {
+  // Encrypt the service authorization before storing
+  let encryptedAuthorization;
+  try {
+    const encryptionKey = getEncryptionKey();
+    encryptedAuthorization = encryptServiceAuthorization(
+      serviceAuthorization,
+      encryptionKey,
+    );
+  } catch (error) {
+    throw new Error("Failed to encrypt service authorization");
+  }
+
   const { error: errorAuthorizations } = await supabaseAdmin
     .from("service_authorizations")
     .upsert(
       {
-        service_authorization: serviceAuthorization,
+        service_authorization: encryptedAuthorization,
         service_id: serviceId,
         user_id: user.id,
       },
@@ -162,11 +192,23 @@ async function updateServiceAuthorizationAndAccounts({
   supabaseAdmin,
   user,
 }: UpdateServiceAuthorizationAndAccounts): Promise<void> {
+  // Encrypt the service authorization before storing
+  let encryptedAuthorization;
+  try {
+    const encryptionKey = getEncryptionKey();
+    encryptedAuthorization = encryptServiceAuthorization(
+      serviceAuthorization,
+      encryptionKey,
+    );
+  } catch (error) {
+    throw new Error("Failed to encrypt service authorization");
+  }
+
   const { error: errorAuthorization } = await supabaseAdmin
     .from("service_authorizations")
     .upsert(
       {
-        service_authorization: serviceAuthorization,
+        service_authorization: encryptedAuthorization,
         service_id: serviceId,
         user_id: user.id,
       },
