@@ -337,6 +337,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     () => ({
       VIDEO_MAX_DURATION,
       VIDEO_MAX_FILESIZE,
+      VIDEO_MIN_DURATION,
       accounts,
       authorizationExpiresAt,
       authorize,
@@ -350,7 +351,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       hasAuthorizationStep,
       hasCompletedAuth,
       icon,
-      VIDEO_MIN_DURATION,
       initial,
       isAuthorized,
       isComplete,
