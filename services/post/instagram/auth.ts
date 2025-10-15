@@ -280,7 +280,7 @@ async function exchangeCodeForTokens(
 }
 
 async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
-  console.log("Starting Facebook authentication...");
+  console.log("Starting Instagram authentication...");
 
   const response = await fetch("/api/hosted/oauth/refresh", {
     body: JSON.stringify({ serviceId: "instagram" }),
@@ -294,6 +294,27 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
     const errorData = await response.json();
     throw new Error(
       `Token refresh failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
+async function disconnectHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Instagram disconnection...");
+
+  const response = await fetch("/api/hosted/oauth/deauthorize", {
+    body: JSON.stringify({ serviceId: "instagram" }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Disconnect failed: ${errorData.error_description ?? errorData.error}`,
     );
   }
 
@@ -374,6 +395,7 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
 // -----------------------------------------------------------------------------
 
 export {
+  disconnectHosted,
   exchangeCodeForTokens,
   getAccounts,
   getAuthorizationExpiresAt,

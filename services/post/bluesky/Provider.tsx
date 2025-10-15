@@ -11,6 +11,7 @@ import { DEBUG_POST } from "@/config/constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
+  disconnectHosted,
   exchangeCodeForTokens,
   getAccounts,
   getAuthorizationExpiresAt,
@@ -212,10 +213,14 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     window.open(authUrl, "_blank");
   }
 
-  function disconnect() {
-    setAuthorization(defaultOauthAuthorization);
+  async function disconnect() {
     setExpiration(defaultOauthExpiration);
     setAccounts([]);
+    if (mode === "hosted") {
+      await disconnectHosted();
+    } else {
+      setAuthorization(defaultOauthAuthorization);
+    }
   }
 
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);

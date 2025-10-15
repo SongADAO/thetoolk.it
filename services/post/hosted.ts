@@ -16,13 +16,6 @@ import {
   refreshAccessToken as refreshAccessTokenInstagram,
   shouldHandleAuthRedirect as shouldHandleAuthRedirectInstagram,
 } from "@/services/post/instagram/auth";
-// import {
-//   exchangeCodeForTokens as exchangeCodeForTokensInstagramfb,
-//   getAccounts as getAccountsInstagramfb,
-//   HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_INSTAGRAMFB,
-//   refreshAccessToken as refreshAccessTokenInstagramfb,
-//   shouldHandleAuthRedirect as shouldHandleAuthRedirectInstagramfb,
-// } from "@/services/post/instagramfb/auth";
 import {
   exchangeCodeForTokens as exchangeCodeForTokensThreads,
   getAccounts as getAccountsThreads,
@@ -71,10 +64,6 @@ function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
     return "instagram";
   }
 
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
-    return "instagramfb";
-  }
-
   if (shouldHandleAuthRedirectThreads(searchParams)) {
     return "threads";
   }
@@ -115,15 +104,6 @@ function getAuthorizeUrl(
       redirectUri,
       codeChallenge,
     );
-  }
-
-  if (serviceId === "instagramfb") {
-    console.log("Handling Instagram FB auth redirect");
-    // return getInstagramfbAuthorizeUrl(
-    //   HOSTED_CREDENTIALS_INSTAGRAMFB.clientId,
-    //   redirectUri,
-    //   codeChallenge,
-    // );
   }
 
   if (serviceId === "threads") {
@@ -193,17 +173,6 @@ async function exchangeCodeForTokens(
     );
   }
 
-  // if (serviceId === "instagramfb") {
-  //   console.log("Handling Instagram FB auth redirect");
-  //   return await exchangeCodeForTokensInstagramfb(
-  //     searchParams.get("code") ?? "",
-  //     redirectUri,
-  //     codeVerifier,
-  //     searchParams.get("state") ?? "",
-  //     HOSTED_CREDENTIALS_INSTAGRAMFB,
-  //   );
-  // }
-
   if (serviceId === "threads") {
     console.log("Handling Threads auth redirect");
     return await exchangeCodeForTokensThreads(
@@ -265,13 +234,6 @@ async function getAccounts(
     return await getAccountsInstagram(authorization.accessToken);
   }
 
-  // if (serviceId === "instagramfb") {
-  //   console.log("Getting Instagram FB accounts");
-  //   return await getAccountsInstagramfb(
-  //     authorization.accessToken,
-  //   );
-  // }
-
   if (serviceId === "threads") {
     console.log("Getting Threads accounts");
     return await getAccountsThreads(authorization.accessToken);
@@ -309,11 +271,6 @@ async function refreshAccessToken(
     console.log("Refreshing Instagram tokens");
     return await refreshAccessTokenInstagram(authorization);
   }
-
-  // if (serviceId === "instagramfb") {
-  //   console.log("Refreshing InstgramFB tokens");
-  //   return await refreshAccessTokenInstagramfb(authorization, expiration);
-  // }
 
   if (serviceId === "threads") {
     console.log("Refreshing Threads tokens");

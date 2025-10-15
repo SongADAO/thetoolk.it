@@ -21,6 +21,7 @@ import {
   type ServiceAccount,
 } from "@/services/post/types";
 import {
+  disconnectHosted,
   exchangeCodeForTokens,
   getAccounts,
   getAuthorizationExpiresAt,
@@ -213,10 +214,14 @@ export function YoutubeProvider({ children }: Readonly<Props>) {
     window.open(authUrl, "_blank");
   }
 
-  function disconnect() {
-    setAuthorization(defaultOauthAuthorization);
+  async function disconnect() {
     setExpiration(defaultOauthExpiration);
     setAccounts([]);
+    if (mode === "hosted") {
+      await disconnectHosted();
+    } else {
+      setAuthorization(defaultOauthAuthorization);
+    }
   }
 
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
