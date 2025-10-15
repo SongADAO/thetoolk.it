@@ -20,13 +20,17 @@ https://dev.thetoolk.it/api/hosted/oauth/callback
 https://www.thetoolk.it/api/hosted/oauth/callback
 
 Uninstall/Deauthorize Callback
-https://www.thetoolk.it/deauthorize
+https://www.thetoolk.it/api/hosted/facebook/uninstall
+https://www.thetoolk.it/api/hosted/instagram/uninstall
+https://www.thetoolk.it/api/hosted/threads/uninstall
 
 Delete Data Callback URL
-https://www.thetoolk.it/delete-data
+https://www.thetoolk.it/api/hosted/facebook/delete
+https://www.thetoolk.it/api/hosted/instagram/delete
+https://www.thetoolk.it/api/hosted/threads/delete
 
 Terms of Service
 https://www.thetoolk.it/terms-of-service
 
 Privacy Policy
-https://ww.thetoolk.it/privacy-policy
+https://www.thetoolk.it/privacy-policy
