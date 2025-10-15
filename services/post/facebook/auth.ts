@@ -305,6 +305,27 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   return await response.json();
 }
 
+async function disconnectHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Facebook disconnection...");
+
+  const response = await fetch("/api/hosted/oauth/deauthorize", {
+    body: JSON.stringify({ serviceId: "facebook" }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Disconnect failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
 // Refresh tokens are automatically refreshed by Facebook when any API is called.
 async function refreshAccessToken(
   authorization: OauthAuthorization,
@@ -453,6 +474,7 @@ async function getAccountAccessToken(
 // -----------------------------------------------------------------------------
 
 export {
+  disconnectHosted,
   exchangeCodeForTokens,
   getAccountAccessToken,
   getAccounts,

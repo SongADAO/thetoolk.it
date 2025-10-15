@@ -280,6 +280,27 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   return await response.json();
 }
 
+async function disconnectHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Twitter disconnection...");
+
+  const response = await fetch("/api/hosted/oauth/deauthorize", {
+    body: JSON.stringify({ serviceId: "twitter" }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Disconnect failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
 // Refresh access token using refresh token
 async function refreshAccessToken(
   credentials: OauthCredentials,
@@ -371,6 +392,7 @@ async function getAccounts(
 // -----------------------------------------------------------------------------
 
 export {
+  disconnectHosted,
   exchangeCodeForTokens,
   getAccounts,
   getAuthorizationExpiresAt,

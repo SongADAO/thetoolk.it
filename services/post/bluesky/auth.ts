@@ -231,6 +231,27 @@ async function refreshAccessTokenHosted(): Promise<OauthAuthorization> {
   return await response.json();
 }
 
+async function disconnectHosted(): Promise<OauthAuthorization> {
+  console.log("Starting Bluesky disconnection...");
+
+  const response = await fetch("/api/hosted/oauth/deauthorize", {
+    body: JSON.stringify({ serviceId: "bluesky" }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Disconnect failed: ${errorData.error_description ?? errorData.error}`,
+    );
+  }
+
+  return await response.json();
+}
+
 // Refresh access token (handled internally by the library)
 async function refreshAccessToken(
   credentials: BlueskyCredentials,
@@ -306,6 +327,7 @@ async function getAccounts(
 // Export functions with the same signatures as before
 
 export {
+  disconnectHosted,
   exchangeCodeForTokens,
   getAccounts,
   getAccountsFromAgent,

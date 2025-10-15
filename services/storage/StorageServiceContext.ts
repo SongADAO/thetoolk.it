@@ -13,6 +13,7 @@ interface StorageServiceContextType {
   authorize: () => void;
   brandColor: string;
   credentialsId: string;
+  disconnect: () => void;
   error: string;
   fields: ServiceFormField[];
   hasAuthenticatedCredentials: boolean;
@@ -48,6 +49,7 @@ const storageServiceContextDefault = {
   authorize: () => {},
   brandColor: "",
   credentialsId: "",
+  disconnect: () => {},
   error: "",
   fields: [],
   hasAuthenticatedCredentials: false,

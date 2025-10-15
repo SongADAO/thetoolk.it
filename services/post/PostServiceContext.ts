@@ -15,6 +15,7 @@ interface PostServiceContextType {
   authorize: () => void;
   brandColor: string;
   credentialsId: string;
+  disconnect: () => void;
   error: string;
   fields: ServiceFormField[];
   handleAuthRedirect: (searchParams: URLSearchParams) => Promise<void>;
@@ -50,6 +51,7 @@ const postServiceContextDefault = {
   authorize: () => {},
   brandColor: "",
   credentialsId: "",
+  disconnect: () => {},
   error: "",
   fields: [],
   handleAuthRedirect: async () => {},

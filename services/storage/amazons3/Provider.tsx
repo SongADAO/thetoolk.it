@@ -87,6 +87,10 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
     // No auth needed.
   }
 
+  function disconnect() {
+    // No auth needed.
+  }
+
   const fields: ServiceFormField[] = [
     {
       label: "Access Key ID",
@@ -219,6 +223,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       authorize,
       brandColor,
       credentialsId,
+      disconnect,
       error,
       fields,
       hasAuthenticatedCredentials,
@@ -251,6 +256,7 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
       brandColor,
       credentials,
       credentialsId,
+      disconnect,
       error,
       hasAuthenticatedCredentials,
       hasAuthorizationStep,
