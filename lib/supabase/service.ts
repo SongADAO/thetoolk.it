@@ -44,16 +44,14 @@ async function getServiceAuthorizationAndExpiration({
   }
 
   // Decrypt the service authorization
-  let decryptedAuthorization;
-  try {
-    const encryptionKey = getEncryptionKey();
-    decryptedAuthorization = decryptServiceAuthorization(
-      dataAuthorization.service_authorization,
-      encryptionKey,
-    );
-  } catch (error) {
-    throw new Error("Failed to decrypt service authorization");
-  }
+  const encryptionKey = getEncryptionKey();
+  const decryptedAuthorization =
+    dataAuthorization.service_authorization === null
+      ? null
+      : decryptServiceAuthorization(
+          dataAuthorization.service_authorization,
+          encryptionKey,
+        );
 
   const { data: dataExpiration, error: errorExpiration } = await supabase
     .from("services")
@@ -96,16 +94,11 @@ async function updateServiceAuthorization({
   user,
 }: UpdateServiceAuthorization): Promise<void> {
   // Encrypt the service authorization before storing
-  let encryptedAuthorization;
-  try {
-    const encryptionKey = getEncryptionKey();
-    encryptedAuthorization = encryptServiceAuthorization(
-      serviceAuthorization,
-      encryptionKey,
-    );
-  } catch (error) {
-    throw new Error("Failed to encrypt service authorization");
-  }
+  const encryptionKey = getEncryptionKey();
+  const encryptedAuthorization =
+    serviceAuthorization === null
+      ? null
+      : encryptServiceAuthorization(serviceAuthorization, encryptionKey);
 
   const { error: errorAuthorizations } = await supabaseAdmin
     .from("service_authorizations")
@@ -193,16 +186,11 @@ async function updateServiceAuthorizationAndAccounts({
   user,
 }: UpdateServiceAuthorizationAndAccounts): Promise<void> {
   // Encrypt the service authorization before storing
-  let encryptedAuthorization;
-  try {
-    const encryptionKey = getEncryptionKey();
-    encryptedAuthorization = encryptServiceAuthorization(
-      serviceAuthorization,
-      encryptionKey,
-    );
-  } catch (error) {
-    throw new Error("Failed to encrypt service authorization");
-  }
+  const encryptionKey = getEncryptionKey();
+  const encryptedAuthorization =
+    serviceAuthorization === null
+      ? null
+      : encryptServiceAuthorization(serviceAuthorization, encryptionKey);
 
   const { error: errorAuthorization } = await supabaseAdmin
     .from("service_authorizations")
