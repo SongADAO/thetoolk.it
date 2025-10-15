@@ -19,13 +19,6 @@ https://caring-annually-teal.ngrok-free.app/api/hosted/oauth/callback
 https://dev.thetoolk.it/api/hosted/oauth/callback
 https://www.thetoolk.it/api/hosted/oauth/callback
 
-Hosted Twitter Callbacks
-https://localhost:3000/api/hosted/twitter/oauth/callback
-https://thetoolk-it-git-develop-songadao.vercel.app/api/hosted/twitter/oauth/callback
-https://caring-annually-teal.ngrok-free.app/api/hosted/twitter/oauth/callback
-https://dev.thetoolk.it/api/hosted/twitter/oauth/callback
-https://www.thetoolk.it/api/hosted/twitter/oauth/callback
-
 Uninstall/Deauthorize Callback
 https://www.thetoolk.it/deauthorize
 
