@@ -53,6 +53,7 @@ function ServiceSwitch({
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
   }, []);
 
@@ -62,6 +63,7 @@ function ServiceSwitch({
 
   useEffect(() => {
     if (isEnabled) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpen(!isComplete);
     } else {
       setOpen(false);

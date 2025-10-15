@@ -58,7 +58,7 @@ export function UserStorageProvider({
 
   // Load ALL data from Supabase in a single batch
   const loadAllFromSupabase = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, react-hooks/preserve-manual-memoization
     async (keys: Map<string, any>): Promise<Map<string, any>> => {
       if (!user?.id || keys.size === 0) return new Map();
 
@@ -137,7 +137,7 @@ export function UserStorageProvider({
 
   // Save to Supabase
   const saveToSupabase = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters, react-hooks/preserve-manual-memoization
     async <T,>(key: string, value: T): Promise<boolean> => {
       if (!user?.id) return false;
 
