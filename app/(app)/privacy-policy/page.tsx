@@ -137,19 +137,40 @@ export default function PrivacyPolicy() {
         <li>Access tokens are stored securely and encrypted</li>
       </ul>
 
-      <h2>6. Data Retention</h2>
+      <h2 id="data-deletion">6. Data Retention and Deletion</h2>
       <p>
         We retain your information only as long as necessary to provide the
         Service:
       </p>
       <ul>
         <li>
-          OAuth tokens: Retained until you disconnect your account or revoke
-          access
+          OAuth tokens: Retained until you disconnect your account.{" "}
+          <div>
+            <strong>
+              To delete your OAuth tokens use the &quot;Disconnect&quot; button
+              for the respective service.
+            </strong>
+          </div>
         </li>
         <li>
           Authorize account names: Used for displaying your connected accounts
-          in the interface
+          in the interface. Retained until you disconnect your account.{" "}
+          <div>
+            <strong>
+              To delete your Account names use the &quot;Disconnect&quot; button
+              for the respective service.
+            </strong>
+          </div>
+        </li>
+        <li>
+          Authorize account ids: Used for identifying your connected accounts
+          during the posting process.{" "}
+          <div>
+            <strong>
+              To delete your Account ids use the &quot;Disconnect&quot; button
+              for the respective service.
+            </strong>
+          </div>
         </li>
         <li>
           Video files: Uploaded to our storage server during posting. Retained

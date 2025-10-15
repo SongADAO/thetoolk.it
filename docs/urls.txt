@@ -19,15 +19,14 @@ https://caring-annually-teal.ngrok-free.app/api/hosted/oauth/callback
 https://dev.thetoolk.it/api/hosted/oauth/callback
 https://www.thetoolk.it/api/hosted/oauth/callback
 
-Uninstall/Deauthorize Callback
-https://www.thetoolk.it/api/hosted/facebook/uninstall
-https://www.thetoolk.it/api/hosted/instagram/uninstall
+Threads Uninstall Callback URL
 https://www.thetoolk.it/api/hosted/threads/uninstall
 
-Delete Data Callback URL
-https://www.thetoolk.it/api/hosted/facebook/delete
-https://www.thetoolk.it/api/hosted/instagram/delete
-https://www.thetoolk.it/api/hosted/threads/delete
+Threads Delete Callback URL
+https://www.thetoolk.it/api/hosted/threads/uninstall
+
+Delete Data Info URL
+https://www.thetoolk.it/privacy-policy#data-deletion
 
 Terms of Service
 https://www.thetoolk.it/terms-of-service
