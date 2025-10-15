@@ -111,14 +111,14 @@ export function UserStorageProvider({
             const authRecord = authData?.find(
               (record) => record.service_id === serviceId,
             );
-            if (authRecord && authRecord[serviceField] !== undefined) {
+            if (authRecord?.[serviceField] !== undefined) {
               value = authRecord[serviceField];
             }
           } else {
             const serviceRecord = servicesData?.find(
               (record) => record.service_id === serviceId,
             );
-            if (serviceRecord && serviceRecord[serviceField] !== undefined) {
+            if (serviceRecord?.[serviceField] !== undefined) {
               value = serviceRecord[serviceField];
             }
           }
