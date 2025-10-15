@@ -3,7 +3,12 @@
 import { NeynarAuthButton } from "@neynar/react";
 import { Checkbox, Collapsible } from "radix-ui";
 import { ReactNode, use, useEffect, useState } from "react";
-import { FaCheck, FaGear } from "react-icons/fa6";
+import {
+  FaCheck,
+  FaCircleUser,
+  FaGear,
+  FaRegCalendarXmark,
+} from "react-icons/fa6";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import type { ServiceAccount } from "@/services/post/types";
@@ -14,6 +19,7 @@ interface Props {
   authorize: () => void;
   brandColor: string;
   credentialsId: string;
+  disconnect: () => void;
   form: ReactNode;
   hasAuthenticatedCredentials: boolean;
   hasAuthorizationStep: boolean;
@@ -31,6 +37,7 @@ function ServiceSwitch({
   authorize,
   brandColor,
   credentialsId,
+  disconnect,
   form,
   hasAuthenticatedCredentials,
   hasAuthorizationStep,
@@ -118,17 +125,20 @@ function ServiceSwitch({
       ) : null}
 
       {isClient && hasAuthorizationStep && isComplete ? (
-        <div className="flex items-center justify-between gap-2 bg-[#fff2] p-2">
+        <div className="gap-2 bg-[#fff2] p-2">
           {isAuthorized && accounts.length > 0 ? (
-            <div className="flex-1">
+            <div className="flex items-center justify-between gap-2 pb-2">
               {accounts.map((account) => (
-                <div className="text-sm" key={account.id}>
-                  @{account.username}{" "}
+                <div
+                  className="flex items-center gap-1 text-sm"
+                  key={account.id}
+                >
+                  <FaCircleUser className="size-4" /> {account.username}{" "}
                 </div>
               ))}
               {authorizationExpiresAt ? (
-                <div className="text-sm">
-                  expires:{" "}
+                <div className="flex items-center gap-1 text-sm">
+                  <FaRegCalendarXmark className="size-4" />{" "}
                   {new Date(authorizationExpiresAt).toLocaleString("en", {
                     day: "numeric",
                     month: "numeric",
@@ -139,34 +149,53 @@ function ServiceSwitch({
             </div>
           ) : null}
 
-          <div className="flex-1">
-            {label === "Farcaster" ? (
-              <NeynarAuthButton
-                label="Authorize"
-                style={{
-                  borderRadius: "0.25rem",
-                  boxShadow: "none",
-                  fontWeight: "400",
-                  padding: "0.75rem 0.25rem",
-                  width: "100%",
-                }}
-              />
-            ) : (
-              <button
-                className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor}`}
-                data-authorized={isAuthorized}
-                onClick={authorize}
-                type="button"
-              >
-                <div>
-                  <div className="flex items-center justify-center gap-2">
-                    {isAuthorized && accounts.length > 0
-                      ? "Reauthorize"
-                      : "Authorize"}
+          <div className="flex items-center justify-between gap-2">
+            {isAuthorized && accounts.length > 0 && label !== "Farcaster" ? (
+              <div className="flex-1">
+                <button
+                  className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor}`}
+                  data-authorized={isAuthorized}
+                  onClick={disconnect}
+                  type="button"
+                >
+                  <div>
+                    <div className="flex items-center justify-center gap-2">
+                      Disconnect
+                    </div>
                   </div>
-                </div>
-              </button>
-            )}
+                </button>
+              </div>
+            ) : null}
+
+            <div className="flex-1">
+              {label === "Farcaster" ? (
+                <NeynarAuthButton
+                  label="Authorize"
+                  style={{
+                    borderRadius: "0.25rem",
+                    boxShadow: "none",
+                    fontWeight: "400",
+                    padding: "0.75rem 0.25rem",
+                    width: "100%",
+                  }}
+                />
+              ) : (
+                <button
+                  className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor}`}
+                  data-authorized={isAuthorized}
+                  onClick={authorize}
+                  type="button"
+                >
+                  <div>
+                    <div className="flex items-center justify-center gap-2">
+                      {isAuthorized && accounts.length > 0
+                        ? "Reauthorize"
+                        : "Authorize"}
+                    </div>
+                  </div>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ) : null}

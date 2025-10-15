@@ -212,6 +212,12 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     window.open(authUrl, "_blank");
   }
 
+  function disconnect() {
+    setAuthorization(defaultOauthAuthorization);
+    setExpiration(defaultOauthExpiration);
+    setAccounts([]);
+  }
+
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
   const [hasCompletedAuth, setHasCompletedAuth] = useState(false);
 
@@ -326,12 +332,12 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
     () => ({
       VIDEO_MAX_DURATION,
       VIDEO_MAX_FILESIZE,
-      VIDEO_MIN_DURATION,
       accounts,
       authorizationExpiresAt,
       authorize,
       brandColor,
       credentialsId,
+      disconnect,
       error,
       fields,
       handleAuthRedirect,
@@ -339,6 +345,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       hasAuthorizationStep,
       hasCompletedAuth,
       icon,
+      VIDEO_MIN_DURATION,
       initial,
       isAuthorized,
       isComplete,
@@ -366,6 +373,7 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
       brandColor,
       credentials,
       credentialsId,
+      disconnect,
       error,
       hasAuthenticatedCredentials,
       hasAuthorizationStep,
