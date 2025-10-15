@@ -148,8 +148,12 @@ export default function PrivacyPolicy() {
           access
         </li>
         <li>
-          Video files: Temporarily processed and deleted immediately after
-          successful posting
+          Authorize account names: Used for displaying your connected accounts
+          in the interface
+        </li>
+        <li>
+          Video files: Uploaded to our storage server during posting. Retained
+          for up to <strong>90 days</strong>
         </li>
         <li>
           Usage logs: Retained for up to <strong>90 days</strong>
