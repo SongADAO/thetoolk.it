@@ -5,10 +5,7 @@ import {
   updateServiceAccounts,
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
-import {
-  defaultOauthAuthorization,
-  defaultOauthExpiration,
-} from "@/services/post/types";
+import { defaultOauthExpiration } from "@/services/post/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     await updateServiceAuthorization({
       ...serverAuth,
-      serviceAuthorization: defaultOauthAuthorization,
+      serviceAuthorization: null,
       serviceExpiration: defaultOauthExpiration,
       serviceId,
     });
