@@ -7,14 +7,39 @@ interface SubscribeButtonProps {
 
 function SubscribeButton({ type, label }: Readonly<SubscribeButtonProps>) {
   async function handleCheckout() {
-    const res = await fetch("/api/subscriptions/checkout", {
-      body: JSON.stringify({ type }),
-      method: "POST",
-    });
+    try {
+      const res = await fetch("/api/subscriptions/checkout", {
+        body: JSON.stringify({ type }),
+        method: "POST",
+      });
 
-    const { url } = await res.json();
+      if (!res.ok) {
+        const error = await res.json();
+        console.error("Error starting checkout:", error);
 
-    window.location.href = url;
+        if (error.error) {
+          throw new Error(error.error);
+        } else {
+          throw new Error("Failed to create checkout page");
+        }
+      }
+
+      const { url } = await res.json();
+
+      if (!url) {
+        throw new Error("No checkout URL returned from server");
+      }
+
+      window.location.href = url;
+    } catch (error: unknown) {
+      console.error("Error:", error);
+      // eslint-disable-next-line no-alert
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to open subscription checkout",
+      );
+    }
   }
 
   return (
