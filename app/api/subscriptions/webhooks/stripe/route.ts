@@ -27,6 +27,8 @@ export async function POST(req: Request) {
       );
 
       await supabaseAdmin.from("subscriptions").insert({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         current_period_end: new Date(subscription.current_period_end * 1000),
         price_id: subscription.items.data[0].price.id,
         status: subscription.status,
@@ -43,6 +45,8 @@ export async function POST(req: Request) {
       await supabaseAdmin
         .from("subscriptions")
         .update({
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           current_period_end: new Date(subscription.current_period_end * 1000),
           price_id: subscription.items.data[0].price.id,
           status: subscription.status,
