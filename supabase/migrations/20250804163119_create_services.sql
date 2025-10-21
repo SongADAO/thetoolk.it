@@ -59,3 +59,29 @@ CREATE TABLE service_oauth_states (
 CREATE INDEX idx_service_oauth_states_user ON service_oauth_states(user_id);
 
 ALTER TABLE service_oauth_states ENABLE ROW LEVEL SECURITY;
+
+-- Create subscriptions table
+CREATE TABLE subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT UNIQUE,
+  status TEXT,
+  price_id TEXT,
+  current_period_end TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create index for faster lookups
+CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
+
+-- Enable RLS
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for subscriptions
+CREATE POLICY "Users can view own subscriptions" ON subscriptions
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own subscriptions" ON subscriptions
+  FOR UPDATE USING (auth.uid() = user_id);
