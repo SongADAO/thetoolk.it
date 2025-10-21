@@ -1,0 +1,58 @@
+import Stripe from "stripe";
+
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export async function POST(req: Request) {
+  const body = await req.text();
+  const sig = req.headers.get("stripe-signature") ?? "";
+
+  const supabaseAdmin = createAdminClient();
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
+
+  const event = stripe.webhooks.constructEvent(
+    body,
+    sig,
+    process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  );
+
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
+  switch (event.type) {
+    case "checkout.session.completed": {
+      const session = event.data.object;
+
+      // Get the subscription details
+      const subscription = await stripe.subscriptions.retrieve(
+        String(session.subscription),
+      );
+
+      await supabaseAdmin.from("subscriptions").insert({
+        current_period_end: new Date(subscription.current_period_end * 1000),
+        price_id: subscription.items.data[0].price.id,
+        status: subscription.status,
+        stripe_customer_id: String(session.customer),
+        stripe_subscription_id: subscription.id,
+        user_id: session.client_reference_id,
+      });
+      break;
+    }
+    case "customer.subscription.updated":
+    case "customer.subscription.deleted": {
+      const subscription = event.data.object;
+
+      await supabaseAdmin
+        .from("subscriptions")
+        .update({
+          current_period_end: new Date(subscription.current_period_end * 1000),
+          price_id: subscription.items.data[0].price.id,
+          status: subscription.status,
+        })
+        .eq("stripe_subscription_id", subscription.id);
+      break;
+    }
+    default:
+      throw new Error(`Unhandled event type: ${event.type}`);
+  }
+
+  return Response.json({ received: true });
+}
