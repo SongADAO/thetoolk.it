@@ -8,6 +8,10 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => Promise.resolve({ data: null, error: null }),
   signOut: async () => Promise.resolve({ error: null }),
   signUp: async () => Promise.resolve({ data: null, error: null }),
+  subscription: undefined,
+  subscriptionError: undefined,
+  subscriptionIsLoading: false,
+  subscriptionMutate: async () => Promise.resolve(undefined),
   user: null,
 });
 

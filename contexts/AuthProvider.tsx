@@ -2,10 +2,21 @@
 
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 
 import { AuthContext } from "@/contexts/AuthContext";
+import type { Subscription } from "@/lib/subscriptions";
 import { createClient } from "@/lib/supabase/client";
 import type { AuthContextType, AuthProviderProps } from "@/types/supabase-auth";
+
+// Fetcher function for SWR
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Failed to fetch subscription status");
+  }
+  return res.json();
+};
 
 export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   const [user, setUser] = useState<User | null>(null);
@@ -16,6 +27,23 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   // Derived state
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
+
+  // Fetch subscription status with SWR
+  // Only fetch if user is authenticated
+  const {
+    data: subscription,
+    error: subscriptionError,
+    isLoading: subscriptionIsLoading,
+    mutate: subscriptionMutate,
+  } = useSWR<Subscription>(
+    isAuthenticated ? "/api/subscriptions/check-status" : null,
+    fetcher,
+    {
+      dedupingInterval: 60 * 1000,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    },
+  );
 
   useEffect(() => {
     // Get initial session
@@ -32,6 +60,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
     // Listen for auth changes
     const {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       data: { subscription },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -71,10 +100,21 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       signIn,
       signOut,
       signUp,
+      subscription,
+      subscriptionError,
+      subscriptionIsLoading,
+      subscriptionMutate,
       user,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isAuthenticated, loading, user],
+    [
+      isAuthenticated,
+      loading,
+      subscription,
+      subscriptionError,
+      subscriptionIsLoading,
+      user,
+    ],
   );
 
   return (

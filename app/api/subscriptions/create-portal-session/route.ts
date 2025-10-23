@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-import { createAdminClient } from "@/lib/supabase/admin";
 import { initServerAuth } from "@/lib/supabase/hosted-api";
 import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
   try {
     const serverAuth = await initServerAuth();
-    const supabaseAdmin = createAdminClient();
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
 
     const baseUrl = getBaseUrlFromRequest(request);
 
     // Get the customer's Stripe customer ID from Supabase
-    const { data: subscription } = await supabaseAdmin
+    const { data: subscription } = await serverAuth.supabaseAdmin
       .from("subscriptions")
       .select("stripe_customer_id")
       .eq("user_id", serverAuth.user.id)
