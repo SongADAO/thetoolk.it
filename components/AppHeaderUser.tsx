@@ -28,7 +28,13 @@ function AppHeaderUser() {
   }
 
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div className="flex flex-row items-end gap-2">
+      <Link
+        className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
+        href="/subscribe"
+      >
+        Subscription
+      </Link>
       <button
         className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
         onClick={signOut}
@@ -36,7 +42,7 @@ function AppHeaderUser() {
       >
         Sign out
       </button>
-      <div className="text-xs">{user.email}</div>
+      {/* <div className="text-xs">{user.email}</div> */}
     </div>
   );
 }

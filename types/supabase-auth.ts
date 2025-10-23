@@ -1,4 +1,7 @@
 import type { User } from "@supabase/supabase-js";
+import type { KeyedMutator } from "swr";
+
+import type { Subscription } from "@/lib/subscriptions";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -23,6 +26,10 @@ interface AuthContextType {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any;
   }>;
+  subscription?: Subscription;
+  subscriptionError?: Error;
+  subscriptionIsLoading: boolean;
+  subscriptionMutate: KeyedMutator<Subscription>;
   user: User | null;
 }
 

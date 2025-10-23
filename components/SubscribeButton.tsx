@@ -43,7 +43,11 @@ function SubscribeButton({ type, label }: Readonly<SubscribeButtonProps>) {
   }
 
   return (
-    <button onClick={handleCheckout} type="button">
+    <button
+      className="cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
+      onClick={handleCheckout}
+      type="button"
+    >
       {label}
     </button>
   );
