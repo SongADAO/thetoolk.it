@@ -15,6 +15,8 @@ import tseslint from "typescript-eslint";
 // import pluginVue from "eslint-plugin-vue";
 // import vueParser from "vue-eslint-parser";
 import unusedImports from "eslint-plugin-unused-imports";
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
@@ -46,9 +48,8 @@ export default tseslint.config(
 
   // reactHooks.configs["recommended-latest"],
 
-  ...compat.config({
-    extends: ["next/core-web-vitals", "next/typescript"],
-  }),
+  nextVitals,
+  nextTs,
 
   // importPlugin.flatConfigs.recommended,
   // importPlugin.flatConfigs.typescript,
