@@ -45,9 +45,10 @@ import {
 
 interface Props {
   children: ReactNode;
+  mode: string;
 }
 
-export function BlueskyProvider({ children }: Readonly<Props>) {
+export function BlueskyProvider({ children, mode }: Readonly<Props>) {
   const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "Bluesky";
@@ -113,8 +114,6 @@ export function BlueskyProvider({ children }: Readonly<Props>) {
   const authorizationExpiresAt = getAuthorizationExpiresAt(expiration);
 
   const isUsable = isEnabled && isComplete && isAuthorized;
-
-  const mode = isAuthenticated ? "hosted" : "self";
 
   async function exchangeCode(code: string, iss: string, state: string) {
     try {
