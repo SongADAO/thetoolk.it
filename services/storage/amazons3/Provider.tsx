@@ -34,7 +34,7 @@ interface Props {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
-  const { isAuthenticated, loading: authLoading } = use(AuthContext);
+  const { loading: authLoading } = use(AuthContext);
 
   const label = "AmazonS3";
 
