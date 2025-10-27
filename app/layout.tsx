@@ -7,8 +7,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ReactNode } from "react";
 
-import { PostProviders } from "@/components/service/post/PostProviders";
-import { StorageProviders } from "@/components/service/storage/StorageProviders";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
 // import { Providers } from "@/app/providers";
@@ -39,13 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <UserStorageProvider>
-            {/* <Providers> */}
-            <StorageProviders>
-              <PostProviders>{children}</PostProviders>
-            </StorageProviders>
-            {/* </Providers> */}
-          </UserStorageProvider>
+          <UserStorageProvider>{children}</UserStorageProvider>
         </AuthProvider>
       </body>
     </html>

@@ -46,9 +46,10 @@ import {
 
 interface Props {
   children: ReactNode;
+  mode: string;
 }
 
-export function TiktokProvider({ children }: Readonly<Props>) {
+export function TiktokProvider({ children, mode }: Readonly<Props>) {
   const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "Tiktok";
@@ -113,8 +114,6 @@ export function TiktokProvider({ children }: Readonly<Props>) {
   const authorizationExpiresAt = getAuthorizationExpiresAt(expiration);
 
   const isUsable = isEnabled && isComplete && isAuthorized;
-
-  const mode = isAuthenticated ? "hosted" : "self";
 
   async function exchangeCode(code: string, state: string) {
     try {

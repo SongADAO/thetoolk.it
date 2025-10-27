@@ -46,9 +46,10 @@ import {
 
 interface Props {
   children: ReactNode;
+  mode: string;
 }
 
-export function TwitterProvider({ children }: Readonly<Props>) {
+export function TwitterProvider({ children, mode }: Readonly<Props>) {
   const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "Twitter";
@@ -113,8 +114,6 @@ export function TwitterProvider({ children }: Readonly<Props>) {
   const authorizationExpiresAt = getAuthorizationExpiresAt(expiration);
 
   const isUsable = isEnabled && isComplete && isAuthorized;
-
-  const mode = isAuthenticated ? "hosted" : "self";
 
   async function exchangeCode(code: string, state: string) {
     try {

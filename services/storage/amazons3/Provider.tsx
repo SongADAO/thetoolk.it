@@ -29,9 +29,11 @@ import {
 
 interface Props {
   children: ReactNode;
+  mode: string;
 }
 
-export function AmazonS3Provider({ children }: Readonly<Props>) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
   const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "AmazonS3";
@@ -75,9 +77,6 @@ export function AmazonS3Provider({ children }: Readonly<Props>) {
   const isEnabled = !isAuthenticated && isClientEnabled;
 
   const isUsable = isEnabled && isComplete && isAuthorized;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const mode = isAuthenticated ? "hosted" : "self";
 
   const authorizationExpiresAt = "0";
 

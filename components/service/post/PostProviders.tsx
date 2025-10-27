@@ -10,19 +10,20 @@ import { TwitterProvider } from "@/services/post/twitter/Provider";
 import { YoutubeProvider } from "@/services/post/youtube/Provider";
 
 interface Props {
+  mode: string;
   children: ReactNode;
 }
 
-export function PostProviders({ children }: Readonly<Props>) {
+export function PostProviders({ mode, children }: Readonly<Props>) {
   return (
-    <NeynarProvider>
-      <TwitterProvider>
-        <TiktokProvider>
-          <BlueskyProvider>
-            <ThreadsProvider>
-              <FacebookProvider>
-                <InstagramProvider>
-                  <YoutubeProvider>{children}</YoutubeProvider>
+    <NeynarProvider mode={mode}>
+      <TwitterProvider mode={mode}>
+        <TiktokProvider mode={mode}>
+          <BlueskyProvider mode={mode}>
+            <ThreadsProvider mode={mode}>
+              <FacebookProvider mode={mode}>
+                <InstagramProvider mode={mode}>
+                  <YoutubeProvider mode={mode}>{children}</YoutubeProvider>
                 </InstagramProvider>
               </FacebookProvider>
             </ThreadsProvider>

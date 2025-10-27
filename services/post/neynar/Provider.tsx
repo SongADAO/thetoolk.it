@@ -37,9 +37,10 @@ import {
 
 interface Props {
   children: ReactNode;
+  mode: string;
 }
 
-export function NeynarProvider({ children }: Readonly<Props>) {
+export function NeynarProvider({ children, mode }: Readonly<Props>) {
   const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "Farcaster";
@@ -105,8 +106,6 @@ export function NeynarProvider({ children }: Readonly<Props>) {
   const authorizationExpiresAt = getAuthorizationExpiresAt(expiration);
 
   const isUsable = isEnabled && isComplete && isAuthorized;
-
-  const mode = isAuthenticated ? "hosted" : "self";
 
   async function authorize() {}
 

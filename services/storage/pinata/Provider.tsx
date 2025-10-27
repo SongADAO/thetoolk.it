@@ -31,9 +31,10 @@ import {
 
 interface Props {
   children: ReactNode;
+  mode: string;
 }
 
-export function PinataProvider({ children }: Readonly<Props>) {
+export function PinataProvider({ children, mode }: Readonly<Props>) {
   const { isAuthenticated, loading: authLoading } = use(AuthContext);
 
   const label = "Pinata";
@@ -76,8 +77,6 @@ export function PinataProvider({ children }: Readonly<Props>) {
   const isEnabled = isAuthenticated || isClientEnabled;
 
   const isUsable = isEnabled && isComplete && isAuthorized;
-
-  const mode = isAuthenticated ? "hosted" : "self";
 
   const authorizationExpiresAt = "0";
 
