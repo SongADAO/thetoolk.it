@@ -26,7 +26,7 @@ export default function Home() {
         <div>
           <p className="mt-10 text-center">
             <Link className="underline" href="/auth/signup">
-              Create an Account
+              Create an Account and Subscribe
             </Link>{" "}
             to use TheToolk.it
           </p>
