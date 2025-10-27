@@ -50,7 +50,7 @@ interface Props {
 }
 
 export function InstagramProvider({ children, mode }: Readonly<Props>) {
-  const { isAuthenticated, loading: authLoading } = use(AuthContext);
+  const { loading: authLoading } = use(AuthContext);
 
   const label = "Instagram";
 
@@ -107,7 +107,8 @@ export function InstagramProvider({ children, mode }: Readonly<Props>) {
 
   const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
 
-  const isComplete = isAuthenticated || isCompleteOwnCredentials;
+  const isComplete =
+    mode === "hosted" || (mode === "self" && isCompleteOwnCredentials);
 
   const isAuthorized = hasCompleteAuthorization(expiration);
 

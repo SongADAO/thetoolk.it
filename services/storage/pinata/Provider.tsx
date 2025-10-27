@@ -35,7 +35,7 @@ interface Props {
 }
 
 export function PinataProvider({ children, mode }: Readonly<Props>) {
-  const { isAuthenticated, loading: authLoading } = use(AuthContext);
+  const { loading: authLoading } = use(AuthContext);
 
   const label = "Pinata";
 
@@ -68,13 +68,14 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
 
   const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
 
-  const isComplete = isAuthenticated || isCompleteOwnCredentials;
+  const isComplete =
+    mode === "hosted" || (mode === "self" && isCompleteOwnCredentials);
 
   const hasAuthorizationStep = false;
 
   const isAuthorized = isComplete;
 
-  const isEnabled = isAuthenticated || isClientEnabled;
+  const isEnabled = mode === "hosted" || (mode === "self" && isClientEnabled);
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 
