@@ -212,6 +212,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       isUsable,
       label,
       loading,
+      mode,
       post,
       postError,
       postProgress,

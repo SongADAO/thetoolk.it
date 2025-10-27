@@ -356,6 +356,7 @@ export function TiktokProvider({ children, mode }: Readonly<Props>) {
       isUsable,
       label,
       loading,
+      mode,
       post,
       postError,
       postProgress,

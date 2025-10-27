@@ -357,6 +357,7 @@ export function TwitterProvider({ children, mode }: Readonly<Props>) {
       isUsable,
       label,
       loading,
+      mode,
       post,
       postError,
       postProgress,
