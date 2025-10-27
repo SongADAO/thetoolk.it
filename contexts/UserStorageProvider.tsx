@@ -23,8 +23,10 @@ interface StorageValue<T = any> {
 
 export function UserStorageProvider({
   children,
+  mode,
 }: {
   readonly children: React.ReactNode;
+  readonly mode: string;
 }) {
   const {
     user,
@@ -205,7 +207,9 @@ export function UserStorageProvider({
           return next;
         });
 
-        if (isAuthenticated && user) {
+        // Hosted
+        // ---------------------------------------------------------------------
+        if (mode === "hosted" && isAuthenticated && user) {
           // Batch fetch all data at once
           const batchData = await loadAllFromSupabase(keysToInit);
 
@@ -219,7 +223,12 @@ export function UserStorageProvider({
           });
 
           previousUserIdRef.current = user.id;
-        } else {
+        }
+        // ---------------------------------------------------------------------
+
+        // Local
+        // ---------------------------------------------------------------------
+        if (mode === "self") {
           // Load from localStorage for each key
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const localData = new Map<string, any>();
@@ -241,6 +250,7 @@ export function UserStorageProvider({
 
           previousUserIdRef.current = null;
         }
+        // ---------------------------------------------------------------------
 
         // Clear loading state and mark as initialized
         setLoadingKeys((prev) => {
@@ -272,6 +282,7 @@ export function UserStorageProvider({
     user,
     loadAllFromSupabase,
     notifySubscribers,
+    mode,
   ]);
 
   // Handle user changes
@@ -292,7 +303,9 @@ export function UserStorageProvider({
           keysToReload.set(key, storage.get(key));
         });
 
-        if (isAuthenticated && user) {
+        // Hosted
+        // ---------------------------------------------------------------------
+        if (mode === "hosted" && isAuthenticated && user) {
           const batchData = await loadAllFromSupabase(keysToReload);
           setStorage((prev) => {
             const next = new Map(prev);
@@ -308,7 +321,12 @@ export function UserStorageProvider({
               notifySubscribers(key);
             });
           });
-        } else {
+        }
+        // ---------------------------------------------------------------------
+
+        // Local
+        // ---------------------------------------------------------------------
+        if (mode === "self") {
           initializedKeys.forEach((key) => {
             const localValue = localStorage.getItem(key);
             if (localValue) {
@@ -327,6 +345,7 @@ export function UserStorageProvider({
             });
           });
         }
+        // ---------------------------------------------------------------------
 
         previousUserIdRef.current = currentUserId;
       };
@@ -342,6 +361,7 @@ export function UserStorageProvider({
     storage,
     loadAllFromSupabase,
     notifySubscribers,
+    mode,
   ]);
 
   // Handle visibility changes
@@ -350,7 +370,9 @@ export function UserStorageProvider({
       if (!document.hidden && initializedKeys.size > 0) {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
-          if (isAuthenticated && user) {
+          // Hosted
+          // ---------------------------------------------------------------------
+          if (mode === "hosted" && isAuthenticated && user) {
             // Refresh from Supabase
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const keysToRefresh = new Map<string, any>();
@@ -373,7 +395,12 @@ export function UserStorageProvider({
                 notifySubscribers(key);
               });
             });
-          } else {
+          }
+          // ---------------------------------------------------------------------
+
+          // Local
+          // ---------------------------------------------------------------------
+          if (mode === "self") {
             // Refresh from localStorage
             setStorage((prev) => {
               const next = new Map(prev);
@@ -393,6 +420,7 @@ export function UserStorageProvider({
               });
             });
           }
+          // ---------------------------------------------------------------------
         }, 100);
       }
     };
@@ -407,6 +435,7 @@ export function UserStorageProvider({
     storage,
     loadAllFromSupabase,
     notifySubscribers,
+    mode,
   ]);
 
   const getValue = useCallback(
@@ -444,13 +473,21 @@ export function UserStorageProvider({
       setStorage((prev) => new Map(prev).set(key, newValue));
       notifySubscribers(key);
 
-      if (isAuthenticated && user) {
+      // Hosted
+      // ---------------------------------------------------------------------
+      if (mode === "hosted" && isAuthenticated && user) {
         await saveToSupabase(key, newValue);
-      } else {
+      }
+      // ---------------------------------------------------------------------
+
+      // Local
+      // ---------------------------------------------------------------------
+      if (mode === "self") {
         localStorage.setItem(key, JSON.stringify(newValue));
       }
+      // ---------------------------------------------------------------------
     },
-    [storage, isAuthenticated, user, saveToSupabase, notifySubscribers],
+    [storage, isAuthenticated, user, saveToSupabase, notifySubscribers, mode],
   );
 
   const refresh = useCallback(

@@ -8,7 +8,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ReactNode } from "react";
 
 import { AuthProvider } from "@/contexts/AuthProvider";
-import { UserStorageProvider } from "@/contexts/UserStorageProvider";
 // import { Providers } from "@/app/providers";
 
 // eslint-disable-next-line new-cap
@@ -36,9 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <UserStorageProvider>{children}</UserStorageProvider>
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
