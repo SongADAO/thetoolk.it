@@ -2,7 +2,7 @@
 
 import { NeynarAuthButton } from "@neynar/react";
 import { Checkbox, Collapsible } from "radix-ui";
-import { ReactNode, use, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   FaCheck,
   FaCircleUser,
@@ -10,7 +10,6 @@ import {
   FaRegCalendarXmark,
 } from "react-icons/fa6";
 
-import { AuthContext } from "@/contexts/AuthContext";
 import type { ServiceAccount } from "@/services/post/types";
 
 interface Props {
@@ -28,6 +27,7 @@ interface Props {
   isComplete: boolean;
   isEnabled: boolean;
   label: string;
+  mode: string;
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
@@ -46,10 +46,9 @@ function ServiceSwitch({
   isComplete,
   isEnabled,
   label,
+  mode,
   setIsEnabled,
 }: Readonly<Props>) {
-  const { isAuthenticated } = use(AuthContext);
-
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -70,7 +69,11 @@ function ServiceSwitch({
     }
   }, [isEnabled, isComplete, credentialsId]);
 
-  const needsCredentials = isEnabled && !isComplete;
+  const hasCredentials = Boolean(
+    mode === "self" || hasAuthenticatedCredentials,
+  );
+
+  const needsCredentials = Boolean(isEnabled && !isComplete);
 
   return (
     <Collapsible.Root
@@ -99,28 +102,24 @@ function ServiceSwitch({
         <Collapsible.Trigger
           className="group flex min-h-[36px] flex-1 items-center justify-between rounded bg-[#fff2] px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
           data-clickable={
-            !isAuthenticated || hasAuthenticatedCredentials ? "true" : "false"
+            hasCredentials && !needsCredentials ? "true" : "false"
           }
-          disabled={
-            Boolean(isAuthenticated && !hasAuthenticatedCredentials) ||
-            needsCredentials
-          }
+          disabled={hasCredentials ? needsCredentials : false}
         >
           <span className="flex items-center gap-x-2">
             {icon} {label}
           </span>
 
-          {(isAuthenticated && !hasAuthenticatedCredentials) ||
-          needsCredentials ? null : (
+          {hasCredentials ? (
             <FaGear
               aria-hidden
               className="transition-transform duration-300 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
             />
-          )}
+          ) : null}
         </Collapsible.Trigger>
       </div>
 
-      {!isAuthenticated || hasAuthenticatedCredentials ? (
+      {hasCredentials ? (
         <Collapsible.Content className="overflow-hidden">
           <div className="m-2 mt-0 rounded bg-[#fff2] p-2">{form}</div>
         </Collapsible.Content>

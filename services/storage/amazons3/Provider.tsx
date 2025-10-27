@@ -240,6 +240,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       isUsable,
       label,
       loading,
+      mode,
       resetStoreState,
       saveData,
       setIsEnabled,

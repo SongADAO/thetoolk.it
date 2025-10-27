@@ -260,6 +260,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
       isUsable,
       label,
       loading,
+      mode,
       resetStoreState,
       saveData,
       setIsEnabled,

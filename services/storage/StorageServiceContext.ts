@@ -26,6 +26,8 @@ interface StorageServiceContextType {
   isStoring: boolean;
   isUsable: boolean;
   label: string;
+  loading: boolean;
+  mode: string;
   resetStoreState: () => void;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
@@ -62,6 +64,8 @@ const storageServiceContextDefault = {
   isStoring: false,
   isUsable: false,
   label: "",
+  loading: true,
+  mode: "self",
   resetStoreState: () => {},
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},

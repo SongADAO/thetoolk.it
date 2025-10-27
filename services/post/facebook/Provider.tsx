@@ -358,6 +358,7 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
       isUsable,
       label,
       loading,
+      mode,
       post,
       postError,
       postProgress,
