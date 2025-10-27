@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div>
       <div>TheToolk.it Free</div>
-      <Poster />
+      <Poster mode="self" />
     </div>
   );
 }

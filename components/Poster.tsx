@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { use } from "react";
 import { FaCircleQuestion, FaServer, FaUsersGear } from "react-icons/fa6";
 
 import { PostForm } from "@/components/PostForm";
@@ -10,18 +7,19 @@ import { PostSettings } from "@/components/service/post/PostSettings";
 import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
 import { StorageSettings } from "@/components/service/storage/StorageSettings";
 import { StoreProgress } from "@/components/service/storage/StoreProgress";
-import { AuthContext } from "@/contexts/AuthContext";
 import { PostProvider } from "@/services/PostProvider";
 
-function Poster() {
-  const { isAuthenticated } = use(AuthContext);
+interface PosterProps {
+  mode: string;
+}
 
+function Poster({ mode }: Readonly<PosterProps>) {
   return (
     <div>
       <div className="px-2 pt-2 lg:hidden">
         <div className="flex items-end justify-end rounded bg-gray-200 px-4 py-2">
           <div className="flex gap-2">
-            {isAuthenticated ? null : (
+            {mode === "self" ? (
               <Link
                 className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
                 href="/instructions"
@@ -30,12 +28,12 @@ function Poster() {
               >
                 <FaCircleQuestion />
               </Link>
-            )}
-            {isAuthenticated ? null : (
+            ) : null}
+            {mode === "self" ? (
               <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
                 <StorageSettings />
               </ServiceSettingsMenu>
-            )}
+            ) : null}
             <ServiceSettingsMenu icon={<FaUsersGear />} label="Post Settings">
               <PostSettings />
             </ServiceSettingsMenu>
@@ -57,7 +55,7 @@ function Poster() {
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Storage Services</h3>
                 <div className="hidden gap-2 lg:flex 2xl:hidden">
-                  {isAuthenticated ? null : (
+                  {mode === "self" ? (
                     <Link
                       className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
                       href="/instructions"
@@ -66,7 +64,7 @@ function Poster() {
                     >
                       <FaCircleQuestion />
                     </Link>
-                  )}
+                  ) : null}
                   <ServiceSettingsMenu
                     icon={<FaServer />}
                     label="Storage Settings"
@@ -81,7 +79,7 @@ function Poster() {
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Posting Services</h3>
                 <div className="hidden gap-2 lg:flex 2xl:hidden">
-                  {isAuthenticated ? null : (
+                  {mode === "self" ? (
                     <Link
                       className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
                       href="/instructions"
@@ -90,7 +88,7 @@ function Poster() {
                     >
                       <FaCircleQuestion />
                     </Link>
-                  )}
+                  ) : null}
                   <ServiceSettingsMenu
                     icon={<FaUsersGear />}
                     label="Post Settings"
@@ -106,7 +104,7 @@ function Poster() {
 
         <div className="hidden 2xl:block">
           <div className="flex flex-col gap-2">
-            {isAuthenticated ? null : (
+            {mode === "self" ? (
               <section className="rounded bg-gray-100 p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <h3>Storage Service Settings</h3>
@@ -121,7 +119,7 @@ function Poster() {
                 </div>
                 <StorageSettings />
               </section>
-            )}
+            ) : null}
             <section className="rounded bg-gray-100 p-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Posting Service Settings</h3>

@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div>
       {isAuthenticated ? (
-        <Poster />
+        <Poster mode="hosted" />
       ) : (
         <div>
           <p className="mt-10 text-center">
