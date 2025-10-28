@@ -41,138 +41,47 @@ interface Props {
 }
 
 export function PostProvider({ children }: Readonly<Props>) {
-  const {
-    isPosting: blueskyIsPosting,
-    isEnabled: blueskyIsEnabled,
-    isUsable: blueskyIsUsable,
-    accounts: blueskyAccounts,
-    post: blueskyPost,
-    resetPostState: blueskyResetPostState,
-    VIDEO_MAX_DURATION: BLUESKY_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: BLUESKY_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: BLUESKY_VIDEO_MIN_DURATION,
-  } = use(BlueskyContext);
-  const {
-    isPosting: facebookIsPosting,
-    isEnabled: facebookIsEnabled,
-    isUsable: facebookIsUsable,
-    accounts: facebookAccounts,
-    post: facebookPost,
-    resetPostState: facebookResetPostState,
-    VIDEO_MAX_DURATION: FACEBOOK_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: FACEBOOK_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: FACEBOOK_VIDEO_MIN_DURATION,
-  } = use(FacebookContext);
-  const {
-    isPosting: instagramIsPosting,
-    isEnabled: instagramIsEnabled,
-    isUsable: instagramIsUsable,
-    accounts: instagramAccounts,
-    post: instagramPost,
-    resetPostState: instagramResetPostState,
-    VIDEO_MAX_DURATION: INSTAGRAM_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: INSTAGRAM_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: INSTAGRAM_VIDEO_MIN_DURATION,
-  } = use(InstagramContext);
-  const {
-    isPosting: neynarIsPosting,
-    isUsable: neynarIsUsable,
-    isEnabled: neynarIsEnabled,
-    accounts: neynarAccounts,
-    post: neynarPost,
-    resetPostState: neynarResetPostState,
-    // VIDEO_MAX_DURATION: NEYNAR_VIDEO_MAX_DURATION,
-    // VIDEO_MAX_FILESIZE: NEYNAR_VIDEO_MAX_FILESIZE,
-    // VIDEO_MIN_DURATION: NEYNAR_VIDEO_MIN_DURATION,
-  } = use(NeynarContext);
-  const {
-    isPosting: threadsIsPosting,
-    isEnabled: threadsIsEnabled,
-    isUsable: threadsIsUsable,
-    accounts: threadsAccounts,
-    post: threadsPost,
-    resetPostState: threadsResetPostState,
-    VIDEO_MAX_DURATION: THREADS_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: THREADS_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: THREADS_VIDEO_MIN_DURATION,
-  } = use(ThreadsContext);
-  const {
-    isPosting: tiktokIsPosting,
-    isEnabled: tiktokIsEnabled,
-    isUsable: tiktokIsUsable,
-    accounts: tiktokAccounts,
-    post: tiktokPost,
-    resetPostState: tiktokResetPostState,
-    VIDEO_MAX_DURATION: TIKTOK_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: TIKTOK_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: TIKTOK_VIDEO_MIN_DURATION,
-  } = use(TiktokContext);
-  const {
-    isPosting: twitterIsPosting,
-    isEnabled: twitterIsEnabled,
-    isUsable: twitterIsUsable,
-    accounts: twitterAccounts,
-    post: twitterPost,
-    resetPostState: twitterResetPostState,
-    VIDEO_MAX_DURATION: TWITTER_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: TWITTER_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: TWITTER_VIDEO_MIN_DURATION,
-  } = use(TwitterContext);
-  const {
-    isPosting: youtubeIsPosting,
-    isEnabled: youtubeIsEnabled,
-    isUsable: youtubeIsUsable,
-    accounts: youtubeAccounts,
-    post: youtubePost,
-    resetPostState: youtubeResetPostState,
-    VIDEO_MAX_DURATION: YOUTUBE_VIDEO_MAX_DURATION,
-    VIDEO_MAX_FILESIZE: YOUTUBE_VIDEO_MAX_FILESIZE,
-    VIDEO_MIN_DURATION: YOUTUBE_VIDEO_MIN_DURATION,
-  } = use(YoutubeContext);
+  // Post services.
+  const bluesky = use(BlueskyContext);
+  const facebook = use(FacebookContext);
+  const instagram = use(InstagramContext);
+  const neynar = use(NeynarContext);
+  const threads = use(ThreadsContext);
+  const tiktok = use(TiktokContext);
+  const twitter = use(TwitterContext);
+  const youtube = use(YoutubeContext);
 
-  const {
-    isStoring: pinataIsStoring,
-    isEnabled: pinataIsEnabled,
-    isUsable: pinataIsUsable,
-    resetStoreState: pinataResetStoreState,
-    storeVideo: pinataStoreVideo,
-    storeHLSFolder: pinataStoreHLSFolder,
-  } = use(PinataContext);
-  const {
-    isStoring: amazonS3IsStoring,
-    isEnabled: amazonS3IsEnabled,
-    isUsable: amazonS3IsUsable,
-    resetStoreState: amazonS3ResetStoreState,
-    storeVideo: amazonS3StoreVideo,
-  } = use(AmazonS3Context);
+  // Storage services.
+  const pinata = use(PinataContext);
+  const amazonS3 = use(AmazonS3Context);
 
   function resetPostState(): void {
-    blueskyResetPostState();
-    facebookResetPostState();
-    instagramResetPostState();
-    neynarResetPostState();
-    threadsResetPostState();
-    tiktokResetPostState();
-    twitterResetPostState();
-    youtubeResetPostState();
+    bluesky.resetPostState();
+    facebook.resetPostState();
+    instagram.resetPostState();
+    neynar.resetPostState();
+    threads.resetPostState();
+    tiktok.resetPostState();
+    twitter.resetPostState();
+    youtube.resetPostState();
   }
 
   function resetStoreState(): void {
-    pinataResetStoreState();
-    amazonS3ResetStoreState();
+    pinata.resetStoreState();
+    amazonS3.resetStoreState();
   }
 
-  const isStoring = pinataIsStoring || amazonS3IsStoring;
+  const isStoring = pinata.isStoring || amazonS3.isStoring;
 
   const isPosting =
-    blueskyIsPosting ||
-    facebookIsPosting ||
-    instagramIsPosting ||
-    neynarIsPosting ||
-    threadsIsPosting ||
-    tiktokIsPosting ||
-    twitterIsPosting ||
-    youtubeIsPosting;
+    bluesky.isPosting ||
+    facebook.isPosting ||
+    instagram.isPosting ||
+    neynar.isPosting ||
+    threads.isPosting ||
+    tiktok.isPosting ||
+    twitter.isPosting ||
+    youtube.isPosting;
 
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
@@ -196,39 +105,39 @@ export function PostProvider({ children }: Readonly<Props>) {
 
   const canPostToAllServices = useMemo(
     () =>
-      (!blueskyIsEnabled || blueskyIsUsable) &&
-      (!facebookIsEnabled || facebookIsUsable) &&
-      (!instagramIsEnabled || instagramIsUsable) &&
-      (!neynarIsEnabled || neynarIsUsable) &&
-      (!threadsIsEnabled || threadsIsUsable) &&
-      (!tiktokIsEnabled || tiktokIsUsable) &&
-      (!twitterIsEnabled || twitterIsUsable) &&
-      (!youtubeIsEnabled || youtubeIsUsable),
+      (!bluesky.isEnabled || bluesky.isUsable) &&
+      (!facebook.isEnabled || facebook.isUsable) &&
+      (!instagram.isEnabled || instagram.isUsable) &&
+      (!neynar.isEnabled || neynar.isUsable) &&
+      (!threads.isEnabled || threads.isUsable) &&
+      (!tiktok.isEnabled || tiktok.isUsable) &&
+      (!twitter.isEnabled || twitter.isUsable) &&
+      (!youtube.isEnabled || youtube.isUsable),
     [
-      blueskyIsEnabled,
-      blueskyIsUsable,
-      facebookIsEnabled,
-      facebookIsUsable,
-      instagramIsEnabled,
-      instagramIsUsable,
-      neynarIsEnabled,
-      neynarIsUsable,
-      threadsIsEnabled,
-      threadsIsUsable,
-      tiktokIsEnabled,
-      tiktokIsUsable,
-      twitterIsEnabled,
-      twitterIsUsable,
-      youtubeIsEnabled,
-      youtubeIsUsable,
+      bluesky.isEnabled,
+      bluesky.isUsable,
+      facebook.isEnabled,
+      facebook.isUsable,
+      instagram.isEnabled,
+      instagram.isUsable,
+      neynar.isEnabled,
+      neynar.isUsable,
+      threads.isEnabled,
+      threads.isUsable,
+      tiktok.isEnabled,
+      tiktok.isUsable,
+      twitter.isEnabled,
+      twitter.isUsable,
+      youtube.isEnabled,
+      youtube.isUsable,
     ],
   );
 
   const canStoreToAllServices = useMemo(
     () =>
-      (!pinataIsEnabled || pinataIsUsable) &&
-      (!amazonS3IsEnabled || amazonS3IsUsable),
-    [pinataIsEnabled, pinataIsUsable, amazonS3IsEnabled, amazonS3IsUsable],
+      (!pinata.isEnabled || pinata.isUsable) &&
+      (!amazonS3.isEnabled || amazonS3.isUsable),
+    [pinata.isEnabled, pinata.isUsable, amazonS3.isEnabled, amazonS3.isUsable],
   );
 
   function getVideoInfo(video: File | null): void {
@@ -388,16 +297,16 @@ export function PostProvider({ children }: Readonly<Props>) {
       }
 
       /* eslint-disable require-atomic-updates */
-      if (blueskyIsEnabled) {
+      if (bluesky.isEnabled) {
         setVideoTrimStatus("Trimming bluesky video if needed...");
         videos.bluesky = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
                 label: "bluesky",
-                maxDuration: BLUESKY_VIDEO_MAX_DURATION,
-                maxFilesize: BLUESKY_VIDEO_MAX_FILESIZE,
-                minDuration: BLUESKY_VIDEO_MIN_DURATION,
+                maxDuration: bluesky.VIDEO_MAX_DURATION,
+                maxFilesize: bluesky.VIDEO_MAX_FILESIZE,
+                minDuration: bluesky.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
                 video: videos.full.video,
               }),
@@ -405,16 +314,16 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
-      if (facebookIsEnabled) {
+      if (facebook.isEnabled) {
         setVideoTrimStatus("Trimming facebook video if needed...");
         videos.facebook = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
                 label: "facebook",
-                maxDuration: FACEBOOK_VIDEO_MAX_DURATION,
-                maxFilesize: FACEBOOK_VIDEO_MAX_FILESIZE,
-                minDuration: FACEBOOK_VIDEO_MIN_DURATION,
+                maxDuration: facebook.VIDEO_MAX_DURATION,
+                maxFilesize: facebook.VIDEO_MAX_FILESIZE,
+                minDuration: facebook.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
                 video: videos.full.video,
               }),
@@ -422,16 +331,16 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
-      if (instagramIsEnabled) {
+      if (instagram.isEnabled) {
         setVideoTrimStatus("Trimming instagram video if needed...");
         videos.instagram = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
                 label: "instagram",
-                maxDuration: INSTAGRAM_VIDEO_MAX_DURATION,
-                maxFilesize: INSTAGRAM_VIDEO_MAX_FILESIZE,
-                minDuration: INSTAGRAM_VIDEO_MIN_DURATION,
+                maxDuration: instagram.VIDEO_MAX_DURATION,
+                maxFilesize: instagram.VIDEO_MAX_FILESIZE,
+                minDuration: instagram.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
                 video: videos.full.video,
               }),
@@ -439,16 +348,16 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
-      if (neynarIsEnabled) {
+      if (neynar.isEnabled) {
         setVideoTrimStatus("Trimming farcaster video if needed...");
         videos.neynar = {
           // video: DEBUG_MEDIA
           //   ? videos.full.video
           //   : await trimVideo({
           //       label: "neynar",
-          //       maxDuration: NEYNAR_VIDEO_MAX_DURATION,
-          //       maxFilesize: NEYNAR_VIDEO_MAX_FILESIZE,
-          //       minDuration: NEYNAR_VIDEO_MIN_DURATION,
+          //       maxDuration: neynar.VIDEO_MAX_DURATION,
+          //       maxFilesize: neynar.VIDEO_MAX_FILESIZE,
+          //       minDuration: neynar.VIDEO_MIN_DURATION,
           //       onProgress: setVideoTrimProgress,
           //       video: videos.full.video,
           //     }),
@@ -457,16 +366,16 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
-      if (threadsIsEnabled) {
+      if (threads.isEnabled) {
         setVideoTrimStatus("Trimming threads video if needed...");
         videos.threads = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
                 label: "threads",
-                maxDuration: THREADS_VIDEO_MAX_DURATION,
-                maxFilesize: THREADS_VIDEO_MAX_FILESIZE,
-                minDuration: THREADS_VIDEO_MIN_DURATION,
+                maxDuration: threads.VIDEO_MAX_DURATION,
+                maxFilesize: threads.VIDEO_MAX_FILESIZE,
+                minDuration: threads.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
                 video: videos.full.video,
               }),
@@ -474,16 +383,16 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
-      if (tiktokIsEnabled) {
+      if (tiktok.isEnabled) {
         setVideoTrimStatus("Trimming tiktok video if needed...");
         videos.tiktok = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
                 label: "tiktok",
-                maxDuration: TIKTOK_VIDEO_MAX_DURATION,
-                maxFilesize: TIKTOK_VIDEO_MAX_FILESIZE,
-                minDuration: TIKTOK_VIDEO_MIN_DURATION,
+                maxDuration: tiktok.VIDEO_MAX_DURATION,
+                maxFilesize: tiktok.VIDEO_MAX_FILESIZE,
+                minDuration: tiktok.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
                 video: videos.full.video,
               }),
@@ -491,16 +400,16 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
-      if (twitterIsEnabled) {
+      if (twitter.isEnabled) {
         setVideoTrimStatus("Trimming twitter video if needed...");
         videos.twitter = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
                 label: "twitter",
-                maxDuration: TWITTER_VIDEO_MAX_DURATION,
-                maxFilesize: TWITTER_VIDEO_MAX_FILESIZE,
-                minDuration: TWITTER_VIDEO_MIN_DURATION,
+                maxDuration: twitter.VIDEO_MAX_DURATION,
+                maxFilesize: twitter.VIDEO_MAX_FILESIZE,
+                minDuration: twitter.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
                 video: videos.full.video,
               }),
@@ -508,16 +417,16 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
-      if (youtubeIsEnabled) {
+      if (youtube.isEnabled) {
         setVideoTrimStatus("Trimming youtube video if needed...");
         videos.youtube = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
                 label: "youtube",
-                maxDuration: YOUTUBE_VIDEO_MAX_DURATION,
-                maxFilesize: YOUTUBE_VIDEO_MAX_FILESIZE,
-                minDuration: YOUTUBE_VIDEO_MIN_DURATION,
+                maxDuration: youtube.VIDEO_MAX_DURATION,
+                maxFilesize: youtube.VIDEO_MAX_FILESIZE,
+                minDuration: youtube.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
                 video: videos.full.video,
               }),
@@ -543,26 +452,26 @@ export function PostProvider({ children }: Readonly<Props>) {
   async function preparePostVideo(
     selectedFile: File,
   ): Promise<Record<string, PostVideo>> {
-    const needsHls = neynarIsEnabled;
-    const needsS3 = tiktokIsEnabled;
+    const needsHls = neynar.isEnabled;
+    const needsS3 = tiktok.isEnabled;
 
-    if (!pinataIsUsable && !amazonS3IsUsable) {
+    if (!pinata.isUsable && !amazonS3.isUsable) {
       throw new Error("You must enable a storage provider.");
     }
 
-    if (needsS3 && !amazonS3IsUsable && tiktokIsUsable) {
+    if (needsS3 && !amazonS3.isUsable && tiktok.isUsable) {
       throw new Error(
         "To use TikTok at least one non-ipfs storage provider must be enabled. (Amazon S3).",
       );
     }
 
-    if (needsHls && !pinataIsUsable) {
+    if (needsHls && !pinata.isUsable) {
       throw new Error(
         "To use Farcaster or Lens at least one enabled storage provider must support IPFS or Arweave. (Pinata).",
       );
     }
 
-    if (!pinataIsUsable && !amazonS3IsUsable) {
+    if (!pinata.isUsable && !amazonS3.isUsable) {
       throw new Error("You must enable a storage provider.");
     }
 
@@ -613,7 +522,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         let videoUrl = "";
 
         // eslint-disable-next-line no-await-in-loop
-        const s3VideoResult = await amazonS3StoreVideo(
+        const s3VideoResult = await amazonS3.storeVideo(
           videoData.video,
           videoId,
         );
@@ -622,7 +531,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         }
 
         // eslint-disable-next-line no-await-in-loop
-        const pinataVideoResult = await pinataStoreVideo(
+        const pinataVideoResult = await pinata.storeVideo(
           videoData.video,
           videoId,
         );
@@ -652,7 +561,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     if (needsHls && hlsFiles) {
       // Upload HLS files to Pinata
       console.log("Uploading HLS files to Pinata...");
-      const videoHSLUrl = await pinataStoreHLSFolder(
+      const videoHSLUrl = await pinata.storeHLSFolder(
         hlsFiles,
         `hls-video-${Date.now()}`,
         "HLS",
@@ -686,74 +595,74 @@ export function PostProvider({ children }: Readonly<Props>) {
   }: Readonly<CreatePostProps>): Promise<void> {
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
     const allResults = await Promise.allSettled([
-      blueskyPost({
+      bluesky.post({
         text,
         title,
-        userId: blueskyAccounts[0]?.id,
-        username: blueskyAccounts[0]?.username,
+        userId: bluesky.accounts[0]?.id,
+        username: bluesky.accounts[0]?.username,
         video: videos.bluesky?.video || videos.full.video,
         videoHSLUrl: videos.bluesky?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.bluesky?.videoUrl || videos.full.videoUrl,
       }),
-      facebookPost({
+      facebook.post({
         text,
         title,
-        userId: facebookAccounts[0]?.id,
-        username: facebookAccounts[0]?.username,
+        userId: facebook.accounts[0]?.id,
+        username: facebook.accounts[0]?.username,
         video: videos.facebook?.video || videos.full.video,
         videoHSLUrl: videos.facebook?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.facebook?.videoUrl || videos.full.videoUrl,
       }),
-      instagramPost({
+      instagram.post({
         text,
         title,
-        userId: instagramAccounts[0]?.id,
-        username: instagramAccounts[0]?.username,
+        userId: instagram.accounts[0]?.id,
+        username: instagram.accounts[0]?.username,
         video: videos.instagram?.video || videos.full.video,
         videoHSLUrl: videos.instagram?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.instagram?.videoUrl || videos.full.videoUrl,
       }),
-      neynarPost({
+      neynar.post({
         text,
         title,
-        userId: neynarAccounts[0]?.id,
-        username: neynarAccounts[0]?.username,
+        userId: neynar.accounts[0]?.id,
+        username: neynar.accounts[0]?.username,
         video: videos.neynar?.video || videos.full.video,
         videoHSLUrl: videos.neynar?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.neynar?.videoUrl || videos.full.videoUrl,
       }),
-      threadsPost({
+      threads.post({
         text,
         title,
-        userId: threadsAccounts[0]?.id,
-        username: threadsAccounts[0]?.username,
+        userId: threads.accounts[0]?.id,
+        username: threads.accounts[0]?.username,
         video: videos.threads?.video || videos.full.video,
         videoHSLUrl: videos.threads?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.threads?.videoUrl || videos.full.videoUrl,
       }),
-      tiktokPost({
+      tiktok.post({
         text,
         title,
-        userId: tiktokAccounts[0]?.id,
-        username: tiktokAccounts[0]?.username,
+        userId: tiktok.accounts[0]?.id,
+        username: tiktok.accounts[0]?.username,
         video: videos.tiktok?.video || videos.full.video,
         videoHSLUrl: videos.tiktok?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.tiktok?.videoUrl || videos.full.videoUrl,
       }),
-      twitterPost({
+      twitter.post({
         text,
         title,
-        userId: twitterAccounts[0]?.id,
-        username: twitterAccounts[0]?.username,
+        userId: twitter.accounts[0]?.id,
+        username: twitter.accounts[0]?.username,
         video: videos.twitter?.video || videos.full.video,
         videoHSLUrl: videos.twitter?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.twitter?.videoUrl || videos.full.videoUrl,
       }),
-      youtubePost({
+      youtube.post({
         text,
         title,
-        userId: youtubeAccounts[0]?.id,
-        username: youtubeAccounts[0]?.username,
+        userId: youtube.accounts[0]?.id,
+        username: youtube.accounts[0]?.username,
         video: videos.youtube?.video || videos.full.video,
         videoHSLUrl: videos.youtube?.videoHSLUrl || videos.full.videoHSLUrl,
         videoUrl: videos.youtube?.videoUrl || videos.full.videoUrl,
