@@ -211,6 +211,7 @@ async function exchangeCodeForTokens(
   codeVerifier: string,
   state: string,
   credentials: OauthCredentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
@@ -331,8 +332,10 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 // Refresh tokens are automatically refreshed by Facebook when any API is called.
 async function refreshAccessToken(
   authorization: OauthAuthorization,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   credentials: OauthCredentials,
   expiration: OauthExpiration,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
@@ -440,6 +443,7 @@ async function getUserInfoFromPage(
 
 async function getAccounts(
   token: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<ServiceAccount[]> {
   const facebookPages = await getFacebookPages(token);

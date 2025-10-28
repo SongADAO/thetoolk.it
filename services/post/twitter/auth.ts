@@ -306,6 +306,7 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 async function refreshAccessToken(
   credentials: OauthCredentials,
   authorization: OauthAuthorization,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   expiration: OauthExpiration,
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {

@@ -120,6 +120,7 @@ async function createPost({
   text,
   title,
   userId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   video,
   videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
