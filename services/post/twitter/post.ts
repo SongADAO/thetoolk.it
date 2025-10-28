@@ -482,6 +482,7 @@ interface CreatePostProps {
   title: string;
   userId: string;
   video: File | null;
+  videoHSLUrl: string;
   videoUrl: string;
 }
 async function createPost({
@@ -500,6 +501,8 @@ async function createPost({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userId,
   video,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  videoHSLUrl,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
