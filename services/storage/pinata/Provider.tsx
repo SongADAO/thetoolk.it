@@ -43,6 +43,10 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
 
   const icon = <GiPinata className="size-6" />;
 
+  const hasAuthorizationStep = false;
+
+  const hasHostedCredentials = false;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
@@ -62,16 +66,16 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
 
   const loading = authLoading;
 
-  const hasHostedCredentials = false;
-
   const credentialsId = getCredentialsId(credentials);
 
   const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
 
   const isComplete =
-    mode === "hosted" || (mode === "self" && isCompleteOwnCredentials);
-
-  const hasAuthorizationStep = false;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    (mode === "hosted" && !hasHostedCredentials) ||
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    (mode === "hosted" && hasHostedCredentials && isCompleteOwnCredentials) ||
+    (mode === "self" && isCompleteOwnCredentials);
 
   const isAuthorized = isComplete;
 

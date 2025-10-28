@@ -63,6 +63,8 @@ export function YoutubeProvider({ children, mode }: Readonly<Props>) {
 
   const hasAuthorizationStep = true;
 
+  const hasHostedCredentials = false;
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
@@ -109,8 +111,6 @@ export function YoutubeProvider({ children, mode }: Readonly<Props>) {
     isAuthorizationLoading ||
     isExpirationLoading ||
     isAccountsLoading;
-
-  const hasHostedCredentials = false;
 
   const credentialsId = getCredentialsId(credentials);
 

@@ -61,6 +61,8 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
 
   const hasAuthorizationStep = true;
 
+  const hasHostedCredentials = true;
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
@@ -101,8 +103,6 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
     isAuthorizationLoading ||
     isExpirationLoading ||
     isAccountsLoading;
-
-  const hasHostedCredentials = true;
 
   const credentialsId = getCredentialsId(credentials);
 

@@ -53,6 +53,8 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
 
   const hasAuthorizationStep = true;
 
+  const hasHostedCredentials = false;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
@@ -94,8 +96,6 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     isAuthorizationLoading ||
     isExpirationLoading ||
     isAccountsLoading;
-
-  const hasHostedCredentials = false;
 
   const credentialsId = getCredentialsId(credentials);
 
