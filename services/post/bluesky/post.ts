@@ -203,7 +203,6 @@ async function createRecord({
   }
 }
 
-// Updated interface - much simpler now!
 interface CreatePostProps {
   accessToken: string;
   credentials: BlueskyCredentials;
