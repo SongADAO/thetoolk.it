@@ -56,10 +56,13 @@ export const threadsProviderConfig: ServiceConfig = {
   defaultAuthorization: defaultOauthAuthorization,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
+    disconnectHosted,
     exchangeCodeForTokens,
     getAccounts,
+    getAuthorizationExpiresAt,
     getAuthorizationUrl,
     getAuthorizationUrlHosted,
+    getCredentialsId,
     getRedirectUri,
     hasCompleteAuthorization,
     hasCompleteCredentials,
@@ -67,9 +70,6 @@ export const threadsProviderConfig: ServiceConfig = {
     refreshAccessToken,
     refreshAccessTokenHosted,
     shouldHandleAuthRedirect,
-    disconnectHosted,
-    getCredentialsId,
-    getAuthorizationExpiresAt,
   },
   postModule: {
     createPost,
