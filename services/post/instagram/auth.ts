@@ -199,9 +199,9 @@ async function getAuthorizationUrl(
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
+  state: string,
   redirectUri: string,
   codeVerifier: string,
-  state: string,
   credentials: OauthCredentials,
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
