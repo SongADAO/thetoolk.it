@@ -33,7 +33,7 @@ import {
   type OauthCredentials,
 } from "@/services/post/types";
 
-export const threadsConfig: ServiceConfig<OauthCredentials> = {
+export const threadsProviderConfig: ServiceConfig<OauthCredentials> = {
   id: "threads",
   label: "Threads",
   brandColor: "threads",

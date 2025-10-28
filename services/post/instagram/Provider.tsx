@@ -1,6 +1,6 @@
 "use client";
 
 import { createServiceProvider } from "@/services/post/createServiceProvider";
-import { providerConfig } from "@/services/post/instagram/providerConfig";
+import { instagramProviderConfig } from "@/services/post/instagram/providerConfig";
 
-export const InstagramProvider = createServiceProvider(providerConfig);
+export const InstagramProvider = createServiceProvider(instagramProviderConfig);

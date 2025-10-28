@@ -33,7 +33,7 @@ import {
   type OauthCredentials,
 } from "@/services/post/types";
 
-const providerConfig: ServiceConfig<OauthCredentials> = {
+export const facebookProviderConfig: ServiceConfig<OauthCredentials> = {
   id: "facebook",
   label: "Facebook",
   brandColor: "facebook",
@@ -79,5 +79,3 @@ const providerConfig: ServiceConfig<OauthCredentials> = {
     VIDEO_MIN_DURATION,
   },
 };
-
-export { providerConfig };

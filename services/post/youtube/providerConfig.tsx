@@ -33,7 +33,7 @@ import {
   VIDEO_MIN_DURATION,
 } from "@/services/post/youtube/post";
 
-export const youtubeConfig: ServiceConfig<OauthCredentials> = {
+export const youtubeProviderConfig: ServiceConfig<OauthCredentials> = {
   id: "youtube",
   label: "YouTube",
   brandColor: "youtube",

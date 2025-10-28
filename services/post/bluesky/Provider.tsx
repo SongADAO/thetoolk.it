@@ -1,6 +1,6 @@
 "use client";
 
-import { providerConfig } from "@/services/post/bluesky/providerConfig";
+import { blueskyProviderConfig } from "@/services/post/bluesky/providerConfig";
 import { createServiceProvider } from "@/services/post/createServiceProvider";
 
-export const BlueskyProvider = createServiceProvider(providerConfig);
+export const BlueskyProvider = createServiceProvider(blueskyProviderConfig);
