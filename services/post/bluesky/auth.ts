@@ -254,8 +254,8 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 
 // Refresh access token (handled internally by the library)
 async function refreshAccessToken(
-  credentials: BlueskyCredentials,
   authorization: OauthAuthorization,
+  credentials: BlueskyCredentials,
   requestUrl: string,
 ): Promise<OauthAuthorizationAndExpiration> {
   try {
