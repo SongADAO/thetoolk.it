@@ -61,7 +61,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
 
   const loading = authLoading;
 
-  const hasAuthenticatedCredentials = false;
+  const hasHostedCredentials = false;
 
   const credentialsId = getCredentialsId(credentials);
 
@@ -229,8 +229,8 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       disconnect,
       error,
       fields,
-      hasAuthenticatedCredentials,
       hasAuthorizationStep,
+      hasHostedCredentials,
       icon,
       initial,
       isAuthorized,
@@ -262,8 +262,8 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       credentialsId,
       disconnect,
       error,
-      hasAuthenticatedCredentials,
       hasAuthorizationStep,
+      hasHostedCredentials,
       icon,
       initial,
       isAuthorized,

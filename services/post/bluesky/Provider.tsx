@@ -102,14 +102,17 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
     isExpirationLoading ||
     isAccountsLoading;
 
-  const hasAuthenticatedCredentials = true;
+  const hasHostedCredentials = true;
 
   const credentialsId = getCredentialsId(credentials);
 
   const isCompleteOwnCredentials = hasCompleteCredentials(credentials);
 
   const isComplete =
-    (mode === "hosted" && isCompleteOwnCredentials) ||
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    (mode === "hosted" && !hasHostedCredentials) ||
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    (mode === "hosted" && hasHostedCredentials && isCompleteOwnCredentials) ||
     (mode === "self" && isCompleteOwnCredentials);
 
   const isAuthorized = hasCompleteAuthorization(expiration);
@@ -351,9 +354,9 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
       error,
       fields,
       handleAuthRedirect,
-      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       hasCompletedAuth,
+      hasHostedCredentials,
       icon,
       initial,
       isAuthorized,
@@ -385,9 +388,9 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
       credentialsId,
       disconnect,
       error,
-      hasAuthenticatedCredentials,
       hasAuthorizationStep,
       hasCompletedAuth,
+      hasHostedCredentials,
       icon,
       initial,
       isAuthorized,

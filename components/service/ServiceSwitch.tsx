@@ -20,8 +20,8 @@ interface Props {
   credentialsId: string;
   disconnect: () => void;
   form: ReactNode;
-  hasAuthenticatedCredentials: boolean;
   hasAuthorizationStep: boolean;
+  hasHostedCredentials: boolean;
   icon: ReactNode;
   isAuthorized: boolean;
   isComplete: boolean;
@@ -39,8 +39,8 @@ function ServiceSwitch({
   credentialsId,
   disconnect,
   form,
-  hasAuthenticatedCredentials,
   hasAuthorizationStep,
+  hasHostedCredentials,
   icon,
   isAuthorized,
   isComplete,
@@ -69,9 +69,7 @@ function ServiceSwitch({
     }
   }, [isEnabled, isComplete, credentialsId]);
 
-  const hasCredentials = Boolean(
-    mode === "self" || hasAuthenticatedCredentials,
-  );
+  const hasCredentials = Boolean(mode === "self" || hasHostedCredentials);
 
   const needsCredentials = Boolean(isEnabled && !isComplete);
 

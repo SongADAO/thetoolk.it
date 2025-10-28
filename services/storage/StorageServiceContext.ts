@@ -16,8 +16,8 @@ interface StorageServiceContextType {
   disconnect: () => void;
   error: string;
   fields: ServiceFormField[];
-  hasAuthenticatedCredentials: boolean;
   hasAuthorizationStep: boolean;
+  hasHostedCredentials: boolean;
   icon: ReactNode;
   initial: ServiceFormState;
   isAuthorized: boolean;
@@ -54,8 +54,8 @@ const storageServiceContextDefault = {
   disconnect: () => {},
   error: "",
   fields: [],
-  hasAuthenticatedCredentials: false,
   hasAuthorizationStep: false,
+  hasHostedCredentials: false,
   icon: null,
   initial: {},
   isAuthorized: false,
