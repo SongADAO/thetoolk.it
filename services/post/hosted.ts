@@ -1,46 +1,44 @@
 import { NextRequest } from "next/server";
 
-import { facebookProviderConfig } from "@/services/post/facebook/providerConfig";
-import { instagramProviderConfig } from "@/services/post/instagram/providerConfig";
+import { facebookServiceConfig } from "@/services/post/facebook/ServiceConfig";
+import { instagramServiceConfig } from "@/services/post/instagram/ServiceConfig";
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
-import { threadsProviderConfig } from "@/services/post/threads/providerConfig";
-import { tiktokProviderConfig } from "@/services/post/tiktok/providerConfig";
-import { twitterProviderConfig } from "@/services/post/twitter/providerConfig";
+import { threadsServiceConfig } from "@/services/post/threads/ServiceConfig";
+import { tiktokServiceConfig } from "@/services/post/tiktok/ServiceConfig";
+import { twitterServiceConfig } from "@/services/post/twitter/ServiceConfig";
 import type {
   OauthAuthorization,
   OauthAuthorizationAndExpiration,
   OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
-import { youtubeProviderConfig } from "@/services/post/youtube/providerConfig";
+import { youtubeServiceConfig } from "@/services/post/youtube/ServiceConfig";
 
 function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
-  if (
-    facebookProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)
-  ) {
-    return facebookProviderConfig.id;
+  if (facebookServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+    return facebookServiceConfig.id;
   }
 
   if (
-    instagramProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)
+    instagramServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)
   ) {
-    return instagramProviderConfig.id;
+    return instagramServiceConfig.id;
   }
 
-  if (threadsProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return threadsProviderConfig.id;
+  if (threadsServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+    return threadsServiceConfig.id;
   }
 
-  if (tiktokProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return tiktokProviderConfig.id;
+  if (tiktokServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+    return tiktokServiceConfig.id;
   }
 
-  if (youtubeProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return youtubeProviderConfig.id;
+  if (youtubeServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+    return youtubeServiceConfig.id;
   }
 
-  if (twitterProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return twitterProviderConfig.id;
+  if (twitterServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+    return twitterServiceConfig.id;
   }
 
   throw new Error("Unsupported service");
@@ -49,17 +47,17 @@ function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
 function getServiceConfig(serviceId: string): ServiceConfig {
   switch (serviceId) {
     case "facebook":
-      return facebookProviderConfig;
+      return facebookServiceConfig;
     case "instagram":
-      return instagramProviderConfig;
+      return instagramServiceConfig;
     case "threads":
-      return threadsProviderConfig;
+      return threadsServiceConfig;
     case "tiktok":
-      return tiktokProviderConfig;
+      return tiktokServiceConfig;
     case "youtube":
-      return youtubeProviderConfig;
+      return youtubeServiceConfig;
     case "twitter":
-      return twitterProviderConfig;
+      return twitterServiceConfig;
     default:
       throw new Error("Unsupported service");
   }

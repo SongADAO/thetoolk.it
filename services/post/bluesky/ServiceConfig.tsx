@@ -31,7 +31,7 @@ import {
   defaultOauthExpiration,
 } from "@/services/post/types";
 
-export const blueskyProviderConfig: ServiceConfig = {
+export const blueskyServiceConfig: ServiceConfig = {
   /* eslint-disable sort-keys */
   id: "bluesky",
   label: "Bluesky",

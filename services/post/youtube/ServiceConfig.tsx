@@ -1,5 +1,11 @@
-import { FaInstagram } from "react-icons/fa6";
+import { FaYoutube } from "react-icons/fa6";
 
+import type { ServiceConfig } from "@/services/post/ServiceConfig";
+import {
+  defaultOauthAuthorization,
+  defaultOauthCredentials,
+  defaultOauthExpiration,
+} from "@/services/post/types";
 import {
   disconnectHosted,
   exchangeCodeForTokens,
@@ -17,38 +23,32 @@ import {
   refreshAccessToken,
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
-} from "@/services/post/instagram/auth";
+} from "@/services/post/youtube/auth";
 import {
   createPost,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
-} from "@/services/post/instagram/post";
-import type { ServiceConfig } from "@/services/post/ServiceConfig";
-import {
-  defaultOauthAuthorization,
-  defaultOauthCredentials,
-  defaultOauthExpiration,
-} from "@/services/post/types";
+} from "@/services/post/youtube/post";
 
-export const instagramProviderConfig: ServiceConfig = {
+export const youtubeServiceConfig: ServiceConfig = {
   /* eslint-disable sort-keys */
-  id: "instagram",
-  label: "Instagram",
-  brandColor: "instagram",
-  icon: <FaInstagram className="size-6" />,
+  id: "youtube",
+  label: "YouTube",
+  brandColor: "youtube",
+  icon: <FaYoutube className="size-6" />,
   hasAuthorizationStep: true,
   hasHostedCredentials: false,
   fields: [
     {
-      label: "App ID",
+      label: "Client ID",
       name: "clientId",
-      placeholder: "App ID",
+      placeholder: "Client ID",
     },
     {
-      label: "App Secret",
+      label: "Client Secret",
       name: "clientSecret",
-      placeholder: "App Secret",
+      placeholder: "Client Secret",
     },
   ],
   authModule: {

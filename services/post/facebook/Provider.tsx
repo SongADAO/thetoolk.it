@@ -2,9 +2,9 @@
 
 import { createServiceProvider } from "@/services/post/createServiceProvider";
 import { FacebookContext } from "@/services/post/facebook/Context";
-import { facebookProviderConfig } from "@/services/post/facebook/providerConfig";
+import { facebookServiceConfig } from "@/services/post/facebook/ServiceConfig";
 
 export const FacebookProvider = createServiceProvider(
   FacebookContext,
-  facebookProviderConfig,
+  facebookServiceConfig,
 );

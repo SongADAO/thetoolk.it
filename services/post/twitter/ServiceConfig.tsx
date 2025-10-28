@@ -31,7 +31,7 @@ import {
   defaultOauthExpiration,
 } from "@/services/post/types";
 
-export const twitterProviderConfig: ServiceConfig = {
+export const twitterServiceConfig: ServiceConfig = {
   /* eslint-disable sort-keys */
   id: "twitter",
   label: "Twitter",

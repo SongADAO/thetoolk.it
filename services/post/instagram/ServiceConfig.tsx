@@ -1,6 +1,5 @@
-import { FaThreads } from "react-icons/fa6";
+import { FaInstagram } from "react-icons/fa6";
 
-import type { ServiceConfig } from "@/services/post/ServiceConfig";
 import {
   disconnectHosted,
   exchangeCodeForTokens,
@@ -18,25 +17,26 @@ import {
   refreshAccessToken,
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
-} from "@/services/post/threads/auth";
+} from "@/services/post/instagram/auth";
 import {
   createPost,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
-} from "@/services/post/threads/post";
+} from "@/services/post/instagram/post";
+import type { ServiceConfig } from "@/services/post/ServiceConfig";
 import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
 } from "@/services/post/types";
 
-export const threadsProviderConfig: ServiceConfig = {
+export const instagramServiceConfig: ServiceConfig = {
   /* eslint-disable sort-keys */
-  id: "threads",
-  label: "Threads",
-  brandColor: "threads",
-  icon: <FaThreads className="size-6" />,
+  id: "instagram",
+  label: "Instagram",
+  brandColor: "instagram",
+  icon: <FaInstagram className="size-6" />,
   hasAuthorizationStep: true,
   hasHostedCredentials: false,
   fields: [

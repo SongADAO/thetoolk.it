@@ -1,10 +1,10 @@
 "use client";
 
 import { BlueskyContext } from "@/services/post/bluesky/Context";
-import { blueskyProviderConfig } from "@/services/post/bluesky/providerConfig";
+import { blueskyServiceConfig } from "@/services/post/bluesky/ServiceConfig";
 import { createServiceProvider } from "@/services/post/createServiceProvider";
 
 export const BlueskyProvider = createServiceProvider(
   BlueskyContext,
-  blueskyProviderConfig,
+  blueskyServiceConfig,
 );
