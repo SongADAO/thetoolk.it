@@ -1,0 +1,83 @@
+/* eslint-disable sort-keys */
+
+import { FaBluesky } from "react-icons/fa6";
+
+import {
+  disconnectHosted,
+  exchangeCodeForTokens,
+  getAccounts,
+  getAuthorizationExpiresAt,
+  getAuthorizationUrl,
+  getAuthorizationUrlHosted,
+  getCredentialsId,
+  getRedirectUri,
+  hasCompleteAuthorization,
+  hasCompleteCredentials,
+  needsRefreshTokenRenewal,
+  refreshAccessToken,
+  refreshAccessTokenHosted,
+  shouldHandleAuthRedirect,
+} from "@/services/post/bluesky/auth";
+import { BlueskyContext } from "@/services/post/bluesky/Context";
+import {
+  createPost,
+  VIDEO_MAX_DURATION,
+  VIDEO_MAX_FILESIZE,
+  VIDEO_MIN_DURATION,
+} from "@/services/post/bluesky/post";
+import type { ServiceConfig } from "@/services/post/ServiceConfig";
+import {
+  type BlueskyCredentials,
+  defaultBlueskyCredentials,
+  defaultOauthAuthorization,
+  defaultOauthExpiration,
+} from "@/services/post/types";
+
+const providerConfig: ServiceConfig<BlueskyCredentials> = {
+  id: "bluesky",
+  label: "Bluesky",
+  brandColor: "bluesky",
+  icon: <FaBluesky className="size-6" />,
+  hasAuthorizationStep: true,
+  hasHostedCredentials: true,
+  fields: [
+    {
+      label: "Service URL",
+      name: "serviceUrl",
+      placeholder: "https://bsky.social",
+    },
+    {
+      label: "Username",
+      name: "username",
+      placeholder: "johndoe.bsky.social",
+    },
+  ],
+  Context: BlueskyContext,
+  defaultCredentials: defaultBlueskyCredentials,
+  defaultAuthorization: defaultOauthAuthorization,
+  defaultExpiration: defaultOauthExpiration,
+  authModule: {
+    exchangeCodeForTokens,
+    getAccounts,
+    getAuthorizationUrl,
+    getAuthorizationUrlHosted,
+    getRedirectUri,
+    hasCompleteAuthorization,
+    hasCompleteCredentials,
+    needsRefreshTokenRenewal,
+    refreshAccessToken,
+    refreshAccessTokenHosted,
+    shouldHandleAuthRedirect,
+    disconnectHosted,
+    getCredentialsId,
+    getAuthorizationExpiresAt,
+  },
+  postModule: {
+    createPost,
+    VIDEO_MAX_DURATION,
+    VIDEO_MAX_FILESIZE,
+    VIDEO_MIN_DURATION,
+  },
+};
+
+export { providerConfig };
