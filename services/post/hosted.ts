@@ -5,7 +5,6 @@ import { instagramProviderConfig } from "@/services/post/instagram/providerConfi
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
 import { threadsProviderConfig } from "@/services/post/threads/providerConfig";
 import { tiktokProviderConfig } from "@/services/post/tiktok/providerConfig";
-import { HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER } from "@/services/post/twitter/auth";
 import { twitterProviderConfig } from "@/services/post/twitter/providerConfig";
 import type {
   OauthAuthorization,
@@ -13,7 +12,6 @@ import type {
   OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
-import { HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_YOUTUBE } from "@/services/post/youtube/auth";
 import { youtubeProviderConfig } from "@/services/post/youtube/providerConfig";
 
 function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
@@ -77,7 +75,7 @@ function getAuthorizeUrl(
   const serviceConfig = getServiceConfig(serviceId);
 
   return serviceConfig.authModule.getAuthorizeUrl(
-    HOSTED_CREDENTIALS_TWITTER.clientId,
+    serviceConfig.authModule.HOSTED_CREDENTIALS,
     redirectUri,
     codeChallenge,
   );
@@ -99,7 +97,7 @@ async function exchangeCodeForTokens(
     searchParams.get("state") ?? "",
     redirectUri,
     codeVerifier,
-    HOSTED_CREDENTIALS_TWITTER,
+    serviceConfig.authModule.HOSTED_CREDENTIALS,
     "",
     "hosted",
   );
@@ -114,7 +112,7 @@ async function getAccounts(
   const serviceConfig = getServiceConfig(serviceId);
 
   return await serviceConfig.authModule.getAccounts(
-    HOSTED_CREDENTIALS_TWITTER,
+    serviceConfig.authModule.HOSTED_CREDENTIALS,
     authorization.accessToken,
     "",
     "hosted",
@@ -132,7 +130,7 @@ async function refreshAccessToken(
 
   return await serviceConfig.authModule.refreshAccessToken(
     authorization,
-    HOSTED_CREDENTIALS_YOUTUBE,
+    serviceConfig.authModule.HOSTED_CREDENTIALS,
     expiration,
     "",
     "hosted",

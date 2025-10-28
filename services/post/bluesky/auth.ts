@@ -123,7 +123,7 @@ function formatExpiration(tokens: OAuthSession): OauthExpiration {
 
 function getAuthorizeUrl(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  clientId: string,
+  credentials: OauthCredentials,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   redirectUri: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -136,13 +136,13 @@ function formatExpiration(tokens: GoogleTokenResponse): OauthExpiration {
 }
 
 function getAuthorizeUrl(
-  clientId: string,
+  credentials: OauthCredentials,
   redirectUri: string,
   codeChallenge: string,
 ): string {
   const params = new URLSearchParams({
     access_type: "offline",
-    client_id: clientId,
+    client_id: credentials.clientId,
     prompt: "consent",
     redirect_uri: redirectUri,
     response_type: "code",
@@ -207,7 +207,7 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  return getAuthorizeUrl(credentials.clientId, redirectUri, codeChallenge);
+  return getAuthorizeUrl(credentials, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token

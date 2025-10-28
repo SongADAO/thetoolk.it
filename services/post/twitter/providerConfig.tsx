@@ -13,6 +13,7 @@ import {
   getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
+  HOSTED_CREDENTIALS,
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
@@ -54,6 +55,7 @@ export const twitterProviderConfig: ServiceConfig = {
   Context: TwitterContext,
   /* eslint-enable sort-keys */
   authModule: {
+    HOSTED_CREDENTIALS,
     disconnectHosted,
     exchangeCodeForTokens,
     getAccounts,

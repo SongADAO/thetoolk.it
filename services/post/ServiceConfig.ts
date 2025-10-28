@@ -35,6 +35,7 @@ interface ServiceConfig {
 
   // Auth module functions
   authModule: {
+    HOSTED_CREDENTIALS: OauthCredentials;
     disconnectHosted: () => Promise<OauthAuthorization>;
     exchangeCodeForTokens: (
       code: string,
@@ -63,7 +64,7 @@ interface ServiceConfig {
       credentials: OauthCredentials,
     ) => Promise<string>;
     getAuthorizeUrl: (
-      clientId: string,
+      credentials: OauthCredentials,
       redirectUri: string,
       codeChallenge: string,
     ) => string;
