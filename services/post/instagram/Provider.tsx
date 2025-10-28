@@ -133,9 +133,9 @@ export function InstagramProvider({ children, mode }: Readonly<Props>) {
     try {
       const newAuthorization = await exchangeCodeForTokens(
         code,
+        state,
         getRedirectUri(),
         codeVerifier,
-        state,
         credentials,
         "self",
       );

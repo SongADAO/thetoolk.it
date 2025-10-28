@@ -206,9 +206,9 @@ async function getAuthorizationUrl(
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
+  state: string,
   redirectUri: string,
   codeVerifier: string,
-  state: string,
   credentials: OauthCredentials,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",

@@ -155,9 +155,9 @@ async function exchangeCodeForTokens(
     console.log("Handling Facebook auth redirect");
     return await exchangeCodeForTokensFacebook(
       searchParams.get("code") ?? "",
+      searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
-      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_FACEBOOK,
     );
   }
@@ -166,9 +166,9 @@ async function exchangeCodeForTokens(
     console.log("Handling Instagram auth redirect");
     return await exchangeCodeForTokensInstagram(
       searchParams.get("code") ?? "",
+      searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
-      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_INSTAGRAM,
     );
   }
@@ -177,9 +177,9 @@ async function exchangeCodeForTokens(
     console.log("Handling Threads auth redirect");
     return await exchangeCodeForTokensThreads(
       searchParams.get("code") ?? "",
+      searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
-      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_THREADS,
     );
   }
@@ -188,9 +188,9 @@ async function exchangeCodeForTokens(
     console.log("Handling TikTok auth redirect");
     return await exchangeCodeForTokensTiktok(
       searchParams.get("code") ?? "",
+      searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
-      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_TIKTOK,
     );
   }
@@ -199,9 +199,9 @@ async function exchangeCodeForTokens(
     console.log("Handling YouTube auth redirect");
     return await exchangeCodeForTokensYoutube(
       searchParams.get("code") ?? "",
+      searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
-      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_YOUTUBE,
     );
   }
@@ -210,9 +210,9 @@ async function exchangeCodeForTokens(
     console.log("Handling Twitter auth redirect");
     return await exchangeCodeForTokensTwitter(
       searchParams.get("code") ?? "",
+      searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
-      searchParams.get("state") ?? "",
       HOSTED_CREDENTIALS_TWITTER,
     );
   }
