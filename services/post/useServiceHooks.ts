@@ -91,12 +91,12 @@ function useOAuthFlow<TCredentials>(
   authModule: {
     exchangeCodeForTokens: any;
     getAccounts: any;
-    getAuthorizationUrl?: any;
-    getAuthorizationUrlHosted?: any;
+    getAuthorizationUrl: any;
+    getAuthorizationUrlHosted: any;
     getRedirectUri: any;
     refreshAccessToken: any;
-    refreshAccessTokenHosted?: any;
-    disconnectHosted?: any;
+    refreshAccessTokenHosted: any;
+    disconnectHosted: any;
   },
   defaultAuthorization: OauthAuthorization,
   defaultExpiration: OauthExpiration,
