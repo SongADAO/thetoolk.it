@@ -19,7 +19,6 @@ import {
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/twitter/auth";
-import { TwitterContext } from "@/services/post/twitter/Context";
 import {
   createPost,
   VIDEO_MAX_DURATION,
@@ -52,8 +51,6 @@ export const twitterProviderConfig: ServiceConfig = {
       placeholder: "OAuth 2.0 Client Secret",
     },
   ],
-  Context: TwitterContext,
-  /* eslint-enable sort-keys */
   authModule: {
     HOSTED_CREDENTIALS,
     disconnectHosted,

@@ -18,7 +18,6 @@ import {
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/bluesky/auth";
-import { BlueskyContext } from "@/services/post/bluesky/Context";
 import {
   createPost,
   VIDEO_MAX_DURATION,
@@ -52,8 +51,6 @@ export const blueskyProviderConfig: ServiceConfig = {
       placeholder: "johndoe.bsky.social",
     },
   ],
-  Context: BlueskyContext,
-  /* eslint-enable sort-keys */
   authModule: {
     HOSTED_CREDENTIALS,
     disconnectHosted,

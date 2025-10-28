@@ -1,7 +1,6 @@
-import { Context, ReactNode } from "react";
+import { ReactNode } from "react";
 
 import type { ServiceFormField } from "@/components/service/ServiceForm";
-import type { PostServiceContextType } from "@/services/post/PostServiceContext";
 import type {
   CreatePostProps,
   OauthAuthorization,
@@ -24,9 +23,6 @@ interface ServiceConfig {
 
   // Form fields
   fields: ServiceFormField[];
-
-  // Context
-  Context: Context<PostServiceContextType>;
 
   // Default values
   defaultCredentials: OauthCredentials;

@@ -1,8 +1,9 @@
-import { ReactNode, use, useMemo, useState } from "react";
+import { Context, ReactNode, use, useMemo, useState } from "react";
 
 import type { ServiceFormState } from "@/components/service/ServiceForm";
 import { DEBUG_POST } from "@/config/constants";
 import { AuthContext } from "@/contexts/AuthContext";
+import type { PostServiceContextType } from "@/services/post/PostServiceContext";
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
 import type { OauthCredentials, PostProps } from "@/services/post/types";
 import {
@@ -20,7 +21,10 @@ interface CreateServiceProviderProps {
 /**
  * Factory function that creates a service provider component
  */
-function createServiceProvider(config: ServiceConfig) {
+function createServiceProvider(
+  configContext: Context<PostServiceContextType>,
+  config: ServiceConfig,
+) {
   return function ServiceProvider({
     children,
     mode,
@@ -269,9 +273,9 @@ function createServiceProvider(config: ServiceConfig) {
     );
 
     return (
-      <config.Context.Provider value={providerValues}>
+      <configContext.Provider value={providerValues}>
         {children}
-      </config.Context.Provider>
+      </configContext.Provider>
     );
   };
 }
