@@ -52,8 +52,8 @@ export const instagramProviderConfig: ServiceConfig = {
     },
   ],
   Context: InstagramContext,
-  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
     disconnectHosted,

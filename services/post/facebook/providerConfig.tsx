@@ -52,8 +52,8 @@ export const facebookProviderConfig: ServiceConfig = {
     },
   ],
   Context: FacebookContext,
-  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
     disconnectHosted,

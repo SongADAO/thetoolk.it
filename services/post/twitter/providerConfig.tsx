@@ -52,8 +52,8 @@ export const twitterProviderConfig: ServiceConfig = {
     },
   ],
   Context: TwitterContext,
-  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
     disconnectHosted,

@@ -52,8 +52,8 @@ export const tiktokProviderConfig: ServiceConfig = {
     },
   ],
   Context: TiktokContext,
-  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
     disconnectHosted,
