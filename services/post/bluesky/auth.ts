@@ -15,7 +15,9 @@ import type {
   ServiceAccount,
 } from "@/services/post/types";
 
-const HOSTED_CREDENTIALS = {
+const HOSTED_CREDENTIALS: OauthCredentials = {
+  clientId: "",
+  clientSecret: "",
   serviceUrl: String(process.env.NEXT_PUBLIC_BLUESKY_SERVICE_URL ?? ""),
   username: "",
 };

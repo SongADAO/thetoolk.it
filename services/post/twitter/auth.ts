@@ -18,7 +18,7 @@ interface TwitterTokenResponse {
   refresh_token: string;
 }
 
-const HOSTED_CREDENTIALS = {
+const HOSTED_CREDENTIALS: OauthCredentials = {
   clientId: String(process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID ?? ""),
   clientSecret: String(process.env.TWITTER_CLIENT_SECRET ?? ""),
   serviceUrl: "",

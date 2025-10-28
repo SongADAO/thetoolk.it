@@ -17,7 +17,7 @@ interface InstagramTokenResponse {
   expires_in: number;
 }
 
-const HOSTED_CREDENTIALS = {
+const HOSTED_CREDENTIALS: OauthCredentials = {
   clientId: String(process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID ?? ""),
   clientSecret: String(process.env.INSTAGRAM_CLIENT_SECRET ?? ""),
   serviceUrl: "",
