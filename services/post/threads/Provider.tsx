@@ -297,6 +297,8 @@ export function ThreadsProvider({ children, mode }: Readonly<Props>) {
 
       return await createPost({
         accessToken: mode === "hosted" ? "hosted" : accessToken,
+        credentials,
+        requestUrl: window.location.origin,
         setIsPosting,
         setPostError,
         setPostProgress,

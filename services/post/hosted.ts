@@ -155,10 +155,13 @@ async function exchangeCodeForTokens(
     console.log("Handling Facebook auth redirect");
     return await exchangeCodeForTokensFacebook(
       searchParams.get("code") ?? "",
+      searchParams.get("iss") ?? "",
       searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
       HOSTED_CREDENTIALS_FACEBOOK,
+      "",
+      "hosted",
     );
   }
 
@@ -166,10 +169,13 @@ async function exchangeCodeForTokens(
     console.log("Handling Instagram auth redirect");
     return await exchangeCodeForTokensInstagram(
       searchParams.get("code") ?? "",
+      searchParams.get("iss") ?? "",
       searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
       HOSTED_CREDENTIALS_INSTAGRAM,
+      "",
+      "hosted",
     );
   }
 
@@ -177,10 +183,13 @@ async function exchangeCodeForTokens(
     console.log("Handling Threads auth redirect");
     return await exchangeCodeForTokensThreads(
       searchParams.get("code") ?? "",
+      searchParams.get("iss") ?? "",
       searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
       HOSTED_CREDENTIALS_THREADS,
+      "",
+      "hosted",
     );
   }
 
@@ -188,10 +197,13 @@ async function exchangeCodeForTokens(
     console.log("Handling TikTok auth redirect");
     return await exchangeCodeForTokensTiktok(
       searchParams.get("code") ?? "",
+      searchParams.get("iss") ?? "",
       searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
       HOSTED_CREDENTIALS_TIKTOK,
+      "",
+      "hosted",
     );
   }
 
@@ -199,10 +211,13 @@ async function exchangeCodeForTokens(
     console.log("Handling YouTube auth redirect");
     return await exchangeCodeForTokensYoutube(
       searchParams.get("code") ?? "",
+      searchParams.get("iss") ?? "",
       searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
       HOSTED_CREDENTIALS_YOUTUBE,
+      "",
+      "hosted",
     );
   }
 
@@ -210,10 +225,13 @@ async function exchangeCodeForTokens(
     console.log("Handling Twitter auth redirect");
     return await exchangeCodeForTokensTwitter(
       searchParams.get("code") ?? "",
+      searchParams.get("iss") ?? "",
       searchParams.get("state") ?? "",
       redirectUri,
       codeVerifier,
       HOSTED_CREDENTIALS_TWITTER,
+      "",
+      "hosted",
     );
   }
 
@@ -226,32 +244,62 @@ async function getAccounts(
 ): Promise<ServiceAccount[]> {
   if (serviceId === "facebook") {
     console.log("Getting Facebook accounts");
-    return await getAccountsFacebook(authorization.accessToken);
+    return await getAccountsFacebook(
+      HOSTED_CREDENTIALS_TWITTER,
+      authorization.accessToken,
+      "",
+      "hosted",
+    );
   }
 
   if (serviceId === "instagram") {
     console.log("Getting Instagram accounts");
-    return await getAccountsInstagram(authorization.accessToken);
+    return await getAccountsInstagram(
+      HOSTED_CREDENTIALS_INSTAGRAM,
+      authorization.accessToken,
+      "",
+      "hosted",
+    );
   }
 
   if (serviceId === "threads") {
     console.log("Getting Threads accounts");
-    return await getAccountsThreads(authorization.accessToken);
+    return await getAccountsThreads(
+      HOSTED_CREDENTIALS_THREADS,
+      authorization.accessToken,
+      "",
+      "hosted",
+    );
   }
 
   if (serviceId === "tiktok") {
     console.log("Getting TikTok accounts");
-    return await getAccountsTiktok(authorization.accessToken);
+    return await getAccountsTiktok(
+      HOSTED_CREDENTIALS_TIKTOK,
+      authorization.accessToken,
+      "",
+      "hosted",
+    );
   }
 
   if (serviceId === "youtube") {
     console.log("Getting YouTube accounts");
-    return await getAccountsYoutube(authorization.accessToken);
+    return await getAccountsYoutube(
+      HOSTED_CREDENTIALS_YOUTUBE,
+      authorization.accessToken,
+      "",
+      "hosted",
+    );
   }
 
   if (serviceId === "twitter") {
     console.log("Getting Twitter accounts");
-    return await getAccountsTwitter(authorization.accessToken);
+    return await getAccountsTwitter(
+      HOSTED_CREDENTIALS_TWITTER,
+      authorization.accessToken,
+      "",
+      "hosted",
+    );
   }
 
   throw new Error("Unsupported service");
@@ -268,6 +316,8 @@ async function refreshAccessToken(
       authorization,
       HOSTED_CREDENTIALS_FACEBOOK,
       expiration,
+      "",
+      "hosted",
     );
   }
 
@@ -277,6 +327,8 @@ async function refreshAccessToken(
       authorization,
       HOSTED_CREDENTIALS_INSTAGRAM,
       expiration,
+      "",
+      "hosted",
     );
   }
 
@@ -286,6 +338,8 @@ async function refreshAccessToken(
       authorization,
       HOSTED_CREDENTIALS_THREADS,
       expiration,
+      "",
+      "hosted",
     );
   }
 
@@ -295,6 +349,8 @@ async function refreshAccessToken(
       authorization,
       HOSTED_CREDENTIALS_TIKTOK,
       expiration,
+      "",
+      "hosted",
     );
   }
 
@@ -304,6 +360,8 @@ async function refreshAccessToken(
       authorization,
       HOSTED_CREDENTIALS_TWITTER,
       expiration,
+      "",
+      "hosted",
     );
   }
 
@@ -313,6 +371,8 @@ async function refreshAccessToken(
       authorization,
       HOSTED_CREDENTIALS_YOUTUBE,
       expiration,
+      "",
+      "hosted",
     );
   }
 

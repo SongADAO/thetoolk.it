@@ -402,7 +402,11 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
 }
 
 async function getAccounts(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  credentials: OauthCredentials,
   token: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<ServiceAccount[]> {
