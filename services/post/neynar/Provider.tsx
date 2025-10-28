@@ -8,6 +8,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
+import { DEBUG_POST } from "@/config/constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import {
@@ -140,6 +141,15 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function handleAuthRedirect(searchParams: URLSearchParams) {}
 
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async function getValidAccessToken(): Promise<string> {
+    if (DEBUG_POST) {
+      return "test-token";
+    }
+
+    return authorization.accessToken;
+  }
+
   const [isPosting, setIsPosting] = useState<boolean>(false);
   const [postError, setPostError] = useState<string>("");
   const [postProgress, setPostProgress] = useState<number>(0);
@@ -155,23 +165,44 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   async function post({
     title,
     text,
+    userId,
+    video,
     videoHSLUrl,
+    videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
     }
 
-    return await createPost({
-      accessToken: mode === "hosted" ? "hosted" : authorization.accessToken,
-      clientSecret: mode === "hosted" ? "hosted" : credentials.clientSecret,
-      setIsPosting,
-      setPostError,
-      setPostProgress,
-      setPostStatus,
-      text,
-      title,
-      videoHSLUrl,
-    });
+    try {
+      const accessToken = await getValidAccessToken();
+
+      return await createPost({
+        accessToken: mode === "hosted" ? "hosted" : accessToken,
+        credentials,
+        requestUrl: window.location.origin,
+        setIsPosting,
+        setPostError,
+        setPostProgress,
+        setPostStatus,
+        text,
+        title,
+        userId,
+        video,
+        videoHSLUrl,
+        videoUrl,
+      });
+    } catch (err: unknown) {
+      console.error("Post error:", err);
+      const errMessage =
+        err instanceof Error ? err.message : "unspecified error";
+      setPostError(`Post failed: ${errMessage}`);
+      setPostStatus("Post failed");
+      setPostProgress(0);
+      setIsPosting(false);
+    }
+
+    return null;
   }
 
   function isCredentialKey(key: string): key is keyof typeof credentials {

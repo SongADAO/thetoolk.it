@@ -1,5 +1,6 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
+import type { OauthCredentials } from "@/services/post/types";
 
 // 100GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 100;
@@ -76,24 +77,38 @@ async function createCast({
 // Create a post
 interface CreatePostProps {
   accessToken: string;
-  clientSecret: string;
+  credentials: OauthCredentials;
+  requestUrl: string;
   setIsPosting: (isPosting: boolean) => void;
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
-  title: string;
   text: string;
+  title: string;
+  userId: string;
+  video: File | null;
   videoHSLUrl: string;
+  videoUrl: string;
 }
 async function createPost({
   accessToken,
-  clientSecret,
+  credentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl,
   setIsPosting,
   setPostError,
   setPostProgress,
   setPostStatus,
   text,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  title,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  userId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  video,
   videoHSLUrl,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 
@@ -121,7 +136,8 @@ async function createPost({
 
       postId = await createCast({
         accessToken,
-        clientSecret,
+        clientSecret:
+          accessToken === "hosted" ? "hosted" : credentials.clientSecret,
         text,
         videoHSLUrl,
       });
