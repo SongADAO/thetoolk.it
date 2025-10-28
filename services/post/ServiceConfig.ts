@@ -62,6 +62,11 @@ interface ServiceConfig {
     getAuthorizationUrlHosted: (
       credentials: OauthCredentials,
     ) => Promise<string>;
+    getAuthorizeUrl: (
+      clientId: string,
+      redirectUri: string,
+      codeChallenge: string,
+    ) => string;
     getCredentialsId: (credentials: OauthCredentials) => string;
     getRedirectUri: () => string;
     hasCompleteAuthorization: (expiration: OauthExpiration) => boolean;
