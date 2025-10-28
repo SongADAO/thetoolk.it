@@ -188,6 +188,7 @@ async function getAuthorizationUrlHosted(): Promise<string> {
 async function getAuthorizationUrl(
   clientId: string,
   redirectUri: string,
+  setCodeVerifier: (codeVerifier: string) => void,
 ): Promise<string> {
   console.log("Starting YouTube authorization...");
 
@@ -195,7 +196,7 @@ async function getAuthorizationUrl(
   const codeVerifier = generateCodeVerifier();
 
   // Store code verifier for later use
-  localStorage.setItem("thetoolkit_youtube_code_verifier", codeVerifier);
+  setCodeVerifier(codeVerifier);
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 

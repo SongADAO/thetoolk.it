@@ -219,7 +219,11 @@ export function InstagramProvider({ children, mode }: Readonly<Props>) {
     const authUrl =
       mode === "hosted"
         ? await getAuthorizationUrlHosted()
-        : await getAuthorizationUrl(credentials.clientId, getRedirectUri());
+        : await getAuthorizationUrl(
+            credentials.clientId,
+            getRedirectUri(),
+            setCodeVerifier,
+          );
 
     window.open(authUrl, "_blank");
   }
