@@ -129,21 +129,25 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 
-  async function exchangeCode(code: string, state: string) {
+  async function exchangeCode(code: string, iss: string, state: string) {
     try {
       const newAuthorization = await exchangeCodeForTokens(
         code,
+        iss,
         state,
         getRedirectUri(),
         codeVerifier,
         credentials,
+        window.location.origin,
         "self",
       );
       setAuthorization(newAuthorization.authorization);
       setExpiration(newAuthorization.expiration);
 
       const newAccounts = await getAccounts(
+        credentials,
         newAuthorization.authorization.accessToken,
+        window.location.origin,
         "self",
       );
       setAccounts(newAccounts);
@@ -179,6 +183,7 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
       authorization,
       credentials,
       expiration,
+      window.location.origin,
       "self",
     );
 
@@ -222,11 +227,12 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
   async function authorize() {
     const authUrl =
       mode === "hosted"
-        ? await getAuthorizationUrlHosted()
+        ? await getAuthorizationUrlHosted(credentials)
         : await getAuthorizationUrl(
-            credentials.clientId,
+            credentials,
             getRedirectUri(),
             setCodeVerifier,
+            window.location.origin,
           );
 
     window.open(authUrl, "_blank");
@@ -252,6 +258,7 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
 
         await exchangeCode(
           searchParams.get("code") ?? "",
+          searchParams.get("iss") ?? "",
           searchParams.get("state") ?? "",
         );
 
@@ -290,6 +297,8 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
 
       return await createPost({
         accessToken: mode === "hosted" ? "hosted" : accessToken,
+        credentials,
+        requestUrl: window.location.origin,
         setIsPosting,
         setPostError,
         setPostProgress,

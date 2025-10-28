@@ -152,7 +152,10 @@ function getAuthorizeUrl(
   return `https://www.facebook.com/v23.0/dialog/oauth?${params.toString()}`;
 }
 
-async function getAuthorizationUrlHosted(): Promise<string> {
+async function getAuthorizationUrlHosted(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  credentials: OauthCredentials,
+): Promise<string> {
   try {
     console.log("Starting OAuth flow for Facebook");
 
@@ -187,9 +190,11 @@ async function getAuthorizationUrlHosted(): Promise<string> {
 }
 
 async function getAuthorizationUrl(
-  clientId: string,
+  credentials: OauthCredentials,
   redirectUri: string,
   setCodeVerifier: (codeVerifier: string) => void,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
 ): Promise<string> {
   console.log("Starting Facebook authorization...");
 
@@ -201,16 +206,20 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  return getAuthorizeUrl(clientId, redirectUri, codeChallenge);
+  return getAuthorizeUrl(credentials.clientId, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  iss: string,
   state: string,
   redirectUri: string,
   codeVerifier: string,
   credentials: OauthCredentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
@@ -336,6 +345,8 @@ async function refreshAccessToken(
   credentials: OauthCredentials,
   expiration: OauthExpiration,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
@@ -442,7 +453,11 @@ async function getUserInfoFromPage(
 }
 
 async function getAccounts(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  credentials: OauthCredentials,
   token: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<ServiceAccount[]> {

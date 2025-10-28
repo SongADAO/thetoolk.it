@@ -186,8 +186,14 @@ async function exchangeCodeForTokens(
   code: string,
   iss: string,
   state: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  redirectUri: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  codeVerifier: string,
   credentials: BlueskyCredentials,
   requestUrl: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Processing OAuth callback...");
@@ -256,7 +262,11 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 async function refreshAccessToken(
   authorization: OauthAuthorization,
   credentials: BlueskyCredentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  expiration: OauthExpiration,
   requestUrl: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Refreshing access token...");
@@ -309,6 +319,8 @@ async function getAccounts(
   credentials: BlueskyCredentials,
   accessToken: string,
   requestUrl: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  mode = "hosted",
 ): Promise<ServiceAccount[]> {
   try {
     console.log("Getting user accounts...");

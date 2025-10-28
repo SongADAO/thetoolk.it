@@ -2,6 +2,7 @@
 
 import { ReactNode, use, useEffect, useMemo, useState } from "react";
 import { FaBluesky } from "react-icons/fa6";
+import { useLocalStorage } from "usehooks-ts";
 
 import type {
   ServiceFormField,
@@ -18,6 +19,7 @@ import {
   getAuthorizationUrl,
   getAuthorizationUrlHosted,
   getCredentialsId,
+  getRedirectUri,
   hasCompleteAuthorization,
   hasCompleteCredentials,
   needsRefreshTokenRenewal,
@@ -96,6 +98,12 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
     ServiceAccount[]
   >(`thetoolkit-${id}-accounts`, [], { initializeWithValue: true });
 
+  const [codeVerifier, setCodeVerifier] = useLocalStorage<string>(
+    `thetoolkit-${id}-code-verifier`,
+    "",
+    { initializeWithValue: true },
+  );
+
   const loading =
     authLoading ||
     isEnabledLoading ||
@@ -127,8 +135,11 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
         code,
         iss,
         state,
+        getRedirectUri(),
+        codeVerifier,
         credentials,
         window.location.origin,
+        "self",
       );
       setAuthorization(newAuthorization.authorization);
       setExpiration(newAuthorization.expiration);
@@ -137,6 +148,7 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
         credentials,
         newAuthorization.authorization.accessToken,
         window.location.origin,
+        "self",
       );
       setAccounts(newAccounts);
 
@@ -170,7 +182,9 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
     const newAuthorization = await refreshAccessToken(
       authorization,
       credentials,
+      expiration,
       window.location.origin,
+      "self",
     );
 
     setAuthorization(newAuthorization.authorization);
@@ -214,7 +228,13 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
     const authUrl =
       mode === "hosted"
         ? await getAuthorizationUrlHosted(credentials)
-        : await getAuthorizationUrl(credentials, window.location.origin);
+        : await getAuthorizationUrl(
+            credentials,
+            getRedirectUri(),
+            setCodeVerifier,
+            window.location.origin,
+          );
+
     window.open(authUrl, "_blank");
   }
 

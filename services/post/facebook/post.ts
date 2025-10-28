@@ -1,6 +1,7 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { getAccountAccessToken } from "@/services/post/facebook/auth";
+import type { OauthCredentials } from "@/services/post/types";
 
 // 4GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 4;
@@ -100,6 +101,8 @@ async function uploadVideo({
 // Create a post
 interface CreatePostProps {
   accessToken: string;
+  credentials: OauthCredentials;
+  requestUrl: string;
   setIsPosting: (isPosting: boolean) => void;
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
@@ -113,6 +116,10 @@ interface CreatePostProps {
 
 async function createPost({
   accessToken,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  credentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl,
   setIsPosting,
   setPostError,
   setPostProgress,
