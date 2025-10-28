@@ -8,7 +8,7 @@ import type { PinataCredentials } from "@/services/storage/types";
 const HOSTED_CREDENTIALS = {
   apiKey: String(process.env.PINATA_API_KEY ?? ""),
   apiSecret: String(process.env.PINATA_API_SECRET ?? ""),
-  gateway: String(process.env.PINATA_API_GATEWAY ?? ""),
+  gateway: String(process.env.NEXT_PUBLIC_PINATA_API_GATEWAY ?? ""),
   jwt: String(process.env.PINATA_API_JWT ?? ""),
 };
 
