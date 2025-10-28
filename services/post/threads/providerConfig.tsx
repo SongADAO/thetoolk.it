@@ -1,5 +1,3 @@
-/* eslint-disable sort-keys */
-
 import { FaThreads } from "react-icons/fa6";
 
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
@@ -33,6 +31,7 @@ import {
 } from "@/services/post/types";
 
 export const threadsProviderConfig: ServiceConfig = {
+  /* eslint-disable sort-keys */
   id: "threads",
   label: "Threads",
   brandColor: "threads",
@@ -52,9 +51,7 @@ export const threadsProviderConfig: ServiceConfig = {
     },
   ],
   Context: ThreadsContext,
-  defaultAuthorization: defaultOauthAuthorization,
-  defaultCredentials: defaultOauthCredentials,
-  defaultExpiration: defaultOauthExpiration,
+  /* eslint-enable sort-keys */
   authModule: {
     disconnectHosted,
     exchangeCodeForTokens,
@@ -71,10 +68,13 @@ export const threadsProviderConfig: ServiceConfig = {
     refreshAccessTokenHosted,
     shouldHandleAuthRedirect,
   },
+  defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
+  defaultExpiration: defaultOauthExpiration,
   postModule: {
-    createPost,
     VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION,
+    createPost,
   },
 };
