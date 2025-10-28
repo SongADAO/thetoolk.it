@@ -264,40 +264,55 @@ async function refreshAccessToken(
 ): Promise<OauthAuthorizationAndExpiration> {
   if (serviceId === "facebook") {
     console.log("Refreshing Facebook tokens");
-    return await refreshAccessTokenFacebook(authorization, expiration);
+    return await refreshAccessTokenFacebook(
+      authorization,
+      HOSTED_CREDENTIALS_FACEBOOK,
+      expiration,
+    );
   }
 
   if (serviceId === "instagram") {
     console.log("Refreshing Instagram tokens");
-    return await refreshAccessTokenInstagram(authorization);
+    return await refreshAccessTokenInstagram(
+      authorization,
+      HOSTED_CREDENTIALS_INSTAGRAM,
+      expiration,
+    );
   }
 
   if (serviceId === "threads") {
     console.log("Refreshing Threads tokens");
-    return await refreshAccessTokenThreads(authorization);
+    return await refreshAccessTokenThreads(
+      authorization,
+      HOSTED_CREDENTIALS_THREADS,
+      expiration,
+    );
   }
 
   if (serviceId === "tiktok") {
     console.log("Refreshing TikTok tokens");
     return await refreshAccessTokenTiktok(
-      HOSTED_CREDENTIALS_TIKTOK,
       authorization,
+      HOSTED_CREDENTIALS_TIKTOK,
+      expiration,
     );
   }
 
   if (serviceId === "twitter") {
     console.log("Refreshing Twitter tokens");
     return await refreshAccessTokenTwitter(
-      HOSTED_CREDENTIALS_TWITTER,
       authorization,
+      HOSTED_CREDENTIALS_TWITTER,
+      expiration,
     );
   }
 
   if (serviceId === "youtube") {
     console.log("Refreshing YouTube tokens");
     return await refreshAccessTokenYoutube(
-      HOSTED_CREDENTIALS_YOUTUBE,
       authorization,
+      HOSTED_CREDENTIALS_YOUTUBE,
+      expiration,
     );
   }
 
