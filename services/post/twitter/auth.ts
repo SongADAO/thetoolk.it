@@ -131,12 +131,12 @@ function formatExpiration(tokens: TwitterTokenResponse): OauthExpiration {
 }
 
 function getAuthorizeUrl(
-  clientId: string,
+  credentials: OauthCredentials,
   redirectUri: string,
   codeChallenge: string,
 ): string {
   const params = new URLSearchParams({
-    client_id: clientId,
+    client_id: credentials.clientId,
     code_challenge: codeChallenge,
     code_challenge_method: "S256",
     redirect_uri: redirectUri,
@@ -202,7 +202,7 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  return getAuthorizeUrl(credentials.clientId, redirectUri, codeChallenge);
+  return getAuthorizeUrl(credentials, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token

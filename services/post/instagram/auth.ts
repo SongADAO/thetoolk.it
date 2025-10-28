@@ -131,12 +131,12 @@ function formatExpiration(tokens: InstagramTokenResponse): OauthExpiration {
 }
 
 function getAuthorizeUrl(
-  clientId: string,
+  credentials: OauthCredentials,
   redirectUri: string,
   codeChallenge: string,
 ): string {
   const params = new URLSearchParams({
-    client_id: clientId,
+    client_id: credentials.clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: SCOPES.join(","),
@@ -200,7 +200,7 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  return getAuthorizeUrl(credentials.clientId, redirectUri, codeChallenge);
+  return getAuthorizeUrl(credentials, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token
