@@ -144,7 +144,10 @@ function getAuthorizeUrl(
   return `https://www.instagram.com/oauth/authorize?${params.toString()}`;
 }
 
-async function getAuthorizationUrlHosted(): Promise<string> {
+async function getAuthorizationUrlHosted(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  credentials: OauthCredentials,
+): Promise<string> {
   try {
     console.log("Starting OAuth flow for Instagram");
 
@@ -179,9 +182,11 @@ async function getAuthorizationUrlHosted(): Promise<string> {
 }
 
 async function getAuthorizationUrl(
-  clientId: string,
+  credentials: OauthCredentials,
   redirectUri: string,
   setCodeVerifier: (codeVerifier: string) => void,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
 ): Promise<string> {
   console.log("Starting Instagram authorization...");
 
@@ -193,16 +198,21 @@ async function getAuthorizationUrl(
 
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  return getAuthorizeUrl(clientId, redirectUri, codeChallenge);
+  return getAuthorizeUrl(credentials.clientId, redirectUri, codeChallenge);
 }
 
 // Exchange authorization code for access token
 async function exchangeCodeForTokens(
   code: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  iss: string,
   state: string,
   redirectUri: string,
   codeVerifier: string,
   credentials: OauthCredentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
@@ -329,6 +339,8 @@ async function refreshAccessToken(
   credentials: OauthCredentials,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   expiration: OauthExpiration,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {

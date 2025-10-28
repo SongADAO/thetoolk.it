@@ -1,5 +1,6 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
+import type { OauthCredentials } from "@/services/post/types";
 
 let DEBUG_STATUS_STEP = 0;
 
@@ -471,6 +472,8 @@ async function publishPost({
 // Create a post
 interface CreatePostProps {
   accessToken: string;
+  credentials: OauthCredentials;
+  requestUrl: string;
   setIsPosting: (isPosting: boolean) => void;
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
@@ -483,6 +486,10 @@ interface CreatePostProps {
 }
 async function createPost({
   accessToken,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  credentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requestUrl,
   setIsPosting,
   setPostError,
   setPostProgress,
