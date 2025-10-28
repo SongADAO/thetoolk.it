@@ -172,8 +172,9 @@ export function TwitterProvider({ children, mode }: Readonly<Props>) {
     }
 
     const newAuthorization = await refreshAccessToken(
-      credentials,
       authorization,
+      credentials,
+      expiration,
       "self",
     );
 

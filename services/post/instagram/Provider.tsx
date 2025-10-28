@@ -140,6 +140,7 @@ export function InstagramProvider({ children, mode }: Readonly<Props>) {
 
       const newAccounts = await getAccounts(
         newAuthorization.authorization.accessToken,
+        "self",
       );
       setAccounts(newAccounts);
 
@@ -170,7 +171,12 @@ export function InstagramProvider({ children, mode }: Readonly<Props>) {
       return authorization;
     }
 
-    const newAuthorization = await refreshAccessToken(authorization);
+    const newAuthorization = await refreshAccessToken(
+      authorization,
+      credentials,
+      expiration,
+      "self",
+    );
 
     setAuthorization(newAuthorization.authorization);
     setExpiration(newAuthorization.expiration);

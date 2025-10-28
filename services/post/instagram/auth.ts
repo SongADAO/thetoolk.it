@@ -324,6 +324,9 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 // Refresh access token using refresh token
 async function refreshAccessToken(
   authorization: OauthAuthorization,
+  credentials: OauthCredentials,
+  expiration: OauthExpiration,
+  mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
@@ -382,7 +385,10 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   };
 }
 
-async function getAccounts(token: string): Promise<ServiceAccount[]> {
+async function getAccounts(
+  token: string,
+  mode = "hosted",
+): Promise<ServiceAccount[]> {
   const accounts = [];
 
   const account = await getUserInfo(token);

@@ -199,6 +199,7 @@ async function exchangeCodeForTokens(
   codeVerifier: string,
   state: string,
   credentials: OauthCredentials,
+  mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
     throw new Error(
@@ -293,8 +294,10 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 
 // Refresh access token using refresh token
 async function refreshAccessToken(
-  credentials: OauthCredentials,
   authorization: OauthAuthorization,
+  credentials: OauthCredentials,
+  expiration: OauthExpiration,
+  mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
@@ -362,7 +365,10 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   };
 }
 
-async function getAccounts(token: string): Promise<ServiceAccount[]> {
+async function getAccounts(
+  token: string,
+  mode = "hosted",
+): Promise<ServiceAccount[]> {
   const accounts = [];
 
   const account = await getUserInfo(token);

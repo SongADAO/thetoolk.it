@@ -133,12 +133,14 @@ export function TiktokProvider({ children, mode }: Readonly<Props>) {
         codeVerifier,
         state,
         credentials,
+        "self",
       );
       setAuthorization(newAuthorization.authorization);
       setExpiration(newAuthorization.expiration);
 
       const newAccounts = await getAccounts(
         newAuthorization.authorization.accessToken,
+        "self",
       );
       setAccounts(newAccounts);
 
@@ -170,8 +172,10 @@ export function TiktokProvider({ children, mode }: Readonly<Props>) {
     }
 
     const newAuthorization = await refreshAccessToken(
-      credentials,
       authorization,
+      credentials,
+      expiration,
+      "self",
     );
 
     setAuthorization(newAuthorization.authorization);
