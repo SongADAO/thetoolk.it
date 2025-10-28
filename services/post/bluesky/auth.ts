@@ -158,6 +158,10 @@ async function getAuthorizationUrlHosted(
 
 async function getAuthorizationUrl(
   credentials: BlueskyCredentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  redirectUri: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setCodeVerifier: (codeVerifier: string) => void,
   requestUrl: string,
 ): Promise<string> {
   try {
