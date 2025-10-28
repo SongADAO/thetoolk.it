@@ -26,6 +26,8 @@ interface FacebookPage {
 const HOSTED_CREDENTIALS = {
   clientId: String(process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID ?? ""),
   clientSecret: String(process.env.FACEBOOK_CLIENT_SECRET ?? ""),
+  serviceUrl: "",
+  username: "",
 };
 
 // -----------------------------------------------------------------------------

@@ -25,6 +25,8 @@ interface TiktokTokenResponse {
 const HOSTED_CREDENTIALS = {
   clientId: String(process.env.NEXT_PUBLIC_TIKTOK_CLIENT_ID ?? ""),
   clientSecret: String(process.env.TIKTOK_CLIENT_SECRET ?? ""),
+  serviceUrl: "",
+  username: "",
 };
 
 // -----------------------------------------------------------------------------

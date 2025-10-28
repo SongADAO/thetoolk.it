@@ -20,6 +20,8 @@ interface ThreadsTokenResponse {
 const HOSTED_CREDENTIALS = {
   clientId: String(process.env.NEXT_PUBLIC_THREADS_CLIENT_ID ?? ""),
   clientSecret: String(process.env.THREADS_CLIENT_SECRET ?? ""),
+  serviceUrl: "",
+  username: "",
 };
 
 // -----------------------------------------------------------------------------

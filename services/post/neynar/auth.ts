@@ -8,6 +8,8 @@ import type {
 const HOSTED_CREDENTIALS = {
   clientId: String(process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID ?? ""),
   clientSecret: String(process.env.NEYNAR_CLIENT_SECRET ?? ""),
+  serviceUrl: "",
+  username: "",
 };
 
 // -----------------------------------------------------------------------------

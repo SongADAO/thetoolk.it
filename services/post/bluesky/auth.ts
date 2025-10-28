@@ -17,6 +17,7 @@ import type {
 
 const HOSTED_CREDENTIALS = {
   serviceUrl: String(process.env.NEXT_PUBLIC_BLUESKY_SERVICE_URL ?? ""),
+  username: "",
 };
 
 // -----------------------------------------------------------------------------
