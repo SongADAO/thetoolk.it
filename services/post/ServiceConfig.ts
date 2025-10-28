@@ -35,6 +35,7 @@ interface ServiceConfig {
 
   // Auth module functions
   authModule: {
+    disconnectHosted: () => Promise<OauthAuthorization>;
     exchangeCodeForTokens: (
       code: string,
       iss: string,
@@ -51,6 +52,7 @@ interface ServiceConfig {
       requestUrl: string,
       mode: "hosted" | "self",
     ) => Promise<ServiceAccount[]>;
+    getAuthorizationExpiresAt: (expiration: OauthExpiration) => string;
     getAuthorizationUrl: (
       credentials: OauthCredentials,
       redirectUri: string,
@@ -60,6 +62,7 @@ interface ServiceConfig {
     getAuthorizationUrlHosted: (
       credentials: OauthCredentials,
     ) => Promise<string>;
+    getCredentialsId: (credentials: OauthCredentials) => string;
     getRedirectUri: () => string;
     hasCompleteAuthorization: (expiration: OauthExpiration) => boolean;
     hasCompleteCredentials: (credentials: OauthCredentials) => boolean;
@@ -73,9 +76,6 @@ interface ServiceConfig {
     ) => Promise<OauthAuthorizationAndExpiration>;
     refreshAccessTokenHosted: () => Promise<OauthAuthorization>;
     shouldHandleAuthRedirect: (searchParams: URLSearchParams) => boolean;
-    disconnectHosted: () => Promise<OauthAuthorization>;
-    getCredentialsId: (credentials: OauthCredentials) => string;
-    getAuthorizationExpiresAt: (expiration: OauthExpiration) => string;
   };
 
   // Post module
