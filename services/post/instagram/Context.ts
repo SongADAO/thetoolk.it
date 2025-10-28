@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const InstagramContext = createContext<PostServiceContextType>(
+export const InstagramContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { InstagramContext };

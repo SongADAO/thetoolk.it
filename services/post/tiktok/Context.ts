@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const TiktokContext = createContext<PostServiceContextType>(
+export const TiktokContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { TiktokContext };

@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const YoutubeContext = createContext<PostServiceContextType>(
+export const YoutubeContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { YoutubeContext };

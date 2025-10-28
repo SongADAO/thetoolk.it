@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const NeynarContext = createContext<PostServiceContextType>(
+export const NeynarContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { NeynarContext };
