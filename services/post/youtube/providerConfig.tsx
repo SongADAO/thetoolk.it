@@ -7,7 +7,6 @@ import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
-  type OauthCredentials,
 } from "@/services/post/types";
 import {
   disconnectHosted,
@@ -33,7 +32,7 @@ import {
   VIDEO_MIN_DURATION,
 } from "@/services/post/youtube/post";
 
-export const youtubeProviderConfig: ServiceConfig<OauthCredentials> = {
+export const youtubeProviderConfig: ServiceConfig = {
   id: "youtube",
   label: "YouTube",
   brandColor: "youtube",

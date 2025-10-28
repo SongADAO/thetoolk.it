@@ -30,10 +30,9 @@ import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
-  type OauthCredentials,
 } from "@/services/post/types";
 
-export const facebookProviderConfig: ServiceConfig<OauthCredentials> = {
+export const facebookProviderConfig: ServiceConfig = {
   id: "facebook",
   label: "Facebook",
   brandColor: "facebook",

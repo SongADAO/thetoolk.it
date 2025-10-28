@@ -8,9 +8,9 @@ import {
   getOAuthClient,
 } from "@/services/post/bluesky/oauth-client-browser";
 import type {
-  BlueskyCredentials,
   OauthAuthorization,
   OauthAuthorizationAndExpiration,
+  OauthCredentials,
   OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
@@ -57,11 +57,11 @@ function needsRefreshTokenRenewal(expiration: OauthExpiration): boolean {
 
 // -----------------------------------------------------------------------------
 
-function getCredentialsId(credentials: BlueskyCredentials): string {
+function getCredentialsId(credentials: OauthCredentials): string {
   return objectIdHash(credentials);
 }
 
-function hasCompleteCredentials(credentials: BlueskyCredentials): boolean {
+function hasCompleteCredentials(credentials: OauthCredentials): boolean {
   return credentials.serviceUrl !== "" && credentials.username !== "";
 }
 
@@ -119,7 +119,7 @@ function formatExpiration(tokens: OAuthSession): OauthExpiration {
 }
 
 async function getAuthorizationUrlHosted(
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
 ): Promise<string> {
   try {
     console.log("Starting OAuth flow for:", credentials.username);
@@ -157,7 +157,7 @@ async function getAuthorizationUrlHosted(
 }
 
 async function getAuthorizationUrl(
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   redirectUri: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -194,7 +194,7 @@ async function exchangeCodeForTokens(
   redirectUri: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   codeVerifier: string,
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
@@ -265,7 +265,7 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 // Refresh access token (handled internally by the library)
 async function refreshAccessToken(
   authorization: OauthAuthorization,
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   expiration: OauthExpiration,
   requestUrl: string,
@@ -320,7 +320,7 @@ async function getAccountsFromAgent(
 
 // Get user accounts using the session
 async function getAccounts(
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
   accessToken: string,
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

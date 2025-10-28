@@ -4,6 +4,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import type {
   OauthAuthorization,
+  OauthCredentials,
   OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
@@ -11,9 +12,9 @@ import type {
 /**
  * Hook for managing service storage (credentials, authorization, expiration, accounts)
  */
-function useServiceStorage<TCredentials>(
+function useServiceStorage(
   serviceId: string,
-  defaultCredentials: TCredentials,
+  defaultCredentials: OauthCredentials,
   defaultAuthorization: OauthAuthorization,
   defaultExpiration: OauthExpiration,
 ) {
@@ -24,7 +25,7 @@ function useServiceStorage<TCredentials>(
   );
 
   const [credentials, setCredentials, isCredentialsLoading] =
-    useUserStorage<TCredentials>(
+    useUserStorage<OauthCredentials>(
       `thetoolkit-${serviceId}-credentials`,
       defaultCredentials,
       { initializeWithValue: true },
@@ -82,8 +83,8 @@ function useServiceStorage<TCredentials>(
  * Hook for managing OAuth flow
  */
 // eslint-disable-next-line max-params
-function useOAuthFlow<TCredentials>(
-  credentials: TCredentials,
+function useOAuthFlow(
+  credentials: OauthCredentials,
   authorization: OauthAuthorization,
   expiration: OauthExpiration,
   codeVerifier: string,

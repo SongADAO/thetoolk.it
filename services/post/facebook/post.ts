@@ -1,7 +1,7 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { getAccountAccessToken } from "@/services/post/facebook/auth";
-import type { OauthCredentials } from "@/services/post/types";
+import type { CreatePostProps } from "@/services/post/types";
 
 // 4GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 4;
@@ -96,23 +96,6 @@ async function uploadVideo({
   console.log("Video uploaded successfully:", result);
 
   return result.id;
-}
-
-// Create a post
-interface CreatePostProps {
-  accessToken: string;
-  credentials: OauthCredentials;
-  requestUrl: string;
-  setIsPosting: (isPosting: boolean) => void;
-  setPostError: (error: string) => void;
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
-  text: string;
-  title: string;
-  userId: string;
-  video: File | null;
-  videoHSLUrl: string;
-  videoUrl: string;
 }
 
 async function createPost({

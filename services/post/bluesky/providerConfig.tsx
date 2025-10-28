@@ -27,13 +27,12 @@ import {
 } from "@/services/post/bluesky/post";
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
 import {
-  type BlueskyCredentials,
-  defaultBlueskyCredentials,
   defaultOauthAuthorization,
+  defaultOauthCredentials,
   defaultOauthExpiration,
 } from "@/services/post/types";
 
-export const blueskyProviderConfig: ServiceConfig<BlueskyCredentials> = {
+export const blueskyProviderConfig: ServiceConfig = {
   id: "bluesky",
   label: "Bluesky",
   brandColor: "bluesky",
@@ -53,7 +52,7 @@ export const blueskyProviderConfig: ServiceConfig<BlueskyCredentials> = {
     },
   ],
   Context: BlueskyContext,
-  defaultCredentials: defaultBlueskyCredentials,
+  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
   defaultExpiration: defaultOauthExpiration,
   authModule: {

@@ -4,7 +4,7 @@ import { BlobRef } from "@atproto/lexicon";
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { createAgent } from "@/services/post/bluesky/oauth-client-browser";
-import type { BlueskyCredentials } from "@/services/post/types";
+import type { CreatePostProps, OauthCredentials } from "@/services/post/types";
 
 // 100MB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 100;
@@ -59,7 +59,7 @@ async function agentUploadBlob({
 
 interface UploadVideoBlobProps {
   accessToken: string;
-  credentials: BlueskyCredentials;
+  credentials: OauthCredentials;
   requestUrl: string;
   video: Blob;
   videoType: string;
@@ -134,7 +134,7 @@ async function uploadVideoBlob({
 interface CreateRecordProps {
   accessToken: string;
   blobRef: BlobRef;
-  credentials: BlueskyCredentials;
+  credentials: OauthCredentials;
   requestUrl: string;
   text: string;
   title: string;
@@ -201,22 +201,6 @@ async function createRecord({
       { cause: err },
     );
   }
-}
-
-interface CreatePostProps {
-  accessToken: string;
-  credentials: BlueskyCredentials;
-  requestUrl: string;
-  setIsPosting: (isPosting: boolean) => void;
-  setPostError: (error: string) => void;
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
-  text: string;
-  title: string;
-  userId: string;
-  video: File | null;
-  videoHSLUrl: string;
-  videoUrl: string;
 }
 
 async function createPost({

@@ -30,10 +30,9 @@ import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
-  type OauthCredentials,
 } from "@/services/post/types";
 
-export const twitterProviderConfig: ServiceConfig<OauthCredentials> = {
+export const twitterProviderConfig: ServiceConfig = {
   id: "twitter",
   label: "Twitter",
   brandColor: "twitter",

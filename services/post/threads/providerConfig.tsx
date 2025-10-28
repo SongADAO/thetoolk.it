@@ -30,10 +30,9 @@ import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
-  type OauthCredentials,
 } from "@/services/post/types";
 
-export const threadsProviderConfig: ServiceConfig<OauthCredentials> = {
+export const threadsProviderConfig: ServiceConfig = {
   id: "threads",
   label: "Threads",
   brandColor: "threads",
