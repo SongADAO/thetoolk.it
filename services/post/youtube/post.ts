@@ -240,7 +240,9 @@ interface CreatePostProps {
   setPostStatus: (status: string) => void;
   text: string;
   title: string;
+  userId: string;
   video: File | null;
+  videoUrl: string;
 }
 async function createPost({
   accessToken,
@@ -250,7 +252,9 @@ async function createPost({
   setPostStatus,
   text,
   title,
+  userId,
   video,
+  videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 

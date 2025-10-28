@@ -267,8 +267,10 @@ export function ThreadsProvider({ children, mode }: Readonly<Props>) {
   }
 
   async function post({
+    title,
     text,
     userId,
+    video,
     videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
@@ -285,7 +287,9 @@ export function ThreadsProvider({ children, mode }: Readonly<Props>) {
         setPostProgress,
         setPostStatus,
         text,
+        title,
         userId,
+        video,
         videoUrl,
       });
     } catch (err: unknown) {
