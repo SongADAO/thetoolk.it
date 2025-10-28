@@ -18,29 +18,29 @@ function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
   if (
     facebookProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)
   ) {
-    return "facebook";
+    return facebookProviderConfig.id;
   }
 
   if (
     instagramProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)
   ) {
-    return "instagram";
+    return instagramProviderConfig.id;
   }
 
   if (threadsProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return "threads";
+    return threadsProviderConfig.id;
   }
 
   if (tiktokProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return "tiktok";
+    return tiktokProviderConfig.id;
   }
 
   if (youtubeProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return "youtube";
+    return youtubeProviderConfig.id;
   }
 
   if (twitterProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
-    return "twitter";
+    return twitterProviderConfig.id;
   }
 
   throw new Error("Unsupported service");
