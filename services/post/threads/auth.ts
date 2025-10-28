@@ -200,6 +200,7 @@ async function exchangeCodeForTokens(
   codeVerifier: string,
   state: string,
   credentials: OauthCredentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
@@ -317,8 +318,11 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 // Refresh access token using refresh token
 async function refreshAccessToken(
   authorization: OauthAuthorization,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   credentials: OauthCredentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   expiration: OauthExpiration,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
@@ -380,6 +384,7 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
 
 async function getAccounts(
   token: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode = "hosted",
 ): Promise<ServiceAccount[]> {
   const accounts = [];

@@ -252,8 +252,10 @@ async function createPost({
   setPostProgress,
   setPostStatus,
   text,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
   userId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   video,
   videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
