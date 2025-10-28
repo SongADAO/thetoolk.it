@@ -1,86 +1,70 @@
 import { NextRequest } from "next/server";
 
-import {
-  exchangeCodeForTokens as exchangeCodeForTokensFacebook,
-  getAccounts as getAccountsFacebook,
-  getAuthorizeUrl as getFacebookAuthorizeUrl,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_FACEBOOK,
-  refreshAccessToken as refreshAccessTokenFacebook,
-  shouldHandleAuthRedirect as shouldHandleAuthRedirectFacebook,
-} from "@/services/post/facebook/auth";
-import {
-  exchangeCodeForTokens as exchangeCodeForTokensInstagram,
-  getAccounts as getAccountsInstagram,
-  getAuthorizeUrl as getInstagramAuthorizeUrl,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_INSTAGRAM,
-  refreshAccessToken as refreshAccessTokenInstagram,
-  shouldHandleAuthRedirect as shouldHandleAuthRedirectInstagram,
-} from "@/services/post/instagram/auth";
-import {
-  exchangeCodeForTokens as exchangeCodeForTokensThreads,
-  getAccounts as getAccountsThreads,
-  getAuthorizeUrl as getThreadsAuthorizeUrl,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_THREADS,
-  refreshAccessToken as refreshAccessTokenThreads,
-  shouldHandleAuthRedirect as shouldHandleAuthRedirectThreads,
-} from "@/services/post/threads/auth";
-import {
-  exchangeCodeForTokens as exchangeCodeForTokensTiktok,
-  getAccounts as getAccountsTiktok,
-  getAuthorizeUrl as getTiktokAuthorizeUrl,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TIKTOK,
-  refreshAccessToken as refreshAccessTokenTiktok,
-  shouldHandleAuthRedirect as shouldHandleAuthRedirectTiktok,
-} from "@/services/post/tiktok/auth";
-import {
-  exchangeCodeForTokens as exchangeCodeForTokensTwitter,
-  getAccounts as getAccountsTwitter,
-  getAuthorizeUrl as getTwitterAuthorizeUrl,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER,
-  refreshAccessToken as refreshAccessTokenTwitter,
-  shouldHandleAuthRedirect as shouldHandleAuthRedirectTwitter,
-} from "@/services/post/twitter/auth";
+import { facebookProviderConfig } from "@/services/post/facebook/providerConfig";
+import { instagramProviderConfig } from "@/services/post/instagram/providerConfig";
+import type { ServiceConfig } from "@/services/post/ServiceConfig";
+import { threadsProviderConfig } from "@/services/post/threads/providerConfig";
+import { tiktokProviderConfig } from "@/services/post/tiktok/providerConfig";
+import { HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_TWITTER } from "@/services/post/twitter/auth";
+import { twitterProviderConfig } from "@/services/post/twitter/providerConfig";
 import type {
   OauthAuthorization,
   OauthAuthorizationAndExpiration,
   OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
-import {
-  exchangeCodeForTokens as exchangeCodeForTokensYoutube,
-  getAccounts as getAccountsYoutube,
-  getAuthorizeUrl as getYoutubeAuthorizeUrl,
-  HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_YOUTUBE,
-  refreshAccessToken as refreshAccessTokenYoutube,
-  shouldHandleAuthRedirect as shouldHandleAuthRedirectYoutube,
-} from "@/services/post/youtube/auth";
+import { HOSTED_CREDENTIALS as HOSTED_CREDENTIALS_YOUTUBE } from "@/services/post/youtube/auth";
+import { youtubeProviderConfig } from "@/services/post/youtube/providerConfig";
 
 function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
-  if (shouldHandleAuthRedirectFacebook(searchParams)) {
+  if (
+    facebookProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)
+  ) {
     return "facebook";
   }
 
-  if (shouldHandleAuthRedirectInstagram(searchParams)) {
+  if (
+    instagramProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)
+  ) {
     return "instagram";
   }
 
-  if (shouldHandleAuthRedirectThreads(searchParams)) {
+  if (threadsProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
     return "threads";
   }
 
-  if (shouldHandleAuthRedirectTiktok(searchParams)) {
+  if (tiktokProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
     return "tiktok";
   }
 
-  if (shouldHandleAuthRedirectYoutube(searchParams)) {
+  if (youtubeProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
     return "youtube";
   }
 
-  if (shouldHandleAuthRedirectTwitter(searchParams)) {
+  if (twitterProviderConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
     return "twitter";
   }
 
   throw new Error("Unsupported service");
+}
+
+function getServiceConfig(serviceId: string): ServiceConfig {
+  switch (serviceId) {
+    case "facebook":
+      return facebookProviderConfig;
+    case "instagram":
+      return instagramProviderConfig;
+    case "threads":
+      return threadsProviderConfig;
+    case "tiktok":
+      return tiktokProviderConfig;
+    case "youtube":
+      return youtubeProviderConfig;
+    case "twitter":
+      return twitterProviderConfig;
+    default:
+      throw new Error("Unsupported service");
+  }
 }
 
 function getAuthorizeUrl(
@@ -88,61 +72,15 @@ function getAuthorizeUrl(
   redirectUri: string,
   codeChallenge: string,
 ): string {
-  if (serviceId === "facebook") {
-    console.log("Handling Facebook auth redirect");
-    return getFacebookAuthorizeUrl(
-      HOSTED_CREDENTIALS_FACEBOOK.clientId,
-      redirectUri,
-      codeChallenge,
-    );
-  }
+  console.log(`Get ${serviceId} auth URL`);
 
-  if (serviceId === "instagram") {
-    console.log("Handling Instagram auth redirect");
-    return getInstagramAuthorizeUrl(
-      HOSTED_CREDENTIALS_INSTAGRAM.clientId,
-      redirectUri,
-      codeChallenge,
-    );
-  }
+  const serviceConfig = getServiceConfig(serviceId);
 
-  if (serviceId === "threads") {
-    console.log("Handling Threads auth redirect");
-    return getThreadsAuthorizeUrl(
-      HOSTED_CREDENTIALS_THREADS.clientId,
-      redirectUri,
-      codeChallenge,
-    );
-  }
-
-  if (serviceId === "tiktok") {
-    console.log("Handling TikTok auth redirect");
-    return getTiktokAuthorizeUrl(
-      HOSTED_CREDENTIALS_TIKTOK.clientId,
-      redirectUri,
-      codeChallenge,
-    );
-  }
-
-  if (serviceId === "youtube") {
-    console.log("Get YouTube auth URL");
-    return getYoutubeAuthorizeUrl(
-      HOSTED_CREDENTIALS_YOUTUBE.clientId,
-      redirectUri,
-      codeChallenge,
-    );
-  }
-
-  if (serviceId === "twitter") {
-    console.log("Get Twitter auth URL");
-    return getTwitterAuthorizeUrl(
-      HOSTED_CREDENTIALS_TWITTER.clientId,
-      redirectUri,
-      codeChallenge,
-    );
-  }
-
-  throw new Error("Unsupported service");
+  return serviceConfig.authModule.getAuthorizeUrl(
+    HOSTED_CREDENTIALS_TWITTER.clientId,
+    redirectUri,
+    codeChallenge,
+  );
 }
 
 async function exchangeCodeForTokens(
@@ -151,158 +89,36 @@ async function exchangeCodeForTokens(
   redirectUri: string,
   codeVerifier: string,
 ): Promise<OauthAuthorizationAndExpiration> {
-  if (serviceId === "facebook") {
-    console.log("Handling Facebook auth redirect");
-    return await exchangeCodeForTokensFacebook(
-      searchParams.get("code") ?? "",
-      searchParams.get("iss") ?? "",
-      searchParams.get("state") ?? "",
-      redirectUri,
-      codeVerifier,
-      HOSTED_CREDENTIALS_FACEBOOK,
-      "",
-      "hosted",
-    );
-  }
+  console.log(`Handling ${serviceId} auth redirect`);
 
-  if (serviceId === "instagram") {
-    console.log("Handling Instagram auth redirect");
-    return await exchangeCodeForTokensInstagram(
-      searchParams.get("code") ?? "",
-      searchParams.get("iss") ?? "",
-      searchParams.get("state") ?? "",
-      redirectUri,
-      codeVerifier,
-      HOSTED_CREDENTIALS_INSTAGRAM,
-      "",
-      "hosted",
-    );
-  }
+  const serviceConfig = getServiceConfig(serviceId);
 
-  if (serviceId === "threads") {
-    console.log("Handling Threads auth redirect");
-    return await exchangeCodeForTokensThreads(
-      searchParams.get("code") ?? "",
-      searchParams.get("iss") ?? "",
-      searchParams.get("state") ?? "",
-      redirectUri,
-      codeVerifier,
-      HOSTED_CREDENTIALS_THREADS,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "tiktok") {
-    console.log("Handling TikTok auth redirect");
-    return await exchangeCodeForTokensTiktok(
-      searchParams.get("code") ?? "",
-      searchParams.get("iss") ?? "",
-      searchParams.get("state") ?? "",
-      redirectUri,
-      codeVerifier,
-      HOSTED_CREDENTIALS_TIKTOK,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "youtube") {
-    console.log("Handling YouTube auth redirect");
-    return await exchangeCodeForTokensYoutube(
-      searchParams.get("code") ?? "",
-      searchParams.get("iss") ?? "",
-      searchParams.get("state") ?? "",
-      redirectUri,
-      codeVerifier,
-      HOSTED_CREDENTIALS_YOUTUBE,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "twitter") {
-    console.log("Handling Twitter auth redirect");
-    return await exchangeCodeForTokensTwitter(
-      searchParams.get("code") ?? "",
-      searchParams.get("iss") ?? "",
-      searchParams.get("state") ?? "",
-      redirectUri,
-      codeVerifier,
-      HOSTED_CREDENTIALS_TWITTER,
-      "",
-      "hosted",
-    );
-  }
-
-  throw new Error("Unsupported service");
+  return await serviceConfig.authModule.exchangeCodeForTokens(
+    searchParams.get("code") ?? "",
+    searchParams.get("iss") ?? "",
+    searchParams.get("state") ?? "",
+    redirectUri,
+    codeVerifier,
+    HOSTED_CREDENTIALS_TWITTER,
+    "",
+    "hosted",
+  );
 }
 
 async function getAccounts(
   serviceId: string,
   authorization: OauthAuthorization,
 ): Promise<ServiceAccount[]> {
-  if (serviceId === "facebook") {
-    console.log("Getting Facebook accounts");
-    return await getAccountsFacebook(
-      HOSTED_CREDENTIALS_TWITTER,
-      authorization.accessToken,
-      "",
-      "hosted",
-    );
-  }
+  console.log(`Getting ${serviceId} accounts`);
 
-  if (serviceId === "instagram") {
-    console.log("Getting Instagram accounts");
-    return await getAccountsInstagram(
-      HOSTED_CREDENTIALS_INSTAGRAM,
-      authorization.accessToken,
-      "",
-      "hosted",
-    );
-  }
+  const serviceConfig = getServiceConfig(serviceId);
 
-  if (serviceId === "threads") {
-    console.log("Getting Threads accounts");
-    return await getAccountsThreads(
-      HOSTED_CREDENTIALS_THREADS,
-      authorization.accessToken,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "tiktok") {
-    console.log("Getting TikTok accounts");
-    return await getAccountsTiktok(
-      HOSTED_CREDENTIALS_TIKTOK,
-      authorization.accessToken,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "youtube") {
-    console.log("Getting YouTube accounts");
-    return await getAccountsYoutube(
-      HOSTED_CREDENTIALS_YOUTUBE,
-      authorization.accessToken,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "twitter") {
-    console.log("Getting Twitter accounts");
-    return await getAccountsTwitter(
-      HOSTED_CREDENTIALS_TWITTER,
-      authorization.accessToken,
-      "",
-      "hosted",
-    );
-  }
-
-  throw new Error("Unsupported service");
+  return await serviceConfig.authModule.getAccounts(
+    HOSTED_CREDENTIALS_TWITTER,
+    authorization.accessToken,
+    "",
+    "hosted",
+  );
 }
 
 async function refreshAccessToken(
@@ -310,73 +126,17 @@ async function refreshAccessToken(
   authorization: OauthAuthorization,
   expiration: OauthExpiration,
 ): Promise<OauthAuthorizationAndExpiration> {
-  if (serviceId === "facebook") {
-    console.log("Refreshing Facebook tokens");
-    return await refreshAccessTokenFacebook(
-      authorization,
-      HOSTED_CREDENTIALS_FACEBOOK,
-      expiration,
-      "",
-      "hosted",
-    );
-  }
+  console.log(`Refreshing ${serviceId} tokens`);
 
-  if (serviceId === "instagram") {
-    console.log("Refreshing Instagram tokens");
-    return await refreshAccessTokenInstagram(
-      authorization,
-      HOSTED_CREDENTIALS_INSTAGRAM,
-      expiration,
-      "",
-      "hosted",
-    );
-  }
+  const serviceConfig = getServiceConfig(serviceId);
 
-  if (serviceId === "threads") {
-    console.log("Refreshing Threads tokens");
-    return await refreshAccessTokenThreads(
-      authorization,
-      HOSTED_CREDENTIALS_THREADS,
-      expiration,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "tiktok") {
-    console.log("Refreshing TikTok tokens");
-    return await refreshAccessTokenTiktok(
-      authorization,
-      HOSTED_CREDENTIALS_TIKTOK,
-      expiration,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "twitter") {
-    console.log("Refreshing Twitter tokens");
-    return await refreshAccessTokenTwitter(
-      authorization,
-      HOSTED_CREDENTIALS_TWITTER,
-      expiration,
-      "",
-      "hosted",
-    );
-  }
-
-  if (serviceId === "youtube") {
-    console.log("Refreshing YouTube tokens");
-    return await refreshAccessTokenYoutube(
-      authorization,
-      HOSTED_CREDENTIALS_YOUTUBE,
-      expiration,
-      "",
-      "hosted",
-    );
-  }
-
-  throw new Error("Unsupported service");
+  return await serviceConfig.authModule.refreshAccessToken(
+    authorization,
+    HOSTED_CREDENTIALS_YOUTUBE,
+    expiration,
+    "",
+    "hosted",
+  );
 }
 
 function getBaseUrlFromRequest(request: NextRequest) {

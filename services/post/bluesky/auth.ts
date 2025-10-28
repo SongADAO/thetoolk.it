@@ -121,6 +121,17 @@ function formatExpiration(tokens: OAuthSession): OauthExpiration {
   };
 }
 
+function getAuthorizeUrl(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  clientId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  redirectUri: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  codeChallenge: string,
+): string {
+  return "";
+}
+
 async function getAuthorizationUrlHosted(
   credentials: OauthCredentials,
 ): Promise<string> {
@@ -353,6 +364,7 @@ export {
   getAuthorizationExpiresAt,
   getAuthorizationUrl,
   getAuthorizationUrlHosted,
+  getAuthorizeUrl,
   getCredentialsId,
   getRedirectUri,
   hasCompleteAuthorization,
