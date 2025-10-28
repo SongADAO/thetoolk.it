@@ -165,8 +165,8 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
     }
 
     const newAuthorization = await refreshAccessToken(
-      credentials,
       authorization,
+      credentials,
       window.location.origin,
     );
 
@@ -261,6 +261,7 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
   async function post({
     title,
     text,
+    userId,
     video,
     videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
@@ -281,6 +282,7 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
         setPostStatus,
         text,
         title,
+        userId,
         video,
         videoUrl,
       });
