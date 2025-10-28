@@ -52,8 +52,8 @@ export const youtubeProviderConfig: ServiceConfig = {
     },
   ],
   Context: YoutubeContext,
-  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
     disconnectHosted,

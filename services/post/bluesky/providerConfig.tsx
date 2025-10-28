@@ -52,8 +52,8 @@ export const blueskyProviderConfig: ServiceConfig = {
     },
   ],
   Context: BlueskyContext,
-  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
     disconnectHosted,

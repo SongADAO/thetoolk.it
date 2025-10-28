@@ -52,8 +52,8 @@ export const threadsProviderConfig: ServiceConfig = {
     },
   ],
   Context: ThreadsContext,
-  defaultCredentials: defaultOauthCredentials,
   defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   authModule: {
     disconnectHosted,
