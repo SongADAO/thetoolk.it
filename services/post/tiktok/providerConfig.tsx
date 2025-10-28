@@ -19,7 +19,6 @@ import {
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/tiktok/auth";
-import { TiktokContext } from "@/services/post/tiktok/Context";
 import {
   createPost,
   VIDEO_MAX_DURATION,
@@ -52,8 +51,6 @@ export const tiktokProviderConfig: ServiceConfig = {
       placeholder: "App Secret",
     },
   ],
-  Context: TiktokContext,
-  /* eslint-enable sort-keys */
   authModule: {
     HOSTED_CREDENTIALS,
     disconnectHosted,

@@ -19,7 +19,6 @@ import {
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/threads/auth";
-import { ThreadsContext } from "@/services/post/threads/Context";
 import {
   createPost,
   VIDEO_MAX_DURATION,
@@ -52,8 +51,6 @@ export const threadsProviderConfig: ServiceConfig = {
       placeholder: "App Secret",
     },
   ],
-  Context: ThreadsContext,
-  /* eslint-enable sort-keys */
   authModule: {
     HOSTED_CREDENTIALS,
     disconnectHosted,

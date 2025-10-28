@@ -18,7 +18,6 @@ import {
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/facebook/auth";
-import { FacebookContext } from "@/services/post/facebook/Context";
 import {
   createPost,
   VIDEO_MAX_DURATION,
@@ -52,8 +51,6 @@ export const facebookProviderConfig: ServiceConfig = {
       placeholder: "App Secret",
     },
   ],
-  Context: FacebookContext,
-  /* eslint-enable sort-keys */
   authModule: {
     HOSTED_CREDENTIALS,
     disconnectHosted,

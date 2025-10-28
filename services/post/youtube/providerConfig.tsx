@@ -24,7 +24,6 @@ import {
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/youtube/auth";
-import { YoutubeContext } from "@/services/post/youtube/Context";
 import {
   createPost,
   VIDEO_MAX_DURATION,
@@ -52,8 +51,6 @@ export const youtubeProviderConfig: ServiceConfig = {
       placeholder: "Client Secret",
     },
   ],
-  Context: YoutubeContext,
-  /* eslint-enable sort-keys */
   authModule: {
     HOSTED_CREDENTIALS,
     disconnectHosted,

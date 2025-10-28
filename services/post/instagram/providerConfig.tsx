@@ -18,7 +18,6 @@ import {
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
 } from "@/services/post/instagram/auth";
-import { InstagramContext } from "@/services/post/instagram/Context";
 import {
   createPost,
   VIDEO_MAX_DURATION,
@@ -52,8 +51,6 @@ export const instagramProviderConfig: ServiceConfig = {
       placeholder: "App Secret",
     },
   ],
-  Context: InstagramContext,
-  /* eslint-enable sort-keys */
   authModule: {
     HOSTED_CREDENTIALS,
     disconnectHosted,
