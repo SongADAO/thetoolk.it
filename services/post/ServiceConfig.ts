@@ -1,6 +1,7 @@
 import { Context, ReactNode } from "react";
 
 import type { ServiceFormField } from "@/components/service/ServiceForm";
+import type { PostServiceContextType } from "@/services/post/PostServiceContext";
 
 interface ServiceConfig<TCredentials> {
   // Identity
@@ -17,7 +18,7 @@ interface ServiceConfig<TCredentials> {
   fields: ServiceFormField[];
 
   // Context
-  Context: Context<any>;
+  Context: Context<PostServiceContextType>;
 
   // Default values
   defaultCredentials: TCredentials;
@@ -28,16 +29,16 @@ interface ServiceConfig<TCredentials> {
   authModule: {
     exchangeCodeForTokens: any;
     getAccounts: any;
-    getAuthorizationUrl?: any;
-    getAuthorizationUrlHosted?: any;
+    getAuthorizationUrl: any;
+    getAuthorizationUrlHosted: any;
     getRedirectUri: any;
     hasCompleteAuthorization: any;
     hasCompleteCredentials: any;
     needsRefreshTokenRenewal: any;
     refreshAccessToken: any;
-    refreshAccessTokenHosted?: any;
+    refreshAccessTokenHosted: any;
     shouldHandleAuthRedirect: any;
-    disconnectHosted?: any;
+    disconnectHosted: any;
     getCredentialsId: any;
     getAuthorizationExpiresAt: any;
   };
