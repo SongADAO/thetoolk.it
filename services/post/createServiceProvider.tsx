@@ -4,7 +4,7 @@ import type { ServiceFormState } from "@/components/service/ServiceForm";
 import { DEBUG_POST } from "@/config/constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
-import type { PostProps } from "@/services/post/types";
+import type { OauthCredentials, PostProps } from "@/services/post/types";
 import {
   useOAuthFlow,
   usePostingState,
@@ -12,7 +12,7 @@ import {
   useTokenRefresh,
 } from "@/services/post/useServiceHooks";
 
-interface ProviderProps {
+interface CreateServiceProviderProps {
   children: ReactNode;
   mode: string;
 }
@@ -20,10 +20,11 @@ interface ProviderProps {
 /**
  * Factory function that creates a service provider component
  */
-function createServiceProvider<TCredentials extends Record<string, any>>(
-  config: ServiceConfig<TCredentials>,
-) {
-  return function ServiceProvider({ children, mode }: Readonly<ProviderProps>) {
+function createServiceProvider(config: ServiceConfig) {
+  return function ServiceProvider({
+    children,
+    mode,
+  }: Readonly<CreateServiceProviderProps>) {
     const { loading: authLoading } = use(AuthContext);
 
     // State management
@@ -159,7 +160,7 @@ function createServiceProvider<TCredentials extends Record<string, any>>(
       return null;
     }
 
-    function isCredentialKey(key: string): key is keyof TCredentials {
+    function isCredentialKey(key: string): key is keyof OauthCredentials {
       return key in storage.credentials;
     }
 

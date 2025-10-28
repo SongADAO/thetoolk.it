@@ -2,8 +2,14 @@ import { Context, ReactNode } from "react";
 
 import type { ServiceFormField } from "@/components/service/ServiceForm";
 import type { PostServiceContextType } from "@/services/post/PostServiceContext";
+import type {
+  CreatePostProps,
+  OauthAuthorization,
+  OauthCredentials,
+  OauthExpiration,
+} from "@/services/post/types";
 
-interface ServiceConfig<TCredentials> {
+interface ServiceConfig {
   // Identity
   id: string;
   label: string;
@@ -21,9 +27,9 @@ interface ServiceConfig<TCredentials> {
   Context: Context<PostServiceContextType>;
 
   // Default values
-  defaultCredentials: TCredentials;
-  defaultAuthorization: any;
-  defaultExpiration: any;
+  defaultCredentials: OauthCredentials;
+  defaultAuthorization: OauthAuthorization;
+  defaultExpiration: OauthExpiration;
 
   // Auth module functions
   authModule: {
@@ -45,7 +51,7 @@ interface ServiceConfig<TCredentials> {
 
   // Post module
   postModule: {
-    createPost: any;
+    createPost: (props: CreatePostProps) => Promise<string | null>;
     VIDEO_MAX_DURATION: number;
     VIDEO_MAX_FILESIZE: number;
     VIDEO_MIN_DURATION: number;

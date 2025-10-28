@@ -26,16 +26,13 @@ interface OauthExpiration {
 interface OauthCredentials {
   clientId: string;
   clientSecret: string;
+  serviceUrl: string;
+  username: string;
 }
 
 interface OauthAuthorizationAndExpiration {
   authorization: OauthAuthorization;
   expiration: OauthExpiration;
-}
-
-interface BlueskyCredentials {
-  serviceUrl: string;
-  username: string;
 }
 
 const defaultOauthAuthorization: OauthAuthorization = {
@@ -51,16 +48,28 @@ const defaultOauthExpiration: OauthExpiration = {
 const defaultOauthCredentials: OauthCredentials = {
   clientId: "",
   clientSecret: "",
-};
-
-const defaultBlueskyCredentials: BlueskyCredentials = {
   serviceUrl: "",
   username: "",
 };
 
+interface CreatePostProps {
+  accessToken: string;
+  credentials: OauthCredentials;
+  requestUrl: string;
+  setIsPosting: (isPosting: boolean) => void;
+  setPostError: (error: string) => void;
+  setPostProgress: (progress: number) => void;
+  setPostStatus: (status: string) => void;
+  text: string;
+  title: string;
+  userId: string;
+  video: File | null;
+  videoHSLUrl: string;
+  videoUrl: string;
+}
+
 export {
-  type BlueskyCredentials,
-  defaultBlueskyCredentials,
+  type CreatePostProps,
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,

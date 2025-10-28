@@ -1,6 +1,6 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { OauthCredentials } from "@/services/post/types";
+import type { CreatePostProps } from "@/services/post/types";
 
 // 1GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 1;
@@ -85,22 +85,6 @@ async function uploadVideo({
   return result.data.publish_id;
 }
 
-// Create a post
-interface CreatePostProps {
-  accessToken: string;
-  credentials: OauthCredentials;
-  requestUrl: string;
-  setIsPosting: (isPosting: boolean) => void;
-  setPostError: (error: string) => void;
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
-  text: string;
-  title: string;
-  userId: string;
-  video: File | null;
-  videoHSLUrl: string;
-  videoUrl: string;
-}
 async function createPost({
   accessToken,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

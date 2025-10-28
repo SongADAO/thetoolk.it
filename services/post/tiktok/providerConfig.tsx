@@ -30,10 +30,9 @@ import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
-  type OauthCredentials,
 } from "@/services/post/types";
 
-export const tiktokProviderConfig: ServiceConfig<OauthCredentials> = {
+export const tiktokProviderConfig: ServiceConfig = {
   id: "tiktok",
   label: "Tiktok",
   brandColor: "tiktok",

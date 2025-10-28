@@ -30,10 +30,9 @@ import {
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
-  type OauthCredentials,
 } from "@/services/post/types";
 
-export const instagramProviderConfig: ServiceConfig<OauthCredentials> = {
+export const instagramProviderConfig: ServiceConfig = {
   id: "instagram",
   label: "Instagram",
   brandColor: "instagram",

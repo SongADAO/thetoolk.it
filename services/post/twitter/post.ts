@@ -1,6 +1,6 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { OauthCredentials } from "@/services/post/types";
+import type { CreatePostProps } from "@/services/post/types";
 
 let DEBUG_STATUS_STEP = 0;
 
@@ -469,22 +469,6 @@ async function publishPost({
   return result.data.id;
 }
 
-// Create a post
-interface CreatePostProps {
-  accessToken: string;
-  credentials: OauthCredentials;
-  requestUrl: string;
-  setIsPosting: (isPosting: boolean) => void;
-  setPostError: (error: string) => void;
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
-  text: string;
-  title: string;
-  userId: string;
-  video: File | null;
-  videoHSLUrl: string;
-  videoUrl: string;
-}
 async function createPost({
   accessToken,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

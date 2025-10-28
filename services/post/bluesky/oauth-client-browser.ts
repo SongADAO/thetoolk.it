@@ -4,7 +4,7 @@ import {
   type OAuthSession,
 } from "@atproto/oauth-client-browser";
 
-import type { BlueskyCredentials } from "@/services/post/types";
+import type { OauthCredentials } from "@/services/post/types";
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
 
@@ -33,7 +33,7 @@ function getClientMetadata(requestUrl: string) {
 
 // Initialize the OAuth client
 async function getOAuthClient(
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
   requestUrl: string,
 ): Promise<BrowserOAuthClient> {
   if (!oauthClient) {
@@ -53,7 +53,7 @@ async function getOAuthClient(
 
 // Check if we have a valid session
 // async function hasValidSession(
-//   credentials: BlueskyCredentials,
+//   credentials: OauthCredentials,
 //   accessToken: string,
 // ): Promise<boolean> {
 //   try {
@@ -69,7 +69,7 @@ async function getOAuthClient(
 
 // Get a valid session for making API calls
 async function getValidSession(
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
   accessToken: string,
   requestUrl: string,
 ): Promise<OAuthSession> {
@@ -80,7 +80,7 @@ async function getValidSession(
 
 // Create an Agent for making API calls
 async function createAgent(
-  credentials: BlueskyCredentials,
+  credentials: OauthCredentials,
   accessToken: string,
   requestUrl: string,
 ): Promise<Agent> {
