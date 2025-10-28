@@ -55,6 +55,19 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
 
   const hasHostedCredentials = false;
 
+  const fields: ServiceFormField[] = [
+    {
+      label: "Client ID",
+      name: "clientId",
+      placeholder: "Client ID",
+    },
+    {
+      label: "API Key",
+      name: "clientSecret",
+      placeholder: "API Key",
+    },
+  ];
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
@@ -161,29 +174,30 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     });
   }
 
-  const fields: ServiceFormField[] = [
-    {
-      label: "Client ID",
-      name: "clientId",
-      placeholder: "Client ID",
-    },
-    {
-      label: "API Key",
-      name: "clientSecret",
-      placeholder: "API Key",
-    },
-  ];
+  function isCredentialKey(key: string): key is keyof typeof credentials {
+    return key in credentials;
+  }
 
-  const initial: ServiceFormState = {
-    clientId: credentials.clientId,
-    clientSecret: credentials.clientSecret,
-  };
+  const initial: ServiceFormState = fields.reduce<ServiceFormState>(
+    (acc, field) => {
+      if (isCredentialKey(field.name)) {
+        acc[field.name] = credentials[field.name];
+      }
+      return acc;
+    },
+    {},
+  );
 
   function saveData(formState: ServiceFormState): ServiceFormState {
-    setCredentials({
-      clientId: formState.clientId,
-      clientSecret: formState.clientSecret,
+    const updatedCredentials = { ...credentials };
+
+    fields.forEach((field) => {
+      if (isCredentialKey(field.name)) {
+        updatedCredentials[field.name] = formState[field.name];
+      }
     });
+
+    setCredentials(updatedCredentials);
 
     return formState;
   }
