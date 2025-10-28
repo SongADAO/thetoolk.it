@@ -91,8 +91,10 @@ interface CreatePostProps {
   setPostError: (error: string) => void;
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
-  title: string;
   text: string;
+  title: string;
+  userId: string;
+  video: File | null;
   videoUrl: string;
 }
 async function createPost({
@@ -103,6 +105,8 @@ async function createPost({
   setPostStatus,
   text,
   title,
+  userId,
+  video,
   videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;

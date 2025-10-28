@@ -107,6 +107,7 @@ interface CreatePostProps {
   text: string;
   title: string;
   userId: string;
+  video: File | null;
   videoUrl: string;
 }
 
@@ -119,6 +120,7 @@ async function createPost({
   text,
   title,
   userId,
+  video,
   videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   let progressInterval = null;

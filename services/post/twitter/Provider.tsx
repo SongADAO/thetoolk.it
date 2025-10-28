@@ -267,8 +267,11 @@ export function TwitterProvider({ children, mode }: Readonly<Props>) {
   }
 
   async function post({
+    title,
     text,
+    userId,
     video,
+    videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
@@ -284,7 +287,10 @@ export function TwitterProvider({ children, mode }: Readonly<Props>) {
         setPostProgress,
         setPostStatus,
         text,
+        title,
+        userId,
         video,
+        videoUrl,
       });
     } catch (err: unknown) {
       console.error("Post error:", err);

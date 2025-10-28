@@ -133,12 +133,14 @@ export function YoutubeProvider({ children, mode }: Readonly<Props>) {
         codeVerifier,
         state,
         credentials,
+        "self",
       );
       setAuthorization(newAuthorization.authorization);
       setExpiration(newAuthorization.expiration);
 
       const newAccounts = await getAccounts(
         newAuthorization.authorization.accessToken,
+        "self",
       );
       setAccounts(newAccounts);
 
@@ -170,8 +172,10 @@ export function YoutubeProvider({ children, mode }: Readonly<Props>) {
     }
 
     const newAuthorization = await refreshAccessToken(
-      credentials,
       authorization,
+      credentials,
+      expiration,
+      "self",
     );
 
     setAuthorization(newAuthorization.authorization);
@@ -265,7 +269,9 @@ export function YoutubeProvider({ children, mode }: Readonly<Props>) {
   async function post({
     title,
     text,
+    userId,
     video,
+    videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
       return null;
@@ -282,7 +288,9 @@ export function YoutubeProvider({ children, mode }: Readonly<Props>) {
         setPostStatus,
         text,
         title,
+        userId,
         video,
+        videoUrl,
       });
     } catch (err: unknown) {
       console.error("Post error:", err);

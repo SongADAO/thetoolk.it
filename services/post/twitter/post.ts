@@ -476,7 +476,10 @@ interface CreatePostProps {
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
   text: string;
+  title: string;
+  userId: string;
   video: File | null;
+  videoUrl: string;
 }
 async function createPost({
   accessToken,
@@ -485,7 +488,10 @@ async function createPost({
   setPostProgress,
   setPostStatus,
   text,
+  title,
+  userId,
   video,
+  videoUrl,
 }: Readonly<CreatePostProps>): Promise<string | null> {
   try {
     if (DEBUG_POST) {

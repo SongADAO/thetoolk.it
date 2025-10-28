@@ -269,6 +269,8 @@ export function TiktokProvider({ children, mode }: Readonly<Props>) {
   async function post({
     title,
     text,
+    userId,
+    video,
     videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
@@ -286,6 +288,8 @@ export function TiktokProvider({ children, mode }: Readonly<Props>) {
         setPostStatus,
         text,
         title,
+        userId,
+        video,
         videoUrl,
       });
     } catch (err: unknown) {
