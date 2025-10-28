@@ -1,5 +1,3 @@
-/* eslint-disable sort-keys */
-
 import { FaInstagram } from "react-icons/fa6";
 
 import {
@@ -33,6 +31,7 @@ import {
 } from "@/services/post/types";
 
 export const instagramProviderConfig: ServiceConfig = {
+  /* eslint-disable sort-keys */
   id: "instagram",
   label: "Instagram",
   brandColor: "instagram",
@@ -52,9 +51,7 @@ export const instagramProviderConfig: ServiceConfig = {
     },
   ],
   Context: InstagramContext,
-  defaultAuthorization: defaultOauthAuthorization,
-  defaultCredentials: defaultOauthCredentials,
-  defaultExpiration: defaultOauthExpiration,
+  /* eslint-enable sort-keys */
   authModule: {
     disconnectHosted,
     exchangeCodeForTokens,
@@ -71,10 +68,13 @@ export const instagramProviderConfig: ServiceConfig = {
     refreshAccessTokenHosted,
     shouldHandleAuthRedirect,
   },
+  defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
+  defaultExpiration: defaultOauthExpiration,
   postModule: {
-    createPost,
     VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION,
+    createPost,
   },
 };

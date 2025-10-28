@@ -1,5 +1,3 @@
-/* eslint-disable sort-keys */
-
 import { FaFacebook } from "react-icons/fa6";
 
 import {
@@ -33,6 +31,7 @@ import {
 } from "@/services/post/types";
 
 export const facebookProviderConfig: ServiceConfig = {
+  /* eslint-disable sort-keys */
   id: "facebook",
   label: "Facebook",
   brandColor: "facebook",
@@ -52,9 +51,7 @@ export const facebookProviderConfig: ServiceConfig = {
     },
   ],
   Context: FacebookContext,
-  defaultAuthorization: defaultOauthAuthorization,
-  defaultCredentials: defaultOauthCredentials,
-  defaultExpiration: defaultOauthExpiration,
+  /* eslint-enable sort-keys */
   authModule: {
     disconnectHosted,
     exchangeCodeForTokens,
@@ -71,10 +68,13 @@ export const facebookProviderConfig: ServiceConfig = {
     refreshAccessTokenHosted,
     shouldHandleAuthRedirect,
   },
+  defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
+  defaultExpiration: defaultOauthExpiration,
   postModule: {
-    createPost,
     VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION,
+    createPost,
   },
 };

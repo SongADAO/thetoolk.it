@@ -1,5 +1,3 @@
-/* eslint-disable sort-keys */
-
 import { FaTiktok } from "react-icons/fa6";
 
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
@@ -33,6 +31,7 @@ import {
 } from "@/services/post/types";
 
 export const tiktokProviderConfig: ServiceConfig = {
+  /* eslint-disable sort-keys */
   id: "tiktok",
   label: "Tiktok",
   brandColor: "tiktok",
@@ -52,9 +51,7 @@ export const tiktokProviderConfig: ServiceConfig = {
     },
   ],
   Context: TiktokContext,
-  defaultAuthorization: defaultOauthAuthorization,
-  defaultCredentials: defaultOauthCredentials,
-  defaultExpiration: defaultOauthExpiration,
+  /* eslint-enable sort-keys */
   authModule: {
     disconnectHosted,
     exchangeCodeForTokens,
@@ -71,10 +68,13 @@ export const tiktokProviderConfig: ServiceConfig = {
     refreshAccessTokenHosted,
     shouldHandleAuthRedirect,
   },
+  defaultAuthorization: defaultOauthAuthorization,
+  defaultCredentials: defaultOauthCredentials,
+  defaultExpiration: defaultOauthExpiration,
   postModule: {
-    createPost,
     VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION,
+    createPost,
   },
 };
