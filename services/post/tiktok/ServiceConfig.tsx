@@ -1,11 +1,6 @@
-import { FaYoutube } from "react-icons/fa6";
+import { FaTiktok } from "react-icons/fa6";
 
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
-import {
-  defaultOauthAuthorization,
-  defaultOauthCredentials,
-  defaultOauthExpiration,
-} from "@/services/post/types";
 import {
   disconnectHosted,
   exchangeCodeForTokens,
@@ -23,32 +18,37 @@ import {
   refreshAccessToken,
   refreshAccessTokenHosted,
   shouldHandleAuthRedirect,
-} from "@/services/post/youtube/auth";
+} from "@/services/post/tiktok/auth";
 import {
   createPost,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
-} from "@/services/post/youtube/post";
+} from "@/services/post/tiktok/post";
+import {
+  defaultOauthAuthorization,
+  defaultOauthCredentials,
+  defaultOauthExpiration,
+} from "@/services/post/types";
 
-export const youtubeProviderConfig: ServiceConfig = {
+export const tiktokServiceConfig: ServiceConfig = {
   /* eslint-disable sort-keys */
-  id: "youtube",
-  label: "YouTube",
-  brandColor: "youtube",
-  icon: <FaYoutube className="size-6" />,
+  id: "tiktok",
+  label: "Tiktok",
+  brandColor: "tiktok",
+  icon: <FaTiktok className="size-6" />,
   hasAuthorizationStep: true,
   hasHostedCredentials: false,
   fields: [
     {
-      label: "Client ID",
+      label: "App ID",
       name: "clientId",
-      placeholder: "Client ID",
+      placeholder: "App ID",
     },
     {
-      label: "Client Secret",
+      label: "App Secret",
       name: "clientSecret",
-      placeholder: "Client Secret",
+      placeholder: "App Secret",
     },
   ],
   authModule: {

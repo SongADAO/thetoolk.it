@@ -2,9 +2,9 @@
 
 import { createServiceProvider } from "@/services/post/createServiceProvider";
 import { ThreadsContext } from "@/services/post/threads/Context";
-import { threadsProviderConfig } from "@/services/post/threads/providerConfig";
+import { threadsServiceConfig } from "@/services/post/threads/ServiceConfig";
 
 export const ThreadsProvider = createServiceProvider(
   ThreadsContext,
-  threadsProviderConfig,
+  threadsServiceConfig,
 );

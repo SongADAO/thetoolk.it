@@ -31,7 +31,7 @@ import {
   defaultOauthExpiration,
 } from "@/services/post/types";
 
-export const facebookProviderConfig: ServiceConfig = {
+export const facebookServiceConfig: ServiceConfig = {
   /* eslint-disable sort-keys */
   id: "facebook",
   label: "Facebook",

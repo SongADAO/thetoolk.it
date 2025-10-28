@@ -2,9 +2,9 @@
 
 import { createServiceProvider } from "@/services/post/createServiceProvider";
 import { InstagramContext } from "@/services/post/instagram/Context";
-import { instagramProviderConfig } from "@/services/post/instagram/providerConfig";
+import { instagramServiceConfig } from "@/services/post/instagram/ServiceConfig";
 
 export const InstagramProvider = createServiceProvider(
   InstagramContext,
-  instagramProviderConfig,
+  instagramServiceConfig,
 );
