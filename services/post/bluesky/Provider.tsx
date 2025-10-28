@@ -65,6 +65,19 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
 
   const hasHostedCredentials = true;
 
+  const fields: ServiceFormField[] = [
+    {
+      label: "Service URL",
+      name: "serviceUrl",
+      placeholder: "https://bsky.social",
+    },
+    {
+      label: "Username",
+      name: "username",
+      placeholder: "johndoe.bsky.social",
+    },
+  ];
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
@@ -322,29 +335,30 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
     return null;
   }
 
-  const fields: ServiceFormField[] = [
-    {
-      label: "Service URL",
-      name: "serviceUrl",
-      placeholder: "https://bsky.social",
-    },
-    {
-      label: "Username",
-      name: "username",
-      placeholder: "johndoe.bsky.social",
-    },
-  ];
+  function isCredentialKey(key: string): key is keyof typeof credentials {
+    return key in credentials;
+  }
 
-  const initial: ServiceFormState = {
-    serviceUrl: credentials.serviceUrl,
-    username: credentials.username,
-  };
+  const initial: ServiceFormState = fields.reduce<ServiceFormState>(
+    (acc, field) => {
+      if (isCredentialKey(field.name)) {
+        acc[field.name] = credentials[field.name];
+      }
+      return acc;
+    },
+    {},
+  );
 
   function saveData(formState: ServiceFormState): ServiceFormState {
-    setCredentials({
-      serviceUrl: formState.serviceUrl,
-      username: formState.username,
+    const updatedCredentials = { ...credentials };
+
+    fields.forEach((field) => {
+      if (isCredentialKey(field.name)) {
+        updatedCredentials[field.name] = formState[field.name];
+      }
     });
+
+    setCredentials(updatedCredentials);
 
     return formState;
   }

@@ -65,6 +65,19 @@ export function InstagramProvider({ children, mode }: Readonly<Props>) {
 
   const hasHostedCredentials = false;
 
+  const fields: ServiceFormField[] = [
+    {
+      label: "App ID",
+      name: "clientId",
+      placeholder: "App ID",
+    },
+    {
+      label: "App Secret",
+      name: "clientSecret",
+      placeholder: "App Secret",
+    },
+  ];
+
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
@@ -322,29 +335,30 @@ export function InstagramProvider({ children, mode }: Readonly<Props>) {
     return null;
   }
 
-  const fields: ServiceFormField[] = [
-    {
-      label: "App ID",
-      name: "clientId",
-      placeholder: "App ID",
-    },
-    {
-      label: "App Secret",
-      name: "clientSecret",
-      placeholder: "App Secret",
-    },
-  ];
+  function isCredentialKey(key: string): key is keyof typeof credentials {
+    return key in credentials;
+  }
 
-  const initial: ServiceFormState = {
-    clientId: credentials.clientId,
-    clientSecret: credentials.clientSecret,
-  };
+  const initial: ServiceFormState = fields.reduce<ServiceFormState>(
+    (acc, field) => {
+      if (isCredentialKey(field.name)) {
+        acc[field.name] = credentials[field.name];
+      }
+      return acc;
+    },
+    {},
+  );
 
   function saveData(formState: ServiceFormState): ServiceFormState {
-    setCredentials({
-      clientId: formState.clientId,
-      clientSecret: formState.clientSecret,
+    const updatedCredentials = { ...credentials };
+
+    fields.forEach((field) => {
+      if (isCredentialKey(field.name)) {
+        updatedCredentials[field.name] = formState[field.name];
+      }
     });
+
+    setCredentials(updatedCredentials);
 
     return formState;
   }

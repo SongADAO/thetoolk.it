@@ -47,6 +47,29 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
 
   const hasHostedCredentials = false;
 
+  const fields: ServiceFormField[] = [
+    {
+      label: "API Key",
+      name: "apiKey",
+      placeholder: "API Key",
+    },
+    {
+      label: "API Secret",
+      name: "apiSecret",
+      placeholder: "API Secret",
+    },
+    {
+      label: "JWT (secret access token)",
+      name: "jwt",
+      placeholder: "JWT (secret access token)",
+    },
+    {
+      label: "Gateway",
+      name: "gateway",
+      placeholder: "xxx-xxx-xxx-nnn.mypinata.cloud",
+    },
+  ];
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
@@ -95,43 +118,30 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
     // No auth needed.
   }
 
-  const fields: ServiceFormField[] = [
-    {
-      label: "API Key",
-      name: "apiKey",
-      placeholder: "API Key",
-    },
-    {
-      label: "API Secret",
-      name: "apiSecret",
-      placeholder: "API Secret",
-    },
-    {
-      label: "JWT (secret access token)",
-      name: "jwt",
-      placeholder: "JWT (secret access token)",
-    },
-    {
-      label: "Gateway",
-      name: "gateway",
-      placeholder: "xxx-xxx-xxx-nnn.mypinata.cloud",
-    },
-  ];
+  function isCredentialKey(key: string): key is keyof typeof credentials {
+    return key in credentials;
+  }
 
-  const initial: ServiceFormState = {
-    apiKey: credentials.apiKey,
-    apiSecret: credentials.apiSecret,
-    gateway: credentials.gateway,
-    jwt: credentials.jwt,
-  };
+  const initial: ServiceFormState = fields.reduce<ServiceFormState>(
+    (acc, field) => {
+      if (isCredentialKey(field.name)) {
+        acc[field.name] = credentials[field.name];
+      }
+      return acc;
+    },
+    {},
+  );
 
   function saveData(formState: ServiceFormState): ServiceFormState {
-    setCredentials({
-      apiKey: formState.apiKey,
-      apiSecret: formState.apiSecret,
-      gateway: formState.gateway,
-      jwt: formState.jwt,
+    const updatedCredentials = { ...credentials };
+
+    fields.forEach((field) => {
+      if (isCredentialKey(field.name)) {
+        updatedCredentials[field.name] = formState[field.name];
+      }
     });
+
+    setCredentials(updatedCredentials);
 
     return formState;
   }

@@ -46,6 +46,29 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
 
   const hasHostedCredentials = false;
 
+  const fields: ServiceFormField[] = [
+    {
+      label: "Access Key ID",
+      name: "accessKeyId",
+      placeholder: "Access Key ID",
+    },
+    {
+      label: "Secret Access Key",
+      name: "secretAccessKey",
+      placeholder: "Secret Access Key",
+    },
+    {
+      label: "Region",
+      name: "region",
+      placeholder: "us-east-1",
+    },
+    {
+      label: "Bucket",
+      name: "bucket",
+      placeholder: "thetoolkit",
+    },
+  ];
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState("");
 
@@ -98,43 +121,30 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
     // No auth needed.
   }
 
-  const fields: ServiceFormField[] = [
-    {
-      label: "Access Key ID",
-      name: "accessKeyId",
-      placeholder: "Access Key ID",
-    },
-    {
-      label: "Secret Access Key",
-      name: "secretAccessKey",
-      placeholder: "Secret Access Key",
-    },
-    {
-      label: "Region",
-      name: "region",
-      placeholder: "us-east-1",
-    },
-    {
-      label: "Bucket",
-      name: "bucket",
-      placeholder: "thetoolkit",
-    },
-  ];
+  function isCredentialKey(key: string): key is keyof typeof credentials {
+    return key in credentials;
+  }
 
-  const initial: ServiceFormState = {
-    accessKeyId: credentials.accessKeyId,
-    bucket: credentials.bucket,
-    region: credentials.region,
-    secretAccessKey: credentials.secretAccessKey,
-  };
+  const initial: ServiceFormState = fields.reduce<ServiceFormState>(
+    (acc, field) => {
+      if (isCredentialKey(field.name)) {
+        acc[field.name] = credentials[field.name];
+      }
+      return acc;
+    },
+    {},
+  );
 
   function saveData(formState: ServiceFormState): ServiceFormState {
-    setCredentials({
-      accessKeyId: formState.accessKeyId,
-      bucket: formState.bucket,
-      region: formState.region,
-      secretAccessKey: formState.secretAccessKey,
+    const updatedCredentials = { ...credentials };
+
+    fields.forEach((field) => {
+      if (isCredentialKey(field.name)) {
+        updatedCredentials[field.name] = formState[field.name];
+      }
     });
+
+    setCredentials(updatedCredentials);
 
     return formState;
   }
