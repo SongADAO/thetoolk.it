@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const BlueskyContext = createContext<PostServiceContextType>(
+export const BlueskyContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { BlueskyContext };

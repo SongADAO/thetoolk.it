@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const TwitterContext = createContext<PostServiceContextType>(
+export const TwitterContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { TwitterContext };

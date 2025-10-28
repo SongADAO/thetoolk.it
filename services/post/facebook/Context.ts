@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const FacebookContext = createContext<PostServiceContextType>(
+export const FacebookContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { FacebookContext };

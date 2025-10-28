@@ -5,8 +5,6 @@ import {
   type PostServiceContextType,
 } from "@/services/post/PostServiceContext";
 
-const ThreadsContext = createContext<PostServiceContextType>(
+export const ThreadsContext = createContext<PostServiceContextType>(
   postServiceContextDefault,
 );
-
-export { ThreadsContext };
