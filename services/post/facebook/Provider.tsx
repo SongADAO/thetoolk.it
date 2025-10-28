@@ -299,6 +299,7 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
     text,
     userId,
     video,
+    videoHSLUrl,
     videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
@@ -320,6 +321,7 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
         title,
         userId,
         video,
+        videoHSLUrl,
         videoUrl,
       });
     } catch (err: unknown) {
