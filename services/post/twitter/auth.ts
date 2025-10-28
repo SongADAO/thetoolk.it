@@ -305,6 +305,7 @@ async function disconnectHosted(): Promise<OauthAuthorization> {
 async function refreshAccessToken(
   credentials: OauthCredentials,
   authorization: OauthAuthorization,
+  expiration: OauthExpiration,
   mode = "hosted",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {

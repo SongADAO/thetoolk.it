@@ -133,12 +133,14 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
         codeVerifier,
         state,
         credentials,
+        "self",
       );
       setAuthorization(newAuthorization.authorization);
       setExpiration(newAuthorization.expiration);
 
       const newAccounts = await getAccounts(
         newAuthorization.authorization.accessToken,
+        "self",
       );
       setAccounts(newAccounts);
 
@@ -171,7 +173,9 @@ export function FacebookProvider({ children, mode }: Readonly<Props>) {
 
     const newAuthorization = await refreshAccessToken(
       authorization,
+      credentials,
       expiration,
+      "self",
     );
 
     setAuthorization(newAuthorization.authorization);
