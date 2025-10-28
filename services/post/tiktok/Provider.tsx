@@ -2,6 +2,7 @@
 
 import { ReactNode, use, useEffect, useMemo, useState } from "react";
 import { FaTiktok } from "react-icons/fa6";
+import { useLocalStorage } from "usehooks-ts";
 
 import type {
   ServiceFormField,
@@ -52,6 +53,8 @@ interface Props {
 export function TiktokProvider({ children, mode }: Readonly<Props>) {
   const { loading: authLoading } = use(AuthContext);
 
+  const id = "tiktok";
+
   const label = "Tiktok";
 
   const brandColor = "tiktok";
@@ -63,35 +66,41 @@ export function TiktokProvider({ children, mode }: Readonly<Props>) {
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
-    "thetoolkit-tiktok-enabled",
+    `thetoolkit-${id}-enabled`,
     false,
     { initializeWithValue: false },
   );
 
   const [credentials, setCredentials, isCredentialsLoading] =
     useUserStorage<OauthCredentials>(
-      "thetoolkit-tiktok-credentials",
+      `thetoolkit-${id}-credentials`,
       defaultOauthCredentials,
       { initializeWithValue: true },
     );
 
   const [authorization, setAuthorization, isAuthorizationLoading] =
     useUserStorage<OauthAuthorization>(
-      "thetoolkit-tiktok-authorization",
+      `thetoolkit-${id}-authorization`,
       defaultOauthAuthorization,
       { initializeWithValue: true },
     );
 
   const [expiration, setExpiration, isExpirationLoading] =
     useUserStorage<OauthExpiration>(
-      "thetoolkit-tiktok-expiration",
+      `thetoolkit-${id}-expiration`,
       defaultOauthExpiration,
       { initializeWithValue: false },
     );
 
   const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
     ServiceAccount[]
-  >("thetoolkit-tiktok-accounts", [], { initializeWithValue: true });
+  >(`thetoolkit-${id}-accounts`, [], { initializeWithValue: true });
+
+  const [codeVerifier, setCodeVerifier] = useLocalStorage<string>(
+    `thetoolkit-${id}-code-verifier`,
+    "",
+    { initializeWithValue: true },
+  );
 
   const loading =
     authLoading ||
@@ -118,9 +127,6 @@ export function TiktokProvider({ children, mode }: Readonly<Props>) {
 
   async function exchangeCode(code: string, state: string) {
     try {
-      const codeVerifier =
-        localStorage.getItem("thetoolkit_tiktok_code_verifier") ?? "";
-
       const newAuthorization = await exchangeCodeForTokens(
         code,
         getRedirectUri(),

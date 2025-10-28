@@ -43,6 +43,8 @@ interface Props {
 export function NeynarProvider({ children, mode }: Readonly<Props>) {
   const { loading: authLoading } = use(AuthContext);
 
+  const id = "neynar";
+
   const label = "Farcaster";
 
   const brandColor = "farcaster";
@@ -55,35 +57,35 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
-    "thetoolkit-neynar-enabled",
+    `thetoolkit-${id}-enabled`,
     false,
     { initializeWithValue: false },
   );
 
   const [credentials, setCredentials, isCredentialsLoading] =
     useUserStorage<OauthCredentials>(
-      "thetoolkit-neynar-credentials",
+      `thetoolkit-${id}-credentials`,
       defaultOauthCredentials,
       { initializeWithValue: true },
     );
 
   const [authorization, setAuthorization, isAuthorizationLoading] =
     useUserStorage<OauthAuthorization>(
-      "thetoolkit-neynar-authorization",
+      `thetoolkit-${id}-authorization`,
       defaultOauthAuthorization,
       { initializeWithValue: true },
     );
 
   const [expiration, setExpiration, isExpirationLoading] =
     useUserStorage<OauthExpiration>(
-      "thetoolkit-neynar-expiration",
+      `thetoolkit-${id}-expiration`,
       defaultOauthExpiration,
       { initializeWithValue: false },
     );
 
   const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
     ServiceAccount[]
-  >("thetoolkit-neynar-accounts", [], { initializeWithValue: true });
+  >(`thetoolkit-${id}-accounts`, [], { initializeWithValue: true });
 
   const loading =
     authLoading ||
