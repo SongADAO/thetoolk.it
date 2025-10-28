@@ -4,11 +4,11 @@ import { useLocalStorage } from "usehooks-ts";
 import { useUserStorage } from "@/hooks/useUserStorage";
 import type {
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
   ServiceAccount,
 } from "@/services/post/types";
-
 /**
  * Hook for managing service storage (credentials, authorization, expiration, accounts)
  */
@@ -90,14 +90,41 @@ function useOAuthFlow(
   codeVerifier: string,
   mode: string,
   authModule: {
-    exchangeCodeForTokens: any;
-    getAccounts: any;
-    getAuthorizationUrl: any;
-    getAuthorizationUrlHosted: any;
-    getRedirectUri: any;
-    refreshAccessToken: any;
-    refreshAccessTokenHosted: any;
-    disconnectHosted: any;
+    exchangeCodeForTokens: (
+      code: string,
+      iss: string,
+      state: string,
+      redirectUri: string,
+      codeVerifier: string,
+      credentials: OauthCredentials,
+      requestUrl: string,
+      mode: "hosted" | "self",
+    ) => Promise<OauthAuthorizationAndExpiration>;
+    getAccounts: (
+      credentials: OauthCredentials,
+      token: string,
+      requestUrl: string,
+      mode: "hosted" | "self",
+    ) => Promise<ServiceAccount[]>;
+    getAuthorizationUrl: (
+      credentials: OauthCredentials,
+      redirectUri: string,
+      setCodeVerifier: (codeVerifier: string) => void,
+      requestUrl: string,
+    ) => Promise<string>;
+    getAuthorizationUrlHosted: (
+      credentials: OauthCredentials,
+    ) => Promise<string>;
+    getRedirectUri: () => string;
+    refreshAccessToken: (
+      authorization: OauthAuthorization,
+      credentials: OauthCredentials,
+      expiration: OauthExpiration,
+      requestUrl: string,
+      mode: "hosted" | "self",
+    ) => Promise<OauthAuthorizationAndExpiration>;
+    refreshAccessTokenHosted: () => Promise<OauthAuthorization>;
+    disconnectHosted: () => Promise<OauthAuthorization>;
   },
   defaultAuthorization: OauthAuthorization,
   defaultExpiration: OauthExpiration,
@@ -150,7 +177,7 @@ function useOAuthFlow(
 
   async function refreshTokens(): Promise<OauthAuthorization> {
     if (mode === "hosted") {
-      await authModule.refreshAccessTokenHosted?.();
+      await authModule.refreshAccessTokenHosted();
 
       console.log("Access token refreshed successfully");
 
@@ -178,8 +205,8 @@ function useOAuthFlow(
   async function authorize(setCodeVerifier: (verifier: string) => void) {
     const authUrl =
       mode === "hosted"
-        ? await authModule.getAuthorizationUrlHosted?.(credentials)
-        : await authModule.getAuthorizationUrl?.(
+        ? await authModule.getAuthorizationUrlHosted(credentials)
+        : await authModule.getAuthorizationUrl(
             credentials,
             authModule.getRedirectUri(),
             setCodeVerifier,
@@ -193,7 +220,7 @@ function useOAuthFlow(
     setExpiration(defaultExpiration);
     setAccounts([]);
     if (mode === "hosted") {
-      await authModule.disconnectHosted?.();
+      await authModule.disconnectHosted();
     } else {
       setAuthorization(defaultAuthorization);
     }

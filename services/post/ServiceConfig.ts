@@ -5,8 +5,10 @@ import type { PostServiceContextType } from "@/services/post/PostServiceContext"
 import type {
   CreatePostProps,
   OauthAuthorization,
+  OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
+  ServiceAccount,
 } from "@/services/post/types";
 
 interface ServiceConfig {
@@ -33,20 +35,47 @@ interface ServiceConfig {
 
   // Auth module functions
   authModule: {
-    exchangeCodeForTokens: any;
-    getAccounts: any;
-    getAuthorizationUrl: any;
-    getAuthorizationUrlHosted: any;
-    getRedirectUri: any;
-    hasCompleteAuthorization: any;
-    hasCompleteCredentials: any;
-    needsRefreshTokenRenewal: any;
-    refreshAccessToken: any;
-    refreshAccessTokenHosted: any;
-    shouldHandleAuthRedirect: any;
-    disconnectHosted: any;
-    getCredentialsId: any;
-    getAuthorizationExpiresAt: any;
+    exchangeCodeForTokens: (
+      code: string,
+      iss: string,
+      state: string,
+      redirectUri: string,
+      codeVerifier: string,
+      credentials: OauthCredentials,
+      requestUrl: string,
+      mode: "hosted" | "self",
+    ) => Promise<OauthAuthorizationAndExpiration>;
+    getAccounts: (
+      credentials: OauthCredentials,
+      token: string,
+      requestUrl: string,
+      mode: "hosted" | "self",
+    ) => Promise<ServiceAccount[]>;
+    getAuthorizationUrl: (
+      credentials: OauthCredentials,
+      redirectUri: string,
+      setCodeVerifier: (codeVerifier: string) => void,
+      requestUrl: string,
+    ) => Promise<string>;
+    getAuthorizationUrlHosted: (
+      credentials: OauthCredentials,
+    ) => Promise<string>;
+    getRedirectUri: () => string;
+    hasCompleteAuthorization: (expiration: OauthExpiration) => boolean;
+    hasCompleteCredentials: (credentials: OauthCredentials) => boolean;
+    needsRefreshTokenRenewal: (expiration: OauthExpiration) => boolean;
+    refreshAccessToken: (
+      authorization: OauthAuthorization,
+      credentials: OauthCredentials,
+      expiration: OauthExpiration,
+      requestUrl: string,
+      mode: "hosted" | "self",
+    ) => Promise<OauthAuthorizationAndExpiration>;
+    refreshAccessTokenHosted: () => Promise<OauthAuthorization>;
+    shouldHandleAuthRedirect: (searchParams: URLSearchParams) => boolean;
+    disconnectHosted: () => Promise<OauthAuthorization>;
+    getCredentialsId: (credentials: OauthCredentials) => string;
+    getAuthorizationExpiresAt: (expiration: OauthExpiration) => string;
   };
 
   // Post module
