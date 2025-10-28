@@ -314,13 +314,14 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
+
       if (facebook.isEnabled) {
         setVideoTrimStatus("Trimming facebook video if needed...");
         videos.facebook = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
-                label: "facebook",
+                label: facebook.id,
                 maxDuration: facebook.VIDEO_MAX_DURATION,
                 maxFilesize: facebook.VIDEO_MAX_FILESIZE,
                 minDuration: facebook.VIDEO_MIN_DURATION,
@@ -331,13 +332,14 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
+
       if (instagram.isEnabled) {
         setVideoTrimStatus("Trimming instagram video if needed...");
         videos.instagram = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
-                label: "instagram",
+                label: instagram.id,
                 maxDuration: instagram.VIDEO_MAX_DURATION,
                 maxFilesize: instagram.VIDEO_MAX_FILESIZE,
                 minDuration: instagram.VIDEO_MIN_DURATION,
@@ -348,13 +350,14 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
+
       if (neynar.isEnabled) {
         setVideoTrimStatus("Trimming farcaster video if needed...");
         videos.neynar = {
           // video: DEBUG_MEDIA
           //   ? videos.full.video
           //   : await trimVideo({
-          //       label: "neynar",
+          //       label: neynar.id,
           //       maxDuration: neynar.VIDEO_MAX_DURATION,
           //       maxFilesize: neynar.VIDEO_MAX_FILESIZE,
           //       minDuration: neynar.VIDEO_MIN_DURATION,
@@ -366,13 +369,14 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
+
       if (threads.isEnabled) {
         setVideoTrimStatus("Trimming threads video if needed...");
         videos.threads = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
-                label: "threads",
+                label: threads.id,
                 maxDuration: threads.VIDEO_MAX_DURATION,
                 maxFilesize: threads.VIDEO_MAX_FILESIZE,
                 minDuration: threads.VIDEO_MIN_DURATION,
@@ -383,13 +387,14 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
+
       if (tiktok.isEnabled) {
         setVideoTrimStatus("Trimming tiktok video if needed...");
         videos.tiktok = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
-                label: "tiktok",
+                label: tiktok.id,
                 maxDuration: tiktok.VIDEO_MAX_DURATION,
                 maxFilesize: tiktok.VIDEO_MAX_FILESIZE,
                 minDuration: tiktok.VIDEO_MIN_DURATION,
@@ -400,13 +405,14 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
+
       if (twitter.isEnabled) {
         setVideoTrimStatus("Trimming twitter video if needed...");
         videos.twitter = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
-                label: "twitter",
+                label: twitter.id,
                 maxDuration: twitter.VIDEO_MAX_DURATION,
                 maxFilesize: twitter.VIDEO_MAX_FILESIZE,
                 minDuration: twitter.VIDEO_MIN_DURATION,
@@ -417,13 +423,14 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl: "",
         };
       }
+
       if (youtube.isEnabled) {
         setVideoTrimStatus("Trimming youtube video if needed...");
         videos.youtube = {
           video: DEBUG_MEDIA
             ? videos.full.video
             : await trimVideo({
-                label: "youtube",
+                label: youtube.id,
                 maxDuration: youtube.VIDEO_MAX_DURATION,
                 maxFilesize: youtube.VIDEO_MAX_FILESIZE,
                 minDuration: youtube.VIDEO_MIN_DURATION,

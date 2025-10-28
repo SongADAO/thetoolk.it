@@ -23,6 +23,7 @@ interface PostServiceContextType {
   hasCompletedAuth: boolean;
   hasHostedCredentials: boolean;
   icon: ReactNode;
+  id: string;
   initial: ServiceFormState;
   isAuthorized: boolean;
   isComplete: boolean;
@@ -60,6 +61,7 @@ const postServiceContextDefault = {
   hasCompletedAuth: false,
   hasHostedCredentials: false,
   icon: null,
+  id: "",
   initial: {},
   isAuthorized: false,
   isComplete: false,
