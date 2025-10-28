@@ -51,6 +51,8 @@ interface Props {
 export function BlueskyProvider({ children, mode }: Readonly<Props>) {
   const { loading: authLoading } = use(AuthContext);
 
+  const id = "bluesky";
+
   const label = "Bluesky";
 
   const brandColor = "bluesky";
@@ -62,35 +64,35 @@ export function BlueskyProvider({ children, mode }: Readonly<Props>) {
   const [error, setError] = useState("");
 
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
-    "thetoolkit-bluesky-enabled",
+    `thetoolkit-${id}-enabled`,
     false,
     { initializeWithValue: false },
   );
 
   const [credentials, setCredentials, isCredentialsLoading] =
     useUserStorage<BlueskyCredentials>(
-      "thetoolkit-bluesky-credentials",
+      `thetoolkit-${id}-credentials`,
       defaultBlueskyCredentials,
-      { initializeWithValue: false },
+      { initializeWithValue: true },
     );
 
   const [authorization, setAuthorization, isAuthorizationLoading] =
     useUserStorage<OauthAuthorization>(
-      "thetoolkit-bluesky-authorization",
+      `thetoolkit-${id}-authorization`,
       defaultOauthAuthorization,
-      { initializeWithValue: false },
+      { initializeWithValue: true },
     );
 
   const [expiration, setExpiration, isExpirationLoading] =
     useUserStorage<OauthExpiration>(
-      "thetoolkit-bluesky-expiration",
+      `thetoolkit-${id}-expiration`,
       defaultOauthExpiration,
       { initializeWithValue: false },
     );
 
   const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
     ServiceAccount[]
-  >("thetoolkit-bluesky-accounts", [], { initializeWithValue: false });
+  >(`thetoolkit-${id}-accounts`, [], { initializeWithValue: true });
 
   const loading =
     authLoading ||
