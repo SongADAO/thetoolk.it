@@ -1,6 +1,6 @@
 "use client";
 
 import { createServiceProvider } from "@/services/post/createServiceProvider";
-import { providerConfig } from "@/services/post/facebook/providerConfig";
+import { facebookProviderConfig } from "@/services/post/facebook/providerConfig";
 
-export const FacebookProvider = createServiceProvider(providerConfig);
+export const FacebookProvider = createServiceProvider(facebookProviderConfig);

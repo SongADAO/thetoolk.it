@@ -33,7 +33,7 @@ import {
   type OauthCredentials,
 } from "@/services/post/types";
 
-export const twitterConfig: ServiceConfig<OauthCredentials> = {
+export const twitterProviderConfig: ServiceConfig<OauthCredentials> = {
   id: "twitter",
   label: "Twitter",
   brandColor: "twitter",

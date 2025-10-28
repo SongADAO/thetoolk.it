@@ -1,6 +1,6 @@
 "use client";
 
 import { createServiceProvider } from "@/services/post/createServiceProvider";
-import { providerConfig } from "@/services/post/instagram/providerConfig";
+import { youtubeProviderConfig } from "@/services/post/youtube/providerConfig";
 
-export const YoutubeProvider = createServiceProvider(providerConfig);
+export const YoutubeProvider = createServiceProvider(youtubeProviderConfig);

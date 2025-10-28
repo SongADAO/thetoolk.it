@@ -33,7 +33,7 @@ import {
   defaultOauthExpiration,
 } from "@/services/post/types";
 
-const providerConfig: ServiceConfig<BlueskyCredentials> = {
+export const blueskyProviderConfig: ServiceConfig<BlueskyCredentials> = {
   id: "bluesky",
   label: "Bluesky",
   brandColor: "bluesky",
@@ -79,5 +79,3 @@ const providerConfig: ServiceConfig<BlueskyCredentials> = {
     VIDEO_MIN_DURATION,
   },
 };
-
-export { providerConfig };

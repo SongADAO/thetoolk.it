@@ -1,6 +1,6 @@
 "use client";
 
 import { createServiceProvider } from "@/services/post/createServiceProvider";
-import { providerConfig } from "@/services/post/instagram/providerConfig";
+import { tiktokProviderConfig } from "@/services/post/tiktok/providerConfig";
 
-export const TiktokProvider = createServiceProvider(providerConfig);
+export const TiktokProvider = createServiceProvider(tiktokProviderConfig);
