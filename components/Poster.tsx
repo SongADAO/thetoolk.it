@@ -14,12 +14,15 @@ interface PosterProps {
 }
 
 function Poster({ mode }: Readonly<PosterProps>) {
+  const showInstructions = mode === "self";
+  const showStorageSettings = mode === "self";
+
   return (
     <div>
       <div className="px-2 pt-2 lg:hidden">
         <div className="flex items-end justify-end rounded bg-gray-200 px-4 py-2">
           <div className="flex gap-2">
-            {mode === "self" ? (
+            {showInstructions ? (
               <Link
                 className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
                 href="/instructions"
@@ -29,7 +32,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 <FaCircleQuestion />
               </Link>
             ) : null}
-            {mode === "self" ? (
+            {showStorageSettings ? (
               <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
                 <StorageSettings />
               </ServiceSettingsMenu>
@@ -55,7 +58,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Storage Services</h3>
                 <div className="hidden gap-2 lg:flex 2xl:hidden">
-                  {mode === "self" ? (
+                  {showInstructions ? (
                     <Link
                       className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
                       href="/instructions"
@@ -65,12 +68,14 @@ function Poster({ mode }: Readonly<PosterProps>) {
                       <FaCircleQuestion />
                     </Link>
                   ) : null}
-                  <ServiceSettingsMenu
-                    icon={<FaServer />}
-                    label="Storage Settings"
-                  >
-                    <StorageSettings />
-                  </ServiceSettingsMenu>
+                  {showStorageSettings ? (
+                    <ServiceSettingsMenu
+                      icon={<FaServer />}
+                      label="Storage Settings"
+                    >
+                      <StorageSettings />
+                    </ServiceSettingsMenu>
+                  ) : null}
                 </div>
               </div>
               <StoreProgress />
@@ -79,7 +84,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Posting Services</h3>
                 <div className="hidden gap-2 lg:flex 2xl:hidden">
-                  {mode === "self" ? (
+                  {showInstructions ? (
                     <Link
                       className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
                       href="/instructions"
@@ -104,10 +109,28 @@ function Poster({ mode }: Readonly<PosterProps>) {
 
         <div className="hidden 2xl:block">
           <div className="flex flex-col gap-2">
-            {mode === "self" ? (
+            {showStorageSettings ? (
               <section className="rounded bg-gray-100 p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <h3>Storage Service Settings</h3>
+                  {showInstructions ? (
+                    <Link
+                      className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 2xl:flex"
+                      href="/instructions"
+                      target="_blank"
+                      title="Instructions"
+                    >
+                      <FaCircleQuestion />
+                    </Link>
+                  ) : null}
+                </div>
+                <StorageSettings />
+              </section>
+            ) : null}
+            <section className="rounded bg-gray-100 p-4">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <h3>Posting Service Settings</h3>
+                {showInstructions ? (
                   <Link
                     className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 2xl:flex"
                     href="/instructions"
@@ -116,21 +139,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   >
                     <FaCircleQuestion />
                   </Link>
-                </div>
-                <StorageSettings />
-              </section>
-            ) : null}
-            <section className="rounded bg-gray-100 p-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h3>Posting Service Settings</h3>
-                <Link
-                  className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 2xl:flex"
-                  href="/instructions"
-                  target="_blank"
-                  title="Instructions"
-                >
-                  <FaCircleQuestion />
-                </Link>
+                ) : null}
               </div>
               <PostSettings />
             </section>
