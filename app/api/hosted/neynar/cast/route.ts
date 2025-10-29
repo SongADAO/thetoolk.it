@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { HOSTED_CREDENTIALS } from "@/services/post/neynar/auth";
 import { createCast } from "@/services/post/neynar/post";
