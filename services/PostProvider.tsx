@@ -460,17 +460,17 @@ export function PostProvider({ children }: Readonly<Props>) {
     selectedFile: File,
   ): Promise<Record<string, PostVideo>> {
     const needsHls = neynar.isEnabled;
-    const needsS3 = tiktok.isEnabled;
+    // const needsS3 = tiktok.isEnabled;
 
     if (!pinata.isUsable && !amazonS3.isUsable) {
       throw new Error("You must enable a storage provider.");
     }
 
-    if (needsS3 && !amazonS3.isUsable && tiktok.isUsable) {
-      throw new Error(
-        "To use TikTok at least one non-ipfs storage provider must be enabled. (Amazon S3).",
-      );
-    }
+    // if (needsS3 && !amazonS3.isUsable && tiktok.isUsable) {
+    //   throw new Error(
+    //     "To use TikTok at least one non-ipfs storage provider must be enabled. (Amazon S3).",
+    //   );
+    // }
 
     if (needsHls && !pinata.isUsable) {
       throw new Error(
