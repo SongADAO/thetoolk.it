@@ -24,6 +24,8 @@ export default function SignInForm() {
     if (signInError) {
       setError(signInError.message);
     } else {
+      setPassword("");
+      setEmail("");
       // Redirect after successful login
       router.push("/");
     }
