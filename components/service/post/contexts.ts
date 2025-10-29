@@ -8,14 +8,22 @@ import { TwitterContext } from "@/services/post/twitter/Context";
 import { YoutubeContext } from "@/services/post/youtube/Context";
 
 const POST_CONTEXTS = [
-  { context: BlueskyContext, id: "BlueskyContext" },
-  { context: FacebookContext, id: "FacebookContext" },
-  { context: InstagramContext, id: "InstagramContext" },
-  { context: NeynarContext, id: "NeynarContext" },
-  { context: ThreadsContext, id: "ThreadsContext" },
-  { context: TiktokContext, id: "TiktokContext" },
-  { context: TwitterContext, id: "TwitterContext" },
-  { context: YoutubeContext, id: "YoutubeContext" },
+  { context: BlueskyContext, id: "BlueskyContext", modes: ["hosted", "self"] },
+  {
+    context: FacebookContext,
+    id: "FacebookContext",
+    modes: ["hosted", "self"],
+  },
+  {
+    context: InstagramContext,
+    id: "InstagramContext",
+    modes: ["hosted", "self"],
+  },
+  { context: NeynarContext, id: "NeynarContext", modes: ["hosted", "self"] },
+  { context: ThreadsContext, id: "ThreadsContext", modes: ["hosted", "self"] },
+  { context: TiktokContext, id: "TiktokContext", modes: ["hosted"] },
+  { context: TwitterContext, id: "TwitterContext", modes: ["hosted", "self"] },
+  { context: YoutubeContext, id: "YoutubeContext", modes: ["hosted", "self"] },
 ];
 
 export { POST_CONTEXTS };

@@ -38,7 +38,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
               </ServiceSettingsMenu>
             ) : null}
             <ServiceSettingsMenu icon={<FaUsersGear />} label="Post Settings">
-              <PostSettings />
+              <PostSettings mode={mode} />
             </ServiceSettingsMenu>
           </div>
         </div>
@@ -98,11 +98,11 @@ function Poster({ mode }: Readonly<PosterProps>) {
                     icon={<FaUsersGear />}
                     label="Post Settings"
                   >
-                    <PostSettings />
+                    <PostSettings mode={mode} />
                   </ServiceSettingsMenu>
                 </div>
               </div>
-              <PostProgress />
+              <PostProgress mode={mode} />
             </section>
           </div>
         </div>
@@ -141,7 +141,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   </Link>
                 ) : null}
               </div>
-              <PostSettings />
+              <PostSettings mode={mode} />
             </section>
           </div>
         </div>
