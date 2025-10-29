@@ -59,9 +59,7 @@ export async function GET(request: NextRequest) {
       stateStore,
       getBaseUrlFromRequest(request),
     );
-    console.log("OAuth session created successfully:", session);
-
-    console.log("OAuth session created successfully");
+    console.log("OAuth session created successfully:");
 
     const agent = await createAgent(
       sessionStore,
@@ -69,15 +67,16 @@ export async function GET(request: NextRequest) {
       session.sub,
       getBaseUrlFromRequest(request),
     );
+    console.log("Created agent for user:", session.sub);
 
     const accounts = await getAccountsFromAgent(agent, session.sub);
+    console.log("Retrieved accounts from agent:", accounts);
 
     await updateServiceAccounts({
       ...serverAuth,
       serviceAccounts: accounts,
       serviceId,
     });
-
     console.log("Tokens stored successfully");
 
     // Redirect back to the application
