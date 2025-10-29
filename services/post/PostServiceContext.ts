@@ -71,7 +71,7 @@ const postServiceContextDefault = {
   isUsable: false,
   label: "",
   loading: true,
-  mode: "self",
+  mode: "self" as "hosted" | "self",
   post: async (props: PostProps) => Promise.resolve(null),
   postError: "",
   postProgress: 0,

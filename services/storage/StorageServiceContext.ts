@@ -65,7 +65,7 @@ const storageServiceContextDefault = {
   isUsable: false,
   label: "",
   loading: true,
-  mode: "self",
+  mode: "self" as "hosted" | "self",
   resetStoreState: () => {},
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
