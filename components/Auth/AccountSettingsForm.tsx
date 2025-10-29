@@ -33,7 +33,6 @@ function AccountSettingsForm() {
       } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        setEmail(user.email ?? "");
       }
     };
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -104,9 +103,14 @@ function AccountSettingsForm() {
       return;
     }
 
-    const { error } = await supabase.auth.updateUser({
-      email,
-    });
+    const { error } = await supabase.auth.updateUser(
+      {
+        email,
+      },
+      {
+        emailRedirectTo: `${window.location.origin}/auth/confirm-email`,
+      },
+    );
 
     if (error) {
       setEmailMessage(error.message);
