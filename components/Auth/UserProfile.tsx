@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { use } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
@@ -38,13 +38,21 @@ function UserProfile() {
           {user.email_confirmed_at ? "Yes" : "No"}
         </p>
       </div>
-      <button
-        className="mt-4 cursor-pointer rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-        onClick={handleSignOut}
-        type="button"
-      >
-        Sign Out
-      </button>
+      <div className="flex gap-4">
+        <button
+          className="mt-4 cursor-pointer rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+          onClick={handleSignOut}
+          type="button"
+        >
+          Sign Out
+        </button>
+        <Link
+          className="mt-4 cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800"
+          href="/account-settings"
+        >
+          Manage Account Details
+        </Link>
+      </div>
     </div>
   );
 }
