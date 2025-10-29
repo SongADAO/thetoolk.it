@@ -6,7 +6,7 @@ import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
 import { Spinner } from "@/components/Spinner";
 import { formatFileDuration, formatFileSize } from "@/lib/video";
 // import { BlueskyContext } from "@/services/post/bluesky/Context";
-import { FacebookContext } from "@/services/post/facebook/Context";
+// import { FacebookContext } from "@/services/post/facebook/Context";
 // import { InstagramContext } from "@/services/post/instagram/Context";
 // import { NeynarContext } from "@/services/post/neynar/Context";
 // import { ThreadsContext } from "@/services/post/threads/Context";
@@ -43,7 +43,7 @@ function fromFormData(formData: FormData): FormState {
 function PostForm() {
   // Post services.
   // const bluesky = use(BlueskyContext);
-  const facebook = use(FacebookContext);
+  // const facebook = use(FacebookContext);
   // const instagram = use(InstagramContext);
   // const neynar = use(NeynarContext);
   // const threads = use(ThreadsContext);
@@ -166,11 +166,11 @@ function PostForm() {
     { label: "Unlisted", value: "unlisted" },
   ];
 
-  const facebookPrivacyOptions = [
-    { label: "Only Me", value: "SELF" },
-    { label: "All Friends", value: "ALL_FRIENDS" },
-    { label: "Public", value: "EVERYONE" },
-  ];
+  // const facebookPrivacyOptions = [
+  //   { label: "Only Me", value: "SELF" },
+  //   { label: "All Friends", value: "ALL_FRIENDS" },
+  //   { label: "Public", value: "EVERYONE" },
+  // ];
 
   return (
     <div>
