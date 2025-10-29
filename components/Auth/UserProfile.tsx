@@ -50,7 +50,7 @@ function UserProfile() {
           className="mt-4 cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800"
           href="/account-settings"
         >
-          Manage Account Details
+          Manage Account
         </Link>
       </div>
     </div>
