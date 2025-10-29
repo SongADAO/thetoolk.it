@@ -3,7 +3,7 @@
 import { POST_CONTEXTS } from "@/components/service/post/contexts";
 import { PostServiceSettings } from "@/components/service/post/PostServiceSettings";
 
-export function PostSettings() {
+function PostSettings() {
   return (
     <div>
       <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
@@ -16,3 +16,5 @@ export function PostSettings() {
     </div>
   );
 }
+
+export { PostSettings };

@@ -8,7 +8,7 @@ interface Props {
   readonly context: Context<PostServiceContextType>;
 }
 
-export function PostServiceSettings({ context }: Props) {
+function PostServiceSettings({ context }: Props) {
   return (
     <ServiceSwitchWithContext
       context={context}
@@ -16,3 +16,5 @@ export function PostServiceSettings({ context }: Props) {
     />
   );
 }
+
+export { PostServiceSettings };

@@ -3,7 +3,7 @@
 import { POST_CONTEXTS } from "@/components/service/post/contexts";
 import { ServicePostProgressWithContext } from "@/components/service/ServicePostProgressWithContext";
 
-export function PostProgress() {
+function PostProgress() {
   return (
     <div className="grid grid-cols-2 gap-2">
       {POST_CONTEXTS.map((context) => (
@@ -15,3 +15,5 @@ export function PostProgress() {
     </div>
   );
 }
+
+export { PostProgress };

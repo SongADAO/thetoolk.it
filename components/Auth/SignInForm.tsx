@@ -5,7 +5,7 @@ import { FormEvent, use, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
-export default function SignInForm() {
+function SignInForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -77,3 +77,4 @@ export default function SignInForm() {
     </form>
   );
 }
+export { SignInForm };

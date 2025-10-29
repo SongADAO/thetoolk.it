@@ -1,6 +1,6 @@
 "use client";
 
-export function ManageSubscriptionButton() {
+function ManageSubscriptionButton() {
   async function handleManageSubscription() {
     try {
       const res = await fetch("/api/subscriptions/create-portal-session", {
@@ -48,3 +48,5 @@ export function ManageSubscriptionButton() {
     </button>
   );
 }
+
+export { ManageSubscriptionButton };

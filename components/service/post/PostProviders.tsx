@@ -14,7 +14,7 @@ interface Props {
   children: ReactNode;
 }
 
-export function PostProviders({ mode, children }: Readonly<Props>) {
+function PostProviders({ mode, children }: Readonly<Props>) {
   return (
     <NeynarProvider mode={mode}>
       <TwitterProvider mode={mode}>
@@ -33,3 +33,5 @@ export function PostProviders({ mode, children }: Readonly<Props>) {
     </NeynarProvider>
   );
 }
+
+export { PostProviders };

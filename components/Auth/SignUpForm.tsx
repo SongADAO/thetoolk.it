@@ -6,7 +6,7 @@ import { FormEvent, use, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
-export default function SignUpForm() {
+function SignUpForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -114,3 +114,5 @@ export default function SignUpForm() {
     </form>
   );
 }
+
+export { SignUpForm };
