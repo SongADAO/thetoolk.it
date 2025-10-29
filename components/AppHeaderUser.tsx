@@ -31,7 +31,7 @@ function AppHeaderUser() {
     <div className="flex flex-row items-end gap-2">
       <Link
         className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
-        href="/dashboard"
+        href="/account"
       >
         Account
       </Link>
