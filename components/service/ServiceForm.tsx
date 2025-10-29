@@ -44,7 +44,6 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
           className="mb-2 flex flex-col"
           key={field.name}
           name={field.name}
-          // serverInvalid={hasError(field.name)}
         >
           <Form.Label className="block w-auto rounded-t bg-[#fff] px-2 py-1 text-sm text-black">
             {field.label}
@@ -55,7 +54,6 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
             defaultValue={state[field.name]}
             disabled={isPending}
             placeholder={field.placeholder}
-            // required
             title={field.label}
             type="text"
           />
@@ -63,9 +61,6 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
             <Form.Message match="valueMissing">
               Missing {field.label}.
             </Form.Message>
-            {/* {getErrors(field.name).map((error) => (
-              <Form.Message key={error}>{error}</Form.Message>
-            ))} */}
           </div>
         </Form.Field>
       ))}

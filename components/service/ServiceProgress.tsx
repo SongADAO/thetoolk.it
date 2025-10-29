@@ -30,24 +30,7 @@ function ServiceProgress({
     return null;
   }
 
-  // if (!isProcessing && !status && !error) {
-  //   return null;
-  // }
-
-  // progress = 24;
-  // isProcessing = true;
-  // status =
-  //   "asdf asdf asd fas dfa asdf asdf asd fas dfa asdf asdf asd fas dfa ";
-  // "asdf asdf asd fas dfa asdf as dfa ";
-
-  // progress = 100;
-  // isProcessing = false;
-
-  // error = "asdfgasdfasfa";
-  // isProcessing = false;
-
   const showProgress = !error && progress !== 100;
-  // const showProgress = true;
 
   const hasError = Boolean(error) || !isUsable;
 
@@ -55,7 +38,6 @@ function ServiceProgress({
 
   return (
     <div
-      // className={`group relative rounded text-brand-${brandColor}-inverse order-0 bg-[#6c7281] contain-paint data-[has-error=true]:order-1 data-[has-error=true]:bg-red-800 data-[is-complete=true]:order-2 data-[is-complete=true]:bg-green-800`}
       className={`group relative rounded text-brand-${brandColor}-inverse bg-[#6c7281] contain-paint data-[has-error=true]:bg-red-800 data-[is-complete=true]:bg-green-800`}
       data-has-error={hasError ? "true" : "false"}
       data-is-complete={isComplete ? "true" : "false"}
