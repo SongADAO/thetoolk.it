@@ -93,10 +93,37 @@ async function getSubscription({
   return subscription;
 }
 
+interface HasActiveSubscriptionProps {
+  supabaseAdmin: SupabaseClient;
+  user: User;
+}
+
+async function hasActiveSubscription({
+  supabaseAdmin,
+  user,
+}: HasActiveSubscriptionProps): Promise<boolean> {
+  const subscription = await getSubscription({ supabaseAdmin, user });
+
+  return subscription.status === "active";
+}
+
+async function gateHasActiveSubscription({
+  supabaseAdmin,
+  user,
+}: HasActiveSubscriptionProps): Promise<void> {
+  const hasActive = await hasActiveSubscription({ supabaseAdmin, user });
+
+  if (!hasActive) {
+    throw new Error("User does not have an active subscription");
+  }
+}
+
 export {
+  gateHasActiveSubscription,
   getPriceId,
   getPriceName,
   getPriceType,
   getSubscription,
+  hasActiveSubscription,
   type Subscription,
 };

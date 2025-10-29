@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 
+import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { createSignedHLSFolderURL } from "@/services/storage/pinata/store";
 
 export async function POST() {
   try {
     const serverAuth = await initServerAuth();
+    await gateHasActiveSubscription({ ...serverAuth });
 
     const url = await createSignedHLSFolderURL();
 

@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 
+import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import {
   getServiceAuthorizationAndExpiration,
@@ -16,6 +17,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const serverAuth = await initServerAuth();
+    await gateHasActiveSubscription({ ...serverAuth });
 
     const stateStore = new SupabaseStateStore({ ...serverAuth });
     const sessionStore = new SupabaseSessionStore({ ...serverAuth });
