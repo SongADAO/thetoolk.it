@@ -22,7 +22,7 @@ export default function SignInPage() {
           <h3 className="font-bold">Forgot your password?</h3>
           <Link
             className="text-blue-600 underline hover:text-blue-800"
-            href="/auth/reset-password"
+            href="/auth/start-reset-password"
           >
             Reset your password
           </Link>

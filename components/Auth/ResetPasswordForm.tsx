@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -10,6 +11,53 @@ function ResetPasswordForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const supabase = createClient();
+  const searchParams = useSearchParams();
+
+  // Check for errors in URL on mount (both query params and hash)
+  useEffect(() => {
+    // Check query parameters
+    const error = searchParams.get("error");
+    const errorDescription = searchParams.get("error_description");
+    const errorCode = searchParams.get("error_code");
+
+    // Also check hash parameters (Supabase uses hash for some errors)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hashError = hashParams.get("error");
+    const hashErrorDescription = hashParams.get("error_description");
+    const hashErrorCode = hashParams.get("error_code");
+
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    const finalError = error || hashError;
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    const finalErrorDescription = errorDescription || hashErrorDescription;
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    const finalErrorCode = errorCode || hashErrorCode;
+
+    if (finalError) {
+      let errorMessage =
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        finalErrorDescription || finalError.replace(/_/gu, " ");
+
+      // Provide user-friendly messages for common errors
+      if (
+        finalErrorCode === "404" ||
+        finalError === "invalid_link" ||
+        finalError === "otp_expired"
+      ) {
+        errorMessage =
+          "This password reset link is invalid or has expired. Please request a new one.";
+      } else if (finalError === "access_denied") {
+        errorMessage =
+          "Access denied. This link may have already been used or is no longer valid.";
+      } else if (finalError === "unauthorized") {
+        errorMessage =
+          "Unauthorized access. Please request a new password reset link.";
+      }
+
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMessage(errorMessage);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
