@@ -4,7 +4,7 @@ import { use } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
-export default function UserProfile() {
+function UserProfile() {
   const { user, signOut, loading, isAuthenticated } = use(AuthContext);
 
   if (loading) {
@@ -48,3 +48,5 @@ export default function UserProfile() {
     </div>
   );
 }
+
+export { UserProfile };

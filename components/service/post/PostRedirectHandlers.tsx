@@ -3,7 +3,7 @@
 import { POST_CONTEXTS } from "@/components/service/post/contexts";
 import { ServiceRedirectHandlerWithContext } from "@/components/service/ServiceRedirectHandlerWithContext";
 
-export function PostRedirectHandlers() {
+function PostRedirectHandlers() {
   return (
     <>
       {POST_CONTEXTS.map((context) => (
@@ -15,3 +15,5 @@ export function PostRedirectHandlers() {
     </>
   );
 }
+
+export { PostRedirectHandlers };

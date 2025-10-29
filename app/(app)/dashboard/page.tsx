@@ -1,5 +1,5 @@
-import ProtectedRoute from "@/components/Auth/ProtectedRoute";
-import UserProfile from "@/components/Auth/UserProfile";
+import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
+import { UserProfile } from "@/components/Auth/UserProfile";
 
 export default function Dashboard() {
   return (
