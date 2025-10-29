@@ -236,6 +236,7 @@ async function createPost({
   accessToken,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   credentials,
+  privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
   setIsPosting,
@@ -292,7 +293,7 @@ async function createPost({
           title,
         },
         status: {
-          privacyStatus: "public",
+          privacyStatus: privacy,
         },
       };
 

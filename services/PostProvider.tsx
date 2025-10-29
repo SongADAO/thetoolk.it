@@ -596,13 +596,16 @@ export function PostProvider({ children }: Readonly<Props>) {
   }
 
   async function createPost({
+    facebookPrivacy,
     text,
     title,
     videos,
+    youtubePrivacy,
   }: Readonly<CreatePostProps>): Promise<void> {
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
     const allResults = await Promise.allSettled([
       bluesky.post({
+        privacy: "",
         text,
         title,
         userId: bluesky.accounts[0]?.id,
@@ -612,6 +615,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.bluesky?.videoUrl || videos.full.videoUrl,
       }),
       facebook.post({
+        privacy: facebookPrivacy,
         text,
         title,
         userId: facebook.accounts[0]?.id,
@@ -621,6 +625,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.facebook?.videoUrl || videos.full.videoUrl,
       }),
       instagram.post({
+        privacy: "",
         text,
         title,
         userId: instagram.accounts[0]?.id,
@@ -630,6 +635,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.instagram?.videoUrl || videos.full.videoUrl,
       }),
       neynar.post({
+        privacy: "",
         text,
         title,
         userId: neynar.accounts[0]?.id,
@@ -639,6 +645,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.neynar?.videoUrl || videos.full.videoUrl,
       }),
       threads.post({
+        privacy: "",
         text,
         title,
         userId: threads.accounts[0]?.id,
@@ -648,6 +655,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.threads?.videoUrl || videos.full.videoUrl,
       }),
       tiktok.post({
+        privacy: "",
         text,
         title,
         userId: tiktok.accounts[0]?.id,
@@ -657,6 +665,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.tiktok?.videoUrl || videos.full.videoUrl,
       }),
       twitter.post({
+        privacy: "",
         text,
         title,
         userId: twitter.accounts[0]?.id,
@@ -666,6 +675,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.twitter?.videoUrl || videos.full.videoUrl,
       }),
       youtube.post({
+        privacy: youtubePrivacy,
         text,
         title,
         userId: youtube.accounts[0]?.id,

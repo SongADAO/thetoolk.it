@@ -4,6 +4,7 @@ interface ServiceAccount {
 }
 
 interface PostProps {
+  privacy: string;
   text: string;
   title: string;
   userId: string;
@@ -55,6 +56,7 @@ const defaultOauthCredentials: OauthCredentials = {
 interface CreatePostProps {
   accessToken: string;
   credentials: OauthCredentials;
+  privacy: string;
   requestUrl: string;
   setIsPosting: (isPosting: boolean) => void;
   setPostError: (error: string) => void;

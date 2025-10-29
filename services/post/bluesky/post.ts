@@ -206,6 +206,8 @@ async function createRecord({
 async function createPost({
   accessToken,
   credentials,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  privacy,
   requestUrl,
   setIsPosting,
   setPostError,

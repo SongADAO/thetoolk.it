@@ -1,4 +1,5 @@
 import type { User } from "@supabase/supabase-js";
+import type { ReactNode } from "react";
 import type { KeyedMutator } from "swr";
 
 import type { Subscription } from "@/lib/subscriptions";
@@ -34,7 +35,7 @@ interface AuthContextType {
 }
 
 interface AuthProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export type { AuthContextType, AuthProviderProps };

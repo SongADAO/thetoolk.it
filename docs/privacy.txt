@@ -1,0 +1,3 @@
+https://developers.tiktok.com/doc/content-sharing-guidelines
+
+https://developers.google.com/youtube/v3/docs/videos#status.privacyStatus

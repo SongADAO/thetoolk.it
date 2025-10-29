@@ -1,6 +1,8 @@
 "use client";
 
-import React, {
+import {
+  type ReactNode,
+  use,
   useCallback,
   useEffect,
   useMemo,
@@ -25,14 +27,10 @@ export function UserStorageProvider({
   children,
   mode,
 }: {
-  readonly children: React.ReactNode;
+  readonly children: ReactNode;
   readonly mode: "hosted" | "self";
 }) {
-  const {
-    user,
-    isAuthenticated,
-    loading: authLoading,
-  } = React.use(AuthContext);
+  const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
   const supabase = createClient();
 
   // Store all values in a Map

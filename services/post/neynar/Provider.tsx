@@ -163,6 +163,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   }
 
   async function post({
+    privacy,
     title,
     text,
     userId,
@@ -180,6 +181,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       return await createPost({
         accessToken: mode === "hosted" ? "hosted" : accessToken,
         credentials,
+        privacy,
         requestUrl: window.location.origin,
         setIsPosting,
         setPostError,

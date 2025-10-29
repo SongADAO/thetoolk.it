@@ -1,32 +1,57 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { use, useRef, useState } from "react";
+import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
 
 import { Spinner } from "@/components/Spinner";
 import { formatFileDuration, formatFileSize } from "@/lib/video";
+// import { BlueskyContext } from "@/services/post/bluesky/Context";
+import { FacebookContext } from "@/services/post/facebook/Context";
+// import { InstagramContext } from "@/services/post/instagram/Context";
+// import { NeynarContext } from "@/services/post/neynar/Context";
+// import { ThreadsContext } from "@/services/post/threads/Context";
+// import { TiktokContext } from "@/services/post/tiktok/Context";
+// import { TwitterContext } from "@/services/post/twitter/Context";
+import { YoutubeContext } from "@/services/post/youtube/Context";
 import { PostContext } from "@/services/PostContext";
 
 interface FormState {
+  facebookPrivacy: string;
   text: string;
   title: string;
+  youtubePrivacy: string;
 }
 
 function fromInitial(): FormState {
   return {
+    facebookPrivacy: "",
     text: "",
     title: "",
+    youtubePrivacy: "",
   };
 }
 
 function fromFormData(formData: FormData): FormState {
+  console.log(formData.get("facebookPrivacy"));
   return {
+    facebookPrivacy: String(formData.get("facebookPrivacy")),
     text: String(formData.get("text")),
     title: String(formData.get("title")),
+    youtubePrivacy: String(formData.get("youtubePrivacy")),
   };
 }
 
 function PostForm() {
+  // Post services.
+  // const bluesky = use(BlueskyContext);
+  const facebook = use(FacebookContext);
+  // const instagram = use(InstagramContext);
+  // const neynar = use(NeynarContext);
+  // const threads = use(ThreadsContext);
+  // const tiktok = use(TiktokContext);
+  // const twitter = use(TwitterContext);
+  const youtube = use(YoutubeContext);
+
   const {
     canPostToAllServices,
     canStoreToAllServices,
@@ -61,13 +86,13 @@ function PostForm() {
 
   const [error, setError] = useState<string>("");
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
     getVideoInfo(file);
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     try {
       event.preventDefault();
       setIsPending(true);
@@ -117,9 +142,11 @@ function PostForm() {
       // const videoHSLUrl = "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8";
 
       await createPost({
+        facebookPrivacy: newFormState.facebookPrivacy,
         text: newFormState.text,
         title: newFormState.title,
         videos,
+        youtubePrivacy: newFormState.youtubePrivacy,
       });
     } catch (err: unknown) {
       console.error(err);
@@ -133,6 +160,18 @@ function PostForm() {
   // Check if we should disable the form
   const isFormDisabled =
     isPending || !canPostToAllServices || !canStoreToAllServices;
+
+  const youtubePrivacyOptions = [
+    { label: "Private", value: "private" },
+    { label: "Public", value: "public" },
+    { label: "Unlisted", value: "unlisted" },
+  ];
+
+  const facebookPrivacyOptions = [
+    { label: "Only Me", value: "SELF" },
+    { label: "All Friends", value: "ALL_FRIENDS" },
+    { label: "Public", value: "EVERYONE" },
+  ];
 
   return (
     <div>
@@ -218,6 +257,104 @@ function PostForm() {
             <Form.Message match="valueMissing">Missing message.</Form.Message>
           </div>
         </Form.Field>
+
+        {facebook.isEnabled ? (
+          <Form.Field
+            className="mb-4 flex flex-col"
+            key="facebookPrivacy"
+            name="facebookPrivacy"
+          >
+            <Form.Label className="mb-2">Facebook Privacy Settings</Form.Label>
+            <Form.Control
+              asChild
+              className="w-full rounded text-black"
+              disabled={isFormDisabled}
+              required
+              title="Facebook Privacy"
+              value={state.facebookPrivacy}
+            >
+              <select
+                onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                  setState((prev) => ({
+                    ...prev,
+                    facebookPrivacy: e.target.value,
+                  }))
+                }
+              >
+                <option key="none" value="">
+                  Select Facebook Privacy Settings
+                </option>
+                {facebookPrivacyOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </Form.Control>
+            <div>
+              <Form.Message match="valueMissing">
+                Missing Facebook Privacy Settings.
+              </Form.Message>
+            </div>
+          </Form.Field>
+        ) : (
+          <Form.Field
+            className="mb-4 flex flex-col"
+            key="facebookPrivacy"
+            name="facebookPrivacy"
+          >
+            <Form.Control type="hidden" value={state.youtubePrivacy} />
+          </Form.Field>
+        )}
+
+        {youtube.isEnabled ? (
+          <Form.Field
+            className="mb-4 flex flex-col"
+            key="youtubePrivacy"
+            name="youtubePrivacy"
+          >
+            <Form.Label className="mb-2">YouTube Privacy Settings</Form.Label>
+            <Form.Control
+              asChild
+              className="w-full rounded text-black"
+              disabled={isFormDisabled}
+              required
+              title="YouTube Privacy"
+              value={state.youtubePrivacy}
+            >
+              <select
+                onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                  setState((prev) => ({
+                    ...prev,
+                    youtubePrivacy: e.target.value,
+                  }))
+                }
+              >
+                <option key="none" value="">
+                  Select YouTube Privacy Settings
+                </option>
+                {youtubePrivacyOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </Form.Control>
+            <div>
+              <Form.Message match="valueMissing">
+                Missing YouTube Privacy Settings.
+              </Form.Message>
+            </div>
+          </Form.Field>
+        ) : (
+          <Form.Field
+            className="mb-4 flex flex-col"
+            key="youtubePrivacy"
+            name="youtubePrivacy"
+          >
+            <Form.Control type="hidden" value={state.youtubePrivacy} />
+          </Form.Field>
+        )}
 
         {isVideoConverting ? (
           <div className="mb-4 rounded bg-gray-500 p-3 text-white">
