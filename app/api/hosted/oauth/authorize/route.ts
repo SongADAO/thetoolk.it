@@ -4,6 +4,7 @@ import {
   generateCodeChallenge,
   generateCodeVerifier,
 } from "@/lib/code-verifier";
+import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateCodeVerifier } from "@/lib/supabase/service";
 import { getAuthorizeUrl, getBaseUrlFromRequest } from "@/services/post/hosted";
@@ -13,6 +14,7 @@ export async function POST(request: NextRequest) {
     const { serviceId } = await request.json();
 
     const serverAuth = await initServerAuth();
+    await gateHasActiveSubscription({ ...serverAuth });
 
     // Generate PKCE values
     const codeVerifier = generateCodeVerifier();

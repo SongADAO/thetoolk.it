@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateServiceAccounts } from "@/lib/supabase/service";
 import { getAccountsFromAgent } from "@/services/post/bluesky/auth";
@@ -17,6 +18,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const serverAuth = await initServerAuth();
+    await gateHasActiveSubscription({ ...serverAuth });
 
     const stateStore = new SupabaseStateStore({ ...serverAuth });
     const sessionStore = new SupabaseSessionStore({ ...serverAuth });

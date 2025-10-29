@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getAuthorizationUrl } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
@@ -9,6 +10,7 @@ import { getBaseUrlFromRequest } from "@/services/post/hosted";
 export async function POST(request: NextRequest) {
   try {
     const serverAuth = await initServerAuth();
+    await gateHasActiveSubscription({ ...serverAuth });
 
     const stateStore = new SupabaseStateStore({ ...serverAuth });
     const sessionStore = new SupabaseSessionStore({ ...serverAuth });

@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 
+import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { uploadVideo } from "@/services/post/facebook/post";
@@ -7,6 +8,7 @@ import { uploadVideo } from "@/services/post/facebook/post";
 export async function POST(request: NextRequest) {
   try {
     const serverAuth = await initServerAuth();
+    await gateHasActiveSubscription({ ...serverAuth });
 
     const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateServiceAuthorizationAndAccounts } from "@/lib/supabase/service";
 import {
@@ -16,6 +17,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const serverAuth = await initServerAuth();
+    await gateHasActiveSubscription({ ...serverAuth });
 
     const { searchParams } = new URL(request.url);
 
