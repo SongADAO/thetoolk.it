@@ -46,6 +46,11 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    subscriptionMutate();
+  }, [user]);
+
+  useEffect(() => {
     // Get initial session
     const getSession = async (): Promise<void> => {
       const {
