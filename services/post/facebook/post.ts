@@ -149,6 +149,7 @@ async function createPost({
 
       postId = await uploadVideo({
         accessToken,
+        privacy,
         text,
         title,
         userId,
