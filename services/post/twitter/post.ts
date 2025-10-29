@@ -61,9 +61,9 @@ async function initializeUploadVideo({
   }
 
   const endpoint =
-    mode === "self"
-      ? "/api/twitter/2/media/upload/initialize"
-      : "https://api.x.com/2/media/upload/initialize";
+    mode === "hosted"
+      ? "https://api.x.com/2/media/upload/initialize"
+      : "/api/self/twitter/2/media/upload/initialize";
 
   const response =
     accessToken === "hosted"
@@ -127,9 +127,9 @@ async function appendUploadVideo({
   }
 
   const endpoint =
-    mode === "self"
-      ? `/api/twitter/2/media/upload/${mediaId}/append`
-      : `https://api.x.com/2/media/upload/${mediaId}/append`;
+    mode === "hosted"
+      ? `https://api.x.com/2/media/upload/${mediaId}/append`
+      : `/api/self/twitter/2/media/upload/${mediaId}/append`;
 
   const formData = new FormData();
   if (accessToken === "hosted") {
@@ -192,9 +192,9 @@ async function finalizeUploadVideo({
   }
 
   const endpoint =
-    mode === "self"
-      ? `/api/twitter/2/media/upload/${mediaId}/finalize`
-      : `https://api.x.com/2/media/upload/${mediaId}/finalize`;
+    mode === "hosted"
+      ? `https://api.x.com/2/media/upload/${mediaId}/finalize`
+      : `/api/self/twitter/2/media/upload/${mediaId}/finalize`;
 
   const finalizeResponse =
     accessToken === "hosted"
@@ -264,9 +264,9 @@ async function statusUploadVideo({
   });
 
   const endpoint =
-    mode === "self"
-      ? `/api/twitter/2/media/upload?${params.toString()}`
-      : `https://api.x.com/2/media/upload?${params.toString()}`;
+    mode === "hosted"
+      ? `https://api.x.com/2/media/upload?${params.toString()}`
+      : `/api/self/twitter/2/media/upload?${params.toString()}`;
 
   const response =
     accessToken === "hosted"
@@ -435,7 +435,9 @@ async function publishPost({
   }
 
   const endpoint =
-    mode === "self" ? "/api/twitter/2/posts" : "https://api.x.com/2/posts";
+    mode === "hosted"
+      ? "https://api.x.com/2/posts"
+      : "/api/self/twitter/2/posts";
 
   const response =
     accessToken === "hosted"

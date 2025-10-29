@@ -241,7 +241,7 @@ async function exchangeCodeForTokens(
   const endpoint =
     mode === "hosted"
       ? "https://api.twitter.com/2/oauth2/token"
-      : "/api/twitter/2/oauth2/token";
+      : "/api/self/twitter/2/oauth2/token";
 
   const response = await fetch(endpoint, {
     body: JSON.stringify({
@@ -331,7 +331,7 @@ async function refreshAccessToken(
   const endpoint =
     mode === "hosted"
       ? "https://api.twitter.com/2/oauth2/token"
-      : "/api/twitter/2/oauth2/token";
+      : "/api/self/twitter/2/oauth2/token";
 
   const response = await fetch(endpoint, {
     body: JSON.stringify({
@@ -371,7 +371,7 @@ async function getUserInfo(
   const endpoint =
     mode === "hosted"
       ? "https://api.twitter.com/2/users/me"
-      : "/api/twitter/2/users/me";
+      : "/api/self/twitter/2/users/me";
 
   const response = await fetch(endpoint, {
     headers: {
