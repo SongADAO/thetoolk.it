@@ -32,7 +32,6 @@ function fromInitial(): FormState {
 }
 
 function fromFormData(formData: FormData): FormState {
-  console.log(formData.get("facebookPrivacy"));
   return {
     facebookPrivacy: String(formData.get("facebookPrivacy")),
     text: String(formData.get("text")),
@@ -258,7 +257,7 @@ function PostForm() {
           </div>
         </Form.Field>
 
-        {facebook.isEnabled ? (
+        {/* {facebook.isEnabled ? (
           <Form.Field
             className="mb-4 flex flex-col"
             key="facebookPrivacy"
@@ -305,7 +304,7 @@ function PostForm() {
           >
             <Form.Control type="hidden" value={state.youtubePrivacy} />
           </Form.Field>
-        )}
+        )} */}
 
         {youtube.isEnabled ? (
           <Form.Field
