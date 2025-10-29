@@ -128,7 +128,7 @@ async function createPost({
       setPostProgress(progress);
     }, 2000);
 
-    // Upload video directly to Facebook
+    // Upload video directly to TikTok
     let postId = "";
     if (videoUrl) {
       postId = await uploadVideo({
