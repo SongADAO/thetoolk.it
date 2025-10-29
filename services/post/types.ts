@@ -4,13 +4,13 @@ interface ServiceAccount {
 }
 
 interface PostProps {
-  title: string;
   text: string;
+  title: string;
   userId: string;
   username: string;
   video: File | null;
-  videoUrl: string;
   videoHSLUrl: string;
+  videoUrl: string;
 }
 
 interface OauthAuthorization {
