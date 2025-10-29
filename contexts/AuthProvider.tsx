@@ -48,6 +48,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     subscriptionMutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
