@@ -42,7 +42,7 @@ interface Props {
 }
 
 export function NeynarProvider({ children, mode }: Readonly<Props>) {
-  const { loading: authLoading } = use(AuthContext);
+  const { loading: authLoading, user } = use(AuthContext);
 
   const id = "neynar";
 
@@ -238,6 +238,11 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   const clientId =
     mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId;
 
+  const providerKey =
+    mode === "hosted"
+      ? `hosted-${HOSTED_CREDENTIALS.clientId}-${user?.id}`
+      : `self-${credentials.clientId}`;
+
   const providerValues = useMemo(
     () => ({
       VIDEO_MAX_DURATION,
@@ -308,41 +313,70 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     ],
   );
 
+  function setAuthorizationHosted(newAuthorization: OauthAuthorization) {
+    // TODO: Send the neynar authorization to the backend to link with user account.
+  }
+
+  function onAuthSuccess({
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    user,
+  }: {
+    user: { username: string; signer_uuid: string };
+  }) {
+    console.log("Neynar Auth Success Callback");
+
+    const newAuthorization = {
+      accessToken: user.signer_uuid,
+      refreshToken: user.signer_uuid,
+    };
+
+    if (mode === "hosted") {
+      setAuthorizationHosted(newAuthorization);
+    } else {
+      setAuthorization(newAuthorization);
+    }
+
+    setExpiration({
+      accessTokenExpiresAt: new Date(
+        Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
+      ).toISOString(),
+      refreshTokenExpiresAt: new Date(
+        Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
+      ).toISOString(),
+    });
+
+    setAccounts([
+      {
+        id: user.username,
+        username: user.username,
+      },
+    ]);
+  }
+
+  function onSignout() {
+    console.log("Neynar Signout Callback");
+
+    if (mode === "hosted") {
+      setAuthorizationHosted(defaultOauthAuthorization);
+    } else {
+      setAuthorization(defaultOauthAuthorization);
+    }
+
+    setExpiration(defaultOauthExpiration);
+
+    setAccounts([]);
+  }
+
   return (
     <NeynarContext.Provider value={providerValues}>
       <NeynarContextProvider
-        key={clientId}
+        key={providerKey}
         settings={{
           clientId,
           defaultTheme: Theme.Light,
           eventsCallbacks: {
-            onAuthSuccess: ({ user }) => {
-              console.log("onAuthSuccess");
-              setAuthorization({
-                accessToken: user.signer_uuid,
-                refreshToken: user.signer_uuid,
-              });
-              setExpiration({
-                accessTokenExpiresAt: new Date(
-                  Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
-                ).toISOString(),
-                refreshTokenExpiresAt: new Date(
-                  Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
-                ).toISOString(),
-              });
-              setAccounts([
-                {
-                  id: user.username,
-                  username: user.username,
-                },
-              ]);
-            },
-            onSignout: () => () => {
-              console.log("onSignout");
-              setAuthorization(defaultOauthAuthorization);
-              setExpiration(defaultOauthExpiration);
-              setAccounts([]);
-            },
+            onAuthSuccess,
+            onSignout,
           },
         }}
       >
