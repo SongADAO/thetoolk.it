@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getSubscription } from "@/lib/subscriptions";
-import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { initServerAuth } from "@/lib/supabase/server-auth";
 
 export async function GET() {
   const serverAuth = await initServerAuth();

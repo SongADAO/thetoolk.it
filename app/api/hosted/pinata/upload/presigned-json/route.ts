@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { initServerAuth } from "@/lib/supabase/server-auth";
 import { createSignedJsonURL } from "@/services/storage/pinata/store";
 
 export async function POST() {

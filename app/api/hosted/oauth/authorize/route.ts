@@ -4,7 +4,7 @@ import {
   generateCodeChallenge,
   generateCodeVerifier,
 } from "@/lib/code-verifier";
-import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateCodeVerifier } from "@/lib/supabase/service";
 import { getAuthorizeUrl, getBaseUrlFromRequest } from "@/services/post/hosted";
 

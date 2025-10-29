@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getAuthorizationUrl } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";

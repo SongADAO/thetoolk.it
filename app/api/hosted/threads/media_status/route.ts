@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { checkMediaStatus } from "@/services/post/threads/post";
 

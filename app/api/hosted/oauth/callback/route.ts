@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { initServerAuth } from "@/lib/supabase/hosted-api";
+import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateServiceAuthorizationAndAccounts } from "@/lib/supabase/service";
 import {
   exchangeCodeForTokens,
