@@ -27,7 +27,7 @@ interface StorageServiceContextType {
   isUsable: boolean;
   label: string;
   loading: boolean;
-  mode: string;
+  mode: "hosted" | "self";
   resetStoreState: () => void;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;

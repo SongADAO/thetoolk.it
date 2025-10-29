@@ -38,7 +38,7 @@ import {
 
 interface Props {
   children: ReactNode;
-  mode: string;
+  mode: "hosted" | "self";
 }
 
 export function NeynarProvider({ children, mode }: Readonly<Props>) {

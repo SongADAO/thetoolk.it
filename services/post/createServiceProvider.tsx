@@ -15,7 +15,7 @@ import {
 
 interface CreateServiceProviderProps {
   children: ReactNode;
-  mode: string;
+  mode: "hosted" | "self";
 }
 
 /**

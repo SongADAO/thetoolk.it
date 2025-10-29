@@ -11,7 +11,7 @@ const VIDEO_MAX_DURATION = 600;
 
 interface UploadVideoProps {
   accessToken: string;
-  mode: string;
+  mode: "hosted" | "self";
   text: string;
   title: string;
   videoUrl: string;

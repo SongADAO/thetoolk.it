@@ -89,7 +89,7 @@ function useOAuthFlow(
   authorization: OauthAuthorization,
   expiration: OauthExpiration,
   codeVerifier: string,
-  mode: string,
+  mode: "hosted" | "self",
   authModule: {
     disconnectHosted: () => Promise<OauthAuthorization>;
     exchangeCodeForTokens: (

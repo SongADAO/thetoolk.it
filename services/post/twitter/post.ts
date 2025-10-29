@@ -44,7 +44,7 @@ interface TwitterStatusUploadResponse {
 
 interface InitializeUploadVideoProps {
   accessToken: string;
-  mode: string;
+  mode: "hosted" | "self";
   videoSize: number;
   videoType: string;
 }
@@ -107,7 +107,7 @@ interface AppendUploadVideoProps {
   accessToken: string;
   chunk: Blob;
   mediaId: string;
-  mode: string;
+  mode: "hosted" | "self";
   segmentIndex: number;
 }
 async function appendUploadVideo({
@@ -166,7 +166,7 @@ async function appendUploadVideo({
 interface FinalizeUploadVideoProps {
   accessToken: string;
   mediaId: string;
-  mode: string;
+  mode: "hosted" | "self";
 }
 async function finalizeUploadVideo({
   accessToken,
@@ -230,7 +230,7 @@ async function finalizeUploadVideo({
 interface StatusUploadVideoProps {
   accessToken: string;
   mediaId: string;
-  mode: string;
+  mode: "hosted" | "self";
 }
 async function statusUploadVideo({
   accessToken,
@@ -298,7 +298,7 @@ async function statusUploadVideo({
 
 interface UploadVideoProps {
   accessToken: string;
-  mode: string;
+  mode: "hosted" | "self";
   setPostProgress: (progress: number) => void;
   setPostStatus: (status: string) => void;
   video: File;
@@ -419,7 +419,7 @@ async function uploadVideo({
 interface PublishPostProps {
   accessToken: string;
   mediaIds: string[];
-  mode: string;
+  mode: "hosted" | "self";
   text: string;
 }
 async function publishPost({
