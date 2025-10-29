@@ -35,16 +35,6 @@ async function uploadVideo({
     return "test";
   }
 
-  console.log(
-    new URLSearchParams({
-      access_token: await getAccountAccessToken(accessToken, userId),
-      description: text,
-      file_url: videoUrl,
-      privacy: JSON.stringify({ value: privacy }),
-      title,
-    }).toString(),
-  );
-
   const response =
     accessToken === "hosted"
       ? await fetch(`/api/hosted/facebook/videos`, {
