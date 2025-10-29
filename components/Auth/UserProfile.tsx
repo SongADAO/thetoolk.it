@@ -20,7 +20,7 @@ function UserProfile() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-lg bg-gray-50 p-6 shadow-md">
+    <div className="mx-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <h2 className="mb-4 text-2xl font-bold">Profile</h2>
       <div className="space-y-2">
         <p>
