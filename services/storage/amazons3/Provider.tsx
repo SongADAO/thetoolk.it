@@ -102,10 +102,11 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
   const isAuthorized = isComplete;
 
   // TODO: Create S3 hosted version.
-  // const isEnabled = mode === "hosted" || (mode === "self" && isClientEnabled);
-  const isEnabled =
-    // eslint-disable-next-line no-constant-binary-expression, @typescript-eslint/no-unnecessary-condition
-    (mode === "hosted" && 0) || (mode === "self" && isClientEnabled);
+  // const isHostedEnabled = mode === "hosted";
+  const isHostedEnabled = false;
+  const isSelfEnabled = mode === "self" && isClientEnabled;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const isEnabled = isHostedEnabled || isSelfEnabled;
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 

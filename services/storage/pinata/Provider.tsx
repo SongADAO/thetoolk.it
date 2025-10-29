@@ -102,7 +102,9 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
 
   const isAuthorized = isComplete;
 
-  const isEnabled = mode === "hosted" || (mode === "self" && isClientEnabled);
+  const isHostedEnabled = mode === "hosted";
+  const isSelfEnabled = mode === "self" && isClientEnabled;
+  const isEnabled = isHostedEnabled || isSelfEnabled;
 
   const isUsable = isEnabled && isComplete && isAuthorized;
 
