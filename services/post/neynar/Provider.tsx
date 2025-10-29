@@ -17,6 +17,7 @@ import {
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,
+  setAuthorizationHosted,
 } from "@/services/post/neynar/auth";
 import { NeynarContext } from "@/services/post/neynar/Context";
 import {
@@ -313,10 +314,6 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     ],
   );
 
-  function setAuthorizationHosted(newAuthorization: OauthAuthorization) {
-    // TODO: Send the neynar authorization to the backend to link with user account.
-  }
-
   function onAuthSuccess({
     // eslint-disable-next-line @typescript-eslint/no-shadow
     user,
@@ -330,34 +327,40 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       refreshToken: user.signer_uuid,
     };
 
-    if (mode === "hosted") {
-      setAuthorizationHosted(newAuthorization);
-    } else {
-      setAuthorization(newAuthorization);
-    }
-
-    setExpiration({
+    const newExpiration = {
       accessTokenExpiresAt: new Date(
         Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
       ).toISOString(),
       refreshTokenExpiresAt: new Date(
         Date.now() + 100 * 365 * 24 * 60 * 60 * 1000,
       ).toISOString(),
-    });
+    };
 
-    setAccounts([
+    const newAccounts = [
       {
         id: user.username,
         username: user.username,
       },
-    ]);
+    ];
+
+    if (mode === "hosted") {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      setAuthorizationHosted(newAuthorization, newExpiration, newAccounts);
+    } else {
+      setAuthorization(newAuthorization);
+    }
+
+    setExpiration(newExpiration);
+
+    setAccounts(newAccounts);
   }
 
   function onSignout() {
     console.log("Neynar Signout Callback");
 
     if (mode === "hosted") {
-      setAuthorizationHosted(defaultOauthAuthorization);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      setAuthorizationHosted(null, defaultOauthExpiration, []);
     } else {
       setAuthorization(defaultOauthAuthorization);
     }

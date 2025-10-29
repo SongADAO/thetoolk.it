@@ -1,5 +1,6 @@
 import { objectIdHash } from "@/lib/hash";
 import type {
+  OauthAuthorization,
   OauthCredentials,
   OauthExpiration,
   ServiceAccount,
@@ -39,6 +40,30 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
 
 // -----------------------------------------------------------------------------
 
+async function setAuthorizationHosted(
+  authorization: OauthAuthorization | null,
+  expiration: OauthExpiration,
+  accounts: ServiceAccount[],
+) {
+  const response = await fetch("/api/hosted/neynar/store-auth", {
+    body: JSON.stringify({
+      accounts,
+      authorization,
+      expiration,
+    }),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to store authorization");
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 export {
   getAccounts,
   getAuthorizationExpiresAt,
@@ -46,4 +71,5 @@ export {
   hasCompleteAuthorization,
   hasCompleteCredentials,
   HOSTED_CREDENTIALS,
+  setAuthorizationHosted,
 };
