@@ -79,20 +79,23 @@ function createServiceProvider(
       storage.credentials,
     );
 
-    const isHostedWithoutCredsComplete =
-      mode === "hosted" && !config.hasHostedCredentials;
+    const isHostedWithoutCredsComplete = Boolean(
+      mode === "hosted" && !config.hasHostedCredentials,
+    );
 
-    const isHostedWithCredsComplete =
+    const isHostedWithCredsComplete = Boolean(
       mode === "hosted" &&
-      config.hasHostedCredentials &&
-      isCompleteOwnCredentials;
+        config.hasHostedCredentials &&
+        isCompleteOwnCredentials,
+    );
 
-    const isSelfComplete = mode === "self" && isCompleteOwnCredentials;
+    const isSelfComplete = Boolean(mode === "self" && isCompleteOwnCredentials);
 
-    const isComplete =
+    const isComplete = Boolean(
       isHostedWithoutCredsComplete ||
-      isHostedWithCredsComplete ||
-      isSelfComplete;
+        isHostedWithCredsComplete ||
+        isSelfComplete,
+    );
 
     const isAuthorized = config.authModule.hasCompleteAuthorization(
       storage.expiration,
