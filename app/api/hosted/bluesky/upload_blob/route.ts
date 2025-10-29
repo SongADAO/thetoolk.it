@@ -12,9 +12,11 @@ import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
 import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
+  const serviceId = "bluesky";
+
   try {
-    const serviceId = "bluesky";
     const serverAuth = await initServerAuth();
+
     const stateStore = new SupabaseStateStore({ ...serverAuth });
     const sessionStore = new SupabaseSessionStore({ ...serverAuth });
 

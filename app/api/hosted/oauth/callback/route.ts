@@ -11,15 +11,13 @@ import {
 } from "@/services/post/hosted";
 
 export async function GET(request: NextRequest) {
-  let serviceId = "unknown";
+  const serviceId = getAuthRedirectServiceId(request.url);
   const oauthUrls = getOauthUrls(getBaseUrlFromRequest(request));
 
   try {
     const serverAuth = await initServerAuth();
 
     const { searchParams } = new URL(request.url);
-
-    serviceId = getAuthRedirectServiceId(searchParams);
 
     const url = new URL(getBaseUrlFromRequest(request));
     const redirectUri = `${url.protocol}//${url.host}/api/hosted/oauth/callback`;

@@ -9,6 +9,7 @@ import { getBaseUrlFromRequest } from "@/services/post/hosted";
 export async function POST(request: NextRequest) {
   try {
     const serverAuth = await initServerAuth();
+
     const stateStore = new SupabaseStateStore({ ...serverAuth });
     const sessionStore = new SupabaseSessionStore({ ...serverAuth });
 

@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const serverAuth = await initServerAuth();
+
     const stateStore = new SupabaseStateStore({ ...serverAuth });
     const sessionStore = new SupabaseSessionStore({ ...serverAuth });
 

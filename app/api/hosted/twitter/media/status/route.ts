@@ -6,8 +6,10 @@ import { statusUploadVideo } from "@/services/post/twitter/post";
 
 export async function POST(request: NextRequest) {
   try {
+    const serverAuth = await initServerAuth();
+
     const authorization = await getServiceAuthorizationAndExpiration({
-      ...(await initServerAuth()),
+      ...serverAuth,
       serviceId: "twitter",
     });
 

@@ -6,8 +6,10 @@ import { uploadVideo } from "@/services/post/facebook/post";
 
 export async function POST(request: NextRequest) {
   try {
+    const serverAuth = await initServerAuth();
+
     const authorization = await getServiceAuthorizationAndExpiration({
-      ...(await initServerAuth()),
+      ...serverAuth,
       serviceId: "facebook",
     });
 
