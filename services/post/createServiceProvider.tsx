@@ -117,8 +117,8 @@ function createServiceProvider(
     }
 
     async function post({
-      title,
       text,
+      title,
       userId,
       video,
       videoHSLUrl,
