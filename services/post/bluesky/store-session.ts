@@ -4,7 +4,10 @@ import type {
 } from "@atproto/oauth-client-node";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
-import { updateServiceAuthorization } from "@/lib/supabase/service";
+import {
+  getServiceAuthorizationAndExpiration,
+  updateServiceAuthorization,
+} from "@/lib/supabase/service";
 
 interface SupabaseSessionStoreProps {
   supabase: SupabaseClient;
@@ -54,24 +57,14 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async get(key: string): Promise<NodeSavedSession | undefined> {
-    const { data, error } = await this.supabaseAdmin
-      .from("services")
-      .select("service_authorization")
-      // .eq("key", key)
-      .eq("service_id", "bluesky")
-      .eq("user_id", this.user.id)
-      .single();
+    const authorization = await getServiceAuthorizationAndExpiration({
+      serviceId: "bluesky",
+      supabase: this.supabase,
+      supabaseAdmin: this.supabaseAdmin,
+      user: this.user,
+    });
 
-    if (error) {
-      if (error.code === "PGRST116") {
-        // Not found
-        return undefined;
-      }
-
-      throw new Error(`Failed to get OAuth session: ${error.message}`);
-    }
-
-    return data.service_authorization;
+    return authorization.authorization;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/class-methods-use-this, @typescript-eslint/require-await
