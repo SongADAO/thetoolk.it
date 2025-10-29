@@ -11,7 +11,7 @@ export default function AppLayout({
       <header>
         <AppHeader />
       </header>
-      <main className="flex-1">{children}</main>
+      <main className="relative flex-1">{children}</main>
       <footer>
         <AppFooter />
       </footer>

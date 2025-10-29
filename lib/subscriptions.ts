@@ -57,7 +57,13 @@ async function getSubscription({
       .single();
 
   if (subscriptionError) {
-    throw new Error("Failed to get subscription status");
+    // throw new Error("Failed to get subscription status");
+    return {
+      current_period_end: null,
+      price_id: null,
+      price_type: null,
+      status: "none",
+    };
   }
 
   // No subscription found

@@ -137,9 +137,9 @@ export default function InstructionsPage() {
       <main className="flex-1 pt-16 pb-16">
         <div className="mx-auto max-w-4xl px-4 py-8">
           <div className="rounded-lg bg-white p-8 shadow-lg">
-            <h1 className="mb-6 text-3xl font-bold text-gray-900">
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">
               TheToolkit Setup Instructions
-            </h1>
+            </h2>
 
             {/* Welcome Section */}
             <section className="mb-8">

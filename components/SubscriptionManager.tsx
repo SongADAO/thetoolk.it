@@ -12,14 +12,12 @@ function SubscriptionManager() {
     use(AuthContext);
 
   if (loading || subscriptionIsLoading) {
-    return (
-      <div className="p-4 pt-20 text-center">Loading subscription data...</div>
-    );
+    return <div className="p-4 text-center">Loading subscription data...</div>;
   }
 
   if (!user) {
     return (
-      <div className="p-4 pt-20 text-center">
+      <div className="p-4 text-center">
         Please sign in to manage your subscription.
       </div>
     );
@@ -27,9 +25,7 @@ function SubscriptionManager() {
 
   if (!subscription) {
     return (
-      <div className="p-4 pt-20 text-center">
-        Loading subscription details...
-      </div>
+      <div className="p-4 text-center">Loading subscription details...</div>
     );
   }
 
@@ -39,7 +35,10 @@ function SubscriptionManager() {
 
   if (subscription.status === "active") {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-12 p-4 pt-20">
+      <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
+        <h2 className="text-center text-xl font-bold">
+          Your TheToolk.it Pro Subscription
+        </h2>
         <div>
           {subscription.price_type ? (
             <div>
@@ -66,9 +65,11 @@ function SubscriptionManager() {
 
   return (
     <div>
-      <div className="flex h-full flex-col items-center justify-center gap-2 p-4 pt-20">
-        <h1 className="text-center text-xl font-bold">Subscribe to Pro</h1>
-        <h2 className="pt-8 text-center font-bold">Features</h2>
+      <div className="flex h-full flex-col items-center justify-center gap-2 p-4">
+        <h2 className="text-center text-xl font-bold">
+          Subscribe to TheToolk.it Pro
+        </h2>
+        <h3 className="pt-4 text-center font-bold">Features</h3>
         <ul className="text-center">
           <li>No API setup required</li>
           <li>Ability to post to TikTok</li>
