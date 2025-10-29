@@ -17,6 +17,16 @@ export default function SignInPage() {
             Create an account
           </Link>
         </div>
+
+        <div className="mt-8 text-center">
+          <h3 className="font-bold">Forgot your password?</h3>
+          <Link
+            className="text-blue-600 underline hover:text-blue-800"
+            href="/auth/reset-password"
+          >
+            Reset your password
+          </Link>
+        </div>
       </div>
     </div>
   );

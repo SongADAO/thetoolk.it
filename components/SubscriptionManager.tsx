@@ -35,7 +35,7 @@ function SubscriptionManager() {
 
   if (subscription.status === "active") {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
+      <div className="flex h-full flex-col items-center justify-center gap-4 p-4">
         <h2 className="text-center text-xl font-bold">
           Your TheToolk.it Pro Subscription
         </h2>
