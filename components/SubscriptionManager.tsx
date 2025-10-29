@@ -29,9 +29,9 @@ function SubscriptionManager() {
     );
   }
 
-  const currentPeriodEnd = subscription.current_period_end
-    ? new Date(subscription.current_period_end)
-    : null;
+  // const currentPeriodEnd = subscription.current_period_end
+  //   ? new Date(subscription.current_period_end)
+  //   : null;
 
   if (subscription.status === "active") {
     return (
@@ -50,11 +50,11 @@ function SubscriptionManager() {
               Status: <span className="capitalize">{subscription.status}</span>
             </strong>
           </div>
-          {currentPeriodEnd ? (
+          {/* {currentPeriodEnd ? (
             <div>
               <strong>Renewal: {currentPeriodEnd.toLocaleDateString()}</strong>
             </div>
-          ) : null}
+          ) : null} */}
         </div>
         <div>
           <ManageSubscriptionButton />
