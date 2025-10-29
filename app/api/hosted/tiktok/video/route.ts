@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
+import { getBaseUrlFromRequest } from "@/services/post/hosted";
 import { uploadVideo } from "@/services/post/tiktok/post";
 
 export async function POST(request: NextRequest) {
@@ -15,8 +16,17 @@ export async function POST(request: NextRequest) {
       serviceId: "tiktok",
     });
 
+    const data = await request.json();
+
+    // Modify the TikTok video URL to use a verified proxy domain.
+    const videoUrl = new URL(data.videoUrl);
+    data.videoUrl = new URL(
+      `/api/storage${videoUrl.pathname}${videoUrl.search}`,
+      getBaseUrlFromRequest(request),
+    );
+
     const publishId = await uploadVideo({
-      ...(await request.json()),
+      ...data,
       accessToken: authorization.authorization.accessToken,
       mode: "hosted",
     });
