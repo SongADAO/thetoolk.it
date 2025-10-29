@@ -6,8 +6,10 @@ import { createMediaContainer } from "@/services/post/threads/post";
 
 export async function POST(request: NextRequest) {
   try {
+    const serverAuth = await initServerAuth();
+
     const authorization = await getServiceAuthorizationAndExpiration({
-      ...(await initServerAuth()),
+      ...serverAuth,
       serviceId: "threads",
     });
 

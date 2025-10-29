@@ -5,7 +5,7 @@ import { createSignedJsonURL } from "@/services/storage/pinata/store";
 
 export async function POST() {
   try {
-    await initServerAuth();
+    const serverAuth = await initServerAuth();
 
     const url = await createSignedJsonURL();
 

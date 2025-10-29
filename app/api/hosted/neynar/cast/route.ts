@@ -7,8 +7,10 @@ import { createCast } from "@/services/post/neynar/post";
 
 export async function POST(request: NextRequest) {
   try {
+    const serverAuth = await initServerAuth();
+
     const authorization = await getServiceAuthorizationAndExpiration({
-      ...(await initServerAuth()),
+      ...serverAuth,
       serviceId: "neynar",
     });
 

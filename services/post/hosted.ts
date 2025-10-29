@@ -14,7 +14,9 @@ import type {
 } from "@/services/post/types";
 import { youtubeServiceConfig } from "@/services/post/youtube/ServiceConfig";
 
-function getAuthRedirectServiceId(searchParams: URLSearchParams): string {
+function getAuthRedirectServiceId(requestUrl: string): string {
+  const { searchParams } = new URL(requestUrl);
+
   if (facebookServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
     return facebookServiceConfig.id;
   }
