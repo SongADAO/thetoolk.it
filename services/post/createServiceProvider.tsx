@@ -31,7 +31,6 @@ function createServiceProvider(
   }: Readonly<CreateServiceProviderProps>) {
     const { loading: authLoading } = use(AuthContext);
 
-    // State management
     const [error, setError] = useState("");
 
     const storage = useServiceStorage(
@@ -68,8 +67,7 @@ function createServiceProvider(
 
     const posting = usePostingState();
 
-    // Computed values
-    const loading = authLoading || storage.loading;
+    const loading = Boolean(authLoading || storage.loading);
 
     const credentialsId = config.authModule.getCredentialsId(
       storage.credentials,
@@ -105,7 +103,7 @@ function createServiceProvider(
       storage.expiration,
     );
 
-    const isUsable = storage.isEnabled && isComplete && isAuthorized;
+    const isUsable = Boolean(storage.isEnabled && isComplete && isAuthorized);
 
     // Helper functions
     async function getValidAccessToken(): Promise<string> {
