@@ -33,7 +33,7 @@ interface PostServiceContextType {
   isUsable: boolean;
   label: string;
   loading: boolean;
-  mode: string;
+  mode: "hosted" | "self";
   post: (props: PostProps) => Promise<string | null>;
   postError: string;
   postProgress: number;

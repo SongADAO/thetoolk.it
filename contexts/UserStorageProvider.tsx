@@ -26,7 +26,7 @@ export function UserStorageProvider({
   mode,
 }: {
   readonly children: React.ReactNode;
-  readonly mode: string;
+  readonly mode: "hosted" | "self";
 }) {
   const {
     user,

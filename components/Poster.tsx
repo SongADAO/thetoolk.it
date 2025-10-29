@@ -10,7 +10,7 @@ import { StoreProgress } from "@/components/service/storage/StoreProgress";
 import { PostProvider } from "@/services/PostProvider";
 
 interface PosterProps {
-  mode: string;
+  mode: "hosted" | "self";
 }
 
 function Poster({ mode }: Readonly<PosterProps>) {

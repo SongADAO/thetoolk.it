@@ -29,7 +29,7 @@ import {
 
 interface Props {
   children: ReactNode;
-  mode: string;
+  mode: "hosted" | "self";
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

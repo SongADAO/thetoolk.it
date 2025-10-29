@@ -4,7 +4,7 @@ import { AmazonS3Provider } from "@/services/storage/amazons3/Provider";
 import { PinataProvider } from "@/services/storage/pinata/Provider";
 
 interface Props {
-  mode: string;
+  mode: "hosted" | "self";
   children: ReactNode;
 }
 

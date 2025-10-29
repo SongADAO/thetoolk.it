@@ -10,7 +10,7 @@ import { TwitterProvider } from "@/services/post/twitter/Provider";
 import { YoutubeProvider } from "@/services/post/youtube/Provider";
 
 interface Props {
-  mode: string;
+  mode: "hosted" | "self";
   children: ReactNode;
 }
 

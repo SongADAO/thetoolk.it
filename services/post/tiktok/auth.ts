@@ -212,7 +212,7 @@ async function exchangeCodeForTokens(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode = "hosted",
+  mode: "hosted" | "self",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
     throw new Error(
@@ -314,7 +314,7 @@ async function refreshAccessToken(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode = "hosted",
+  mode: "hosted" | "self",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
@@ -389,7 +389,7 @@ async function getAccounts(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode = "hosted",
+  mode: "hosted" | "self",
 ): Promise<ServiceAccount[]> {
   const accounts = [];
 
