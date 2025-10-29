@@ -2,14 +2,14 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { AppFooter } from "@/components/AppFooter";
 import { AppLogo } from "@/components/AppLogo";
 
 interface AccordionSectionProps {
   readonly title: string;
-  readonly children: React.ReactNode;
+  readonly children: ReactNode;
   readonly isOpen: boolean;
   readonly onToggle: () => void;
 }

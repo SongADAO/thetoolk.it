@@ -14,6 +14,7 @@ const VIDEO_MAX_DURATION = 240;
 
 interface UploadVideoProps {
   accessToken: string;
+  privacy: string;
   text: string;
   title: string;
   userId: string;
@@ -22,6 +23,7 @@ interface UploadVideoProps {
 
 async function uploadVideo({
   accessToken,
+  privacy,
   text,
   title,
   userId,
@@ -37,6 +39,7 @@ async function uploadVideo({
     accessToken === "hosted"
       ? await fetch(`/api/hosted/facebook/videos`, {
           body: JSON.stringify({
+            privacy,
             text,
             title,
             userId,
@@ -52,7 +55,7 @@ async function uploadVideo({
             access_token: await getAccountAccessToken(accessToken, userId),
             description: text,
             file_url: videoUrl,
-            privacy: JSON.stringify({ value: "EVERYONE" }),
+            privacy: JSON.stringify({ value: privacy }),
             title,
           }),
           headers: {
@@ -102,6 +105,7 @@ async function createPost({
   accessToken,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   credentials,
+  privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
   setIsPosting,

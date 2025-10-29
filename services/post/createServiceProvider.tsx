@@ -117,6 +117,7 @@ function createServiceProvider(
     }
 
     async function post({
+      privacy,
       text,
       title,
       userId,
@@ -139,6 +140,7 @@ function createServiceProvider(
         return await config.postModule.createPost({
           accessToken: mode === "hosted" ? "hosted" : accessToken,
           credentials: storage.credentials,
+          privacy,
           requestUrl: window.location.origin,
           setIsPosting: posting.setIsPosting,
           setPostError: posting.setPostError,

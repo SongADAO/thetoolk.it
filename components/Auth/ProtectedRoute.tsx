@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { use, useEffect } from "react";
+import { type ReactNode, use, useEffect } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
-  readonly children: React.ReactNode;
+  readonly children: ReactNode;
 }
 
 function ProtectedRoute({ children }: ProtectedRouteProps) {

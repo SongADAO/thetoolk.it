@@ -7,9 +7,11 @@ interface PostVideo {
 }
 
 interface CreatePostProps {
+  facebookPrivacy: string;
   text: string;
   title: string;
   videos: Record<string, PostVideo>;
+  youtubePrivacy: string;
 }
 
 interface PostContextType {
