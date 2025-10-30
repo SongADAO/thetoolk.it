@@ -1,10 +1,13 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
 function UserProfile() {
+  const router = useRouter();
+
   const { user, signOut, loading, isAuthenticated } = use(AuthContext);
 
   if (loading) {
@@ -17,6 +20,7 @@ function UserProfile() {
 
   const handleSignOut = async (): Promise<void> => {
     await signOut();
+    router.push("/auth/signin");
   };
 
   return (
