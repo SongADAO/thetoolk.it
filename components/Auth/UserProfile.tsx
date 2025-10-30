@@ -6,9 +6,9 @@ import { use } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function UserProfile() {
-  const router = useRouter();
-
   const { user, signOut, loading, isAuthenticated } = use(AuthContext);
+
+  const router = useRouter();
 
   if (loading) {
     return <div>Loading...</div>;
