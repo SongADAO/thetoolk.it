@@ -1,4 +1,7 @@
-import type { User } from "@supabase/supabase-js";
+import type {
+  SignUpWithPasswordCredentials,
+  User,
+} from "@supabase/supabase-js";
 import type { ReactNode } from "react";
 import type { KeyedMutator } from "swr";
 
@@ -21,6 +24,7 @@ interface AuthContextType {
   signUp: (
     email: string,
     password: string,
+    options?: SignUpWithPasswordCredentials["options"],
   ) => Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
