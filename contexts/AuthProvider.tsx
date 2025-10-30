@@ -1,6 +1,9 @@
 "use client";
 
-import type { User } from "@supabase/supabase-js";
+import type {
+  SignUpWithPasswordCredentials,
+  User,
+} from "@supabase/supabase-js";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 
@@ -78,9 +81,14 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     return () => subscription?.unsubscribe();
   }, [supabase.auth]);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    options?: SignUpWithPasswordCredentials["options"],
+  ) => {
     const { data, error } = await supabase.auth.signUp({
       email,
+      options,
       password,
     });
     return { data, error };
