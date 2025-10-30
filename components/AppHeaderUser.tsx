@@ -1,12 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
 function AppHeaderUser() {
   const { user, signOut } = use(AuthContext);
+
+  const router = useRouter();
+
+  const handleSignOut = async (): Promise<void> => {
+    await signOut();
+    router.push("/auth/signin");
+  };
 
   if (!user) {
     return (
@@ -37,7 +45,7 @@ function AppHeaderUser() {
       </Link>
       <button
         className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
-        onClick={signOut}
+        onClick={handleSignOut}
         type="button"
       >
         Sign out
