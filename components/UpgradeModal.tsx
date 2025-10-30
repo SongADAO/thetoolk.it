@@ -50,7 +50,7 @@ function UpgradeModal() {
             </p>
           </div>
 
-          <div className="mt-10">
+          {/* <div className="mt-10">
             <p className="mb-4 text-center">Not ready to subscribe?</p>
             <p className="text-center">
               <Link
@@ -60,7 +60,7 @@ function UpgradeModal() {
                 Try TheToolk.it Free Edition
               </Link>
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     );
