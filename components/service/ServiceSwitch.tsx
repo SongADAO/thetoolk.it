@@ -149,52 +149,53 @@ function ServiceSwitch({
           ) : null}
 
           <div className="flex items-center justify-between gap-2">
-            {isAuthorized && accounts.length > 0 && label !== "Farcaster" ? (
-              <div className="flex-1">
-                <button
-                  className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor}`}
-                  data-authorized={isAuthorized}
-                  onClick={disconnect}
-                  type="button"
-                >
-                  <div>
-                    <div className="flex items-center justify-center gap-2">
-                      Disconnect
-                    </div>
+            {label === "Farcaster" ? (
+              <NeynarAuthButton
+                label="Authorize"
+                style={{
+                  borderRadius: "0.25rem",
+                  boxShadow: "none",
+                  fontWeight: "400",
+                  padding: "0.75rem 0.25rem",
+                  width: "100%",
+                }}
+              />
+            ) : (
+              // eslint-disable-next-line react/jsx-no-useless-fragment
+              <>
+                {isAuthorized && accounts.length > 0 ? (
+                  <div className="flex-1">
+                    <button
+                      className={`w-full cursor-pointer gap-2 rounded bg-[#800] px-4 py-2 text-white hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
+                      data-authorized={isAuthorized}
+                      onClick={disconnect}
+                      type="button"
+                    >
+                      <div>
+                        <div className="flex items-center justify-center gap-2">
+                          {icon} Log out of {label}
+                        </div>
+                      </div>
+                    </button>
                   </div>
-                </button>
-              </div>
-            ) : null}
-
-            <div className="flex-1">
-              {label === "Farcaster" ? (
-                <NeynarAuthButton
-                  label="Authorize"
-                  style={{
-                    borderRadius: "0.25rem",
-                    boxShadow: "none",
-                    fontWeight: "400",
-                    padding: "0.75rem 0.25rem",
-                    width: "100%",
-                  }}
-                />
-              ) : (
-                <button
-                  className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor}`}
-                  data-authorized={isAuthorized}
-                  onClick={authorize}
-                  type="button"
-                >
-                  <div>
-                    <div className="flex items-center justify-center gap-2">
-                      {isAuthorized && accounts.length > 0
-                        ? "Reauthorize"
-                        : "Authorize"}
-                    </div>
+                ) : (
+                  <div className="flex-1">
+                    <button
+                      className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
+                      data-authorized={isAuthorized}
+                      onClick={authorize}
+                      type="button"
+                    >
+                      <div>
+                        <div className="flex items-center justify-center gap-2">
+                          {icon} Log in with {label}
+                        </div>
+                      </div>
+                    </button>
                   </div>
-                </button>
-              )}
-            </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       ) : null}
