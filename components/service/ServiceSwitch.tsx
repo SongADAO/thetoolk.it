@@ -167,7 +167,7 @@ function ServiceSwitch({
                 {isAuthorized && accounts.length > 0 ? (
                   <div className="flex-1">
                     <button
-                      className={`w-full cursor-pointer gap-2 rounded bg-[#800] px-4 py-2 text-white hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
+                      className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
                       data-authorized={isAuthorized}
                       onClick={disconnect}
                       type="button"
