@@ -43,7 +43,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
           </div>
         </div>
       </div>
-      <div className="grid gap-4 p-2 lg:grid-cols-2 lg:p-4 2xl:grid-cols-[1fr_1fr_620px]">
+      <div className="grid gap-4 p-2 lg:grid-cols-2 lg:p-4 xl:grid-cols-[1fr_1fr_525px] 2xl:grid-cols-[1fr_1fr_620px]">
         <div>
           <section className="rounded bg-gray-100 p-4">
             <PostProvider>
@@ -57,7 +57,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
             <section className="rounded bg-gray-100 p-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Storage Services</h3>
-                <div className="hidden gap-2 lg:flex 2xl:hidden">
+                <div className="hidden gap-2 lg:flex xl:hidden">
                   {showInstructions ? (
                     <Link
                       className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
@@ -83,7 +83,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
             <section className="rounded bg-gray-100 p-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3>Active Posting Services</h3>
-                <div className="hidden gap-2 lg:flex 2xl:hidden">
+                <div className="hidden gap-2 lg:flex xl:hidden">
                   {showInstructions ? (
                     <Link
                       className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
@@ -107,7 +107,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
           </div>
         </div>
 
-        <div className="hidden 2xl:block">
+        <div className="hidden xl:block">
           <div className="flex flex-col gap-2">
             {showStorageSettings ? (
               <section className="rounded bg-gray-100 p-4">
@@ -115,7 +115,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   <h3>Storage Service Settings</h3>
                   {showInstructions ? (
                     <Link
-                      className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 2xl:flex"
+                      className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 xl:flex"
                       href="/instructions"
                       target="_blank"
                       title="Instructions"
@@ -132,7 +132,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 <h3>Posting Service Settings</h3>
                 {showInstructions ? (
                   <Link
-                    className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 2xl:flex"
+                    className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 xl:flex"
                     href="/instructions"
                     target="_blank"
                     title="Instructions"
