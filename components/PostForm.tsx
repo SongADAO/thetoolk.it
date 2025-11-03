@@ -458,7 +458,7 @@ function PostForm() {
           disabled={isFormDisabled}
         >
           {isPending ? <Spinner /> : null}
-          {isPending ? "Posting..." : "Post"}
+          {isPending ? "Posting..." : "Create Post"}
         </Form.Submit>
       </Form.Root>
     </div>
