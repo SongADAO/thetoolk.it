@@ -151,12 +151,13 @@ function ServiceSwitch({
           <div className="flex items-center justify-between gap-2">
             {label === "Farcaster" ? (
               <NeynarAuthButton
-                label="Authorize"
+                label="Log in with Neynar"
                 style={{
                   borderRadius: "0.25rem",
-                  boxShadow: "none",
+                  boxShadow:
+                    "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
                   fontWeight: "400",
-                  padding: "0.75rem 0.25rem",
+                  padding: "0.64rem 0.2rem",
                   width: "100%",
                 }}
               />
