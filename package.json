@@ -24,7 +24,7 @@
     "node": "^22.0.0"
   },
   "dependencies": {
-    "@atproto/api": "^0.17.0",
+    "@atproto/api": "^0.18.0",
     "@atproto/jwk-jose": "^0.1.9",
     "@atproto/lexicon": "^0.5.1",
     "@atproto/oauth-client-browser": "^0.3.27",
