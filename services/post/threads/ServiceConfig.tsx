@@ -17,6 +17,7 @@ import {
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
+  shouldHandleAuthCallback,
   shouldHandleAuthRedirect,
 } from "@/services/post/threads/auth";
 import {
@@ -67,6 +68,7 @@ export const threadsServiceConfig: ServiceConfig = {
     needsRefreshTokenRenewal,
     refreshAccessToken,
     refreshAccessTokenHosted,
+    shouldHandleAuthCallback,
     shouldHandleAuthRedirect,
   },
   defaultAuthorization: defaultOauthAuthorization,

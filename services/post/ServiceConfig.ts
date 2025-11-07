@@ -77,6 +77,7 @@ interface ServiceConfig {
       mode: "hosted" | "self",
     ) => Promise<OauthAuthorizationAndExpiration>;
     refreshAccessTokenHosted: () => Promise<OauthAuthorization>;
+    shouldHandleAuthCallback: (searchParams: URLSearchParams) => boolean;
     shouldHandleAuthRedirect: (searchParams: URLSearchParams) => boolean;
   };
 
