@@ -102,10 +102,13 @@ function getRedirectUri(): string {
   return `${url.origin}/authorize`;
 }
 
+function shouldHandleAuthCallback(searchParams: URLSearchParams): boolean {
+  return Boolean(searchParams.get("state")?.includes(OAUTH_STATE));
+}
+
 function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
   return Boolean(
-    searchParams.get("code") &&
-      searchParams.get("state")?.includes(OAUTH_STATE),
+    shouldHandleAuthCallback(searchParams) && searchParams.get("code"),
   );
 }
 
@@ -431,5 +434,6 @@ export {
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
+  shouldHandleAuthCallback,
   shouldHandleAuthRedirect,
 };

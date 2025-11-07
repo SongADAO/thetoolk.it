@@ -16,6 +16,7 @@ import {
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
+  shouldHandleAuthCallback,
   shouldHandleAuthRedirect,
 } from "@/services/post/instagram/auth";
 import {
@@ -67,6 +68,7 @@ export const instagramServiceConfig: ServiceConfig = {
     needsRefreshTokenRenewal,
     refreshAccessToken,
     refreshAccessTokenHosted,
+    shouldHandleAuthCallback,
     shouldHandleAuthRedirect,
   },
   defaultAuthorization: defaultOauthAuthorization,

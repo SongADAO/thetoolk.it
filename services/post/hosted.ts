@@ -17,29 +17,29 @@ import { youtubeServiceConfig } from "@/services/post/youtube/ServiceConfig";
 function getAuthRedirectServiceId(requestUrl: string): string {
   const { searchParams } = new URL(requestUrl);
 
-  if (facebookServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+  if (facebookServiceConfig.authModule.shouldHandleAuthCallback(searchParams)) {
     return facebookServiceConfig.id;
   }
 
   if (
-    instagramServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)
+    instagramServiceConfig.authModule.shouldHandleAuthCallback(searchParams)
   ) {
     return instagramServiceConfig.id;
   }
 
-  if (threadsServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+  if (threadsServiceConfig.authModule.shouldHandleAuthCallback(searchParams)) {
     return threadsServiceConfig.id;
   }
 
-  if (tiktokServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+  if (tiktokServiceConfig.authModule.shouldHandleAuthCallback(searchParams)) {
     return tiktokServiceConfig.id;
   }
 
-  if (youtubeServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+  if (youtubeServiceConfig.authModule.shouldHandleAuthCallback(searchParams)) {
     return youtubeServiceConfig.id;
   }
 
-  if (twitterServiceConfig.authModule.shouldHandleAuthRedirect(searchParams)) {
+  if (twitterServiceConfig.authModule.shouldHandleAuthCallback(searchParams)) {
     return twitterServiceConfig.id;
   }
 

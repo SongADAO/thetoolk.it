@@ -22,6 +22,7 @@ import {
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
+  shouldHandleAuthCallback,
   shouldHandleAuthRedirect,
 } from "@/services/post/youtube/auth";
 import {
@@ -67,6 +68,7 @@ export const youtubeServiceConfig: ServiceConfig = {
     needsRefreshTokenRenewal,
     refreshAccessToken,
     refreshAccessTokenHosted,
+    shouldHandleAuthCallback,
     shouldHandleAuthRedirect,
   },
   defaultAuthorization: defaultOauthAuthorization,

@@ -87,11 +87,15 @@ function getRedirectUri(): string {
   return `${url.origin}/authorize`;
 }
 
+function shouldHandleAuthCallback(searchParams: URLSearchParams): boolean {
+  return Boolean(searchParams.get("iss")?.includes("bsky"));
+}
+
 function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
   return Boolean(
-    searchParams.get("code") &&
-      searchParams.get("state") &&
-      searchParams.get("iss")?.includes("bsky"),
+    shouldHandleAuthCallback(searchParams) &&
+      searchParams.get("code") &&
+      searchParams.get("state"),
   );
 }
 
@@ -374,5 +378,6 @@ export {
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
+  shouldHandleAuthCallback,
   shouldHandleAuthRedirect,
 };

@@ -16,6 +16,7 @@ import {
   needsRefreshTokenRenewal,
   refreshAccessToken,
   refreshAccessTokenHosted,
+  shouldHandleAuthCallback,
   shouldHandleAuthRedirect,
 } from "@/services/post/facebook/auth";
 import {
@@ -67,6 +68,7 @@ export const facebookServiceConfig: ServiceConfig = {
     needsRefreshTokenRenewal,
     refreshAccessToken,
     refreshAccessTokenHosted,
+    shouldHandleAuthCallback,
     shouldHandleAuthRedirect,
   },
   defaultAuthorization: defaultOauthAuthorization,
