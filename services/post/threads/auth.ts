@@ -26,7 +26,7 @@ const HOSTED_CREDENTIALS: OauthCredentials = {
 
 // -----------------------------------------------------------------------------
 
-const SCOPES: string[] = ["threads_basic", "threads_content_publish"];
+const SCOPES: string[] = ["threads_basic"];
 
 const OAUTH_STATE = "threads_auth";
 
