@@ -42,6 +42,7 @@ function SignInForm() {
           Email
         </label>
         <input
+          autoComplete="email"
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
@@ -56,6 +57,7 @@ function SignInForm() {
           Password
         </label>
         <input
+          autoComplete="current-password"
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           id="password"
           onChange={(e) => setPassword(e.target.value)}
