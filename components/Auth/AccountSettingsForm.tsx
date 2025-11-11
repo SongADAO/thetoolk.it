@@ -153,6 +153,7 @@ function AccountSettingsForm() {
               Current Email
             </label>
             <input
+              autoComplete="email"
               className="w-full rounded border border-gray-300 bg-gray-50 px-3 py-2"
               disabled
               id="current-email"
@@ -169,6 +170,7 @@ function AccountSettingsForm() {
               New Email
             </label>
             <input
+              autoComplete="email"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               id="new-email"
               onChange={(e) => setEmail(e.target.value)}
@@ -200,6 +202,19 @@ function AccountSettingsForm() {
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-xl font-semibold">Change Password</h2>
         <form className="space-y-4" onSubmit={handlePasswordChange}>
+          <div className="sr-only">
+            <label htmlFor="username">Username</label>
+            <input
+              autoComplete="username"
+              id="username"
+              name="username"
+              readOnly
+              tabIndex={-1}
+              type="text"
+              value={user.email ?? ""}
+            />
+          </div>
+
           <div>
             <label
               className="mb-1 block text-sm font-medium"
@@ -208,6 +223,7 @@ function AccountSettingsForm() {
               Current Password
             </label>
             <input
+              autoComplete="current-password"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               id="current-password"
               minLength={6}
@@ -229,6 +245,7 @@ function AccountSettingsForm() {
               New Password
             </label>
             <input
+              autoComplete="new-password"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               id="new-password"
               minLength={6}
@@ -247,6 +264,7 @@ function AccountSettingsForm() {
               Confirm New Password
             </label>
             <input
+              autoComplete="new-password"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               id="confirm-password"
               minLength={6}
