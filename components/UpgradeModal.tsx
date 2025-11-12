@@ -30,6 +30,9 @@ function UpgradeModal() {
         <div className="absolute top-1/4 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 -translate-y-1/2 transform rounded-md border-2 border-gray-500 bg-gray-200 p-6 shadow-lg">
           <div>
             <p className="mb-4 text-center">
+              Post videos to all your favorite social networks from one place.
+            </p>
+            <p className="mb-4 text-center">
               TheToolk.it Pro offers all the sharing features of our free
               version, but without the headache of creating your own API
               credentials.
