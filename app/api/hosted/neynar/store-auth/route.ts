@@ -11,7 +11,6 @@ export async function POST(request: NextRequest) {
     await gateHasActiveSubscription({ ...serverAuth });
 
     const { authorization, expiration, accounts } = await request.json();
-    console.log(authorization, expiration, accounts);
 
     await updateServiceAuthorizationAndAccounts({
       ...serverAuth,
