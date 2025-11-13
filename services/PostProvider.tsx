@@ -9,12 +9,12 @@ import {
 } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { convertToHLS, type HLSFiles } from "@/lib/video/hls";
+import { convertVideoRemotion } from "@/lib/video/remotion";
 import { trimVideo } from "@/lib/video/trim";
 import {
   getVideoDuration,
   // downloadFile,
 } from "@/lib/video/video";
-import { convertVideoWebcodecs } from "@/lib/video/webcodecs";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
@@ -176,7 +176,7 @@ export function PostProvider({ children }: Readonly<Props>) {
       }
 
       console.log("Starting video conversion...");
-      const convertedData = await convertVideoWebcodecs(
+      const convertedData = await convertVideoRemotion(
         video,
         {
           audioBitrate: 128000,
