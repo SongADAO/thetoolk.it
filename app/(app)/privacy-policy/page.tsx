@@ -1,4 +1,4 @@
-export default function PrivacyPolicy() {
+export default function PrivacyPolicyPage() {
   return (
     <div className="terms">
       <h1>Privacy Policy</h1>

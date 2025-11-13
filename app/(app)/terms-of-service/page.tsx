@@ -1,4 +1,4 @@
-export default function TermsOfService() {
+export default function TermsOfServicePage() {
   return (
     <div className="terms">
       <h1>Terms of Service</h1>
