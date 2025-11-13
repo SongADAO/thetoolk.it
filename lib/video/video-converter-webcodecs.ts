@@ -225,15 +225,6 @@ class VideoConverter {
     console.log(`Downloaded converted file: ${file.name}`);
   }
 
-  // Helper method to create a File from Uint8Array for downloading
-  public createFileFromArray(
-    data: Uint8Array,
-    filename = "converted_video.mp4",
-  ): File {
-    const blob = new Blob([data as BlobPart], { type: "video/mp4" });
-    return new File([blob], filename, { type: "video/mp4" });
-  }
-
   // Calculate target video bitrate to stay under file size limit
   private calculateTargetBitrate(
     durationSeconds: number,
