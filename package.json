@@ -38,8 +38,6 @@
     "@pigment-css/react": "^0.0.30",
     "@radix-ui/react-icons": "^1.3.2",
     "@rainbow-me/rainbowkit": "^2.2.8",
-    "@remotion/media-parser": "^4.0.324",
-    "@remotion/webcodecs": "^4.0.324",
     "@stripe/stripe-js": "^8.1.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.53.0",
