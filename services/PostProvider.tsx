@@ -530,11 +530,6 @@ export function PostProvider({ children }: Readonly<Props>) {
           videoUrl = pinataVideoResult;
         }
 
-        // TikTok can't work with IPFS as the domain cannot be verified.
-        if (videoId === "tiktok") {
-          videoUrl = s3VideoResult;
-        }
-
         if (!videoUrl) {
           console.error(`Failed to upload ${videoId} video to storage.`);
           throw new Error(`Failed to upload ${videoId} video to storage.`);
