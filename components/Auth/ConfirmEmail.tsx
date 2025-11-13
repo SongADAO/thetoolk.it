@@ -89,7 +89,7 @@ function ConfirmEmail() {
 
   return (
     <div className="mx-auto max-w-md space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-      <h2 className="text-center text-2xl font-bold">Email Confirmation</h2>
+      <h1 className="text-center text-2xl font-bold">Email Confirmation</h1>
 
       {isLoading ? (
         <div className="flex flex-col items-center space-y-4">

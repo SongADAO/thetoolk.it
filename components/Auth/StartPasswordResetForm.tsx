@@ -31,7 +31,7 @@ function StartPasswordResetForm() {
 
   return (
     <form className="mx-auto max-w-md space-y-4" onSubmit={handleSubmit}>
-      <h2 className="text-2xl font-bold">Reset Password</h2>
+      <h1 className="text-2xl font-bold">Reset Password</h1>
 
       <div>
         <label className="mb-1 block text-sm font-medium" htmlFor="email">

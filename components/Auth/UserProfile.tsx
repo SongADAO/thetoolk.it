@@ -26,7 +26,7 @@ function UserProfile() {
 
   return (
     <div className="mx-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-2xl font-bold">Profile</h2>
+      <h1 className="mb-4 text-2xl font-bold">Profile</h1>
       <div className="space-y-2">
         <p>
           <strong>Email:</strong> {user.email}
