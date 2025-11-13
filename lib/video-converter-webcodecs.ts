@@ -1,7 +1,6 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/class-methods-use-this */
 
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-// import { toBlobURL } from "@ffmpeg/util";
 import { parseMedia } from "@remotion/media-parser";
 import { convertMedia } from "@remotion/webcodecs";
 
@@ -32,14 +31,6 @@ class FFmpegAudioPreprocessor {
 
     // Load FFmpeg wasm files
     await this.ffmpeg.load();
-    // const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
-    // await this.ffmpeg.load({
-    //   coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-    //   wasmURL: await toBlobURL(
-    //     `${baseURL}/ffmpeg-core.wasm`,
-    //     "application/wasm",
-    //   ),
-    // });
 
     this.initialized = true;
     console.log("FFmpeg initialized");
