@@ -17,7 +17,7 @@ import {
   cleanupFFmpeg as cleanupFFmpegTrim,
   trimVideo,
 } from "@/lib/video/trim";
-import { VideoConverter } from "@/lib/video/video-converter-webcodecs";
+import { VideoConverter } from "@/lib/video/webcodecs";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
