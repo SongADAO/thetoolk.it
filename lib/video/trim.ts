@@ -22,6 +22,10 @@ async function trimVideo({
   onProgress,
   video,
 }: TrimVideoOptions): Promise<File | null> {
+  // Initialize FFmpeg
+  console.log("Initializing FFmpeg...");
+  const ffmpeg = await initializeFFmpeg(onProgress);
+
   try {
     console.log(
       `Trimming video: maxDuration=${maxDuration}s, maxFilesize=${maxFilesize} bytes, minDuration=${minDuration}s`,
@@ -41,10 +45,6 @@ async function trimVideo({
       console.log("Video is within limits, no trimming needed");
       return null;
     }
-
-    // Initialize FFmpeg
-    console.log("Initializing FFmpeg...");
-    const ffmpeg = await initializeFFmpeg(onProgress);
 
     const inputFileName = `input_${Date.now()}.${getFileExtension(video.name)}`;
     const outputFileName = `output_${Date.now()}.${getFileExtension(video.name)}`;
