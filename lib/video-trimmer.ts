@@ -141,7 +141,9 @@ async function trimVideo({
     }
 
     // Convert output to File object
-    const trimmedBlob = new Blob([outputData], { type: video.type });
+    const trimmedBlob = new Blob([outputData as BlobPart], {
+      type: video.type,
+    });
     const trimmedFile = new File(
       [trimmedBlob],
       `${label}_trimmed_${video.name}`,
