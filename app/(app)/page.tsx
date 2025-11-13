@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div>
@@ -9,28 +11,41 @@ export default function Home() {
             src="/home-screenshot.webp"
           />
         </div>
-        <div>
+        <section>
           <h1 className="mb-4 text-4xl font-bold">TheToolk.it</h1>
           <p className="mb-4">
             TheToolk.it Pro is your one place to post videos to all your
             favorite social media networks at once.
           </p>
-          <h2 className="mb-2 font-semibold">Supported Networks</h2>
-          <div className="grid max-w-100 grid-cols-2 items-start justify-start gap-4 md:flex-row">
-            <ul className="list-disc pl-5">
-              <li>Bluesky</li>
-              <li>Facebook</li>
-              <li>Farcaster</li>
-              <li>Instagram</li>
-            </ul>
-            <ul className="list-disc pl-5">
-              <li>TikTok</li>
-              <li>Threads</li>
-              <li>X (Twitter)</li>
-              <li>YouTube</li>
-            </ul>
-          </div>
-        </div>
+          <section className="mb-4">
+            <h2 className="mb-2 font-semibold">Supported Networks</h2>
+            <div className="grid max-w-100 grid-cols-2 items-start justify-start gap-4 md:flex-row">
+              <ul className="list-disc pl-5">
+                <li>Bluesky</li>
+                <li>Facebook</li>
+                <li>Farcaster</li>
+                <li>Instagram</li>
+              </ul>
+              <ul className="list-disc pl-5">
+                <li>TikTok</li>
+                <li>Threads</li>
+                <li>X (Twitter)</li>
+                <li>YouTube</li>
+              </ul>
+            </div>
+          </section>
+          <section>
+            <h2 className="mb-2 font-semibold">Get Started Now</h2>
+            <div className="grid max-w-100 items-start justify-start gap-4 md:flex-row">
+              <Link
+                className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
+                href="/pro"
+              >
+                Access TheToolk.it Pro
+              </Link>
+            </div>
+          </section>
+        </section>
       </div>
     </div>
   );

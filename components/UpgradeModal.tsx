@@ -39,13 +39,13 @@ function UpgradeModal() {
             </p>
             <p className="flex flex-col items-center justify-center gap-4 text-center md:flex-row">
               <Link
-                className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
+                className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
                 href="/auth/signup"
               >
                 Create an Account
               </Link>
               <Link
-                className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
+                className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
                 href="/auth/signin"
               >
                 Sign In
@@ -79,7 +79,7 @@ function UpgradeModal() {
           </p>
           <p className="text-center">
             <Link
-              className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
+              className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
               href="/subscribe"
             >
               Subscribe
