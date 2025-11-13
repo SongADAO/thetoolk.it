@@ -1,7 +1,7 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
 
-import { getVideoDuration } from "@/lib/video";
+import { getVideoDuration } from "@/lib/video/video";
 
 let ffmpegInstance: FFmpeg | null = null;
 

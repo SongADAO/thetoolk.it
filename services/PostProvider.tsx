@@ -8,15 +8,12 @@ import {
   DEBUG_STOP_AFTER_STORAGE,
 } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import {
-  // getVideoCodecInfo,
-  getVideoDuration,
-} from "@/lib/video";
 import { HLSConverter, type HLSFiles } from "@/lib/video/hls";
 import {
   cleanupFFmpeg as cleanupFFmpegTrim,
   trimVideo,
 } from "@/lib/video/trim";
+import { getVideoDuration } from "@/lib/video/video";
 import { VideoConverter } from "@/lib/video/webcodecs";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
