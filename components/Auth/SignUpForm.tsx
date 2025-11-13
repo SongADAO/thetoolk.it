@@ -21,7 +21,7 @@ function SignUpForm() {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { data, error: signUpError } = await signUp(email, password, {
-      emailRedirectTo: `${window.location.origin}/`,
+      emailRedirectTo: `${window.location.origin}/pro`,
     });
 
     if (signUpError) {
