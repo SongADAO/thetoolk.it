@@ -6,14 +6,13 @@ import {
   convertAudioTo16BitPCM,
   extractVideoOnly,
 } from "@/lib/video/audio";
-import { calculateTargetBitrate } from "@/lib/video/video";
+// import { calculateTargetBitrate } from "@/lib/video/video";
 
 interface ConvertVideoRemotionOptions {
   audioBitrate: number;
   audioSampleRate: number;
-  crf: number;
-  duration: number;
-  maxFileSizeMB: number;
+  // duration: number;
+  // maxFileSizeMB: number;
   maxWidth: number;
   maxFps: number;
 }
@@ -88,14 +87,14 @@ async function convertVideoRemotion(
 
     console.log(`Target dimensions: ${targetWidth}x${targetHeight}`);
 
-    const targetSizeMB = options.maxFileSizeMB * 0.95;
+    // const targetSizeMB = options.maxFileSizeMB * 0.95;
 
-    const targetBitrate = calculateTargetBitrate(
-      options.duration,
-      targetSizeMB,
-      options.audioBitrate,
-    );
-    console.log(`Target bitrate: ${targetBitrate} kbps`);
+    // const targetBitrate = calculateTargetBitrate(
+    //   options.duration,
+    //   targetSizeMB,
+    //   options.audioBitrate,
+    // );
+    // console.log(`Target bitrate: ${targetBitrate} kbps`);
 
     // Calculate scale factor instead of explicit dimensions
     const resizeOperation = (() => {
@@ -161,7 +160,6 @@ async function convertVideoRemotion(
         console.log("Re-encoding video track");
         return {
           // bitrate: targetBitrate,
-          // crf: options.crf,
           type: "reencode",
           videoCodec: "h264",
         };
