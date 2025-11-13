@@ -118,7 +118,7 @@ function ConfirmEmail() {
 
           <div className="flex flex-col space-y-2">
             <Link
-              className="w-full rounded bg-blue-600 px-4 py-2 text-center text-white hover:bg-blue-700"
+              className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
               href="/auth/signin"
             >
               Go to Sign In
