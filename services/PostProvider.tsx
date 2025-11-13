@@ -13,11 +13,11 @@ import {
   getVideoDuration,
 } from "@/lib/video";
 import { HLSConverter, type HLSFiles } from "@/lib/video/hls-converter";
-import { VideoConverter } from "@/lib/video/video-converter-webcodecs";
 import {
   cleanupFFmpeg as cleanupFFmpegTrim,
   trimVideo,
-} from "@/lib/video/video-trimmer";
+} from "@/lib/video/trim";
+import { VideoConverter } from "@/lib/video/video-converter-webcodecs";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
