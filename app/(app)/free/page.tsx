@@ -9,7 +9,7 @@ import { StorageProviders } from "@/components/service/storage/StorageProviders"
 import { AuthContext } from "@/contexts/AuthContext";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
 
-export default function Home() {
+export default function FreePage() {
   const { isAuthenticated } = use(AuthContext);
 
   return (
