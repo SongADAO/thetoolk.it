@@ -23,6 +23,11 @@
   "engines": {
     "node": "^22.0.0"
   },
+  "overrides": {
+    "@pigment-css/react": {
+      "@wyw-in-js/transform": "^0.8.0"
+    }
+  },
   "dependencies": {
     "@atproto/api": "^0.18.0",
     "@atproto/jwk-jose": "^0.1.9",
