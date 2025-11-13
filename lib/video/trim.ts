@@ -1,14 +1,7 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
 
-interface TrimVideoOptions {
-  label: string;
-  maxDuration: number;
-  maxFilesize: number;
-  minDuration: number;
-  onProgress: ((progress: number) => void) | undefined | null;
-  video: File;
-}
+import { getVideoDuration } from "@/lib/video";
 
 let ffmpegInstance: FFmpeg | null = null;
 
@@ -40,28 +33,32 @@ async function initializeFFmpeg(
   return ffmpeg;
 }
 
-async function getVideoActualDuration(video: File): Promise<number> {
-  return new Promise((resolve) => {
-    const videoElement = document.createElement("video");
-    videoElement.preload = "metadata";
-
-    videoElement.onloadedmetadata = () => {
-      window.URL.revokeObjectURL(videoElement.src);
-      resolve(videoElement.duration);
-    };
-
-    videoElement.onerror = () => {
-      window.URL.revokeObjectURL(videoElement.src);
-      resolve(0);
-    };
-
-    videoElement.src = URL.createObjectURL(video);
-  });
+// Utility function to clean up FFmpeg instance if needed
+function cleanupFFmpeg(): void {
+  if (ffmpegInstance) {
+    // FFmpeg doesn't have an explicit cleanup method in the current API
+    // The instance will be garbage collected
+    ffmpegInstance = null;
+  }
 }
+
+// -----------------------------------------------------------------------------
 
 function getFileExtension(filename: string): string {
   const extension = filename.split(".").pop()?.toLowerCase();
+
   return extension ?? "mp4";
+}
+
+// -----------------------------------------------------------------------------
+
+interface TrimVideoOptions {
+  label: string;
+  maxDuration: number;
+  maxFilesize: number;
+  minDuration: number;
+  onProgress: ((progress: number) => void) | undefined | null;
+  video: File;
 }
 
 async function trimVideo({
@@ -78,7 +75,7 @@ async function trimVideo({
     );
 
     // Get actual video duration
-    const actualDuration = await getVideoActualDuration(video);
+    const actualDuration = await getVideoDuration(video);
     console.log(`Video actual duration: ${actualDuration}s`);
 
     // If video is shorter than minimum duration, return as-is
@@ -185,13 +182,6 @@ async function trimVideo({
   }
 }
 
-// Utility function to clean up FFmpeg instance if needed
-function cleanupFFmpeg(): void {
-  if (ffmpegInstance) {
-    // FFmpeg doesn't have an explicit cleanup method in the current API
-    // The instance will be garbage collected
-    ffmpegInstance = null;
-  }
-}
+// -----------------------------------------------------------------------------
 
 export { cleanupFFmpeg, trimVideo };

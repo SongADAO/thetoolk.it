@@ -138,11 +138,11 @@ export function PostProvider({ children }: Readonly<Props>) {
     [pinata.isEnabled, pinata.isUsable, amazonS3.isEnabled, amazonS3.isUsable],
   );
 
-  function getVideoInfo(video: File | null): void {
+  async function getVideoInfo(video: File | null): Promise<void> {
     if (video) {
       setVideoPreviewUrl(URL.createObjectURL(video));
       setVideoFileSize(video.size);
-      getVideoDuration({ setVideoDuration, video });
+      setVideoDuration(await getVideoDuration(video));
 
       return;
     }

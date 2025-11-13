@@ -20,22 +20,23 @@ function formatFileDuration(duration: number) {
     : `${padded(minutes)}:${padded(seconds)}`;
 }
 
-function getVideoDuration({
-  video,
-  setVideoDuration,
-}: Readonly<{
-  video: File;
-  setVideoDuration: (duration: number) => void;
-}>) {
-  const videoElement = document.createElement("video");
-  videoElement.preload = "metadata";
+async function getVideoDuration(video: File): Promise<number> {
+  return new Promise((resolve) => {
+    const videoElement = document.createElement("video");
+    videoElement.preload = "metadata";
 
-  videoElement.onloadedmetadata = () => {
-    window.URL.revokeObjectURL(videoElement.src);
-    setVideoDuration(videoElement.duration);
-  };
+    videoElement.onloadedmetadata = () => {
+      window.URL.revokeObjectURL(videoElement.src);
+      resolve(videoElement.duration);
+    };
 
-  videoElement.src = URL.createObjectURL(video);
+    videoElement.onerror = () => {
+      window.URL.revokeObjectURL(videoElement.src);
+      resolve(0);
+    };
+
+    videoElement.src = URL.createObjectURL(video);
+  });
 }
 
 export { formatFileDuration, formatFileSize, getVideoDuration };
