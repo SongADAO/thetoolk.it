@@ -1,8 +1,8 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 import { DEBUG_STORAGE } from "@/config/constants";
-import type { HLSFiles } from "@/lib/hls-converter";
 import { sleep } from "@/lib/utils";
+import type { HLSFiles } from "@/lib/video/hls-converter";
 import type { AmazonS3Credentials } from "@/services/storage/types";
 
 interface UploadFileProps {

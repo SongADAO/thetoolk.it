@@ -7,18 +7,18 @@ import {
   DEBUG_STOP_AFTER_CONVERSION,
   DEBUG_STOP_AFTER_STORAGE,
 } from "@/config/constants";
-import { HLSConverter, type HLSFiles } from "@/lib/hls-converter";
 import { sleep } from "@/lib/utils";
 import {
   // getVideoCodecInfo,
   getVideoDuration,
 } from "@/lib/video";
+import { HLSConverter, type HLSFiles } from "@/lib/video/hls-converter";
 // import { VideoConverter } from "@/lib/video-converter-ffmpeg";
-import { VideoConverter } from "@/lib/video-converter-webcodecs";
+import { VideoConverter } from "@/lib/video/video-converter-webcodecs";
 import {
   cleanupFFmpeg as cleanupFFmpegTrim,
   trimVideo,
-} from "@/lib/video-trimmer";
+} from "@/lib/video/video-trimmer";
 // import { validateVideoFile } from "@/lib/video-validator";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
