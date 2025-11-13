@@ -145,11 +145,6 @@ export function PostProvider({ children }: Readonly<Props>) {
       setVideoPreviewUrl(URL.createObjectURL(video));
       setVideoFileSize(video.size);
       getVideoDuration({ setVideoDuration, video });
-      // setVideoCodecInfo(await getVideoCodecInfo(video));
-
-      // console.log("check video info");
-      // const result = await validateVideoFile(video);
-      // console.log("Video validation:", result);
 
       return;
     }
