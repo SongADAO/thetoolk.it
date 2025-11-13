@@ -6,7 +6,7 @@ TheToolkit (thetoolk.it) is a self-hosted social media management application th
 
 - **Next.js 15** with App Router
 - **React 19** 
-- **Media processing** capabilities (FFmpeg, video muxing, Remotion WebCodecs)
+- **Media processing** capabilities (FFmpeg, video muxing, Mediabunny)
 - **Web3 integrations** (RainbowKit, Wagmi, Viem for blockchain connectivity)
 - **File storage** options (AWS S3, Pinata IPFS, TUS uploads)
 - **Social platform APIs** for cross-posting
