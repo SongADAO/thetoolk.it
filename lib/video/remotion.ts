@@ -8,7 +8,7 @@ import {
 } from "@/lib/video/audio";
 import { calculateTargetBitrate } from "@/lib/video/video";
 
-interface ConvertVideoWebcodecsOptions {
+interface ConvertVideoRemotionOptions {
   audioBitrate: number;
   audioSampleRate: number;
   crf: number;
@@ -18,9 +18,9 @@ interface ConvertVideoWebcodecsOptions {
   maxFps: number;
 }
 
-async function convertVideoWebcodecs(
+async function convertVideoRemotion(
   file: File,
-  options: ConvertVideoWebcodecsOptions,
+  options: ConvertVideoRemotionOptions,
   onProgress: (progress: number) => void,
   setVideoConversionStatus: (status: string) => void,
 ): Promise<Uint8Array> {
@@ -187,4 +187,4 @@ async function convertVideoWebcodecs(
   }
 }
 
-export { convertVideoWebcodecs, type ConvertVideoWebcodecsOptions };
+export { convertVideoRemotion, type ConvertVideoRemotionOptions };
