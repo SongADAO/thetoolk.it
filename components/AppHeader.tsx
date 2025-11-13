@@ -4,9 +4,9 @@ import { AppLogo } from "@/components/AppLogo";
 function AppHeader() {
   return (
     <div className="flex items-center justify-between bg-gray-200 p-2 lg:px-4">
-      <h1>
+      <div>
         <AppLogo />
-      </h1>
+      </div>
       <AppHeaderUser />
     </div>
   );
