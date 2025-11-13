@@ -3,6 +3,7 @@
 import { ReactNode, use, useMemo, useState } from "react";
 
 import {
+  DEBUG_DOWNLOAD_MEDIA,
   DEBUG_MEDIA,
   DEBUG_STOP_AFTER_CONVERSION,
   DEBUG_STOP_AFTER_STORAGE,
@@ -11,10 +12,7 @@ import { sleep } from "@/lib/utils";
 import { convertToHLS, type HLSFiles } from "@/lib/video/hls";
 import { convertVideoRemotion } from "@/lib/video/remotion";
 import { trimVideo } from "@/lib/video/trim";
-import {
-  getVideoDuration,
-  // downloadFile,
-} from "@/lib/video/video";
+import { downloadFile, getVideoDuration } from "@/lib/video/video";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
@@ -203,7 +201,10 @@ export function PostProvider({ children }: Readonly<Props>) {
       );
       setVideoConversionProgress(100);
 
-      // downloadFile(convertedVideo);
+      if (DEBUG_DOWNLOAD_MEDIA) {
+        downloadFile(convertedVideo);
+        throw new Error("TESTING CONVERSION ONLY");
+      }
 
       return convertedVideo;
     } catch (err: unknown) {

@@ -1,5 +1,6 @@
 /* eslint-disable import/group-exports */
 
+export const DEBUG_DOWNLOAD_MEDIA = process.env.NEXT_PUBLIC_DEBUG_DOWNLOAD_MEDIA === "true";
 export const DEBUG_MEDIA = process.env.NEXT_PUBLIC_DEBUG_MEDIA === "true";
 export const DEBUG_POST = process.env.NEXT_PUBLIC_DEBUG_POST === "true";
 export const DEBUG_STORAGE = process.env.NEXT_PUBLIC_DEBUG_STORAGE === "true";
