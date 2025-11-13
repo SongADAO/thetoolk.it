@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { FaCircleQuestion, FaServer, FaUsersGear } from "react-icons/fa6";
+import { FaServer, FaUsersGear } from "react-icons/fa6";
 
+import { InstructionsButton } from "@/components/InstructionsButton";
 import { PostForm } from "@/components/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";
 import { PostSettings } from "@/components/service/post/PostSettings";
@@ -22,22 +22,19 @@ function Poster({ mode }: Readonly<PosterProps>) {
       <div className="px-2 pt-2 lg:hidden">
         <div className="flex items-end justify-end rounded bg-gray-200 px-4 py-2">
           <div className="flex gap-2">
-            {showInstructions ? (
-              <Link
-                className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
-                href="/instructions"
-                target="_blank"
-                title="Instructions"
-              >
-                <FaCircleQuestion />
-              </Link>
-            ) : null}
+            {showInstructions ? <InstructionsButton /> : null}
             {showStorageSettings ? (
-              <ServiceSettingsMenu icon={<FaServer />} label="Storage Settings">
+              <ServiceSettingsMenu
+                icon={<FaServer className="size-6" />}
+                label="Storage Settings"
+              >
                 <StorageSettings />
               </ServiceSettingsMenu>
             ) : null}
-            <ServiceSettingsMenu icon={<FaUsersGear />} label="Post Settings">
+            <ServiceSettingsMenu
+              icon={<FaUsersGear className="size-6" />}
+              label="Post Settings"
+            >
               <PostSettings mode={mode} />
             </ServiceSettingsMenu>
           </div>
@@ -45,32 +42,28 @@ function Poster({ mode }: Readonly<PosterProps>) {
       </div>
       <div className="grid gap-4 p-2 lg:grid-cols-2 lg:p-4 xl:grid-cols-[1fr_1fr_525px] 2xl:grid-cols-[1fr_1fr_620px]">
         <div>
-          <section className="rounded bg-gray-100 p-4">
-            <PostProvider>
-              <PostForm />
-            </PostProvider>
+          <section className="rounded bg-gray-100">
+            <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
+              <h3 className="font-bold">Create Post</h3>
+            </div>
+            <div className="p-4">
+              <PostProvider>
+                <PostForm />
+              </PostProvider>
+            </div>
           </section>
         </div>
 
         <div>
           <div className="flex flex-col gap-4">
-            <section className="rounded bg-gray-100 p-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h3>Active Storage Services</h3>
+            <section className="rounded bg-gray-100">
+              <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
+                <h3 className="font-bold">Active Storage Services</h3>
                 <div className="hidden gap-2 lg:flex xl:hidden">
-                  {showInstructions ? (
-                    <Link
-                      className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
-                      href="/instructions"
-                      target="_blank"
-                      title="Instructions"
-                    >
-                      <FaCircleQuestion />
-                    </Link>
-                  ) : null}
+                  {showInstructions ? <InstructionsButton /> : null}
                   {showStorageSettings ? (
                     <ServiceSettingsMenu
-                      icon={<FaServer />}
+                      icon={<FaServer className="size-6" />}
                       label="Storage Settings"
                     >
                       <StorageSettings />
@@ -78,70 +71,51 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   ) : null}
                 </div>
               </div>
-              <StoreProgress />
+              <div className="p-4">
+                <StoreProgress />
+              </div>
             </section>
-            <section className="rounded bg-gray-100 p-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h3>Active Posting Services</h3>
+            <section className="rounded bg-gray-100">
+              <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
+                <h3 className="font-bold">Active Posting Services</h3>
                 <div className="hidden gap-2 lg:flex xl:hidden">
-                  {showInstructions ? (
-                    <Link
-                      className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
-                      href="/instructions"
-                      target="_blank"
-                      title="Instructions"
-                    >
-                      <FaCircleQuestion />
-                    </Link>
-                  ) : null}
+                  {showInstructions ? <InstructionsButton /> : null}
                   <ServiceSettingsMenu
-                    icon={<FaUsersGear />}
+                    icon={<FaUsersGear className="size-6" />}
                     label="Post Settings"
                   >
                     <PostSettings mode={mode} />
                   </ServiceSettingsMenu>
                 </div>
               </div>
-              <PostProgress mode={mode} />
+              <div className="p-4">
+                <PostProgress mode={mode} />
+              </div>
             </section>
           </div>
         </div>
 
         <div className="hidden xl:block">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             {showStorageSettings ? (
-              <section className="rounded bg-gray-100 p-4">
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <h3>Storage Service Settings</h3>
-                  {showInstructions ? (
-                    <Link
-                      className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 xl:flex"
-                      href="/instructions"
-                      target="_blank"
-                      title="Instructions"
-                    >
-                      <FaCircleQuestion />
-                    </Link>
-                  ) : null}
+              <section className="rounded bg-gray-100">
+                <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
+                  <h3 className="font-bold">Storage Service Settings</h3>
+                  {showInstructions ? <InstructionsButton /> : null}
                 </div>
-                <StorageSettings />
+                <div className="p-4">
+                  <StorageSettings />
+                </div>
               </section>
             ) : null}
-            <section className="rounded bg-gray-100 p-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h3>Posting Service Settings</h3>
-                {showInstructions ? (
-                  <Link
-                    className="hidden inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800 xl:flex"
-                    href="/instructions"
-                    target="_blank"
-                    title="Instructions"
-                  >
-                    <FaCircleQuestion />
-                  </Link>
-                ) : null}
+            <section className="rounded bg-gray-100">
+              <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
+                <h3 className="font-bold">Posting Service Settings</h3>
+                {showInstructions ? <InstructionsButton /> : null}
               </div>
-              <PostSettings mode={mode} />
+              <div className="p-4">
+                <PostSettings mode={mode} />
+              </div>
             </section>
           </div>
         </div>

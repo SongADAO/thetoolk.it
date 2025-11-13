@@ -14,8 +14,7 @@ function ServiceSettingsMenu({ label, icon, children }: Readonly<Props>) {
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
         <button
-          aria-label={label}
-          className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 px-4 py-2 text-white outline-none hover:bg-gray-800"
+          className="flex inline-flex cursor-pointer items-center justify-center gap-2 rounded bg-gray-500 p-3 text-white outline-none hover:bg-gray-800"
           title={label}
           type="button"
         >
