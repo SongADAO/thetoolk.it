@@ -4,7 +4,7 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
-import type { HLSFiles } from "@/lib/video/hls-converter";
+import type { HLSFiles } from "@/lib/video/hls";
 import type { ServiceAccount } from "@/services/storage/types";
 
 interface StorageServiceContextType {
