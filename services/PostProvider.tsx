@@ -8,7 +8,7 @@ import {
   DEBUG_STOP_AFTER_STORAGE,
 } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import { HLSConverter, type HLSFiles } from "@/lib/video/hls";
+import { convertToHLS, type HLSFiles } from "@/lib/video/hls";
 import { trimVideo } from "@/lib/video/trim";
 import {
   getVideoDuration,
@@ -248,13 +248,9 @@ export function PostProvider({ children }: Readonly<Props>) {
         };
       }
 
-      console.log("Initializing HLS converter...");
-      const hlsConverter = new HLSConverter();
-      await hlsConverter.initialize(setHLSConversionProgress);
-
       // Convert to HLS (try copy first, fallback to encoding if needed)
       console.log("Converting video to HLS format...");
-      const hlsFiles = await hlsConverter.convertToHLS(video);
+      const hlsFiles = await convertToHLS(video, setHLSConversionProgress);
       console.log(hlsFiles);
 
       console.log("HLS conversion successful");
