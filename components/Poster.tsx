@@ -19,32 +19,28 @@ function Poster({ mode }: Readonly<PosterProps>) {
 
   return (
     <div>
-      <div className="px-2 pt-2 lg:hidden">
-        <div className="flex items-end justify-end rounded bg-gray-200 px-4 py-2">
-          <div className="flex gap-2">
-            {showInstructions ? <InstructionsButton /> : null}
-            {showStorageSettings ? (
-              <ServiceSettingsMenu
-                icon={<FaServer className="size-6" />}
-                label="Storage Settings"
-              >
-                <StorageSettings />
-              </ServiceSettingsMenu>
-            ) : null}
-            <ServiceSettingsMenu
-              icon={<FaUsersGear className="size-6" />}
-              label="Post Settings"
-            >
-              <PostSettings mode={mode} />
-            </ServiceSettingsMenu>
-          </div>
-        </div>
-      </div>
       <div className="grid gap-4 p-2 lg:grid-cols-2 lg:p-4 xl:grid-cols-[1fr_1fr_525px] 2xl:grid-cols-[1fr_1fr_620px]">
         <div>
           <section className="rounded bg-gray-100">
             <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
               <h3 className="font-bold">Create Post</h3>
+              <div className="flex gap-2 lg:hidden">
+                {showInstructions ? <InstructionsButton /> : null}
+                {showStorageSettings ? (
+                  <ServiceSettingsMenu
+                    icon={<FaServer className="size-6" />}
+                    label="Storage Settings"
+                  >
+                    <StorageSettings />
+                  </ServiceSettingsMenu>
+                ) : null}
+                <ServiceSettingsMenu
+                  icon={<FaUsersGear className="size-6" />}
+                  label="Post Settings"
+                >
+                  <PostSettings mode={mode} />
+                </ServiceSettingsMenu>
+              </div>
             </div>
             <div className="p-4">
               <PostProvider>
