@@ -9,7 +9,7 @@ export default function ConfirmEmailPage() {
         <Suspense
           fallback={
             <div className="mx-auto max-w-md space-y-4">
-              <h2 className="text-2xl font-bold">Loading...</h2>
+              <h1 className="text-2xl font-bold">Loading...</h1>
             </div>
           }
         >

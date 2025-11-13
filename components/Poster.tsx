@@ -23,7 +23,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
         <div>
           <section className="rounded bg-gray-100">
             <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
-              <h3 className="font-bold">Create Post</h3>
+              <h1 className="font-bold">Create Post</h1>
               <div className="flex gap-2 lg:hidden">
                 {showInstructions ? <InstructionsButton /> : null}
                 {showStorageSettings ? (
@@ -54,7 +54,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
           <div className="flex flex-col gap-4">
             <section className="rounded bg-gray-100">
               <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
-                <h3 className="font-bold">Active Storage Services</h3>
+                <h2 className="font-bold">Active Storage Services</h2>
                 <div className="hidden gap-2 lg:flex xl:hidden">
                   {showInstructions ? <InstructionsButton /> : null}
                   {showStorageSettings ? (
@@ -73,7 +73,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
             </section>
             <section className="rounded bg-gray-100">
               <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
-                <h3 className="font-bold">Active Posting Services</h3>
+                <h2 className="font-bold">Active Posting Services</h2>
                 <div className="hidden gap-2 lg:flex xl:hidden">
                   {showInstructions ? <InstructionsButton /> : null}
                   <ServiceSettingsMenu
@@ -96,7 +96,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
             {showStorageSettings ? (
               <section className="rounded bg-gray-100">
                 <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
-                  <h3 className="font-bold">Storage Service Settings</h3>
+                  <h2 className="font-bold">Storage Service Settings</h2>
                   {showInstructions ? <InstructionsButton /> : null}
                 </div>
                 <div className="p-4">
@@ -106,7 +106,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
             ) : null}
             <section className="rounded bg-gray-100">
               <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
-                <h3 className="font-bold">Posting Service Settings</h3>
+                <h2 className="font-bold">Posting Service Settings</h2>
                 {showInstructions ? <InstructionsButton /> : null}
               </div>
               <div className="p-4">
