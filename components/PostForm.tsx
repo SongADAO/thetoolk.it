@@ -4,7 +4,7 @@ import { Form } from "radix-ui";
 import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
 
 import { Spinner } from "@/components/Spinner";
-import { formatFileDuration, formatFileSize } from "@/lib/video";
+import { formatFileDuration, formatFileSize } from "@/lib/video/video";
 // import { BlueskyContext } from "@/services/post/bluesky/Context";
 // import { FacebookContext } from "@/services/post/facebook/Context";
 // import { InstagramContext } from "@/services/post/instagram/Context";
