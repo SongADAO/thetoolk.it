@@ -27,6 +27,7 @@ async function initializeFFmpeg(
   // Set up progress tracking
   if (onProgress) {
     ffmpeg.on("progress", ({ progress }) => {
+      console.log(`FFmpeg progress: ${Math.round(progress * 100)}%`);
       // FFmpeg progress is between 0 and 1, convert to percentage
       const progressPercent = Math.round(progress * 100);
       onProgress(progressPercent);
