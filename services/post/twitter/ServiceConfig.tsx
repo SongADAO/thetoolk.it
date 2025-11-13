@@ -1,4 +1,4 @@
-import { FaTwitter } from "react-icons/fa6";
+import { FaXTwitter } from "react-icons/fa6";
 
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
 import {
@@ -35,9 +35,9 @@ import {
 export const twitterServiceConfig: ServiceConfig = {
   /* eslint-disable sort-keys */
   id: "twitter",
-  label: "Twitter",
+  label: "X (Twitter)",
   brandColor: "twitter",
-  icon: <FaTwitter className="size-6" />,
+  icon: <FaXTwitter className="size-6" />,
   hasAuthorizationStep: true,
   hasHostedCredentials: false,
   fields: [
