@@ -7,7 +7,7 @@ export default function AppLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <div className="flex min-h-[100vh] flex-col">
+    <div className="flex min-h-screen flex-col">
       <header>
         <AppHeader />
       </header>
