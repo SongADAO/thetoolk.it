@@ -45,6 +45,7 @@
     "@supabase/supabase-js": "^2.53.0",
     "@tanstack/react-query": "^5.81.5",
     "babel-plugin-react-compiler": "^1.0.0",
+    "mediabunny": "^1.25.0",
     "next": "^16.0.0",
     "pinata": "^2.4.9",
     "radix-ui": "^1.4.2",
