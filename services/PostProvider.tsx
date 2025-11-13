@@ -9,12 +9,12 @@ import {
 } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { HLSConverter, type HLSFiles } from "@/lib/video/hls";
+import { trimVideo } from "@/lib/video/trim";
 import {
-  cleanupFFmpeg as cleanupFFmpegTrim,
-  trimVideo,
-} from "@/lib/video/trim";
-import { getVideoDuration } from "@/lib/video/video";
-import { VideoConverter } from "@/lib/video/webcodecs";
+  getVideoDuration,
+  // downloadFile,
+} from "@/lib/video/video";
+import { convertVideoWebcodecs } from "@/lib/video/webcodecs";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
@@ -175,12 +175,8 @@ export function PostProvider({ children }: Readonly<Props>) {
         return video;
       }
 
-      console.log("Initializing Video converter...");
-      const converter = new VideoConverter();
-      await converter.initialize(setVideoConversionProgress);
-
       console.log("Starting video conversion...");
-      const convertedData = await converter.convertVideo(
+      const convertedData = await convertVideoWebcodecs(
         video,
         {
           audioBitrate: 128000,
@@ -208,7 +204,7 @@ export function PostProvider({ children }: Readonly<Props>) {
       );
       setVideoConversionProgress(100);
 
-      // converter.downloadFile(convertedVideo);
+      // downloadFile(convertedVideo);
 
       return convertedVideo;
     } catch (err: unknown) {
@@ -432,8 +428,6 @@ export function PostProvider({ children }: Readonly<Props>) {
         };
       }
       /* eslint-enable require-atomic-updates */
-
-      cleanupFFmpegTrim();
 
       return videos;
     } catch (err: unknown) {

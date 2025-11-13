@@ -1,7 +1,7 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
 
-import { getVideoDuration } from "@/lib/video/video";
+import { getFileExtension, getVideoDuration } from "@/lib/video/video";
 
 let ffmpegInstance: FFmpeg | null = null;
 
@@ -40,14 +40,6 @@ function cleanupFFmpeg(): void {
     // The instance will be garbage collected
     ffmpegInstance = null;
   }
-}
-
-// -----------------------------------------------------------------------------
-
-function getFileExtension(filename: string): string {
-  const extension = filename.split(".").pop()?.toLowerCase();
-
-  return extension ?? "mp4";
 }
 
 // -----------------------------------------------------------------------------
@@ -179,6 +171,8 @@ async function trimVideo({
       `Video trimming failed: ${err instanceof Error ? err.message : "Unknown error"}`,
       { cause: err },
     );
+  } finally {
+    cleanupFFmpeg();
   }
 }
 

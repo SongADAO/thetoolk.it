@@ -39,4 +39,44 @@ async function getVideoDuration(video: File): Promise<number> {
   });
 }
 
-export { formatFileDuration, formatFileSize, getVideoDuration };
+function getFileExtension(filename: string): string {
+  const extension = filename.split(".").pop()?.toLowerCase();
+
+  return extension ?? "mp4";
+}
+
+function downloadFile(file: File): void {
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  console.log(`Downloaded converted file: ${file.name}`);
+}
+
+// Calculate target video bitrate to stay under file size limit
+function calculateTargetBitrate(
+  durationSeconds: number,
+  maxFileSizeMB: number,
+  audioBitrateKbps = 128000,
+): number {
+  const maxFileSizeBits = maxFileSizeMB * 8 * 1024 * 1024;
+  const audioBits = audioBitrateKbps * durationSeconds;
+  const videoBits = maxFileSizeBits - audioBits;
+  const videoBitrateKbps = Math.floor(videoBits / durationSeconds / 1000);
+
+  // Ensure minimum quality and maximum limits
+  return Math.max(500, Math.min(videoBitrateKbps, 25000));
+}
+
+export {
+  calculateTargetBitrate,
+  downloadFile,
+  formatFileDuration,
+  formatFileSize,
+  getFileExtension,
+  getVideoDuration,
+};
