@@ -12,7 +12,7 @@ import {
   // getVideoCodecInfo,
   getVideoDuration,
 } from "@/lib/video";
-import { HLSConverter, type HLSFiles } from "@/lib/video/hls-converter";
+import { HLSConverter, type HLSFiles } from "@/lib/video/hls";
 import {
   cleanupFFmpeg as cleanupFFmpegTrim,
   trimVideo,
