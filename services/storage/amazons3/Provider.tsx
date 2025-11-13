@@ -9,7 +9,7 @@ import type {
   ServiceFormState,
 } from "@/components/service/ServiceForm";
 import { AuthContext } from "@/contexts/AuthContext";
-import type { HLSFiles } from "@/lib/hls-converter";
+import type { HLSFiles } from "@/lib/video/hls-converter";
 import {
   getCredentialsId,
   hasCompleteCredentials,

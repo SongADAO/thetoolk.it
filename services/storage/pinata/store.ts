@@ -1,8 +1,8 @@
 import { PinataSDK } from "pinata";
 
 import { DEBUG_STORAGE } from "@/config/constants";
-import type { HLSFiles } from "@/lib/hls-converter";
 import { sleep } from "@/lib/utils";
+import type { HLSFiles } from "@/lib/video/hls-converter";
 import type { PinataCredentials } from "@/services/storage/types";
 
 const HOSTED_CREDENTIALS = {
