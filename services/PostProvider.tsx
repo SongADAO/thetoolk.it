@@ -181,9 +181,8 @@ export function PostProvider({ children }: Readonly<Props>) {
         {
           audioBitrate: 128000,
           audioSampleRate: 48000,
-          crf: 23,
-          duration: videoDuration,
-          maxFileSizeMB: 20,
+          // duration: videoDuration,
+          // maxFileSizeMB: 20,
           maxFps: 60,
           maxWidth: 1920,
         },
