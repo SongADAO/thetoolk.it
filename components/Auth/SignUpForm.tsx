@@ -31,7 +31,7 @@ function SignUpForm() {
       setEmail("");
       setMessage("Check your email for confirmation link!");
       // Redirect after successful login
-      // router.push("/");
+      // router.push("/pro");
     }
 
     setLoading(false);

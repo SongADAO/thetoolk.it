@@ -27,7 +27,7 @@ function SignInForm() {
       setPassword("");
       setEmail("");
       // Redirect after successful login
-      router.push("/");
+      router.push("/pro");
     }
 
     setLoading(false);
