@@ -1,6 +1,7 @@
 interface ServiceAccount {
   id: string;
   username: string;
+  permissions: object;
 }
 
 interface PostProps {
