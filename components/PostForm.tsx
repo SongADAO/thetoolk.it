@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { Form } from "radix-ui";
 import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 import { Spinner } from "@/components/Spinner";
 import { formatFileDuration, formatFileSize } from "@/lib/video/video";
@@ -10,7 +12,7 @@ import { formatFileDuration, formatFileSize } from "@/lib/video/video";
 // import { InstagramContext } from "@/services/post/instagram/Context";
 // import { NeynarContext } from "@/services/post/neynar/Context";
 // import { ThreadsContext } from "@/services/post/threads/Context";
-// import { TiktokContext } from "@/services/post/tiktok/Context";
+import { TiktokContext } from "@/services/post/tiktok/Context";
 // import { TwitterContext } from "@/services/post/twitter/Context";
 import { YoutubeContext } from "@/services/post/youtube/Context";
 import { PostContext } from "@/services/PostContext";
@@ -18,6 +20,13 @@ import { PostContext } from "@/services/PostContext";
 interface FormState {
   facebookPrivacy: string;
   text: string;
+  tiktokComment: boolean;
+  tiktokDisclose: boolean;
+  tiktokDiscloseBrandOther: boolean;
+  tiktokDiscloseBrandSelf: boolean;
+  tiktokDuet: boolean;
+  tiktokPrivacy: string;
+  tiktokStitch: boolean;
   title: string;
   youtubePrivacy: string;
 }
@@ -26,6 +35,13 @@ function fromInitial(): FormState {
   return {
     facebookPrivacy: "",
     text: "",
+    tiktokComment: true,
+    tiktokDisclose: false,
+    tiktokDiscloseBrandOther: false,
+    tiktokDiscloseBrandSelf: false,
+    tiktokDuet: true,
+    tiktokPrivacy: "",
+    tiktokStitch: true,
     title: "",
     youtubePrivacy: "",
   };
@@ -35,6 +51,13 @@ function fromFormData(formData: FormData): FormState {
   return {
     facebookPrivacy: String(formData.get("facebookPrivacy")),
     text: String(formData.get("text")),
+    tiktokComment: Boolean(formData.get("tiktokComment")),
+    tiktokDisclose: Boolean(formData.get("tiktokDisclose")),
+    tiktokDiscloseBrandOther: Boolean(formData.get("tiktokDiscloseBrandOther")),
+    tiktokDiscloseBrandSelf: Boolean(formData.get("tiktokDiscloseBrandSelf")),
+    tiktokDuet: Boolean(formData.get("tiktokDuet")),
+    tiktokPrivacy: String(formData.get("tiktokPrivacy")),
+    tiktokStitch: Boolean(formData.get("tiktokStitch")),
     title: String(formData.get("title")),
     youtubePrivacy: String(formData.get("youtubePrivacy")),
   };
@@ -47,7 +70,7 @@ function PostForm() {
   // const instagram = use(InstagramContext);
   // const neynar = use(NeynarContext);
   // const threads = use(ThreadsContext);
-  // const tiktok = use(TiktokContext);
+  const tiktok = use(TiktokContext);
   // const twitter = use(TwitterContext);
   const youtube = use(YoutubeContext);
 
@@ -143,6 +166,13 @@ function PostForm() {
       await createPost({
         facebookPrivacy: newFormState.facebookPrivacy,
         text: newFormState.text,
+        tiktokComment: newFormState.tiktokComment,
+        tiktokDisclose: newFormState.tiktokDisclose,
+        tiktokDiscloseBrandOther: newFormState.tiktokDiscloseBrandOther,
+        tiktokDiscloseBrandSelf: newFormState.tiktokDiscloseBrandSelf,
+        tiktokDuet: newFormState.tiktokDuet,
+        tiktokPrivacy: newFormState.tiktokPrivacy,
+        tiktokStitch: newFormState.tiktokStitch,
         title: newFormState.title,
         videos,
         youtubePrivacy: newFormState.youtubePrivacy,
@@ -166,6 +196,29 @@ function PostForm() {
     { label: "Unlisted", value: "unlisted" },
   ];
 
+  const allTiktokPrivacyOptions = [
+    { label: "Followers", value: "FOLLOWER_OF_CREATOR" },
+    {
+      label: "Friends (Followers you follow back)",
+      value: "MUTUAL_FOLLOW_FRIENDS",
+    },
+    { label: "Only You", value: "SELF_ONLY" },
+  ];
+
+  const tiktokPrivacyOptions = allTiktokPrivacyOptions.filter((option) =>
+    tiktok.accounts[0]?.permissions?.privacy_level_options?.includes(
+      option.value,
+    ),
+  );
+
+  const canTiktokComment = !tiktok.accounts[0]?.permissions?.comment_disabled;
+  const canTiktokDuet = !tiktok.accounts[0]?.permissions?.duet_disabled;
+  const canTiktokStitch = !tiktok.accounts[0]?.permissions?.stitch_disabled;
+
+  // const canTiktokComment = true;
+  // const canTiktokDuet = true;
+  // const canTiktokStitch = true;
+
   // const facebookPrivacyOptions = [
   //   { label: "Only Me", value: "SELF" },
   //   { label: "All Friends", value: "ALL_FRIENDS" },
@@ -176,7 +229,7 @@ function PostForm() {
     <div>
       <Form.Root>
         <Form.Field className="mb-4 flex flex-col" key="video" name="video">
-          <Form.Label className="mb-2">Video</Form.Label>
+          <Form.Label className="mb-2 font-semibold">Video</Form.Label>
           <Form.Control
             accept="video/mp4"
             autoComplete="off"
@@ -216,7 +269,7 @@ function PostForm() {
 
       <Form.Root onSubmit={handleSubmit}>
         <Form.Field className="mb-4 flex flex-col" key="title" name="title">
-          <Form.Label className="mb-2">Title</Form.Label>
+          <Form.Label className="mb-2 font-semibold">Title</Form.Label>
           <Form.Control
             autoComplete="off"
             className="w-full rounded text-black"
@@ -236,7 +289,7 @@ function PostForm() {
         </Form.Field>
 
         <Form.Field className="mb-4 flex flex-col" key="text" name="text">
-          <Form.Label className="mb-2">Message</Form.Label>
+          <Form.Label className="mb-2 font-semibold">Message</Form.Label>
           <Form.Control
             asChild
             autoComplete="off"
@@ -263,7 +316,7 @@ function PostForm() {
             key="facebookPrivacy"
             name="facebookPrivacy"
           >
-            <Form.Label className="mb-2">Facebook Privacy Settings</Form.Label>
+            <Form.Label className="mb-2 font-semibold">Facebook Privacy Settings</Form.Label>
             <Form.Control
               asChild
               className="w-full rounded text-black"
@@ -307,52 +360,381 @@ function PostForm() {
         )} */}
 
         {youtube.isEnabled ? (
-          <Form.Field
-            className="mb-4 flex flex-col"
-            key="youtubePrivacy"
-            name="youtubePrivacy"
-          >
-            <Form.Label className="mb-2">YouTube Privacy Settings</Form.Label>
-            <Form.Control
-              asChild
-              className="w-full rounded text-black"
-              disabled={isFormDisabled}
-              required
-              title="YouTube Privacy"
-              value={state.youtubePrivacy}
+          <section className="mb-4 rounded bg-gray-200 p-2">
+            <h4 className="mb-2 font-semibold">YouTube Settings</h4>
+            <Form.Field
+              className="flex flex-col"
+              key="youtubePrivacy"
+              name="youtubePrivacy"
             >
-              <select
-                onInput={(e: ChangeEvent<HTMLSelectElement>) =>
-                  setState((prev) => ({
-                    ...prev,
-                    youtubePrivacy: e.target.value,
-                  }))
-                }
+              <Form.Label className="mb-2 font-semibold">
+                Who can view this video
+              </Form.Label>
+              <Form.Control
+                asChild
+                className="w-full rounded text-black"
+                disabled={isFormDisabled}
+                required
+                title="YouTube Privacy"
+                value={state.youtubePrivacy}
               >
-                <option key="none" value="">
-                  Select YouTube Privacy Settings
-                </option>
-                {youtubePrivacyOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+                <select
+                  onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setState((prev) => ({
+                      ...prev,
+                      youtubePrivacy: e.target.value,
+                    }))
+                  }
+                >
+                  <option key="none" value="">
+                    Select YouTube Privacy Settings
                   </option>
-                ))}
-              </select>
-            </Form.Control>
-            <div>
-              <Form.Message match="valueMissing">
-                Missing YouTube Privacy Settings.
-              </Form.Message>
-            </div>
-          </Form.Field>
+                  {youtubePrivacyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </Form.Control>
+              <div>
+                <Form.Message match="valueMissing">
+                  Missing YouTube Privacy Settings.
+                </Form.Message>
+              </div>
+            </Form.Field>
+          </section>
         ) : (
-          <Form.Field
-            className="mb-4 flex flex-col"
-            key="youtubePrivacy"
-            name="youtubePrivacy"
-          >
-            <Form.Control type="hidden" value={state.youtubePrivacy} />
-          </Form.Field>
+          <input name="youtubePrivacy" type="hidden" value="" />
+        )}
+
+        {tiktok.isEnabled ? (
+          <section className="mb-4 rounded bg-gray-200 p-2">
+            <h4 className="mb-2 font-semibold">TikTok Settings</h4>
+
+            <Form.Field
+              className="flex flex-col"
+              key="tiktokPrivacy"
+              name="tiktokPrivacy"
+            >
+              <Form.Label className="mb-2 font-semibold">
+                Who can view this video
+              </Form.Label>
+              <Form.Control
+                asChild
+                className="w-full rounded text-black"
+                disabled={isFormDisabled}
+                required
+                title="TikTok Privacy"
+                value={state.tiktokPrivacy}
+              >
+                <select
+                  onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setState((prev) => ({
+                      ...prev,
+                      tiktokPrivacy: e.target.value,
+                    }))
+                  }
+                >
+                  <option key="none" value="">
+                    Select TikTok Privacy Settings
+                  </option>
+                  {tiktokPrivacyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </Form.Control>
+              <div>
+                <Form.Message match="valueMissing">
+                  Missing TikTok Privacy Settings.
+                </Form.Message>
+              </div>
+            </Form.Field>
+
+            <section className="mt-4 rounded bg-gray-300 p-2">
+              <h4 className="mb-2 font-semibold">Allow users to</h4>
+              <div className="flex gap-8">
+                {canTiktokComment ? (
+                  <Form.Field
+                    className="flex flex-row items-center gap-2"
+                    key="tiktokComment"
+                    name="tiktokComment"
+                  >
+                    <Form.Control asChild>
+                      <input
+                        checked={state.tiktokComment}
+                        className="h-4 w-4 rounded"
+                        disabled={isFormDisabled}
+                        id="tiktokComment"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setState((prev) => ({
+                            ...prev,
+                            tiktokComment: e.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                        value="1"
+                      />
+                    </Form.Control>
+                    <Form.Label
+                      className="cursor-pointer"
+                      htmlFor="tiktokComment"
+                    >
+                      Comment
+                    </Form.Label>
+                  </Form.Field>
+                ) : (
+                  <input name="tiktokComment" type="hidden" value="0" />
+                )}
+
+                {canTiktokDuet ? (
+                  <Form.Field
+                    className="flex flex-row items-center gap-2"
+                    key="tiktokDuet"
+                    name="tiktokDuet"
+                  >
+                    <Form.Control asChild>
+                      <input
+                        checked={state.tiktokDuet}
+                        className="h-4 w-4 rounded"
+                        disabled={isFormDisabled}
+                        id="tiktokDuet"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setState((prev) => ({
+                            ...prev,
+                            tiktokDuet: e.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                        value="1"
+                      />
+                    </Form.Control>
+                    <Form.Label className="cursor-pointer" htmlFor="tiktokDuet">
+                      Duet
+                    </Form.Label>
+                  </Form.Field>
+                ) : (
+                  <input name="tiktokDuet" type="hidden" value="0" />
+                )}
+
+                {canTiktokStitch ? (
+                  <Form.Field
+                    className="flex flex-row items-center gap-2"
+                    key="tiktokStitch"
+                    name="tiktokStitch"
+                  >
+                    <Form.Control asChild>
+                      <input
+                        checked={state.tiktokStitch}
+                        className="h-4 w-4 rounded"
+                        disabled={isFormDisabled}
+                        id="tiktokStitch"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setState((prev) => ({
+                            ...prev,
+                            tiktokStitch: e.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                        value="1"
+                      />
+                    </Form.Control>
+                    <Form.Label
+                      className="cursor-pointer"
+                      htmlFor="tiktokStitch"
+                    >
+                      Stitch
+                    </Form.Label>
+                  </Form.Field>
+                ) : (
+                  <input name="tiktokStitch" type="hidden" value="0" />
+                )}
+              </div>
+            </section>
+
+            <section>
+              <div>
+                <div className="mt-4 rounded bg-gray-300 p-2">
+                  <Form.Field
+                    className="mb-1 flex flex-row items-center gap-2"
+                    key="tiktokDisclose"
+                    name="tiktokDisclose"
+                  >
+                    <Form.Control asChild>
+                      <input
+                        checked={state.tiktokDisclose}
+                        className="h-4 w-4 rounded"
+                        disabled={isFormDisabled}
+                        id="tiktokDisclose"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setState((prev) => ({
+                            ...prev,
+                            tiktokDisclose: e.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                        value="1"
+                      />
+                    </Form.Control>
+                    <Form.Label
+                      className="cursor-pointer font-semibold"
+                      htmlFor="tiktokDisclose"
+                    >
+                      Disclose video content
+                    </Form.Label>
+                  </Form.Field>
+                  {state.tiktokDisclose ? (
+                    <div className="mb-2 flex items-start gap-3 rounded bg-blue-200 p-2 pl-3 text-sm">
+                      <div>
+                        <FaCircleExclamation className="size-5 text-blue-600" />
+                      </div>
+                      <p>
+                        Your video will be labeled &quot;Promotional
+                        content&quot;. This cannot be changed once your video is
+                        posted.
+                      </p>
+                    </div>
+                  ) : null}
+                  <p className="text-sm">
+                    Turn on to disclose that this video promotes goods or
+                    services in exchange for something of value. Your video
+                    could promote yourself, a third party, or both.
+                  </p>
+                </div>
+
+                {state.tiktokDisclose ? (
+                  <div className="mt-4 rounded bg-gray-300 p-2">
+                    <Form.Field
+                      className="mb-1 flex flex-row items-center gap-2"
+                      key="tiktokDiscloseBrandSelf"
+                      name="tiktokDiscloseBrandSelf"
+                    >
+                      <Form.Control asChild>
+                        <input
+                          checked={state.tiktokDiscloseBrandSelf}
+                          className="h-4 w-4 rounded"
+                          disabled={isFormDisabled}
+                          id="tiktokDiscloseBrandSelf"
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            setState((prev) => ({
+                              ...prev,
+                              tiktokDiscloseBrandSelf: e.target.checked,
+                            }))
+                          }
+                          type="checkbox"
+                          value="1"
+                        />
+                      </Form.Control>
+                      <Form.Label
+                        className="cursor-pointer font-semibold"
+                        htmlFor="tiktokDiscloseBrandSelf"
+                      >
+                        Your brand
+                      </Form.Label>
+                    </Form.Field>
+                    <p className="text-sm">
+                      You are promoting yourself or your own business. This
+                      video will be classified as Brand Organic.
+                    </p>
+                  </div>
+                ) : (
+                  <input
+                    name="tiktokDiscloseBrandSelf"
+                    type="hidden"
+                    value="0"
+                  />
+                )}
+
+                {state.tiktokDisclose ? (
+                  <div className="mt-4 rounded bg-gray-300 p-2">
+                    <Form.Field
+                      className="mb-1 flex flex-row items-center gap-2"
+                      key="tiktokDiscloseBrandOther"
+                      name="tiktokDiscloseBrandOther"
+                    >
+                      <Form.Control asChild>
+                        <input
+                          checked={state.tiktokDiscloseBrandOther}
+                          className="h-4 w-4 rounded"
+                          disabled={isFormDisabled}
+                          id="tiktokDiscloseBrandOther"
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            setState((prev) => ({
+                              ...prev,
+                              tiktokDiscloseBrandOther: e.target.checked,
+                            }))
+                          }
+                          type="checkbox"
+                          value="1"
+                        />
+                      </Form.Control>
+                      <Form.Label
+                        className="cursor-pointer font-semibold"
+                        htmlFor="tiktokDiscloseBrandOther"
+                      >
+                        Branded content
+                      </Form.Label>
+                    </Form.Field>
+                    <p className="text-sm">
+                      You are promoting another brand or a third party. This
+                      video will be classified sa Branded Content.
+                    </p>
+                  </div>
+                ) : (
+                  <input
+                    name="tiktokDiscloseBrandOther"
+                    type="hidden"
+                    value="0"
+                  />
+                )}
+              </div>
+            </section>
+
+            {state.tiktokDisclose && state.tiktokDiscloseBrandOther ? (
+              <p className="mt-4 rounded bg-gray-300 p-2 text-sm">
+                By posting, you agree to TikTok&apos;s{" "}
+                <Link
+                  className="text-blue-800 underline"
+                  href="https://www.tiktok.com/legal/page/global/bc-policy/en"
+                  target="_blank"
+                >
+                  Branded Content Policy
+                </Link>{" "}
+                and{" "}
+                <Link
+                  className="text-blue-800 underline"
+                  href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en"
+                  target="_blank"
+                >
+                  Music Usage Confirmation
+                </Link>
+                .
+              </p>
+            ) : (
+              <p className="mt-4 rounded bg-gray-300 p-2 text-sm">
+                By posting, you agree to TikTok&apos;s{" "}
+                <Link
+                  className="text-blue-800 underline"
+                  href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en"
+                  target="_blank"
+                >
+                  Music Usage Confirmation
+                </Link>
+                .
+              </p>
+            )}
+          </section>
+        ) : (
+          <>
+            <input name="tiktokPrivacy" type="hidden" value="" />
+            <input name="tiktokComment" type="hidden" value="0" />
+            <input name="tiktokDuet" type="hidden" value="0" />
+            <input name="tiktokStitch" type="hidden" value="0" />
+            <input name="tiktokDisclose" type="hidden" value="0" />
+            <input name="tiktokDiscloseBrandSelf" type="hidden" value="0" />
+            <input name="tiktokDiscloseBrandOther" type="hidden" value="0" />
+          </>
         )}
 
         {isVideoConverting ? (

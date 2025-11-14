@@ -1,7 +1,13 @@
 interface ServiceAccount {
   id: string;
   username: string;
-  permissions: object;
+  permissions: {
+    comment_disabled: boolean;
+    duet_disabled: boolean;
+    max_video_post_duration_sec: number;
+    privacy_level_options: string[];
+    stitch_disabled: boolean;
+  };
 }
 
 interface PostProps {
