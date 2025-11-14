@@ -12,6 +12,15 @@ const VIDEO_MAX_DURATION = 600;
 interface UploadVideoProps {
   accessToken: string;
   mode: "hosted" | "self";
+  options: {
+    disclose?: boolean;
+    discloseBrandOther?: boolean;
+    discloseBrandSelf?: boolean;
+    permissionComment?: boolean;
+    permissionDuet?: boolean;
+    permissionStitch?: boolean;
+  };
+  privacy: string;
   text: string;
   title: string;
   videoUrl: string;
@@ -19,6 +28,8 @@ interface UploadVideoProps {
 async function uploadVideo({
   accessToken,
   mode,
+  options,
+  privacy,
   text,
   title,
   videoUrl,
@@ -51,13 +62,19 @@ async function uploadVideo({
       : await fetch(endpoint, {
           body: JSON.stringify({
             post_info: {
+              brand_content_toggle:
+                options.disclose === true &&
+                options.discloseBrandOther === true,
+              brand_organic_toggle:
+                options.disclose === true && options.discloseBrandSelf === true,
               description: text,
-              disable_comment: false,
-              disable_duet: false,
-              disable_stitch: false,
-              privacy_level: "SELF_ONLY",
+              disable_comment: options.permissionComment === false,
+              disable_duet: options.permissionDuet === false,
+              disable_stitch: options.permissionStitch === false,
+              // is_aigc: false,
+              privacy_level: privacy,
               title,
-              video_cover_timestamp_ms: 1000,
+              // video_cover_timestamp_ms: 1000,
             },
             source_info: {
               source: "PULL_FROM_URL",
@@ -88,7 +105,6 @@ async function createPost({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   credentials,
   options,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
@@ -135,6 +151,8 @@ async function createPost({
       postId = await uploadVideo({
         accessToken,
         mode: "self",
+        options,
+        privacy,
         text,
         title,
         videoUrl,
