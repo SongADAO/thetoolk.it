@@ -9,6 +9,13 @@ interface PostVideo {
 interface CreatePostProps {
   facebookPrivacy: string;
   text: string;
+  tiktokComment: boolean;
+  tiktokDisclose: boolean;
+  tiktokDiscloseBrandOther: boolean;
+  tiktokDiscloseBrandSelf: boolean;
+  tiktokDuet: boolean;
+  tiktokPrivacy: string;
+  tiktokStitch: boolean;
   title: string;
   videos: Record<string, PostVideo>;
   youtubePrivacy: string;

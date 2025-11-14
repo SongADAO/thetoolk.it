@@ -578,6 +578,13 @@ export function PostProvider({ children }: Readonly<Props>) {
   async function createPost({
     facebookPrivacy,
     text,
+    tiktokComment,
+    tiktokDisclose,
+    tiktokDiscloseBrandOther,
+    tiktokDiscloseBrandSelf,
+    tiktokDuet,
+    tiktokPrivacy,
+    tiktokStitch,
     title,
     videos,
     youtubePrivacy,
@@ -585,6 +592,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
     const allResults = await Promise.allSettled([
       bluesky.post({
+        options: {},
         privacy: "",
         text,
         title,
@@ -595,6 +603,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.bluesky?.videoUrl || videos.full.videoUrl,
       }),
       facebook.post({
+        options: {},
         privacy: facebookPrivacy,
         text,
         title,
@@ -605,6 +614,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.facebook?.videoUrl || videos.full.videoUrl,
       }),
       instagram.post({
+        options: {},
         privacy: "",
         text,
         title,
@@ -615,6 +625,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.instagram?.videoUrl || videos.full.videoUrl,
       }),
       neynar.post({
+        options: {},
         privacy: "",
         text,
         title,
@@ -625,6 +636,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.neynar?.videoUrl || videos.full.videoUrl,
       }),
       threads.post({
+        options: {},
         privacy: "",
         text,
         title,
@@ -635,7 +647,15 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.threads?.videoUrl || videos.full.videoUrl,
       }),
       tiktok.post({
-        privacy: "",
+        options: {
+          disclose: tiktokDisclose,
+          discloseBrandOther: tiktokDiscloseBrandOther,
+          discloseBrandSelf: tiktokDiscloseBrandSelf,
+          permissionComment: tiktokComment,
+          permissionDuet: tiktokDuet,
+          permissionStitch: tiktokStitch,
+        },
+        privacy: tiktokPrivacy,
         text,
         title,
         userId: tiktok.accounts[0]?.id,
@@ -645,6 +665,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.tiktok?.videoUrl || videos.full.videoUrl,
       }),
       twitter.post({
+        options: {},
         privacy: "",
         text,
         title,
@@ -655,6 +676,7 @@ export function PostProvider({ children }: Readonly<Props>) {
         videoUrl: videos.twitter?.videoUrl || videos.full.videoUrl,
       }),
       youtube.post({
+        options: {},
         privacy: youtubePrivacy,
         text,
         title,
