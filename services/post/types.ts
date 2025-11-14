@@ -71,6 +71,14 @@ const defaultOauthCredentials: OauthCredentials = {
 interface CreatePostProps {
   accessToken: string;
   credentials: OauthCredentials;
+  options: {
+    disclose?: boolean;
+    discloseBrandOther?: boolean;
+    discloseBrandSelf?: boolean;
+    permissionComment?: boolean;
+    permissionDuet?: boolean;
+    permissionStitch?: boolean;
+  };
   privacy: string;
   requestUrl: string;
   setIsPosting: (isPosting: boolean) => void;
