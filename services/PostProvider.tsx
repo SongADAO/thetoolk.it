@@ -377,7 +377,9 @@ export function PostProvider({ children }: Readonly<Props>) {
             ? videos.full.video
             : await trimVideo({
                 label: tiktok.id,
-                maxDuration: tiktok.VIDEO_MAX_DURATION,
+                maxDuration:
+                  tiktok.accounts[0]?.permissions
+                    ?.max_video_post_duration_sec ?? tiktok.VIDEO_MAX_DURATION,
                 maxFilesize: tiktok.VIDEO_MAX_FILESIZE,
                 minDuration: tiktok.VIDEO_MIN_DURATION,
                 onProgress: setVideoTrimProgress,
