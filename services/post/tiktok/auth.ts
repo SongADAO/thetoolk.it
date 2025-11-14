@@ -354,7 +354,10 @@ async function refreshAccessToken(
 
 // -----------------------------------------------------------------------------
 
-async function getUserInfo(token: string): Promise<ServiceAccount> {
+async function getUserInfo(
+  token: string,
+  mode: "hosted" | "self",
+): Promise<ServiceAccount> {
   console.log(`Checking Tiktok user info`);
 
   const params = new URLSearchParams({
@@ -379,8 +382,30 @@ async function getUserInfo(token: string): Promise<ServiceAccount> {
   const userInfo = await response.json();
   console.log("Tiktok user info:", userInfo);
 
+  const endpoint =
+    mode === "hosted"
+      ? "https://open.tiktokapis.com/v2/post/publish/creator_info/query/"
+      : "/api/self/tiktok/v2/post/publish/creator_info/query/";
+
+  // Fetch creator info
+  const creatorResponse = await fetch(endpoint, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: "POST",
+  });
+
+  if (!creatorResponse.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to get Tiktok creator info: ${errorText}`);
+  }
+
+  const creatorInfo = await creatorResponse.json();
+  console.log("Tiktok creator info:", creatorInfo);
+
   return {
     id: userInfo.data.user.open_id,
+    permissions: creatorInfo.data,
     username: userInfo.data.user.display_name,
   };
 }
@@ -391,12 +416,11 @@ async function getAccounts(
   token: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode: "hosted" | "self",
 ): Promise<ServiceAccount[]> {
   const accounts = [];
 
-  const account = await getUserInfo(token);
+  const account = await getUserInfo(token, mode);
 
   accounts.push(account);
 
