@@ -78,6 +78,8 @@ async function createPost({
   accessToken,
   credentials,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  options,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
