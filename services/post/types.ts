@@ -11,6 +11,14 @@ interface ServiceAccount {
 }
 
 interface PostProps {
+  options: {
+    disclose?: boolean;
+    discloseBrandOther?: boolean;
+    discloseBrandSelf?: boolean;
+    permissionComment?: boolean;
+    permissionDuet?: boolean;
+    permissionStitch?: boolean;
+  };
   privacy: string;
   text: string;
   title: string;
