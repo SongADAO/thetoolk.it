@@ -20,7 +20,7 @@ interface AuthContextType {
     error: any;
   }>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signOut: () => Promise<{ error: any }>;
+  signOut: (scope: "local" | "global") => Promise<{ error: any }>;
   signUp: (
     email: string,
     password: string,

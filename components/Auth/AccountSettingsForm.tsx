@@ -23,7 +23,7 @@ function AccountSettingsForm() {
   const supabase = createClient();
 
   const handleSignOut = async (): Promise<void> => {
-    await signOut();
+    await signOut("global");
     router.push("/auth/signin");
   };
 
