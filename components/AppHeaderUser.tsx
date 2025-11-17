@@ -18,7 +18,7 @@ function AppHeaderUser() {
   const router = useRouter();
 
   const handleSignOut = async (): Promise<void> => {
-    await signOut();
+    await signOut("local");
     router.push("/auth/signin");
   };
 
