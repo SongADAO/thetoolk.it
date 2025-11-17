@@ -77,8 +77,56 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       setLoading(false);
     });
 
+    // Periodically validate the session
+    const validateSession = async () => {
+      try {
+        const {
+          data: { user: currentUser },
+          error,
+        } = await supabase.auth.getUser();
+
+        // If there's an error or no user, the session is invalid
+        if (error || !currentUser) {
+          setUser(null);
+          // This will trigger the auth state change listener
+          await supabase.auth.signOut({ scope: "local" });
+        }
+      } catch (error) {
+        console.error("Session validation error:", error);
+        setUser(null);
+      }
+    };
+
+    // Validate session every 30 seconds
+    // const intervalId = setInterval(() => {
+    //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    //   validateSession();
+    // }, 30000);
+
+    // Also validate on visibility change (when user returns to tab)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        validateSession();
+      }
+    };
+
+    // Validate on window focus (when user clicks on the tab/window)
+    const handleFocus = () => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      validateSession();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return () => subscription?.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      // clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+    };
   }, [supabase.auth]);
 
   const signUp = async (
