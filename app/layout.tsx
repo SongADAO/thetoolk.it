@@ -26,8 +26,7 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const host = headersList.get("host") ?? "";
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = `https://${host}`;
 
   return {
     alternates: {
