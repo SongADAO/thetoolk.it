@@ -8,7 +8,7 @@ interface Props {
   readonly context: Context<StorageServiceContextType>;
 }
 
-export function StorageServiceSettings({ context }: Props) {
+function StorageServiceSettings({ context }: Props) {
   return (
     <ServiceSwitchWithContext
       context={context}
@@ -16,3 +16,5 @@ export function StorageServiceSettings({ context }: Props) {
     />
   );
 }
+
+export { StorageServiceSettings };
