@@ -1,6 +1,7 @@
 /* eslint-disable react/no-multi-comp, no-inline-comments, max-lines */
 "use client";
 
+import type { Metadata } from "next";
 import Image from "next/image";
 import { type ReactNode, useState } from "react";
 
@@ -110,6 +111,15 @@ function AccordionSection({
     </section>
   );
 }
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/instructions",
+  },
+  description:
+    "TheToolk.it is a free web app for cross-posting across social media. This page contains setup instructions for using the app.",
+  title: "Instructions - TheToolk.it",
+};
 
 export default function InstructionsPage() {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});

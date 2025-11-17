@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { ResetPasswordForm } from "@/components/Auth/ResetPasswordForm";
 
-export default function SignInPage() {
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/auth/reset-password",
+  },
+  description: "Reset your password for TheToolk.it account.",
+  title: "Reset Password - TheToolk.it",
+};
+export default function ResetPasswordPage() {
   return (
     <div className="flex items-center justify-center p-4 md:pt-20">
       <div className="w-full">

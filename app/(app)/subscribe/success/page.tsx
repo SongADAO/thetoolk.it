@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/subscribe/success",
+  },
+  description:
+    "Thank you for subscribing to TheToolk.it Pro! Your payment was successful, and you can now start using all the features of TheToolk.it Pro. Click the button below to get started.",
+  title: "Subscribe Success - TheToolk.it",
+};
 
 export default function SubscribeSuccessPage() {
   return (

@@ -5,6 +5,7 @@ import "@neynar/react/dist/style.css";
 import type { Metadata } from "next";
 // eslint-disable-next-line camelcase
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import { ReactNode } from "react";
 
 import { AuthProvider } from "@/contexts/AuthProvider";
@@ -22,10 +23,21 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-export const metadata: Metadata = {
-  description: "TheToolk.it",
-  title: "TheToolk.it",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "";
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const baseUrl = `${protocol}://${host}`;
+
+  return {
+    alternates: {
+      canonical: "/",
+    },
+    description: "TheToolk.it",
+    metadataBase: new URL(baseUrl),
+    title: "TheToolk.it",
+  };
+}
 
 export default function RootLayout({
   children,

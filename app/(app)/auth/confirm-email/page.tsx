@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { ConfirmEmail } from "@/components/Auth/ConfirmEmail";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/auth/confirm-email",
+  },
+  description: "Confirm your email address.",
+  title: "Confirm Email - TheToolk.it",
+};
 
 export default function ConfirmEmailPage() {
   return (
