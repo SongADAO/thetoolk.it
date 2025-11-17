@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   },
   description:
     "TheToolk.it Pro Edition offers advanced features and full access to all tools. Upgrade now to enhance your experience and unlock the full potential of TheToolk.it.",
-  title: "TheToolk.it Pro",
+  title: "TheToolk.it Pro - Create Post",
 };
 
 export default function ProPage() {
