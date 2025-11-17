@@ -14,7 +14,7 @@ function SignUpForm() {
   const { signUp } = use(AuthContext);
   // const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     setLoading(true);
     setMessage("");
@@ -35,7 +35,7 @@ function SignUpForm() {
     }
 
     setLoading(false);
-  };
+  }
 
   return (
     <form className="mx-auto w-full max-w-lg space-y-4" onSubmit={handleSubmit}>

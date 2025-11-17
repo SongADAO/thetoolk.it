@@ -10,7 +10,7 @@ function StartPasswordResetForm() {
   const [message, setMessage] = useState<string>("");
   const supabase = createClient();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     setLoading(true);
     setMessage("");
@@ -27,7 +27,7 @@ function StartPasswordResetForm() {
     }
 
     setLoading(false);
-  };
+  }
 
   return (
     <form className="mx-auto max-w-md space-y-4" onSubmit={handleSubmit}>

@@ -16,7 +16,7 @@ function ConfirmEmail() {
   const supabase = createClient();
 
   useEffect(() => {
-    const handleEmailConfirmation = async () => {
+    async function handleEmailConfirmation(): Promise<void> {
       // Check for errors in both query params and hash
       const error = searchParams.get("error");
       const errorDescription = searchParams.get("error_description");
@@ -81,7 +81,7 @@ function ConfirmEmail() {
         }
         setIsLoading(false);
       }
-    };
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleEmailConfirmation();
