@@ -22,14 +22,14 @@ function AccountSettingsForm() {
   const [emailMessage, setEmailMessage] = useState<string>("");
   const supabase = createClient();
 
-  const handleSignOut = async (): Promise<void> => {
+  async function handleSignOut(): Promise<void> {
     await signOut("global");
     router.push("/auth/signin");
-  };
+  }
 
   useEffect(() => {
     // Get current user
-    const getUser = async () => {
+    async function getUser(): Promise<void> {
       const {
         // eslint-disable-next-line @typescript-eslint/no-shadow
         data: { user },
@@ -37,14 +37,14 @@ function AccountSettingsForm() {
       if (user) {
         setUser(user);
       }
-    };
+    }
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getUser();
   }, [supabase.auth]);
 
-  const handlePasswordChange = async (
+  async function handlePasswordChange(
     e: FormEvent<HTMLFormElement>,
-  ): Promise<void> => {
+  ): Promise<void> {
     e.preventDefault();
     setLoading(true);
     setMessage("");
@@ -90,11 +90,11 @@ function AccountSettingsForm() {
     }
 
     setLoading(false);
-  };
+  }
 
-  const handleEmailChange = async (
+  async function handleEmailChange(
     e: FormEvent<HTMLFormElement>,
-  ): Promise<void> => {
+  ): Promise<void> {
     e.preventDefault();
     setEmailLoading(true);
     setEmailMessage("");
@@ -128,7 +128,7 @@ function AccountSettingsForm() {
     }
 
     setEmailLoading(false);
-  };
+  }
 
   if (!user) {
     return (

@@ -191,7 +191,7 @@ export function UserStorageProvider({
     const timeoutId = setTimeout(async () => {
       if (pendingKeysRef.current.size === 0) return;
 
-      const initializePendingKeys = async () => {
+      async function initializePendingKeys(): Promise<void> {
         const keysToInit = new Map(pendingKeysRef.current);
         pendingKeysRef.current.clear();
         hasLoadedBatch.current = true;
@@ -265,7 +265,7 @@ export function UserStorageProvider({
 
         // Notify all subscribers
         keysToInit.forEach((_, key) => notifySubscribers(key));
-      };
+      }
 
       await initializePendingKeys();
       // 50ms debounce to collect all initial keys
@@ -291,7 +291,7 @@ export function UserStorageProvider({
     const previousUserId = previousUserIdRef.current;
 
     if (currentUserId !== previousUserId) {
-      const handleUserChange = async () => {
+      async function handleUserChange(): Promise<void> {
         hasLoadedBatch.current = false;
 
         // Collect all initialized keys with their default values
@@ -346,7 +346,7 @@ export function UserStorageProvider({
         // ---------------------------------------------------------------------
 
         previousUserIdRef.current = currentUserId;
-      };
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleUserChange();

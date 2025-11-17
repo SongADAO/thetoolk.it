@@ -19,10 +19,10 @@ function UserProfile() {
     return <div>Not authenticated</div>;
   }
 
-  const handleSignOut = async (): Promise<void> => {
+  async function handleSignOut(): Promise<void> {
     await signOut("local");
     router.push("/auth/signin");
-  };
+  }
 
   return (
     <div className="mx-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm">

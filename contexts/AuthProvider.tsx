@@ -13,13 +13,13 @@ import { createClient } from "@/lib/supabase/client";
 import type { AuthContextType, AuthProviderProps } from "@/types/supabase-auth";
 
 // Fetcher function for SWR
-const fetcher = async (url: string) => {
+async function fetcher(url: string) {
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error("Failed to fetch subscription status");
   }
   return res.json();
-};
+}
 
 export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   const [user, setUser] = useState<User | null>(null);
@@ -56,13 +56,13 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   useEffect(() => {
     // Get initial session
-    const getSession = async (): Promise<void> => {
+    async function getSession(): Promise<void> {
       const {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
       setLoading(false);
-    };
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getSession();
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     });
 
     // Periodically validate the session
-    const validateSession = async () => {
+    async function validateSession(): Promise<void> {
       try {
         const {
           data: { user: currentUser },
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
         console.error("Session validation error:", error);
         setUser(null);
       }
-    };
+    }
 
     // Validate session every 30 seconds
     // const intervalId = setInterval(() => {
@@ -104,18 +104,18 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     // }, 30000);
 
     // Also validate on visibility change (when user returns to tab)
-    const handleVisibilityChange = () => {
+    function handleVisibilityChange(): void {
       if (document.visibilityState === "visible") {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         validateSession();
       }
-    };
+    }
 
     // Validate on window focus (when user clicks on the tab/window)
-    const handleFocus = () => {
+    function handleFocus(): void {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       validateSession();
-    };
+    }
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("focus", handleFocus);
@@ -129,31 +129,34 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     };
   }, [supabase.auth]);
 
-  const signUp = async (
+  async function signUp(
     email: string,
     password: string,
     options?: SignUpWithPasswordCredentials["options"],
-  ) => {
+  ) {
     const { data, error } = await supabase.auth.signUp({
       email,
       options,
       password,
     });
-    return { data, error };
-  };
 
-  const signIn = async (email: string, password: string) => {
+    return { data, error };
+  }
+
+  async function signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    return { data, error };
-  };
 
-  const signOut = async (scope: "local" | "global" = "local") => {
+    return { data, error };
+  }
+
+  async function signOut(scope: "local" | "global" = "local") {
     const { error } = await supabase.auth.signOut({ scope });
+
     return { error };
-  };
+  }
 
   const providerValues: AuthContextType = useMemo(
     () => ({
