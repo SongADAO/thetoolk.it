@@ -10,10 +10,11 @@ import {
   FaRegCalendarXmark,
 } from "react-icons/fa6";
 
-import type { ServiceAccount } from "@/services/post/types";
+import type { ServiceAccount as PostServiceAccount } from "@/services/post/types";
+import type { ServiceAccount as StorageServiceAccount } from "@/services/storage/types";
 
 interface Props {
-  accounts: ServiceAccount[];
+  accounts: PostServiceAccount[] | StorageServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
   brandColor: string;

@@ -1,14 +1,6 @@
 interface ServiceAccount {
-  accessToken: string;
   id: string;
   username: string;
-}
-
-interface OauthAuthorization {
-  accessToken: string;
-  accessTokenExpiresAt: string;
-  refreshToken: string;
-  refreshTokenExpiresAt: string;
 }
 
 interface AmazonS3Credentials {
@@ -24,13 +16,6 @@ interface PinataCredentials {
   jwt: string;
   gateway: string;
 }
-
-const defaultOauthAuthorization: OauthAuthorization = {
-  accessToken: "",
-  accessTokenExpiresAt: "",
-  refreshToken: "",
-  refreshTokenExpiresAt: "",
-};
 
 const defaultAmazonS3Credentials: AmazonS3Credentials = {
   accessKeyId: "",
@@ -49,9 +34,7 @@ const defaultPinataCredentials: PinataCredentials = {
 export {
   type AmazonS3Credentials,
   defaultAmazonS3Credentials,
-  defaultOauthAuthorization,
   defaultPinataCredentials,
-  type OauthAuthorization,
   type PinataCredentials,
   type ServiceAccount,
 };

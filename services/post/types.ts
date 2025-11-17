@@ -1,7 +1,7 @@
 interface ServiceAccount {
   id: string;
   username: string;
-  permissions: {
+  permissions?: {
     comment_disabled: boolean;
     duet_disabled: boolean;
     max_video_post_duration_sec: number;
