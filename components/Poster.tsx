@@ -51,7 +51,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
         </div>
 
         <div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:sticky md:top-0">
             <section className="rounded bg-gray-100">
               <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
                 <h2 className="font-bold">Active Storage Services</h2>
