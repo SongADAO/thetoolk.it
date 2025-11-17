@@ -1,5 +1,6 @@
 "use client";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { use } from "react";
 
@@ -8,6 +9,15 @@ import { PostProviders } from "@/components/service/post/PostProviders";
 import { StorageProviders } from "@/components/service/storage/StorageProviders";
 import { AuthContext } from "@/contexts/AuthContext";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/free",
+  },
+  description:
+    "TheToolk.it Free Edition allows you to create and manage your posts with limited features. Upgrade to Pro for full access.",
+  title: "TheToolk.it Free",
+};
 
 export default function FreePage() {
   const { isAuthenticated } = use(AuthContext);

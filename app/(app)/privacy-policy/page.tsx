@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/privacy-policy",
+  },
+  description:
+    "Read TheToolk.it's Privacy Policy to understand how we collect, use, and protect your information when you use our video posting service.",
+  title: "Privacy Policy - TheToolk.it",
+};
+
 export default function PrivacyPolicyPage() {
   return (
     <div className="terms">

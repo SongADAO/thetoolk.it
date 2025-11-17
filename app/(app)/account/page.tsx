@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
+
 import { ProtectedRoute } from "@/components/Auth/ProtectedRoute";
 import { UserProfile } from "@/components/Auth/UserProfile";
 import { SubscriptionManager } from "@/components/SubscriptionManager";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/account",
+  },
+  description:
+    "Manage your account settings, view your subscription details, and update your profile information on TheToolk.it.",
+  title: "My Account - TheToolk.it",
+};
 
 export default function Dashboard() {
   return (

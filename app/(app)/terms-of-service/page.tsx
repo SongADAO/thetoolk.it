@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/terms-of-service",
+  },
+  description:
+    "Read TheToolk.it's Terms of Service to understand the rules and guidelines for using our video posting service, including your responsibilities and our policies.",
+  title: "Terms of Service - TheToolk.it",
+};
+
 export default function TermsOfServicePage() {
   return (
     <div className="terms">

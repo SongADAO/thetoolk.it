@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SignInForm } from "@/components/Auth/SignInForm";
 
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/auth/signin",
+  },
+  description: "Sign in to your account to access your tools and settings.",
+  title: "Sign In - TheToolk.it",
+};
 export default function SignInPage() {
   return (
     <div className="flex items-center justify-center p-4 md:pt-20">

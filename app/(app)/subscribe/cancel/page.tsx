@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/subscribe/cancel",
+  },
+  description:
+    "You cancelled your subscription checkout before completing it. You have not been charged. Click the button below to return to TheToolk.it.",
+  title: "Subscribe Cancelled - TheToolk.it",
+};
 
 export default function SubscribeCancelPage() {
   return (
