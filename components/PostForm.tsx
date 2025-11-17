@@ -211,9 +211,13 @@ function PostForm() {
     ),
   );
 
-  const canTiktokComment = !tiktok.accounts[0]?.permissions?.comment_disabled;
-  const canTiktokDuet = !tiktok.accounts[0]?.permissions?.duet_disabled;
-  const canTiktokStitch = !tiktok.accounts[0]?.permissions?.stitch_disabled;
+  const canTiktokComment =
+    tiktok.accounts.length &&
+    !tiktok.accounts[0]?.permissions?.comment_disabled;
+  const canTiktokDuet =
+    tiktok.accounts.length && !tiktok.accounts[0]?.permissions?.duet_disabled;
+  const canTiktokStitch =
+    tiktok.accounts.length && !tiktok.accounts[0]?.permissions?.stitch_disabled;
 
   // const canTiktokComment = true;
   // const canTiktokDuet = true;
@@ -452,106 +456,117 @@ function PostForm() {
               </div>
             </Form.Field>
 
-            <section className="mt-4 rounded bg-gray-300 p-2">
-              <h4 className="mb-2 font-semibold">Allow users to</h4>
-              <div className="flex gap-8">
-                {canTiktokComment ? (
-                  <Form.Field
-                    className="flex flex-row items-center gap-2"
-                    key="tiktokComment"
-                    name="tiktokComment"
-                  >
-                    <Form.Control asChild>
-                      <input
-                        checked={state.tiktokComment}
-                        className="h-4 w-4 rounded"
-                        disabled={isFormDisabled}
-                        id="tiktokComment"
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          setState((prev) => ({
-                            ...prev,
-                            tiktokComment: e.target.checked,
-                          }))
-                        }
-                        type="checkbox"
-                        value="1"
-                      />
-                    </Form.Control>
-                    <Form.Label
-                      className="cursor-pointer"
-                      htmlFor="tiktokComment"
+            {canTiktokComment || canTiktokDuet || canTiktokStitch ? (
+              <section className="mt-4 rounded bg-gray-300 p-2">
+                <h4 className="mb-2 font-semibold">Allow users to</h4>
+                <div className="flex gap-8">
+                  {canTiktokComment ? (
+                    <Form.Field
+                      className="flex flex-row items-center gap-2"
+                      key="tiktokComment"
+                      name="tiktokComment"
                     >
-                      Comment
-                    </Form.Label>
-                  </Form.Field>
-                ) : (
-                  <input name="tiktokComment" type="hidden" value="0" />
-                )}
+                      <Form.Control asChild>
+                        <input
+                          checked={state.tiktokComment}
+                          className="h-4 w-4 rounded"
+                          disabled={isFormDisabled}
+                          id="tiktokComment"
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            setState((prev) => ({
+                              ...prev,
+                              tiktokComment: e.target.checked,
+                            }))
+                          }
+                          type="checkbox"
+                          value="1"
+                        />
+                      </Form.Control>
+                      <Form.Label
+                        className="cursor-pointer"
+                        htmlFor="tiktokComment"
+                      >
+                        Comment
+                      </Form.Label>
+                    </Form.Field>
+                  ) : (
+                    <input name="tiktokComment" type="hidden" value="0" />
+                  )}
 
-                {canTiktokDuet ? (
-                  <Form.Field
-                    className="flex flex-row items-center gap-2"
-                    key="tiktokDuet"
-                    name="tiktokDuet"
-                  >
-                    <Form.Control asChild>
-                      <input
-                        checked={state.tiktokDuet}
-                        className="h-4 w-4 rounded"
-                        disabled={isFormDisabled}
-                        id="tiktokDuet"
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          setState((prev) => ({
-                            ...prev,
-                            tiktokDuet: e.target.checked,
-                          }))
-                        }
-                        type="checkbox"
-                        value="1"
-                      />
-                    </Form.Control>
-                    <Form.Label className="cursor-pointer" htmlFor="tiktokDuet">
-                      Duet
-                    </Form.Label>
-                  </Form.Field>
-                ) : (
-                  <input name="tiktokDuet" type="hidden" value="0" />
-                )}
-
-                {canTiktokStitch ? (
-                  <Form.Field
-                    className="flex flex-row items-center gap-2"
-                    key="tiktokStitch"
-                    name="tiktokStitch"
-                  >
-                    <Form.Control asChild>
-                      <input
-                        checked={state.tiktokStitch}
-                        className="h-4 w-4 rounded"
-                        disabled={isFormDisabled}
-                        id="tiktokStitch"
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          setState((prev) => ({
-                            ...prev,
-                            tiktokStitch: e.target.checked,
-                          }))
-                        }
-                        type="checkbox"
-                        value="1"
-                      />
-                    </Form.Control>
-                    <Form.Label
-                      className="cursor-pointer"
-                      htmlFor="tiktokStitch"
+                  {canTiktokDuet ? (
+                    <Form.Field
+                      className="flex flex-row items-center gap-2"
+                      key="tiktokDuet"
+                      name="tiktokDuet"
                     >
-                      Stitch
-                    </Form.Label>
-                  </Form.Field>
-                ) : (
-                  <input name="tiktokStitch" type="hidden" value="0" />
-                )}
-              </div>
-            </section>
+                      <Form.Control asChild>
+                        <input
+                          checked={state.tiktokDuet}
+                          className="h-4 w-4 rounded"
+                          disabled={isFormDisabled}
+                          id="tiktokDuet"
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            setState((prev) => ({
+                              ...prev,
+                              tiktokDuet: e.target.checked,
+                            }))
+                          }
+                          type="checkbox"
+                          value="1"
+                        />
+                      </Form.Control>
+                      <Form.Label
+                        className="cursor-pointer"
+                        htmlFor="tiktokDuet"
+                      >
+                        Duet
+                      </Form.Label>
+                    </Form.Field>
+                  ) : (
+                    <input name="tiktokDuet" type="hidden" value="0" />
+                  )}
+
+                  {canTiktokStitch ? (
+                    <Form.Field
+                      className="flex flex-row items-center gap-2"
+                      key="tiktokStitch"
+                      name="tiktokStitch"
+                    >
+                      <Form.Control asChild>
+                        <input
+                          checked={state.tiktokStitch}
+                          className="h-4 w-4 rounded"
+                          disabled={isFormDisabled}
+                          id="tiktokStitch"
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            setState((prev) => ({
+                              ...prev,
+                              tiktokStitch: e.target.checked,
+                            }))
+                          }
+                          type="checkbox"
+                          value="1"
+                        />
+                      </Form.Control>
+                      <Form.Label
+                        className="cursor-pointer"
+                        htmlFor="tiktokStitch"
+                      >
+                        Stitch
+                      </Form.Label>
+                    </Form.Field>
+                  ) : (
+                    <input name="tiktokStitch" type="hidden" value="0" />
+                  )}
+                </div>
+              </section>
+            ) : (
+              <>
+                <input name="tiktokComment" type="hidden" value="0" />
+                <input name="tiktokDuet" type="hidden" value="0" />
+                <input name="tiktokStitch" type="hidden" value="0" />
+              </>
+            )}
 
             <section>
               <div>
