@@ -1,6 +1,4 @@
 /* eslint-disable react/no-multi-comp, no-inline-comments, max-lines */
-"use client";
-
 import type { Metadata } from "next";
 import Image from "next/image";
 import { type ReactNode, useState } from "react";

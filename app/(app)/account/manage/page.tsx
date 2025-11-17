@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     canonical: "/account/manage",
   },
   description: "Manage your account settings and preferences on TheToolk.it.",
-  title: "Manage - TheToolk.it",
+  title: "Manage Account - TheToolk.it",
 };
 export default function SignInPage() {
   return (
