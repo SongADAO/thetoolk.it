@@ -2,11 +2,14 @@
 
 import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, use, useEffect, useState } from "react";
 
+import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
 function AccountSettingsForm() {
+  const { signOut } = use(AuthContext);
+
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState<string>("");
@@ -19,10 +22,10 @@ function AccountSettingsForm() {
   const [emailMessage, setEmailMessage] = useState<string>("");
   const supabase = createClient();
 
-  async function signOut() {
-    await supabase.auth.signOut();
+  const handleSignOut = async (): Promise<void> => {
+    await signOut();
     router.push("/auth/signin");
-  }
+  };
 
   useEffect(() => {
     // Get current user
@@ -82,7 +85,7 @@ function AccountSettingsForm() {
       // Log out and redirect after a brief delay
       setTimeout(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        signOut();
+        handleSignOut();
       }, 1500);
     }
 
@@ -120,7 +123,7 @@ function AccountSettingsForm() {
       // Log out and redirect after a brief delay
       setTimeout(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        signOut();
+        handleSignOut();
       }, 2000);
     }
 
