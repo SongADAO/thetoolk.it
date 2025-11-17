@@ -152,7 +152,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     return { data, error };
   }
 
-  async function signOut(scope: "local" | "global" = "local") {
+  async function signOut(scope: "local" | "global") {
     const { error } = await supabase.auth.signOut({ scope });
 
     return { error };
