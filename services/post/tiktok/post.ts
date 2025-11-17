@@ -50,6 +50,7 @@ async function uploadVideo({
     accessToken === "hosted"
       ? await fetch(`/api/hosted/tiktok/video`, {
           body: JSON.stringify({
+            options,
             text,
             title,
             videoUrl,
