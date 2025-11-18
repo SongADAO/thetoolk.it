@@ -44,7 +44,7 @@ function ServiceProgress({
     >
       {showProgress ? (
         <div
-          className={`absolute z-10 h-full w-[0] bg-brand-${brandColor}`}
+          className={`absolute z-10 h-full w-0 bg-brand-${brandColor}`}
           style={{ width: `${processProgress}%` }}
         >
           &nbsp;
@@ -54,7 +54,7 @@ function ServiceProgress({
       <div className="relative z-20 flex items-center justify-between gap-2 p-2 2xl:py-3.5">
         <div>{icon}</div>
 
-        <div className="flex-1 text-left text-xs leading-[1]">
+        <div className="flex-1 text-left text-xs leading-none">
           {processError ? <p>{processError}</p> : null}
 
           {!processError && processStatus ? <p>{processStatus}</p> : null}

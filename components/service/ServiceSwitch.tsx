@@ -87,7 +87,7 @@ function ServiceSwitch({
       >
         <Checkbox.Root
           checked={isEnabled}
-          className="flex size-[36px] cursor-pointer appearance-none items-center justify-center rounded bg-white outline-none hover:bg-gray-200"
+          className="flex size-9 cursor-pointer appearance-none items-center justify-center rounded bg-white outline-none hover:bg-gray-200"
           id="c1"
           onCheckedChange={(checked) => setIsEnabled(Boolean(checked))}
         >
@@ -99,7 +99,7 @@ function ServiceSwitch({
         </Checkbox.Root>
 
         <Collapsible.Trigger
-          className="group flex min-h-[36px] flex-1 items-center justify-between rounded bg-[#fff2] px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
+          className="group flex min-h-9 flex-1 items-center justify-between rounded bg-[#fff2] px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
           data-clickable={
             hasCredentials && !needsCredentials ? "true" : "false"
           }
@@ -112,7 +112,7 @@ function ServiceSwitch({
           {hasCredentials ? (
             <FaGear
               aria-hidden
-              className="transition-transform duration-300 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+              className="transition-transform duration-300 ease-[cubic-bezier(0.87,0,0.13,1)] group-data-[state=open]:rotate-180"
             />
           ) : null}
         </Collapsible.Trigger>
