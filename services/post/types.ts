@@ -1,3 +1,25 @@
+interface OauthAuthorization {
+  accessToken: string;
+  refreshToken: string;
+}
+
+interface OauthExpiration {
+  accessTokenExpiresAt: string;
+  refreshTokenExpiresAt: string;
+}
+
+interface OauthCredentials {
+  clientId: string;
+  clientSecret: string;
+  serviceUrl: string;
+  username: string;
+}
+
+interface OauthAuthorizationAndExpiration {
+  authorization: OauthAuthorization;
+  expiration: OauthExpiration;
+}
+
 interface PostServiceAccount {
   id: string;
   username: string;
@@ -29,45 +51,6 @@ interface PostProps {
   videoUrl: string;
 }
 
-interface OauthAuthorization {
-  accessToken: string;
-  refreshToken: string;
-}
-
-interface OauthExpiration {
-  accessTokenExpiresAt: string;
-  refreshTokenExpiresAt: string;
-}
-
-interface OauthCredentials {
-  clientId: string;
-  clientSecret: string;
-  serviceUrl: string;
-  username: string;
-}
-
-interface OauthAuthorizationAndExpiration {
-  authorization: OauthAuthorization;
-  expiration: OauthExpiration;
-}
-
-const defaultOauthAuthorization: OauthAuthorization = {
-  accessToken: "",
-  refreshToken: "",
-};
-
-const defaultOauthExpiration: OauthExpiration = {
-  accessTokenExpiresAt: "",
-  refreshTokenExpiresAt: "",
-};
-
-const defaultOauthCredentials: OauthCredentials = {
-  clientId: "",
-  clientSecret: "",
-  serviceUrl: "",
-  username: "",
-};
-
 interface CreatePostProps {
   accessToken: string;
   credentials: OauthCredentials;
@@ -92,6 +75,23 @@ interface CreatePostProps {
   videoHSLUrl: string;
   videoUrl: string;
 }
+
+const defaultOauthAuthorization: OauthAuthorization = {
+  accessToken: "",
+  refreshToken: "",
+};
+
+const defaultOauthExpiration: OauthExpiration = {
+  accessTokenExpiresAt: "",
+  refreshTokenExpiresAt: "",
+};
+
+const defaultOauthCredentials: OauthCredentials = {
+  clientId: "",
+  clientSecret: "",
+  serviceUrl: "",
+  username: "",
+};
 
 export {
   type CreatePostProps,
