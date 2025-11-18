@@ -26,21 +26,21 @@ function AppHeaderUser() {
     return (
       <div className="flex flex-row items-end gap-2">
         {/* <Link
-          className="flex inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
+          className="inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
           href="/pro"
           title="Create Post"
         >
           Create Post
         </Link> */}
         {/* <Link
-          className="flex inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
+          className="inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-3 py-1 text-white outline-none hover:bg-gray-800"
           href="/auth/signup"
           title="Create Account"
         >
           Create Account
         </Link> */}
         <Link
-          className="flex inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-4 py-3 font-bold text-white outline-none hover:bg-gray-800"
+          className="inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-4 py-3 font-bold text-white outline-none hover:bg-gray-800"
           href="/auth/signin"
           title="Sign In"
         >
@@ -54,7 +54,7 @@ function AppHeaderUser() {
   return (
     <div className="flex flex-row items-end gap-2">
       <Link
-        className="flex inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-4 py-3 font-bold text-white outline-none hover:bg-gray-800"
+        className="inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 px-4 py-3 font-bold text-white outline-none hover:bg-gray-800"
         href="/pro"
         title="Create a Post"
       >
@@ -62,14 +62,14 @@ function AppHeaderUser() {
         Post
       </Link>
       <Link
-        className="flex inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 p-3 text-white outline-none hover:bg-gray-800"
+        className="inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 p-3 text-white outline-none hover:bg-gray-800"
         href="/account"
         title="Manage Account"
       >
         <FaGear className="size-6" />
       </Link>
       <button
-        className="flex inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 p-3 text-white outline-none hover:bg-gray-800"
+        className="inline-flex cursor-pointer items-center justify-center gap-3 rounded bg-gray-500 p-3 text-white outline-none hover:bg-gray-800"
         onClick={handleSignOut}
         title="Sign out"
         type="button"
