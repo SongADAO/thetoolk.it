@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
 
+import { getBaseUrlFromRequest } from "@/lib/request";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
-import { getBaseUrlFromRequest } from "@/services/post/hosted";
 import { uploadVideo } from "@/services/post/tiktok/post";
 
 export async function POST(request: NextRequest) {
