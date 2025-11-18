@@ -1,6 +1,6 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { CreatePostProps } from "@/services/post/types";
+import type { PostServiceCreatePostProps } from "@/services/post/types";
 
 // 100GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 100;
@@ -97,7 +97,7 @@ async function createPost({
   videoHSLUrl,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   videoUrl,
-}: Readonly<CreatePostProps>): Promise<string | null> {
+}: Readonly<PostServiceCreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 
   try {

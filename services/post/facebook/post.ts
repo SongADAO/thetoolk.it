@@ -1,7 +1,7 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { getAccountAccessToken } from "@/services/post/facebook/auth";
-import type { CreatePostProps } from "@/services/post/types";
+import type { PostServiceCreatePostProps } from "@/services/post/types";
 
 // 4GB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 4;
@@ -122,7 +122,7 @@ async function createPost({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   videoHSLUrl,
   videoUrl,
-}: Readonly<CreatePostProps>): Promise<string | null> {
+}: Readonly<PostServiceCreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 
   try {
