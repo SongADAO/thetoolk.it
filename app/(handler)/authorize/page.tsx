@@ -11,7 +11,7 @@ export default function Authorize() {
       <StorageProviders mode="self">
         <PostProviders mode="self">
           <Suspense>
-            <PostRedirectHandlers />
+            <PostRedirectHandlers mode="self" />
           </Suspense>
         </PostProviders>
       </StorageProviders>

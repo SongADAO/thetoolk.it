@@ -1,6 +1,7 @@
 "use client";
 
-import { PostServiceSettings } from "@/components/service/post/PostServiceSettings";
+import { ServiceFormWithContext } from "@/components/service/ServiceFormWithContext";
+import { ServiceSwitchWithContext } from "@/components/service/ServiceSwitchWithContext";
 import { POST_CONTEXTS } from "@/services/post/POST_CONTEXTS";
 
 interface PostSettingsProps {
@@ -12,7 +13,11 @@ function PostSettings({ mode }: Readonly<PostSettingsProps>) {
     <>
       {POST_CONTEXTS.filter((context) => context.modes.includes(mode)).map(
         (context) => (
-          <PostServiceSettings context={context.context} key={context.id} />
+          <ServiceSwitchWithContext
+            context={context.context}
+            form={<ServiceFormWithContext context={context.context} />}
+            key={context.id}
+          />
         ),
       )}
     </>
