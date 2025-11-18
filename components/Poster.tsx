@@ -5,8 +5,8 @@ import { PostForm } from "@/components/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";
 import { PostSettings } from "@/components/service/post/PostSettings";
 import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
+import { StorageProgress } from "@/components/service/storage/StorageProgress";
 import { StorageSettings } from "@/components/service/storage/StorageSettings";
-import { StoreProgress } from "@/components/service/storage/StoreProgress";
 import { CreatePostProvider } from "@/contexts/CreatePostProvider";
 
 interface PosterProps {
@@ -75,7 +75,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-2">
-                  <StoreProgress />
+                  <StorageProgress />
                 </div>
               </div>
             </section>
