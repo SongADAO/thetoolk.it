@@ -11,7 +11,7 @@ interface Props {
   children: ReactNode;
 }
 
-export function PostPageProviders({ children, mode }: Readonly<Props>) {
+export function PosterProviders({ children, mode }: Readonly<Props>) {
   return (
     <UserStorageProvider mode={mode}>
       <StorageProviders mode={mode}>

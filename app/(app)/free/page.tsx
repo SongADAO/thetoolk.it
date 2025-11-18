@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { PostPageProviders } from "@/app/post-page-providers";
 import { FreeBanner } from "@/components/FreeBanner";
 import { Poster } from "@/components/Poster";
+import { PosterProviders } from "@/components/PosterProviders";
 
 export const metadata: Metadata = {
   alternates: {
@@ -17,9 +17,9 @@ export default function FreePage() {
   return (
     <div>
       <FreeBanner />
-      <PostPageProviders mode="self">
+      <PosterProviders mode="self">
         <Poster mode="self" />
-      </PostPageProviders>
+      </PosterProviders>
     </div>
   );
 }

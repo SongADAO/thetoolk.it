@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
-import { PostPageProviders } from "@/app/post-page-providers";
 import { Poster } from "@/components/Poster";
+import { PosterProviders } from "@/components/PosterProviders";
 import { UpgradeModal } from "@/components/UpgradeModal";
 
 export const metadata: Metadata = {
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 export default function ProPage() {
   return (
     <div>
-      <PostPageProviders mode="hosted">
+      <PosterProviders mode="hosted">
         <Poster mode="hosted" />
-      </PostPageProviders>
+      </PosterProviders>
       <UpgradeModal />
     </div>
   );
