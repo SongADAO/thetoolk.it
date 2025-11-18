@@ -13,6 +13,11 @@ import { convertToHLS, type HLSFiles } from "@/lib/video/hls";
 import { convertVideoMediabunny } from "@/lib/video/mediabunny";
 import { trimVideo } from "@/lib/video/trim";
 import { downloadFile, getVideoDuration } from "@/lib/video/video";
+import {
+  CreatePostContext,
+  type CreatePostProps,
+  type PostVideo,
+} from "@/services/CreatePostContext";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
@@ -21,11 +26,6 @@ import { ThreadsContext } from "@/services/post/threads/Context";
 import { TiktokContext } from "@/services/post/tiktok/Context";
 import { TwitterContext } from "@/services/post/twitter/Context";
 import { YoutubeContext } from "@/services/post/youtube/Context";
-import {
-  type CreatePostProps,
-  PostContext,
-  type PostVideo,
-} from "@/services/PostContext";
 import { AmazonS3Context } from "@/services/storage/amazons3/Context";
 import { PinataContext } from "@/services/storage/pinata/Context";
 
@@ -33,7 +33,7 @@ interface Props {
   children: ReactNode;
 }
 
-export function PostProvider({ children }: Readonly<Props>) {
+export function CreatePostProvider({ children }: Readonly<Props>) {
   // Post services.
   const bluesky = use(BlueskyContext);
   const facebook = use(FacebookContext);
@@ -751,8 +751,8 @@ export function PostProvider({ children }: Readonly<Props>) {
   );
 
   return (
-    <PostContext.Provider value={providerValues}>
+    <CreatePostContext.Provider value={providerValues}>
       {children}
-    </PostContext.Provider>
+    </CreatePostContext.Provider>
   );
 }

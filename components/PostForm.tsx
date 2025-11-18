@@ -7,6 +7,7 @@ import { FaCircleExclamation } from "react-icons/fa6";
 
 import { Spinner } from "@/components/Spinner";
 import { formatFileDuration, formatFileSize } from "@/lib/video/video";
+import { CreatePostContext } from "@/services/CreatePostContext";
 // import { BlueskyContext } from "@/services/post/bluesky/Context";
 // import { FacebookContext } from "@/services/post/facebook/Context";
 // import { InstagramContext } from "@/services/post/instagram/Context";
@@ -15,7 +16,6 @@ import { formatFileDuration, formatFileSize } from "@/lib/video/video";
 import { TiktokContext } from "@/services/post/tiktok/Context";
 // import { TwitterContext } from "@/services/post/twitter/Context";
 import { YoutubeContext } from "@/services/post/youtube/Context";
-import { PostContext } from "@/services/PostContext";
 
 interface FormState {
   facebookPrivacy: string;
@@ -96,7 +96,7 @@ function PostForm() {
     videoPreviewUrl,
     videoTrimProgress,
     videoTrimStatus,
-  } = use(PostContext);
+  } = use(CreatePostContext);
 
   const [state, setState] = useState<FormState>(fromInitial());
 

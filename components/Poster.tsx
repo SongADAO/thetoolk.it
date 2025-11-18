@@ -7,7 +7,7 @@ import { PostSettings } from "@/components/service/post/PostSettings";
 import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
 import { StorageSettings } from "@/components/service/storage/StorageSettings";
 import { StoreProgress } from "@/components/service/storage/StoreProgress";
-import { PostProvider } from "@/services/PostProvider";
+import { CreatePostProvider } from "@/services/CreatePostProvider";
 
 interface PosterProps {
   mode: "hosted" | "self";
@@ -43,9 +43,9 @@ function Poster({ mode }: Readonly<PosterProps>) {
               </div>
             </div>
             <div className="p-4">
-              <PostProvider>
+              <CreatePostProvider>
                 <PostForm />
-              </PostProvider>
+              </CreatePostProvider>
             </div>
           </section>
         </div>
