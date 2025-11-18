@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { ResetPasswordForm } from "@/components/Auth/ResetPasswordForm";
+import { ResetPasswordForm } from "@/components/auth-move/ResetPasswordForm";
 
 export const metadata: Metadata = {
   alternates: {
