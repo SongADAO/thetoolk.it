@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 
-import { Spinner } from "@/components/Spinner";
+import { Spinner } from "@/components/general/Spinner";
 
 interface Props {
   error: string;

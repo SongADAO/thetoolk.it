@@ -1,7 +1,7 @@
 import { Form } from "radix-ui";
 import { useActionState } from "react";
 
-import { Spinner } from "@/components/Spinner";
+import { Spinner } from "@/components/general/Spinner";
 
 type ServiceFormState = Record<string, string>;
 

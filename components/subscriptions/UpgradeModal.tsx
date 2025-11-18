@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { use } from "react";
 
-import { ModalOverlay } from "@/components/ModalOverlay";
+import { ModalOverlay } from "@/components/general/ModalOverlay";
 import { SubscriptionManager } from "@/components/subscriptions/SubscriptionManager";
 import { AuthContext } from "@/contexts/AuthContext";
 

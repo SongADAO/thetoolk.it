@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
-import { AppFooter } from "@/components/AppFooter";
-import { AppHeader } from "@/components/AppHeader";
+import { AppFooter } from "@/components/layout/AppFooter";
+import { AppHeader } from "@/components/layout/AppHeader";
 
 export default function AppLayout({
   children,

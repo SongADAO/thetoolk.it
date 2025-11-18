@@ -1,6 +1,6 @@
 import { FaServer, FaUsersGear } from "react-icons/fa6";
 
-import { InstructionsButton } from "@/components/InstructionsButton";
+import { InstructionsButton } from "@/components/poster/InstructionsButton";
 import { PosterSettingsMenu } from "@/components/poster/PosterSettingsMenu";
 import { PostForm } from "@/components/poster/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { AppFooter } from "@/components/AppFooter";
-import { AppLogo } from "@/components/AppLogo";
-import { Instructions } from "@/components/Instructions";
+import { Instructions } from "@/components/instructions/Instructions";
+import { AppFooter } from "@/components/layout/AppFooter";
+import { AppLogo } from "@/components/layout/AppLogo";
 
 export const metadata: Metadata = {
   alternates: {
