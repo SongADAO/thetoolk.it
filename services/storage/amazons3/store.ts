@@ -9,33 +9,33 @@ interface UploadFileProps {
   credentials: AmazonS3Credentials;
   file: File;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
 }
 async function uploadFile({
   credentials,
   file,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadFileProps>): Promise<string> {
   let progressInterval = null;
 
   try {
-    setIsStoring(true);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("Preparing media for upload...");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("Preparing media for upload...");
 
     if (DEBUG_STORAGE) {
       console.log("Test S3: uploadFile");
       await sleep(5000);
-      setStoreProgress(100);
-      setStoreStatus("Success");
+      setProcessProgress(100);
+      setProcessStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
 
@@ -45,11 +45,11 @@ async function uploadFile({
     const filename = `thetoolkit/${timestamp}-${sanitizedFileName}`;
 
     // Convert file to ArrayBuffer for browser compatibility
-    setStoreStatus("Buffering media...");
+    setProcessStatus("Buffering media...");
     const fileBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(fileBuffer);
 
-    setStoreStatus(`Uploading ${serviceLabel} media...`);
+    setProcessStatus(`Uploading ${serviceLabel} media...`);
 
     // For progress tracking, we'll use a different approach
     // The AWS SDK doesn't provide built-in progress for browser uploads
@@ -64,8 +64,8 @@ async function uploadFile({
       const estimatedTime = Math.max(5000, fileSize / 100000);
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
-      setStoreProgress(Math.round(progress));
-      setStoreStatus(
+      setProcessProgress(Math.round(progress));
+      setProcessStatus(
         `Uploading ${serviceLabel} media... ${Math.round(progress)}%`,
       );
     }, 500);
@@ -132,18 +132,18 @@ async function uploadFile({
     console.log("S3 upload successful:", response);
     console.log("Public URL:", publicUrl);
 
-    setStoreProgress(100);
-    setStoreStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return publicUrl;
   } catch (err: unknown) {
     console.error("S3 upload error:", err);
 
     const errMessage = err instanceof Error ? err.message : "Upload failed";
-    setStoreError(`Upload failed for ${serviceLabel}: ${errMessage}`);
-    setStoreStatus(`Upload failed for ${serviceLabel}`);
+    setProcessError(`Upload failed for ${serviceLabel}: ${errMessage}`);
+    setProcessStatus(`Upload failed for ${serviceLabel}`);
   } finally {
-    setIsStoring(false);
+    setIsProcessing(false);
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);
@@ -157,28 +157,28 @@ interface UploadVideoProps {
   credentials: AmazonS3Credentials;
   file: File;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreStatus: (status: string) => void;
-  setStoreProgress: (progress: number) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessStatus: (status: string) => void;
+  setProcessProgress: (progress: number) => void;
 }
 async function uploadVideo({
   credentials,
   file,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadVideoProps>): Promise<string> {
   return uploadFile({
     credentials,
     file,
     serviceLabel,
-    setIsStoring,
-    setStoreError,
-    setStoreProgress,
-    setStoreStatus,
+    setIsProcessing,
+    setProcessError,
+    setProcessProgress,
+    setProcessStatus,
   });
 }
 
@@ -186,10 +186,10 @@ interface UploadJsonProps {
   credentials: AmazonS3Credentials;
   data: object;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreStatus: (status: string) => void;
-  setStoreProgress: (progress: number) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessStatus: (status: string) => void;
+  setProcessProgress: (progress: number) => void;
 }
 
 async function uploadJson({
@@ -197,10 +197,10 @@ async function uploadJson({
   credentials,
   data,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }: Readonly<UploadJsonProps>): Promise<string> {
   throw new Error(`Not implemented`);
@@ -217,10 +217,10 @@ async function uploadJson({
   //   credentials,
   //   data,
   //   serviceLabel,,
-  //   setIsStoring,
-  //   setStoreError,
-  //   setStoreProgress,
-  //   setStoreStatus,
+  //   setIsProcessing,
+  //   setProcessError,
+  //   setProcessProgress,
+  //   setProcessStatus,
   // });
 }
 
@@ -229,10 +229,10 @@ interface UploadHLSFolderProps {
   folderName?: string;
   hlsFiles: HLSFiles;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
 }
 
 async function uploadHLSFolder({
@@ -241,10 +241,10 @@ async function uploadHLSFolder({
   folderName,
   hlsFiles,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }: Readonly<UploadHLSFolderProps>): Promise<string> {
   throw new Error(`Not implemented`);
