@@ -1,10 +1,10 @@
 import { FaServer, FaUsersGear } from "react-icons/fa6";
 
 import { InstructionsButton } from "@/components/InstructionsButton";
+import { PosterSettingsMenu } from "@/components/PosterSettingsMenu";
 import { PostForm } from "@/components/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";
 import { PostSwitches } from "@/components/service/post/PostSwitches";
-import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
 import { StorageProgress } from "@/components/service/storage/StorageProgress";
 import { StorageSwitches } from "@/components/service/storage/StorageSwitches";
 import { CreatePostProvider } from "@/contexts/CreatePostProvider";
@@ -27,23 +27,23 @@ function Poster({ mode }: Readonly<PosterProps>) {
               <div className="flex gap-2 lg:hidden">
                 {showInstructions ? <InstructionsButton /> : null}
                 {showStorageSwitches ? (
-                  <ServiceSettingsMenu
+                  <PosterSettingsMenu
                     icon={<FaServer className="size-6" />}
                     label="Storage Settings"
                   >
                     <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                       <StorageSwitches mode={mode} />
                     </div>
-                  </ServiceSettingsMenu>
+                  </PosterSettingsMenu>
                 ) : null}
-                <ServiceSettingsMenu
+                <PosterSettingsMenu
                   icon={<FaUsersGear className="size-6" />}
                   label="Post Settings"
                 >
                   <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                     <PostSwitches mode={mode} />
                   </div>
-                </ServiceSettingsMenu>
+                </PosterSettingsMenu>
               </div>
             </div>
             <div className="p-4">
@@ -62,14 +62,14 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 <div className="hidden gap-2 lg:flex xl:hidden">
                   {showInstructions ? <InstructionsButton /> : null}
                   {showStorageSwitches ? (
-                    <ServiceSettingsMenu
+                    <PosterSettingsMenu
                       icon={<FaServer className="size-6" />}
                       label="Storage Settings"
                     >
                       <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                         <StorageSwitches mode={mode} />
                       </div>
-                    </ServiceSettingsMenu>
+                    </PosterSettingsMenu>
                   ) : null}
                 </div>
               </div>
@@ -84,14 +84,14 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 <h2 className="font-bold">Active Posting Services</h2>
                 <div className="hidden gap-2 lg:flex xl:hidden">
                   {showInstructions ? <InstructionsButton /> : null}
-                  <ServiceSettingsMenu
+                  <PosterSettingsMenu
                     icon={<FaUsersGear className="size-6" />}
                     label="Post Settings"
                   >
                     <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                       <PostSwitches mode={mode} />
                     </div>
-                  </ServiceSettingsMenu>
+                  </PosterSettingsMenu>
                 </div>
               </div>
               <div className="p-4">
