@@ -10,8 +10,8 @@ import {
   FaRegCalendarXmark,
 } from "react-icons/fa6";
 
-import type { ServiceAccount as PostServiceAccount } from "@/services/post/types";
-import type { ServiceAccount as StorageServiceAccount } from "@/services/storage/types";
+import type { PostServiceAccount } from "@/services/post/types";
+import type { StorageServiceAccount } from "@/services/storage/types";
 
 interface Props {
   accounts: PostServiceAccount[] | StorageServiceAccount[];
