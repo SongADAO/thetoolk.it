@@ -4,7 +4,10 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
-import type { PostProps, PostServiceAccount } from "@/services/post/types";
+import type {
+  PostServiceAccount,
+  PostServicePostProps,
+} from "@/services/post/types";
 
 interface PostServiceContextType {
   VIDEO_MAX_DURATION: number;
@@ -34,7 +37,7 @@ interface PostServiceContextType {
   label: string;
   loading: boolean;
   mode: "hosted" | "self";
-  post: (props: PostProps) => Promise<string | null>;
+  post: (props: PostServicePostProps) => Promise<string | null>;
   processError: string;
   processProgress: number;
   processStatus: string;
@@ -72,7 +75,7 @@ const postServiceContextDefault = {
   label: "",
   loading: true,
   mode: "self" as "hosted" | "self",
-  post: async (props: PostProps) => Promise.resolve(null),
+  post: async (props: PostServicePostProps) => Promise.resolve(null),
   processError: "",
   processProgress: 0,
   processStatus: "",
