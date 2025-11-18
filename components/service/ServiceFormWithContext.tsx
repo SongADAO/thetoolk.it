@@ -15,11 +15,5 @@ export function ServiceFormWithContext<T extends ServiceFormProps>({
 }: Props<T>) {
   const contextValue = use(context);
 
-  const props: ServiceFormProps = {
-    fields: contextValue.fields,
-    initial: contextValue.initial,
-    saveData: contextValue.saveData,
-  };
-
-  return <ServiceForm {...props} />;
+  return <ServiceForm {...contextValue} />;
 }
