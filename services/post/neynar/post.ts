@@ -83,10 +83,10 @@ async function createPost({
   privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
-  setIsPosting,
-  setPostError,
-  setPostProgress,
-  setPostStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   text,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
@@ -106,20 +106,20 @@ async function createPost({
       videoHSLUrl = "https://example.com/test-video.mp4";
     }
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
 
     let postId = "";
     if (videoHSLUrl) {
-      setPostStatus("Publishing post...");
+      setProcessStatus("Publishing post...");
 
       // Simulate progress during upload
       let progress = 10;
       progressInterval = setInterval(() => {
         progress = progress < 90 ? progress + 5 : progress;
-        setPostProgress(progress);
+        setProcessProgress(progress);
       }, 2000);
 
       postId = await createCast({
@@ -136,17 +136,17 @@ async function createPost({
       throw new Error("Text only posts are not supported yet.");
     }
 
-    setPostProgress(100);
-    setPostStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("Post failed");
+    setProcessError(`Post failed: ${errMessage}`);
+    setProcessStatus("Post failed");
   } finally {
-    setIsPosting(false);
+    setIsProcessing(false);
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);

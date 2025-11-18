@@ -211,10 +211,10 @@ async function createPost({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   privacy,
   requestUrl,
-  setIsPosting,
-  setPostError,
-  setPostProgress,
-  setPostStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   text,
   title,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -232,23 +232,23 @@ async function createPost({
       video = new File(["a"], "test.mp4", { type: "video/mp4" });
     }
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
 
     let postUri = "";
 
     if (video) {
       // Step 1: Upload video blob
-      setPostProgress(10);
-      setPostStatus("Uploading post...");
+      setProcessProgress(10);
+      setProcessStatus("Uploading post...");
 
       // Simulate progress during upload
       let progress = 10;
       progressInterval = setInterval(() => {
         progress = progress < 90 ? progress + 5 : progress;
-        setPostProgress(progress);
+        setProcessProgress(progress);
       }, 2000);
 
       const blobRef = await uploadVideoBlob({
@@ -263,8 +263,8 @@ async function createPost({
       clearInterval(progressInterval);
 
       // Step 2: Create post
-      setPostStatus("Publishing post...");
-      setPostProgress(90);
+      setProcessStatus("Publishing post...");
+      setProcessProgress(90);
 
       postUri = await createRecord({
         accessToken,
@@ -279,8 +279,8 @@ async function createPost({
       throw new Error("Text only posts are not supported yet.");
 
       // // Text-only post (much simpler with Agent!)
-      // setPostStatus("Publishing post...");
-      // setPostProgress(50);
+      // setProcessStatus("Publishing post...");
+      // setProcessProgress(50);
 
       // const response = await agent.post({
       //   createdAt: new Date().toISOString(),
@@ -290,8 +290,8 @@ async function createPost({
       // postUri = response.uri;
     }
 
-    setPostProgress(100);
-    setPostStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     // Extract post ID from the URI (at://did:plc:abc.../app.bsky.feed.post/POST_ID)
     // const postId = postUri.split("/").pop() ?? postUri;
@@ -300,10 +300,10 @@ async function createPost({
   } catch (err: unknown) {
     console.error("Post error:", err);
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("Post failed");
+    setProcessError(`Post failed: ${errMessage}`);
+    setProcessStatus("Post failed");
   } finally {
-    setIsPosting(false);
+    setIsProcessing(false);
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);

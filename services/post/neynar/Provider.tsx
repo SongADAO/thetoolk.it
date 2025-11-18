@@ -151,16 +151,16 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     return authorization.accessToken;
   }
 
-  const [isPosting, setIsPosting] = useState<boolean>(false);
-  const [postError, setPostError] = useState<string>("");
-  const [postProgress, setPostProgress] = useState<number>(0);
-  const [postStatus, setPostStatus] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [processError, setProcessError] = useState<string>("");
+  const [processProgress, setProcessProgress] = useState<number>(0);
+  const [processStatus, setProcessStatus] = useState<string>("");
 
   function resetPostState() {
-    setIsPosting(false);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(false);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
   }
 
   async function post({
@@ -173,7 +173,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     videoHSLUrl,
     videoUrl,
   }: Readonly<PostProps>): Promise<string | null> {
-    if (!isEnabled || !isComplete || !isAuthorized || isPosting) {
+    if (!isEnabled || !isComplete || !isAuthorized || isProcessing) {
       return null;
     }
 
@@ -186,10 +186,10 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
         options,
         privacy,
         requestUrl: window.location.origin,
-        setIsPosting,
-        setPostError,
-        setPostProgress,
-        setPostStatus,
+        setIsProcessing,
+        setProcessError,
+        setProcessProgress,
+        setProcessStatus,
         text,
         title,
         userId,
@@ -201,10 +201,10 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       console.error("Post error:", err);
       const errMessage =
         err instanceof Error ? err.message : "unspecified error";
-      setPostError(`Post failed: ${errMessage}`);
-      setPostStatus("Post failed");
-      setPostProgress(0);
-      setIsPosting(false);
+      setProcessError(`Post failed: ${errMessage}`);
+      setProcessStatus("Post failed");
+      setProcessProgress(0);
+      setIsProcessing(false);
     }
 
     return null;
@@ -270,15 +270,15 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isHandlingAuth,
-      isPosting,
+      isProcessing,
       isUsable,
       label,
       loading,
       mode,
       post,
-      postError,
-      postProgress,
-      postStatus,
+      processError,
+      processProgress,
+      processStatus,
       resetPostState,
       saveData,
       setIsEnabled,
@@ -305,13 +305,13 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       isComplete,
       isEnabled,
       isHandlingAuth,
-      isPosting,
+      isProcessing,
       isUsable,
       label,
       loading,
-      postError,
-      postProgress,
-      postStatus,
+      processError,
+      processProgress,
+      processStatus,
       resetPostState,
     ],
   );

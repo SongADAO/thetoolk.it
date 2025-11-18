@@ -121,15 +121,15 @@ async function uploadFileChunk({
 // Upload file in chunks
 interface UploadFileInChunks {
   accessToken: string;
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
   uploadUrl: string;
   video: File;
 }
 async function uploadFileInChunks({
   accessToken,
-  setPostProgress,
-  setPostStatus,
+  setProcessProgress,
+  setProcessStatus,
   uploadUrl,
   video,
 }: Readonly<UploadFileInChunks>): Promise<string> {
@@ -185,8 +185,8 @@ async function uploadFileInChunks({
       // Continue uploading
       uploadedBytes += chunkSize;
       const progress = Math.round((uploadedBytes / totalBytes) * 100);
-      setPostProgress(progress);
-      setPostStatus(
+      setProcessProgress(progress);
+      setProcessStatus(
         `Uploading... ${progress}% (${Math.round(uploadedBytes / 1024 / 1024)}MB / ${Math.round(totalBytes / 1024 / 1024)}MB)`,
       );
     } catch (err: unknown) {
@@ -212,7 +212,7 @@ async function uploadFileInChunks({
       //       // eslint-disable-next-line max-depth
       //       if (rangeMatch) {
       //         uploadedBytes = parseInt(rangeMatch[1], 10) + 1;
-      //         setPostStatus(
+      //         setProcessStatus(
       //           `Resuming upload from ${Math.round(uploadedBytes / 1024 / 1024)}MB...`,
       //         );
 
@@ -241,10 +241,10 @@ async function createPost({
   privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
-  setIsPosting,
-  setPostError,
-  setPostProgress,
-  setPostStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   text,
   title,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -263,22 +263,22 @@ async function createPost({
       video = new File(["a"], "test.mp4", { type: "video/mp4" });
     }
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
 
     let postId = "";
     if (video) {
       // Step 1: Upload video blob
-      setPostProgress(10);
-      setPostStatus("Uploading post...");
+      setProcessProgress(10);
+      setProcessStatus("Uploading post...");
 
       // Simulate progress during upload
       let progress = 10;
       progressInterval = setInterval(() => {
         progress = progress < 90 ? progress + 5 : progress;
-        setPostProgress(progress);
+        setProcessProgress(progress);
       }, 2000);
 
       // Prepare metadata
@@ -309,13 +309,13 @@ async function createPost({
 
       clearInterval(progressInterval);
 
-      setPostProgress(90);
-      setPostStatus("Publishing post...");
+      setProcessProgress(90);
+      setProcessStatus("Publishing post...");
 
       postId = await uploadFileInChunks({
         accessToken,
-        setPostProgress,
-        setPostStatus,
+        setProcessProgress,
+        setProcessStatus,
         uploadUrl,
         video,
       });
@@ -324,17 +324,17 @@ async function createPost({
       throw new Error("Text only posts are not supported yet.");
     }
 
-    setPostProgress(100);
-    setPostStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("Post failed");
+    setProcessError(`Post failed: ${errMessage}`);
+    setProcessStatus("Post failed");
   } finally {
-    setIsPosting(false);
+    setIsProcessing(false);
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);

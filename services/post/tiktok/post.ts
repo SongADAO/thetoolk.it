@@ -110,10 +110,10 @@ async function createPost({
   privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
-  setIsPosting,
-  setPostError,
-  setPostProgress,
-  setPostStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   text,
   title,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -132,19 +132,19 @@ async function createPost({
       videoUrl = "https://example.com/test-video.mp4";
     }
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
 
-    setPostProgress(10);
-    setPostStatus("Uploading post...");
+    setProcessProgress(10);
+    setProcessStatus("Uploading post...");
 
     // Simulate progress updates during upload
     let progress = 10;
     progressInterval = setInterval(() => {
       progress = progress < 90 ? progress + 5 : progress;
-      setPostProgress(progress);
+      setProcessProgress(progress);
     }, 2000);
 
     // Upload video directly to TikTok
@@ -164,17 +164,17 @@ async function createPost({
       throw new Error("Text only posts are not supported yet.");
     }
 
-    setPostProgress(100);
-    setPostStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("Post failed");
+    setProcessError(`Post failed: ${errMessage}`);
+    setProcessStatus("Post failed");
   } finally {
-    setIsPosting(false);
+    setIsProcessing(false);
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);

@@ -67,14 +67,14 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
   const isStoring = pinata.isProcessing || amazonS3.isProcessing;
 
   const isPosting =
-    bluesky.isPosting ||
-    facebook.isPosting ||
-    instagram.isPosting ||
-    neynar.isPosting ||
-    threads.isPosting ||
-    tiktok.isPosting ||
-    twitter.isPosting ||
-    youtube.isPosting;
+    bluesky.isProcessing ||
+    facebook.isProcessing ||
+    instagram.isProcessing ||
+    neynar.isProcessing ||
+    threads.isProcessing ||
+    tiktok.isProcessing ||
+    twitter.isProcessing ||
+    youtube.isProcessing;
 
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
