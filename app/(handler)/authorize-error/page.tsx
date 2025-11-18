@@ -1,4 +1,4 @@
-import { AuthorizeError } from "@/components/AuthorizeError";
+import { AuthorizeError } from "@/components/poster/AuthorizeError";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
 import { PostProviders } from "@/services/post/PostProviders";
 import { StorageProviders } from "@/services/storage/StorageProviders";

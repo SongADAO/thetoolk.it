@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
-import { Poster } from "@/components/Poster";
-import { PosterProviders } from "@/components/PosterProviders";
+import { Poster } from "@/components/poster/Poster";
+import { PosterProviders } from "@/components/poster/PosterProviders";
 import { UpgradeModal } from "@/components/subscriptions/UpgradeModal";
 
 export const metadata: Metadata = {

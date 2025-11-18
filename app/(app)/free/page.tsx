@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { FreeBanner } from "@/components/FreeBanner";
-import { Poster } from "@/components/Poster";
-import { PosterProviders } from "@/components/PosterProviders";
+import { FreeBanner } from "@/components/poster/FreeBanner";
+import { Poster } from "@/components/poster/Poster";
+import { PosterProviders } from "@/components/poster/PosterProviders";
 
 export const metadata: Metadata = {
   alternates: {

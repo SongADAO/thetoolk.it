@@ -1,4 +1,4 @@
-import { AuthorizeSuccess } from "@/components/AuthorizeSuccess";
+import { AuthorizeSuccess } from "@/components/poster/AuthorizeSuccess";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
 import { PostProviders } from "@/services/post/PostProviders";
 import { StorageProviders } from "@/services/storage/StorageProviders";
