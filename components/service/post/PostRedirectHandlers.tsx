@@ -1,7 +1,7 @@
 "use client";
 
-import { POST_CONTEXTS } from "@/components/service/post/contexts";
 import { ServiceRedirectHandlerWithContext } from "@/components/service/ServiceRedirectHandlerWithContext";
+import { POST_CONTEXTS } from "@/services/post/POST_CONTEXTS";
 
 function PostRedirectHandlers() {
   return (

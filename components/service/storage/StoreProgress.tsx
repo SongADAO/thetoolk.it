@@ -1,7 +1,7 @@
 "use client";
 
 import { ServiceProgressWithContext } from "@/components/service/ServiceProgressWithContext";
-import { STORAGE_CONTEXTS } from "@/components/service/storage/contexts";
+import { STORAGE_CONTEXTS } from "@/services/storage/STORAGE_CONTEXTS";
 
 export function StoreProgress() {
   return (
