@@ -2,7 +2,7 @@
 
 import { ServiceFormWithContext } from "@/components/service/ServiceFormWithContext";
 import { ServiceSwitchWithContext } from "@/components/service/ServiceSwitchWithContext";
-import { STORAGE_CONTEXTS } from "@/services/storage/STORAGE_CONTEXTS";
+import { STORAGE_CONTEXTS } from "@/services/storage/contexts";
 
 interface StorageSwitchesProps {
   mode: "hosted" | "self";
