@@ -6,8 +6,8 @@ import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
 
 import { Spinner } from "@/components/Spinner";
+import { CreatePostContext } from "@/contexts/CreatePostContext";
 import { formatFileDuration, formatFileSize } from "@/lib/video/video";
-import { CreatePostContext } from "@/services/CreatePostContext";
 // import { BlueskyContext } from "@/services/post/bluesky/Context";
 // import { FacebookContext } from "@/services/post/facebook/Context";
 // import { InstagramContext } from "@/services/post/instagram/Context";

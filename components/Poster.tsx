@@ -7,7 +7,7 @@ import { PostSettings } from "@/components/service/post/PostSettings";
 import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
 import { StorageSettings } from "@/components/service/storage/StorageSettings";
 import { StoreProgress } from "@/components/service/storage/StoreProgress";
-import { CreatePostProvider } from "@/services/CreatePostProvider";
+import { CreatePostProvider } from "@/contexts/CreatePostProvider";
 
 interface PosterProps {
   mode: "hosted" | "self";
