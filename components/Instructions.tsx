@@ -1,6 +1,6 @@
 "use client";
 
-/* eslint-disable react/no-multi-comp, no-inline-comments, max-lines */
+/* eslint-disable react/no-multi-comp, max-lines */
 
 import Image from "next/image";
 import { type ReactNode, useState } from "react";
