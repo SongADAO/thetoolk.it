@@ -10,9 +10,9 @@ interface Props {
   isEnabled: boolean;
   isProcessing: boolean;
   label: string;
-  error: string;
-  progress: number;
-  status: string;
+  processError: string;
+  processProgress: number;
+  processStatus: string;
 }
 
 function ServiceProgress({
@@ -22,19 +22,19 @@ function ServiceProgress({
   isEnabled,
   isProcessing,
   label,
-  error,
-  progress,
-  status,
+  processError,
+  processProgress,
+  processStatus,
 }: Readonly<Props>) {
   if (!isEnabled) {
     return null;
   }
 
-  const showProgress = !error && progress !== 100;
+  const showProgress = !processError && processProgress !== 100;
 
-  const hasError = Boolean(error) || !isUsable;
+  const hasError = Boolean(processError) || !isUsable;
 
-  const isComplete = !error && status && progress === 100;
+  const isComplete = !processError && processStatus && processProgress === 100;
 
   return (
     <div
@@ -45,7 +45,7 @@ function ServiceProgress({
       {showProgress ? (
         <div
           className={`absolute z-10 h-full w-[0] bg-brand-${brandColor}`}
-          style={{ width: `${progress}%` }}
+          style={{ width: `${processProgress}%` }}
         >
           &nbsp;
         </div>
@@ -55,11 +55,11 @@ function ServiceProgress({
         <div>{icon}</div>
 
         <div className="flex-1 text-left text-xs leading-[1]">
-          {error ? <p>{error}</p> : null}
+          {processError ? <p>{processError}</p> : null}
 
-          {!error && status ? <p>{status}</p> : null}
+          {!processError && processStatus ? <p>{processStatus}</p> : null}
 
-          {!error && !status ? <p>{label}</p> : null}
+          {!processError && !processStatus ? <p>{label}</p> : null}
 
           {isUsable ? null : <p>Not authorized</p>}
         </div>
@@ -67,11 +67,11 @@ function ServiceProgress({
         <div>
           {isProcessing ? <Spinner /> : null}
 
-          {!isProcessing && (error || !isUsable) ? (
+          {!isProcessing && (processError || !isUsable) ? (
             <FaCircleExclamation className="size-6" />
           ) : null}
 
-          {!isProcessing && !error && status ? (
+          {!isProcessing && !processError && processStatus ? (
             <FaCheck className="size-4" />
           ) : null}
         </div>
