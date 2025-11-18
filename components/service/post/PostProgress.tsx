@@ -1,7 +1,7 @@
 "use client";
 
 import { POST_CONTEXTS } from "@/components/service/post/contexts";
-import { ServicePostProgressWithContext } from "@/components/service/ServicePostProgressWithContext";
+import { ServiceProgressWithContext } from "@/components/service/ServiceProgressWithContext";
 
 interface PostProgressProps {
   mode: "hosted" | "self";
@@ -12,7 +12,7 @@ function PostProgress({ mode }: Readonly<PostProgressProps>) {
     <div className="grid grid-cols-2 gap-2">
       {POST_CONTEXTS.filter((context) => context.modes.includes(mode)).map(
         (context) => (
-          <ServicePostProgressWithContext
+          <ServiceProgressWithContext
             context={context.context}
             key={context.id}
           />
