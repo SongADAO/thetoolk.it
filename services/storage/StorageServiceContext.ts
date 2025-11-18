@@ -28,7 +28,7 @@ interface StorageServiceContextType {
   label: string;
   loading: boolean;
   mode: "hosted" | "self";
-  resetStoreState: () => void;
+  resetProcessState: () => void;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
   processError: string;
@@ -66,7 +66,7 @@ const storageServiceContextDefault = {
   label: "",
   loading: true,
   mode: "self" as "hosted" | "self",
-  resetStoreState: () => {},
+  resetProcessState: () => {},
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
   processError: "",

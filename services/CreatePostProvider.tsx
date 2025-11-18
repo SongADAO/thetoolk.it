@@ -49,19 +49,19 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
   const amazonS3 = use(AmazonS3Context);
 
   function resetPostState(): void {
-    bluesky.resetPostState();
-    facebook.resetPostState();
-    instagram.resetPostState();
-    neynar.resetPostState();
-    threads.resetPostState();
-    tiktok.resetPostState();
-    twitter.resetPostState();
-    youtube.resetPostState();
+    bluesky.resetProcessState();
+    facebook.resetProcessState();
+    instagram.resetProcessState();
+    neynar.resetProcessState();
+    threads.resetProcessState();
+    tiktok.resetProcessState();
+    twitter.resetProcessState();
+    youtube.resetProcessState();
   }
 
   function resetStoreState(): void {
-    pinata.resetStoreState();
-    amazonS3.resetStoreState();
+    pinata.resetProcessState();
+    amazonS3.resetProcessState();
   }
 
   const isStoring = pinata.isProcessing || amazonS3.isProcessing;

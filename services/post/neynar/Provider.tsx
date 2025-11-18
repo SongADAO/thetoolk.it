@@ -156,7 +156,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   const [processProgress, setProcessProgress] = useState<number>(0);
   const [processStatus, setProcessStatus] = useState<string>("");
 
-  function resetPostState() {
+  function resetProcessState() {
     setIsProcessing(false);
     setProcessError("");
     setProcessProgress(0);
@@ -279,7 +279,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       processError,
       processProgress,
       processStatus,
-      resetPostState,
+      resetProcessState,
       saveData,
       setIsEnabled,
     }),
@@ -312,7 +312,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       processError,
       processProgress,
       processStatus,
-      resetPostState,
+      resetProcessState,
     ],
   );
 
