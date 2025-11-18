@@ -7,7 +7,7 @@ import type {
   OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 
 interface ServiceConfig {
@@ -48,7 +48,7 @@ interface ServiceConfig {
       token: string,
       requestUrl: string,
       mode: "hosted" | "self",
-    ) => Promise<ServiceAccount[]>;
+    ) => Promise<PostServiceAccount[]>;
     getAuthorizationExpiresAt: (expiration: OauthExpiration) => string;
     getAuthorizationUrl: (
       credentials: OauthCredentials,

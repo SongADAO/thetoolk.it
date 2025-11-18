@@ -9,7 +9,7 @@ import type {
   OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 
 interface InstagramTokenResponse {
@@ -380,7 +380,7 @@ async function refreshAccessToken(
 
 // -----------------------------------------------------------------------------
 
-async function getUserInfo(token: string): Promise<ServiceAccount> {
+async function getUserInfo(token: string): Promise<PostServiceAccount> {
   console.log(`Checking Threads user info`);
 
   const params = new URLSearchParams({
@@ -414,7 +414,7 @@ async function getAccounts(
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode: "hosted" | "self",
-): Promise<ServiceAccount[]> {
+): Promise<PostServiceAccount[]> {
   const accounts = [];
 
   const account = await getUserInfo(token);

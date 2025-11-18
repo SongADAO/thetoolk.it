@@ -8,7 +8,7 @@ import type {
   OauthAuthorization,
   OauthAuthorizationAndExpiration,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 import { youtubeServiceConfig } from "@/services/post/youtube/ServiceConfig";
 
@@ -104,7 +104,7 @@ async function exchangeCodeForTokens(
 async function getAccounts(
   serviceId: string,
   authorization: OauthAuthorization,
-): Promise<ServiceAccount[]> {
+): Promise<PostServiceAccount[]> {
   console.log(`Getting ${serviceId} accounts`);
 
   const serviceConfig = getServiceConfig(serviceId);

@@ -5,10 +5,10 @@ import type {
   ServiceFormState,
 } from "@/components/service/ServiceForm";
 import type { HLSFiles } from "@/lib/video/hls";
-import type { ServiceAccount } from "@/services/storage/types";
+import type { StorageServiceAccount } from "@/services/storage/types";
 
 interface StorageServiceContextType {
-  accounts: ServiceAccount[];
+  accounts: StorageServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
   brandColor: string;

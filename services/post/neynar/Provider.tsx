@@ -34,7 +34,7 @@ import {
   type OauthCredentials,
   type OauthExpiration,
   type PostProps,
-  type ServiceAccount,
+  type PostServiceAccount,
 } from "@/services/post/types";
 
 interface Props {
@@ -101,7 +101,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     );
 
   const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
-    ServiceAccount[]
+    PostServiceAccount[]
   >(`thetoolkit-${id}-accounts`, [], { initializeWithValue: true });
 
   const loading =

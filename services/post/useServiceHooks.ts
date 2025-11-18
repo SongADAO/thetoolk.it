@@ -7,7 +7,7 @@ import type {
   OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 
 /**
@@ -47,7 +47,7 @@ function useServiceStorage(
     );
 
   const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
-    ServiceAccount[]
+    PostServiceAccount[]
   >(`thetoolkit-${serviceId}-accounts`, [], { initializeWithValue: true });
 
   const [codeVerifier, setCodeVerifier] = useLocalStorage<string>(
@@ -107,7 +107,7 @@ function useOAuthFlow(
       token: string,
       requestUrl: string,
       mode: "hosted" | "self",
-    ) => Promise<ServiceAccount[]>;
+    ) => Promise<PostServiceAccount[]>;
     getAuthorizationUrl: (
       credentials: OauthCredentials,
       redirectUri: string,
@@ -131,7 +131,7 @@ function useOAuthFlow(
   defaultExpiration: OauthExpiration,
   setAuthorization: (auth: OauthAuthorization) => void,
   setExpiration: (exp: OauthExpiration) => void,
-  setAccounts: (accounts: ServiceAccount[]) => void,
+  setAccounts: (accounts: PostServiceAccount[]) => void,
   setError: (error: string) => void,
 ) {
   const [isHandlingAuth, setIsHandlingAuth] = useState(false);
