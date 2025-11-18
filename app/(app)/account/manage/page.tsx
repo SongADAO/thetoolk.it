@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { AccountSettingsForm } from "@/components/auth-move/AccountSettingsForm";
+import { AccountSettingsForm } from "@/components/auth/AccountSettingsForm";
 
 export const metadata: Metadata = {
   alternates: {
