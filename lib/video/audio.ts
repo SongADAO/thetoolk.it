@@ -1,6 +1,6 @@
 import { cleanupFFmpeg, initializeFFmpeg } from "@/lib/video/ffmpeg";
 
-// Convert 32-bit audio to 16-bit PCM stereo using FFmpeg
+// Convert 32-bit multichannel audio to 16-bit PCM stereo using FFmpeg
 async function convertAudioTo16BitPCM(
   file: File,
   onProgress?: (progress: number) => void,
@@ -26,7 +26,7 @@ async function convertAudioTo16BitPCM(
     // -vn: no video (audio only)
     // -acodec pcm_s16le: 16-bit PCM little endian
     // -ac 2: stereo (2 channels)
-    // -ar 44100: 44.1kHz sample rate (you can change this)
+    // -ar 48000: 48kHz sample rate (you can change this)
     await ffmpeg.exec([
       "-i",
       inputFileName,
@@ -40,7 +40,6 @@ async function convertAudioTo16BitPCM(
       "2",
       // sample rate
       "-ar",
-      // "44100",
       "48000",
       outputFileName,
     ]);
