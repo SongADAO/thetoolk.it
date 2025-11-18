@@ -5,13 +5,6 @@
 import Image from "next/image";
 import { type ReactNode, useState } from "react";
 
-interface AccordionSectionProps {
-  readonly title: string;
-  readonly children: ReactNode;
-  readonly isOpen: boolean;
-  readonly onToggle: () => void;
-}
-
 interface ScreenshotButtonProps {
   readonly imagePath: string;
   readonly altText: string;
@@ -79,6 +72,15 @@ function ScreenshotButton({ imagePath, altText }: ScreenshotButtonProps) {
   );
 }
 
+// -----------------------------------------------------------------------------
+
+interface AccordionSectionProps {
+  readonly title: string;
+  readonly children: ReactNode;
+  readonly isOpen: boolean;
+  readonly onToggle: () => void;
+}
+
 function AccordionSection({
   title,
   children,
@@ -108,6 +110,8 @@ function AccordionSection({
     </section>
   );
 }
+
+// -----------------------------------------------------------------------------
 
 function Instructions() {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
