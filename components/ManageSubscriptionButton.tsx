@@ -1,5 +1,3 @@
-"use client";
-
 function ManageSubscriptionButton() {
   async function handleManageSubscription() {
     try {

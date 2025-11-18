@@ -1,5 +1,3 @@
-"use client";
-
 interface SubscribeButtonProps {
   type: string;
   label: string;
