@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
-import { ProtectedRoute } from "@/components/auth-move/ProtectedRoute";
-import { UserProfile } from "@/components/auth-move/UserProfile";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { UserProfile } from "@/components/auth/UserProfile";
 import { SubscriptionManager } from "@/components/SubscriptionManager";
 
 export const metadata: Metadata = {

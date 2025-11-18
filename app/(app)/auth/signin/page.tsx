@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { SignInForm } from "@/components/auth-move/SignInForm";
+import { SignInForm } from "@/components/auth/SignInForm";
 
 export const metadata: Metadata = {
   alternates: {

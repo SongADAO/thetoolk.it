@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { StartPasswordResetForm } from "@/components/auth-move/StartPasswordResetForm";
+import { StartPasswordResetForm } from "@/components/auth/StartPasswordResetForm";
 
 export const metadata: Metadata = {
   alternates: {
