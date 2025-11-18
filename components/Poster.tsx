@@ -32,7 +32,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                     label="Storage Settings"
                   >
                     <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                      <StorageSwitches />
+                      <StorageSwitches mode={mode} />
                     </div>
                   </ServiceSettingsMenu>
                 ) : null}
@@ -67,7 +67,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                       label="Storage Settings"
                     >
                       <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                        <StorageSwitches />
+                        <StorageSwitches mode={mode} />
                       </div>
                     </ServiceSettingsMenu>
                   ) : null}
@@ -75,7 +75,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-2">
-                  <StorageProgress />
+                  <StorageProgress mode={mode} />
                 </div>
               </div>
             </section>
@@ -113,7 +113,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                    <StorageSwitches />
+                    <StorageSwitches mode={mode} />
                   </div>
                 </div>
               </section>
