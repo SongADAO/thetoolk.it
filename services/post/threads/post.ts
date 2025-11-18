@@ -229,10 +229,10 @@ async function createPost({
   privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
-  setIsPosting,
-  setPostError,
-  setPostProgress,
-  setPostStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   text,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
@@ -249,15 +249,15 @@ async function createPost({
       videoUrl = "https://example.com/test-video.mp4";
     }
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
 
     let postId = "";
     if (videoUrl) {
-      setPostProgress(10);
-      setPostStatus("Creating media container...");
+      setProcessProgress(10);
+      setProcessStatus("Creating media container...");
 
       // Step 2: Create media container (30-50% progress)
       const creationId = await createMediaContainer({
@@ -267,8 +267,8 @@ async function createPost({
         videoUrl,
       });
 
-      setPostProgress(20);
-      setPostStatus("Preparing post...");
+      setProcessProgress(20);
+      setProcessStatus("Preparing post...");
 
       // Step 3: Wait for processing (50-80% progress)
       let status = "IN_PROGRESS";
@@ -288,8 +288,8 @@ async function createPost({
         attempts++;
 
         const progress = 20 + (attempts / maxAttempts) * 30;
-        setPostProgress(Math.round(progress));
-        setPostStatus(`Submitting post... (${attempts}/${maxAttempts})`);
+        setProcessProgress(Math.round(progress));
+        setProcessStatus(`Submitting post... (${attempts}/${maxAttempts})`);
 
         console.log(`Attempt ${attempts}: Status = ${status}`);
       }
@@ -310,8 +310,8 @@ async function createPost({
         throw new Error(`Video processing failed with status: ${status}`);
       }
 
-      setPostProgress(90);
-      setPostStatus("Publishing post...");
+      setProcessProgress(90);
+      setProcessStatus("Publishing post...");
 
       // Step 4: Publish the media (80-100% progress)
       postId = await publishMedia({ accessToken, creationId, userId });
@@ -320,17 +320,17 @@ async function createPost({
       throw new Error("Text only posts are not supported yet.");
     }
 
-    setPostProgress(100);
-    setPostStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("Post failed");
+    setProcessError(`Post failed: ${errMessage}`);
+    setProcessStatus("Post failed");
   } finally {
-    setIsPosting(false);
+    setIsProcessing(false);
   }
 
   return null;

@@ -308,28 +308,28 @@ function useTokenRefresh(
  * Hook for managing posting state
  */
 function usePostingState() {
-  const [isPosting, setIsPosting] = useState<boolean>(false);
-  const [postError, setPostError] = useState<string>("");
-  const [postProgress, setPostProgress] = useState<number>(0);
-  const [postStatus, setPostStatus] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [processError, setProcessError] = useState<string>("");
+  const [processProgress, setProcessProgress] = useState<number>(0);
+  const [processStatus, setProcessStatus] = useState<string>("");
 
   function resetPostState() {
-    setIsPosting(false);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(false);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
   }
 
   return {
-    isPosting,
-    postError,
-    postProgress,
-    postStatus,
+    isProcessing,
+    processError,
+    processProgress,
+    processStatus,
     resetPostState,
-    setIsPosting,
-    setPostError,
-    setPostProgress,
-    setPostStatus,
+    setIsProcessing,
+    setProcessError,
+    setProcessProgress,
+    setProcessStatus,
   };
 }
 

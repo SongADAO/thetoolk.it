@@ -29,15 +29,15 @@ interface PostServiceContextType {
   isComplete: boolean;
   isEnabled: boolean;
   isHandlingAuth: boolean;
-  isPosting: boolean;
+  isProcessing: boolean;
   isUsable: boolean;
   label: string;
   loading: boolean;
   mode: "hosted" | "self";
   post: (props: PostProps) => Promise<string | null>;
-  postError: string;
-  postProgress: number;
-  postStatus: string;
+  processError: string;
+  processProgress: number;
+  processStatus: string;
   resetPostState: () => void;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
@@ -67,15 +67,15 @@ const postServiceContextDefault = {
   isComplete: false,
   isEnabled: false,
   isHandlingAuth: false,
-  isPosting: false,
+  isProcessing: false,
   isUsable: false,
   label: "",
   loading: true,
   mode: "self" as "hosted" | "self",
   post: async (props: PostProps) => Promise.resolve(null),
-  postError: "",
-  postProgress: 0,
-  postStatus: "",
+  processError: "",
+  processProgress: 0,
+  processStatus: "",
   resetPostState: () => {},
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},

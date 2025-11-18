@@ -299,20 +299,20 @@ async function statusUploadVideo({
 interface UploadVideoProps {
   accessToken: string;
   mode: "hosted" | "self";
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
   video: File;
 }
 async function uploadVideo({
   accessToken,
   mode,
-  setPostProgress,
-  setPostStatus,
+  setProcessProgress,
+  setProcessStatus,
   video,
 }: Readonly<UploadVideoProps>): Promise<string> {
   // Step 1: INIT - Initialize the upload
-  setPostProgress(10);
-  setPostStatus("Initializing upload...");
+  setProcessProgress(10);
+  setProcessStatus("Initializing upload...");
   const mediaId = await initializeUploadVideo({
     accessToken,
     mode,
@@ -320,8 +320,8 @@ async function uploadVideo({
     videoType: video.type,
   });
 
-  setPostProgress(20);
-  setPostStatus("Uploading video chunks...");
+  setProcessProgress(20);
+  setProcessStatus("Uploading video chunks...");
 
   // Step 2: APPEND - Upload the file in chunks
   // 4MB chunks
@@ -343,13 +343,13 @@ async function uploadVideo({
     });
 
     const progress = 20 + ((segmentIndex + 1) / totalChunks) * 50;
-    setPostProgress(Math.round(progress));
-    setPostStatus(`Uploading chunk ${segmentIndex + 1}/${totalChunks}...`);
+    setProcessProgress(Math.round(progress));
+    setProcessStatus(`Uploading chunk ${segmentIndex + 1}/${totalChunks}...`);
   }
 
   // Step 3: FINALIZE - Complete the upload
-  setPostProgress(70);
-  setPostStatus("Finalizing upload...");
+  setProcessProgress(70);
+  setProcessStatus("Finalizing upload...");
   const finalizeData = await finalizeUploadVideo({
     accessToken,
     mediaId,
@@ -358,8 +358,8 @@ async function uploadVideo({
 
   // Step 4: Check processing status if needed
   if (finalizeData.data?.processing_info) {
-    setPostProgress(75);
-    setPostStatus("Processing video...");
+    setProcessProgress(75);
+    setProcessStatus("Processing video...");
 
     await new Promise((resolve) => {
       setTimeout(
@@ -402,8 +402,8 @@ async function uploadVideo({
       }
 
       const progress = 75 + (attempts / maxAttempts) * 15;
-      setPostProgress(Math.round(progress));
-      setPostStatus(`Processing video... (${attempts + 1}/${maxAttempts})`);
+      setProcessProgress(Math.round(progress));
+      setProcessStatus(`Processing video... (${attempts + 1}/${maxAttempts})`);
 
       attempts++;
     }
@@ -481,10 +481,10 @@ async function createPost({
   privacy,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl,
-  setIsPosting,
-  setPostError,
-  setPostProgress,
-  setPostStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
   text,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
@@ -502,10 +502,10 @@ async function createPost({
       video = new File(["a"], "test.mp4", { type: "video/mp4" });
     }
 
-    setIsPosting(true);
-    setPostError("");
-    setPostProgress(0);
-    setPostStatus("");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
 
     let postId = "";
     if (video) {
@@ -513,13 +513,13 @@ async function createPost({
       const mediaId = await uploadVideo({
         accessToken,
         mode: "self",
-        setPostProgress,
-        setPostStatus,
+        setProcessProgress,
+        setProcessStatus,
         video,
       });
 
-      setPostProgress(90);
-      setPostStatus("Publishing post...");
+      setProcessProgress(90);
+      setProcessStatus("Publishing post...");
 
       // Create post with media
       postId = await publishPost({
@@ -533,17 +533,17 @@ async function createPost({
       throw new Error("Text only posts are not supported yet.");
     }
 
-    setPostProgress(100);
-    setPostStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return postId;
   } catch (err: unknown) {
     console.error("Post error:", err);
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    setPostError(`Post failed: ${errMessage}`);
-    setPostStatus("Post failed");
+    setProcessError(`Post failed: ${errMessage}`);
+    setProcessStatus("Post failed");
   } finally {
-    setIsPosting(false);
+    setIsProcessing(false);
   }
 
   return null;

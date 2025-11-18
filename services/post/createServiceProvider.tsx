@@ -130,7 +130,7 @@ function createServiceProvider(
         !storage.isEnabled ||
         !isComplete ||
         !isAuthorized ||
-        posting.isPosting
+        posting.isProcessing
       ) {
         return null;
       }
@@ -144,10 +144,10 @@ function createServiceProvider(
           options,
           privacy,
           requestUrl: window.location.origin,
-          setIsPosting: posting.setIsPosting,
-          setPostError: posting.setPostError,
-          setPostProgress: posting.setPostProgress,
-          setPostStatus: posting.setPostStatus,
+          setIsProcessing: posting.setIsProcessing,
+          setProcessError: posting.setProcessError,
+          setProcessProgress: posting.setProcessProgress,
+          setProcessStatus: posting.setProcessStatus,
           text,
           title,
           userId,
@@ -159,10 +159,10 @@ function createServiceProvider(
         console.error("Post error:", err);
         const errMessage =
           err instanceof Error ? err.message : "unspecified error";
-        posting.setPostError(`Post failed: ${errMessage}`);
-        posting.setPostStatus("Post failed");
-        posting.setPostProgress(0);
-        posting.setIsPosting(false);
+        posting.setProcessError(`Post failed: ${errMessage}`);
+        posting.setProcessStatus("Post failed");
+        posting.setProcessProgress(0);
+        posting.setIsProcessing(false);
       }
 
       return null;
@@ -231,15 +231,15 @@ function createServiceProvider(
         isComplete,
         isEnabled: storage.isEnabled,
         isHandlingAuth: oauth.isHandlingAuth,
-        isPosting: posting.isPosting,
+        isProcessing: posting.isProcessing,
         isUsable,
         label: config.label,
         loading,
         mode,
         post,
-        postError: posting.postError,
-        postProgress: posting.postProgress,
-        postStatus: posting.postStatus,
+        processError: posting.processError,
+        processProgress: posting.processProgress,
+        processStatus: posting.processStatus,
         resetPostState: posting.resetPostState,
         saveData,
         setIsEnabled: storage.setIsEnabled,
@@ -264,10 +264,10 @@ function createServiceProvider(
         oauth.disconnect,
         oauth.hasCompletedAuth,
         oauth.isHandlingAuth,
-        posting.isPosting,
-        posting.postError,
-        posting.postProgress,
-        posting.postStatus,
+        posting.isProcessing,
+        posting.processError,
+        posting.processProgress,
+        posting.processStatus,
         posting.resetPostState,
         storage.accounts,
         storage.authorization,

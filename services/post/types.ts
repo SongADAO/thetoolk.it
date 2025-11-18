@@ -81,10 +81,10 @@ interface CreatePostProps {
   };
   privacy: string;
   requestUrl: string;
-  setIsPosting: (isPosting: boolean) => void;
-  setPostError: (error: string) => void;
-  setPostProgress: (progress: number) => void;
-  setPostStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
   text: string;
   title: string;
   userId: string;
