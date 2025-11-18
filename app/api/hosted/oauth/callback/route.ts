@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getBaseUrlFromRequest } from "@/lib/request";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateServiceAuthorizationAndAccounts } from "@/lib/supabase/service";
@@ -7,7 +8,6 @@ import {
   exchangeCodeForTokens,
   getAccounts,
   getAuthRedirectServiceId,
-  getBaseUrlFromRequest,
   getOauthUrls,
 } from "@/services/post/hosted";
 
