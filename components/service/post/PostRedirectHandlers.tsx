@@ -1,7 +1,7 @@
 "use client";
 
 import { ServiceRedirectHandlerWithContext } from "@/components/service/ServiceRedirectHandlerWithContext";
-import { POST_CONTEXTS } from "@/services/post/POST_CONTEXTS";
+import { POST_CONTEXTS } from "@/services/post/contexts";
 
 interface PostRedirectHandlersProps {
   mode: "hosted" | "self";

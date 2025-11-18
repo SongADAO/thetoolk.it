@@ -2,7 +2,7 @@
 
 import { ServiceFormWithContext } from "@/components/service/ServiceFormWithContext";
 import { ServiceSwitchWithContext } from "@/components/service/ServiceSwitchWithContext";
-import { POST_CONTEXTS } from "@/services/post/POST_CONTEXTS";
+import { POST_CONTEXTS } from "@/services/post/contexts";
 
 interface PostSwitchesProps {
   mode: "hosted" | "self";

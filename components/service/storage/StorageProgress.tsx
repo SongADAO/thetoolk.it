@@ -1,7 +1,7 @@
 "use client";
 
 import { ServiceProgressWithContext } from "@/components/service/ServiceProgressWithContext";
-import { STORAGE_CONTEXTS } from "@/services/storage/STORAGE_CONTEXTS";
+import { STORAGE_CONTEXTS } from "@/services/storage/contexts";
 
 interface StorageProgressProps {
   mode: "hosted" | "self";
