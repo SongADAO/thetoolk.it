@@ -313,7 +313,7 @@ function usePostingState() {
   const [processProgress, setProcessProgress] = useState<number>(0);
   const [processStatus, setProcessStatus] = useState<string>("");
 
-  function resetPostState() {
+  function resetProcessState() {
     setIsProcessing(false);
     setProcessError("");
     setProcessProgress(0);
@@ -325,7 +325,7 @@ function usePostingState() {
     processError,
     processProgress,
     processStatus,
-    resetPostState,
+    resetProcessState,
     setIsProcessing,
     setProcessError,
     setProcessProgress,

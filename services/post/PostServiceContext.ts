@@ -38,7 +38,7 @@ interface PostServiceContextType {
   processError: string;
   processProgress: number;
   processStatus: string;
-  resetPostState: () => void;
+  resetProcessState: () => void;
   saveData: (formState: ServiceFormState) => ServiceFormState;
   setIsEnabled: (isEnabled: boolean) => void;
 }
@@ -76,7 +76,7 @@ const postServiceContextDefault = {
   processError: "",
   processProgress: 0,
   processStatus: "",
-  resetPostState: () => {},
+  resetProcessState: () => {},
   saveData: (formState: ServiceFormState) => ({}),
   setIsEnabled: (isEnabled: boolean) => {},
 };

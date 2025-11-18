@@ -153,7 +153,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
   const [processProgress, setProcessProgress] = useState<number>(0);
   const [processStatus, setProcessStatus] = useState<string>("");
 
-  function resetStoreState() {
+  function resetProcessState() {
     setIsProcessing(false);
     setProcessError("");
     setProcessProgress(0);
@@ -280,7 +280,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
       processError,
       processProgress,
       processStatus,
-      resetStoreState,
+      resetProcessState,
       saveData,
       setIsEnabled,
       storeFile,
@@ -312,7 +312,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
       processError,
       processProgress,
       processStatus,
-      resetStoreState,
+      resetProcessState,
     ],
   );
 
