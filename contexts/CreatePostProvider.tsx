@@ -8,16 +8,16 @@ import {
   DEBUG_STOP_AFTER_CONVERSION,
   DEBUG_STOP_AFTER_STORAGE,
 } from "@/config/constants";
+import {
+  CreatePostContext,
+  type CreatePostProps,
+  type PostVideo,
+} from "@/contexts/CreatePostContext";
 import { sleep } from "@/lib/utils";
 import { convertToHLS, type HLSFiles } from "@/lib/video/hls";
 import { convertVideoMediabunny } from "@/lib/video/mediabunny";
 import { trimVideo } from "@/lib/video/trim";
 import { downloadFile, getVideoDuration } from "@/lib/video/video";
-import {
-  CreatePostContext,
-  type CreatePostProps,
-  type PostVideo,
-} from "@/services/CreatePostContext";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
