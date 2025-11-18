@@ -150,20 +150,20 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
     return formState;
   }
 
-  const [isStoring, setIsStoring] = useState<boolean>(false);
-  const [storeError, setStoreError] = useState<string>("");
-  const [storeProgress, setStoreProgress] = useState<number>(0);
-  const [storeStatus, setStoreStatus] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [processError, setProcessError] = useState<string>("");
+  const [processProgress, setProcessProgress] = useState<number>(0);
+  const [processStatus, setProcessStatus] = useState<string>("");
 
   function resetStoreState() {
-    setIsStoring(false);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("");
+    setIsProcessing(false);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("");
   }
 
   async function storeFile(file: File, serviceLabel: string): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isProcessing) {
       return "";
     }
 
@@ -171,10 +171,10 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       credentials,
       file,
       serviceLabel,
-      setIsStoring,
-      setStoreError,
-      setStoreProgress,
-      setStoreStatus,
+      setIsProcessing,
+      setProcessError,
+      setProcessProgress,
+      setProcessStatus,
     });
   }
 
@@ -182,7 +182,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
     data: object,
     serviceLabel: string,
   ): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isProcessing) {
       return "";
     }
 
@@ -190,15 +190,15 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       credentials,
       data,
       serviceLabel,
-      setIsStoring,
-      setStoreError,
-      setStoreProgress,
-      setStoreStatus,
+      setIsProcessing,
+      setProcessError,
+      setProcessProgress,
+      setProcessStatus,
     });
   }
 
   async function storeVideo(file: File, serviceLabel: string): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isProcessing) {
       return "";
     }
 
@@ -206,10 +206,10 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       credentials,
       file,
       serviceLabel,
-      setIsStoring,
-      setStoreError,
-      setStoreProgress,
-      setStoreStatus,
+      setIsProcessing,
+      setProcessError,
+      setProcessProgress,
+      setProcessStatus,
     });
   }
 
@@ -218,7 +218,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
     folderName: string,
     serviceLabel: string,
   ): Promise<string> {
-    if (!isEnabled || !isComplete || !isAuthorized || isStoring) {
+    if (!isEnabled || !isComplete || !isAuthorized || isProcessing) {
       return "";
     }
 
@@ -227,10 +227,10 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       folderName,
       hlsFiles,
       serviceLabel,
-      setIsStoring,
-      setStoreError,
-      setStoreProgress,
-      setStoreStatus,
+      setIsProcessing,
+      setProcessError,
+      setProcessProgress,
+      setProcessStatus,
     });
   }
 
@@ -251,20 +251,20 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       isAuthorized,
       isComplete,
       isEnabled,
-      isStoring,
+      isProcessing,
       isUsable,
       label,
       loading,
       mode,
+      processError,
+      processProgress,
+      processStatus,
       resetStoreState,
       saveData,
       setIsEnabled,
-      storeError,
       storeFile,
       storeHLSFolder,
       storeJson,
-      storeProgress,
-      storeStatus,
       storeVideo,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -284,14 +284,14 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       isAuthorized,
       isComplete,
       isEnabled,
-      isStoring,
+      isProcessing,
       isUsable,
       label,
       loading,
+      processError,
+      processProgress,
+      processStatus,
       resetStoreState,
-      storeError,
-      storeProgress,
-      storeStatus,
     ],
   );
 

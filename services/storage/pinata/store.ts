@@ -75,40 +75,40 @@ async function createSignedHLSFolderURL(): Promise<string> {
 interface UploadFileWithPresignedProps {
   file: File;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
 }
 
 async function uploadVideoWithPresignedURL({
   file,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadFileWithPresignedProps>): Promise<string> {
   try {
-    setIsStoring(true);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("Preparing media for upload...");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("Preparing media for upload...");
 
     if (DEBUG_STORAGE) {
       console.log("Test Presigned Upload (Fetch): uploadFileWithPresigned");
       await sleep(2000);
-      setStoreProgress(50);
-      setStoreStatus("Getting upload URL...");
+      setProcessProgress(50);
+      setProcessStatus("Getting upload URL...");
       await sleep(2000);
-      setStoreProgress(100);
-      setStoreStatus("Success");
+      setProcessProgress(100);
+      setProcessStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
 
     // Step 1: Get presigned upload URL
-    setStoreStatus("Getting upload authorization...");
-    setStoreProgress(10);
+    setProcessStatus("Getting upload authorization...");
+    setProcessProgress(10);
 
     const presignedResponse = await fetch(
       "/api/hosted/pinata/upload/presigned-video",
@@ -127,8 +127,8 @@ async function uploadVideoWithPresignedURL({
 
     const { url } = await presignedResponse.json();
 
-    setStoreProgress(25);
-    setStoreStatus(`Uploading ${serviceLabel} media...`);
+    setProcessProgress(25);
+    setProcessStatus(`Uploading ${serviceLabel} media...`);
 
     // Step 2: Upload using fetch
     const formData = new FormData();
@@ -145,8 +145,8 @@ async function uploadVideoWithPresignedURL({
       const estimatedTime = Math.max(5000, fileSize / 100000);
       // 25% to 90%
       const progress = Math.min((elapsedTime / estimatedTime) * 65, 65);
-      setStoreProgress(25 + Math.round(progress));
-      setStoreStatus(
+      setProcessProgress(25 + Math.round(progress));
+      setProcessStatus(
         `Uploading ${serviceLabel} media... ${25 + Math.round(progress)}%`,
       );
     }, 500);
@@ -164,8 +164,8 @@ async function uploadVideoWithPresignedURL({
       );
     }
 
-    setStoreProgress(95);
-    setStoreStatus("Finalizing upload...");
+    setProcessProgress(95);
+    setProcessStatus("Finalizing upload...");
 
     // Parse response to get CID
     const response = await uploadResponse.json();
@@ -178,20 +178,20 @@ async function uploadVideoWithPresignedURL({
 
     const contentUri = `https://${sanitizeGateway(HOSTED_CREDENTIALS.gateway)}/ipfs/${cid}`;
 
-    setStoreProgress(100);
-    setStoreStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return contentUri;
   } catch (err: unknown) {
     console.error("Presigned upload error:", err);
 
     const errMessage = err instanceof Error ? err.message : "Upload failed";
-    setStoreError(`Upload failed for ${serviceLabel}: ${errMessage}`);
-    setStoreStatus(`Upload failed for ${serviceLabel}`);
+    setProcessError(`Upload failed for ${serviceLabel}: ${errMessage}`);
+    setProcessStatus(`Upload failed for ${serviceLabel}`);
 
     return "";
   } finally {
-    setIsStoring(false);
+    setIsProcessing(false);
   }
 }
 
@@ -199,41 +199,41 @@ interface UploadHLSFolderWithPresignedProps {
   folderName?: string;
   hlsFiles: HLSFiles;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
 }
 
 async function uploadHLSFolderWithPresignedURL({
   folderName,
   hlsFiles,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadHLSFolderWithPresignedProps>): Promise<string> {
   try {
-    setIsStoring(true);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("Preparing HLS files for upload...");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("Preparing HLS files for upload...");
 
     if (DEBUG_STORAGE) {
       console.log("Test Presigned HLS Upload: uploadHLSFolderWithPresignedURL");
       await sleep(2000);
-      setStoreProgress(50);
-      setStoreStatus("Getting upload URL...");
+      setProcessProgress(50);
+      setProcessStatus("Getting upload URL...");
       await sleep(2000);
-      setStoreProgress(100);
-      setStoreStatus("Success");
+      setProcessProgress(100);
+      setProcessStatus("Success");
       return `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
     }
 
     // Step 1: Get presigned upload URL for folder
-    setStoreStatus("Getting upload authorization...");
-    setStoreProgress(10);
+    setProcessStatus("Getting upload authorization...");
+    setProcessProgress(10);
 
     const presignedResponse = await fetch(
       "/api/hosted/pinata/upload/presigned-hls",
@@ -252,8 +252,8 @@ async function uploadHLSFolderWithPresignedURL({
 
     const { url } = await presignedResponse.json();
 
-    setStoreProgress(25);
-    setStoreStatus(`Uploading ${serviceLabel} HLS files...`);
+    setProcessProgress(25);
+    setProcessStatus(`Uploading ${serviceLabel} HLS files...`);
 
     // Step 2: Prepare all files for upload
     const files: File[] = [];
@@ -314,8 +314,8 @@ async function uploadHLSFolderWithPresignedURL({
       const estimatedTime = Math.max(10000, totalFileSize / 50000);
       // 25% to 90%
       const progress = Math.min((elapsedTime / estimatedTime) * 65, 65);
-      setStoreProgress(25 + Math.round(progress));
-      setStoreStatus(
+      setProcessProgress(25 + Math.round(progress));
+      setProcessStatus(
         `Uploading ${serviceLabel} HLS files... ${25 + Math.round(progress)}%`,
       );
     }, 500);
@@ -333,8 +333,8 @@ async function uploadHLSFolderWithPresignedURL({
       );
     }
 
-    setStoreProgress(95);
-    setStoreStatus("Finalizing HLS upload...");
+    setProcessProgress(95);
+    setProcessStatus("Finalizing HLS upload...");
 
     // Parse response to get CID
     const response = await uploadResponse.json();
@@ -355,20 +355,20 @@ async function uploadHLSFolderWithPresignedURL({
       playlistUrl,
     });
 
-    setStoreProgress(100);
-    setStoreStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return playlistUrl;
   } catch (err: unknown) {
     console.error("Presigned HLS upload error:", err);
 
     const errMessage = err instanceof Error ? err.message : "HLS Upload failed";
-    setStoreError(`HLS Upload failed for ${serviceLabel}: ${errMessage}`);
-    setStoreStatus(`HLS Upload failed for ${serviceLabel}`);
+    setProcessError(`HLS Upload failed for ${serviceLabel}: ${errMessage}`);
+    setProcessStatus(`HLS Upload failed for ${serviceLabel}`);
 
     return "";
   } finally {
-    setIsStoring(false);
+    setIsProcessing(false);
   }
 }
 
@@ -376,33 +376,33 @@ interface UploadFileProps {
   credentials: PinataCredentials;
   file: File;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
 }
 async function uploadFile({
   credentials,
   file,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadFileProps>): Promise<string> {
   let progressInterval = null;
 
   try {
-    setIsStoring(true);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("Preparing media for upload...");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("Preparing media for upload...");
 
     if (DEBUG_STORAGE) {
       console.log("Test Pinata: uploadFile");
       await sleep(5000);
-      setStoreProgress(100);
-      setStoreStatus("Success");
+      setProcessProgress(100);
+      setProcessStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
 
@@ -419,8 +419,8 @@ async function uploadFile({
       const estimatedTime = Math.max(5000, fileSize / 100000);
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
-      setStoreProgress(Math.round(progress));
-      setStoreStatus(
+      setProcessProgress(Math.round(progress));
+      setProcessStatus(
         `Uploading ${serviceLabel} media... ${Math.round(progress)}%`,
       );
     }, 500);
@@ -438,18 +438,18 @@ async function uploadFile({
     // const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
     const contentUri = `https://${sanitizeGateway(credentials.gateway)}/ipfs/${upload.cid}`;
 
-    setStoreProgress(100);
-    setStoreStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return contentUri;
   } catch (err: unknown) {
     console.error("Pinata upload error:", err);
 
     const errMessage = err instanceof Error ? err.message : "Upload failed";
-    setStoreError(`Upload failed for ${serviceLabel}: ${errMessage}`);
-    setStoreStatus(`Upload failed for ${serviceLabel}`);
+    setProcessError(`Upload failed for ${serviceLabel}: ${errMessage}`);
+    setProcessStatus(`Upload failed for ${serviceLabel}`);
   } finally {
-    setIsStoring(false);
+    setIsProcessing(false);
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);
@@ -462,29 +462,29 @@ async function uploadFile({
 interface UploadVideoProps {
   credentials: PinataCredentials;
   file: File;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreStatus: (status: string) => void;
-  setStoreProgress: (progress: number) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessStatus: (status: string) => void;
+  setProcessProgress: (progress: number) => void;
   serviceLabel: string;
 }
 async function uploadVideo({
   credentials,
   file,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadVideoProps>): Promise<string> {
   return uploadFile({
     credentials,
     file,
     serviceLabel,
-    setIsStoring,
-    setStoreError,
-    setStoreProgress,
-    setStoreStatus,
+    setIsProcessing,
+    setProcessError,
+    setProcessProgress,
+    setProcessStatus,
   });
 }
 
@@ -492,35 +492,35 @@ interface UploadJsonProps {
   credentials: PinataCredentials;
   data: object;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
 }
 async function uploadJson({
   credentials,
   data,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadJsonProps>): Promise<string> {
   try {
-    setIsStoring(true);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("Preparing media for upload...");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("Preparing media for upload...");
 
     if (DEBUG_STORAGE) {
       console.log("Test Pinata: uploadJson");
       await sleep(5000);
-      setStoreProgress(100);
-      setStoreStatus("Success");
+      setProcessProgress(100);
+      setProcessStatus("Success");
       return "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
     }
 
-    setStoreStatus(`Uploading ${serviceLabel} json...`);
+    setProcessStatus(`Uploading ${serviceLabel} json...`);
 
     const pinata = new PinataSDK({
       pinataJwt: credentials.jwt,
@@ -533,18 +533,18 @@ async function uploadJson({
     // const contentUri = `https://ipfs.io/ipfs/${upload.cid}`;
     const contentUri = `https://${sanitizeGateway(credentials.gateway)}/ipfs/${upload.cid}`;
 
-    setStoreProgress(100);
-    setStoreStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return contentUri;
   } catch (err: unknown) {
     console.error("Pinata upload error:", err);
 
     const errMessage = err instanceof Error ? err.message : "Upload failed";
-    setStoreError(`Upload failed: ${errMessage}`);
-    setStoreStatus("Upload failed");
+    setProcessError(`Upload failed: ${errMessage}`);
+    setProcessStatus("Upload failed");
   } finally {
-    setIsStoring(false);
+    setIsProcessing(false);
   }
 
   return "";
@@ -555,34 +555,34 @@ interface UploadHLSFolderProps {
   folderName?: string;
   hlsFiles: HLSFiles;
   serviceLabel: string;
-  setIsStoring: (isStoring: boolean) => void;
-  setStoreError: (error: string) => void;
-  setStoreProgress: (progress: number) => void;
-  setStoreStatus: (status: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
+  setProcessError: (error: string) => void;
+  setProcessProgress: (progress: number) => void;
+  setProcessStatus: (status: string) => void;
 }
 async function uploadHLSFolder({
   credentials,
   folderName,
   hlsFiles,
   serviceLabel,
-  setIsStoring,
-  setStoreError,
-  setStoreProgress,
-  setStoreStatus,
+  setIsProcessing,
+  setProcessError,
+  setProcessProgress,
+  setProcessStatus,
 }: Readonly<UploadHLSFolderProps>): Promise<string> {
   let progressInterval = null;
 
   try {
-    setIsStoring(true);
-    setStoreError("");
-    setStoreProgress(0);
-    setStoreStatus("Preparing HLS files for upload...");
+    setIsProcessing(true);
+    setProcessError("");
+    setProcessProgress(0);
+    setProcessStatus("Preparing HLS files for upload...");
 
     if (DEBUG_STORAGE) {
       console.log("Test Pinata: uploadHLSFolder");
       await sleep(5000);
-      setStoreProgress(100);
-      setStoreStatus("Success");
+      setProcessProgress(100);
+      setProcessStatus("Success");
       return `https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8`;
       // return `https://plum-cooperative-bobcat-432.mypinata.cloud/ipfs/bafybeig3a55gounmtzgklm5v6dxfu4vab6frmocz3ncurao4d2yxcr3fcy/video.m3u8`;
     }
@@ -606,8 +606,8 @@ async function uploadHLSFolder({
       const estimatedTime = Math.max(5000, fileSize / 100000);
       const progress = Math.min((elapsedTime / estimatedTime) * 100, 95);
       // S3 upload is 30% of total
-      setStoreProgress(Math.round(progress));
-      setStoreStatus(
+      setProcessProgress(Math.round(progress));
+      setProcessStatus(
         `Uploading ${serviceLabel} media... ${Math.round(progress)}%`,
       );
     }, 500);
@@ -661,18 +661,18 @@ async function uploadHLSFolder({
     const playlistUrl = `${baseUrl}/${hlsFiles.masterManifest.name}`;
     // const thumbnailUrl = `${baseUrl}/${hlsFiles.thumbnail.name}`;
 
-    setStoreProgress(100);
-    setStoreStatus("Success");
+    setProcessProgress(100);
+    setProcessStatus("Success");
 
     return playlistUrl;
   } catch (err: unknown) {
     console.error("Pinata HLS Upload error:", err);
 
     const errMessage = err instanceof Error ? err.message : "HLS Upload failed";
-    setStoreError(`HLS Upload failed: ${errMessage}`);
-    setStoreStatus("HLS Upload failed");
+    setProcessError(`HLS Upload failed: ${errMessage}`);
+    setProcessStatus("HLS Upload failed");
   } finally {
-    setIsStoring(false);
+    setIsProcessing(false);
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);

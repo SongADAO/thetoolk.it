@@ -64,7 +64,7 @@ export function PostProvider({ children }: Readonly<Props>) {
     amazonS3.resetStoreState();
   }
 
-  const isStoring = pinata.isStoring || amazonS3.isStoring;
+  const isStoring = pinata.isProcessing || amazonS3.isProcessing;
 
   const isPosting =
     bluesky.isPosting ||
