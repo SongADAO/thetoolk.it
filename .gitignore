@@ -44,3 +44,4 @@ next-env.d.ts
 certificates
 .eslintcache
 /demo
+/public/tiktok*
