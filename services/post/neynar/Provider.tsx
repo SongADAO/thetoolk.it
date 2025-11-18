@@ -33,8 +33,8 @@ import {
   type OauthAuthorization,
   type OauthCredentials,
   type OauthExpiration,
-  type PostProps,
   type PostServiceAccount,
+  type PostServicePostProps,
 } from "@/services/post/types";
 
 interface Props {
@@ -172,7 +172,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     video,
     videoHSLUrl,
     videoUrl,
-  }: Readonly<PostProps>): Promise<string | null> {
+  }: Readonly<PostServicePostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isProcessing) {
       return null;
     }

@@ -5,7 +5,10 @@ import { DEBUG_POST } from "@/config/constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import type { PostServiceContextType } from "@/services/post/PostServiceContext";
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
-import type { OauthCredentials, PostProps } from "@/services/post/types";
+import type {
+  OauthCredentials,
+  PostServicePostProps,
+} from "@/services/post/types";
 import {
   useOAuthFlow,
   usePostingState,
@@ -125,7 +128,7 @@ function createServiceProvider(
       video,
       videoHSLUrl,
       videoUrl,
-    }: Readonly<PostProps>): Promise<string | null> {
+    }: Readonly<PostServicePostProps>): Promise<string | null> {
       if (
         !storage.isEnabled ||
         !isComplete ||

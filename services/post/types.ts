@@ -32,7 +32,7 @@ interface PostServiceAccount {
   };
 }
 
-interface PostProps {
+interface PostServicePostProps {
   options: {
     disclose?: boolean;
     discloseBrandOther?: boolean;
@@ -102,6 +102,6 @@ export {
   type OauthAuthorizationAndExpiration,
   type OauthCredentials,
   type OauthExpiration,
-  type PostProps,
   type PostServiceAccount,
+  type PostServicePostProps,
 };
