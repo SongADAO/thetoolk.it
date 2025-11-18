@@ -237,7 +237,7 @@ function PostForm() {
           <Form.Control
             accept="video/mp4"
             autoComplete="off"
-            className="w-full rounded border-1 bg-gray-500 p-2 text-white"
+            className="w-full rounded border bg-gray-500 p-2 text-white"
             disabled={isFormDisabled}
             onChange={handleFileChange}
             placeholder="Title"
