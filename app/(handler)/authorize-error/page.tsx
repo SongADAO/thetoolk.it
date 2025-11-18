@@ -1,7 +1,7 @@
 import { AuthorizeError } from "@/components/AuthorizeError";
-import { PostProviders } from "@/components/service/post/PostProviders";
-import { StorageProviders } from "@/components/service/storage/StorageProviders";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
+import { PostProviders } from "@/services/post/PostProviders";
+import { StorageProviders } from "@/services/storage/StorageProviders";
 
 export default function AuthorizeErrorPage() {
   return (

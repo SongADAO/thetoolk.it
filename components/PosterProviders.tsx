@@ -2,9 +2,9 @@
 
 import { ReactNode } from "react";
 
-import { PostProviders } from "@/components/service/post/PostProviders";
-import { StorageProviders } from "@/components/service/storage/StorageProviders";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
+import { PostProviders } from "@/services/post/PostProviders";
+import { StorageProviders } from "@/services/storage/StorageProviders";
 
 interface Props {
   mode: "self" | "hosted";

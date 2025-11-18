@@ -1,7 +1,7 @@
 "use client";
 
-import { POST_CONTEXTS } from "@/components/service/post/contexts";
 import { PostServiceSettings } from "@/components/service/post/PostServiceSettings";
+import { POST_CONTEXTS } from "@/services/post/POST_CONTEXTS";
 
 interface PostSettingsProps {
   mode: "hosted" | "self";

@@ -1,7 +1,7 @@
 "use client";
 
-import { POST_CONTEXTS } from "@/components/service/post/contexts";
 import { ServiceProgressWithContext } from "@/components/service/ServiceProgressWithContext";
+import { POST_CONTEXTS } from "@/services/post/POST_CONTEXTS";
 
 interface PostProgressProps {
   mode: "hosted" | "self";
