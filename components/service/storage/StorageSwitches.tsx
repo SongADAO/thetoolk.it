@@ -4,7 +4,7 @@ import { ServiceFormWithContext } from "@/components/service/ServiceFormWithCont
 import { ServiceSwitchWithContext } from "@/components/service/ServiceSwitchWithContext";
 import { STORAGE_CONTEXTS } from "@/services/storage/STORAGE_CONTEXTS";
 
-export function StorageSettings() {
+export function StorageSwitches() {
   return (
     <>
       {STORAGE_CONTEXTS.map((context) => (

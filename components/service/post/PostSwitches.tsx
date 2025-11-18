@@ -4,11 +4,11 @@ import { ServiceFormWithContext } from "@/components/service/ServiceFormWithCont
 import { ServiceSwitchWithContext } from "@/components/service/ServiceSwitchWithContext";
 import { POST_CONTEXTS } from "@/services/post/POST_CONTEXTS";
 
-interface PostSettingsProps {
+interface PostSwitchesProps {
   mode: "hosted" | "self";
 }
 
-function PostSettings({ mode }: Readonly<PostSettingsProps>) {
+function PostSwitches({ mode }: Readonly<PostSwitchesProps>) {
   return (
     <>
       {POST_CONTEXTS.filter((context) => context.modes.includes(mode)).map(
@@ -24,4 +24,4 @@ function PostSettings({ mode }: Readonly<PostSettingsProps>) {
   );
 }
 
-export { PostSettings };
+export { PostSwitches };

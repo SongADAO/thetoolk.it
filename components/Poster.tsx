@@ -3,10 +3,10 @@ import { FaServer, FaUsersGear } from "react-icons/fa6";
 import { InstructionsButton } from "@/components/InstructionsButton";
 import { PostForm } from "@/components/PostForm";
 import { PostProgress } from "@/components/service/post/PostProgress";
-import { PostSettings } from "@/components/service/post/PostSettings";
+import { PostSwitches } from "@/components/service/post/PostSwitches";
 import { ServiceSettingsMenu } from "@/components/service/ServiceSettingsMenu";
 import { StorageProgress } from "@/components/service/storage/StorageProgress";
-import { StorageSettings } from "@/components/service/storage/StorageSettings";
+import { StorageSwitches } from "@/components/service/storage/StorageSwitches";
 import { CreatePostProvider } from "@/contexts/CreatePostProvider";
 
 interface PosterProps {
@@ -15,7 +15,7 @@ interface PosterProps {
 
 function Poster({ mode }: Readonly<PosterProps>) {
   const showInstructions = mode === "self";
-  const showStorageSettings = mode === "self";
+  const showStorageSwitches = mode === "self";
 
   return (
     <div>
@@ -26,13 +26,13 @@ function Poster({ mode }: Readonly<PosterProps>) {
               <h1 className="font-bold">Create Post</h1>
               <div className="flex gap-2 lg:hidden">
                 {showInstructions ? <InstructionsButton /> : null}
-                {showStorageSettings ? (
+                {showStorageSwitches ? (
                   <ServiceSettingsMenu
                     icon={<FaServer className="size-6" />}
                     label="Storage Settings"
                   >
                     <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                      <StorageSettings />
+                      <StorageSwitches />
                     </div>
                   </ServiceSettingsMenu>
                 ) : null}
@@ -41,7 +41,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   label="Post Settings"
                 >
                   <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                    <PostSettings mode={mode} />
+                    <PostSwitches mode={mode} />
                   </div>
                 </ServiceSettingsMenu>
               </div>
@@ -61,13 +61,13 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 <h2 className="font-bold">Active Storage Services</h2>
                 <div className="hidden gap-2 lg:flex xl:hidden">
                   {showInstructions ? <InstructionsButton /> : null}
-                  {showStorageSettings ? (
+                  {showStorageSwitches ? (
                     <ServiceSettingsMenu
                       icon={<FaServer className="size-6" />}
                       label="Storage Settings"
                     >
                       <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                        <StorageSettings />
+                        <StorageSwitches />
                       </div>
                     </ServiceSettingsMenu>
                   ) : null}
@@ -89,7 +89,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                     label="Post Settings"
                   >
                     <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                      <PostSettings mode={mode} />
+                      <PostSwitches mode={mode} />
                     </div>
                   </ServiceSettingsMenu>
                 </div>
@@ -105,7 +105,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
 
         <div className="hidden xl:block">
           <div className="flex flex-col gap-4">
-            {showStorageSettings ? (
+            {showStorageSwitches ? (
               <section className="rounded bg-gray-100">
                 <div className="flex items-center justify-between gap-2 bg-gray-300 p-2 pl-4">
                   <h2 className="font-bold">Storage Service Settings</h2>
@@ -113,7 +113,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                    <StorageSettings />
+                    <StorageSwitches />
                   </div>
                 </div>
               </section>
@@ -125,7 +125,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
               </div>
               <div className="p-4">
                 <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                  <PostSettings mode={mode} />
+                  <PostSwitches mode={mode} />
                 </div>
               </div>
             </section>
