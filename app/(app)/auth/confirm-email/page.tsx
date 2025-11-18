@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { ConfirmEmail } from "@/components/Auth/ConfirmEmail";
+import { ConfirmEmail } from "@/components/auth-move/ConfirmEmail";
 
 export const metadata: Metadata = {
   alternates: {
