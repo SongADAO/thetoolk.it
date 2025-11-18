@@ -21,7 +21,7 @@ interface CreatePostProps {
   youtubePrivacy: string;
 }
 
-interface PostContextType {
+interface CreatePostContextType {
   canPostToAllServices: boolean;
   canStoreToAllServices: boolean;
   createPost: (params: CreatePostProps) => Promise<void>;
@@ -49,7 +49,7 @@ interface PostContextType {
   videoTrimStatus: string;
 }
 
-const PostContext = createContext<PostContextType>({
+const CreatePostContext = createContext<CreatePostContextType>({
   canPostToAllServices: false,
   canStoreToAllServices: false,
   createPost: async () => {},
@@ -84,4 +84,4 @@ const PostContext = createContext<PostContextType>({
   videoTrimStatus: "",
 });
 
-export { type CreatePostProps, PostContext, type PostVideo };
+export { CreatePostContext, type CreatePostProps, type PostVideo };
