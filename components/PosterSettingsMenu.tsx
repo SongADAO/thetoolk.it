@@ -9,7 +9,7 @@ interface Props {
   children: ReactNode;
 }
 
-function ServiceSettingsMenu({ label, icon, children }: Readonly<Props>) {
+function PosterSettingsMenu({ label, icon, children }: Readonly<Props>) {
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
@@ -50,4 +50,4 @@ function ServiceSettingsMenu({ label, icon, children }: Readonly<Props>) {
   );
 }
 
-export { ServiceSettingsMenu };
+export { PosterSettingsMenu };
