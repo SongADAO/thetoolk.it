@@ -31,14 +31,18 @@ function Poster({ mode }: Readonly<PosterProps>) {
                     icon={<FaServer className="size-6" />}
                     label="Storage Settings"
                   >
-                    <StorageSettings />
+                    <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                      <StorageSettings />
+                    </div>
                   </ServiceSettingsMenu>
                 ) : null}
                 <ServiceSettingsMenu
                   icon={<FaUsersGear className="size-6" />}
                   label="Post Settings"
                 >
-                  <PostSettings mode={mode} />
+                  <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <PostSettings mode={mode} />
+                  </div>
                 </ServiceSettingsMenu>
               </div>
             </div>
@@ -62,13 +66,17 @@ function Poster({ mode }: Readonly<PosterProps>) {
                       icon={<FaServer className="size-6" />}
                       label="Storage Settings"
                     >
-                      <StorageSettings />
+                      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                        <StorageSettings />
+                      </div>
                     </ServiceSettingsMenu>
                   ) : null}
                 </div>
               </div>
               <div className="p-4">
-                <StoreProgress />
+                <div className="grid grid-cols-2 gap-2">
+                  <StoreProgress />
+                </div>
               </div>
             </section>
             <section className="rounded bg-gray-100">
@@ -80,12 +88,16 @@ function Poster({ mode }: Readonly<PosterProps>) {
                     icon={<FaUsersGear className="size-6" />}
                     label="Post Settings"
                   >
-                    <PostSettings mode={mode} />
+                    <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                      <PostSettings mode={mode} />
+                    </div>
                   </ServiceSettingsMenu>
                 </div>
               </div>
               <div className="p-4">
-                <PostProgress mode={mode} />
+                <div className="grid grid-cols-2 gap-2">
+                  <PostProgress mode={mode} />
+                </div>
               </div>
             </section>
           </div>
@@ -100,7 +112,9 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   {showInstructions ? <InstructionsButton /> : null}
                 </div>
                 <div className="p-4">
-                  <StorageSettings />
+                  <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <StorageSettings />
+                  </div>
                 </div>
               </section>
             ) : null}
@@ -110,7 +124,9 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 {showInstructions ? <InstructionsButton /> : null}
               </div>
               <div className="p-4">
-                <PostSettings mode={mode} />
+                <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                  <PostSettings mode={mode} />
+                </div>
               </div>
             </section>
           </div>

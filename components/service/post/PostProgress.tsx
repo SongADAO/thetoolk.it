@@ -9,7 +9,7 @@ interface PostProgressProps {
 
 function PostProgress({ mode }: Readonly<PostProgressProps>) {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <>
       {POST_CONTEXTS.filter((context) => context.modes.includes(mode)).map(
         (context) => (
           <ServiceProgressWithContext
@@ -18,7 +18,7 @@ function PostProgress({ mode }: Readonly<PostProgressProps>) {
           />
         ),
       )}
-    </div>
+    </>
   );
 }
 
