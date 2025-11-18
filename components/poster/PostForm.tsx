@@ -5,7 +5,7 @@ import { Form } from "radix-ui";
 import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
 
-import { Spinner } from "@/components/Spinner";
+import { Spinner } from "@/components/general/Spinner";
 import { CreatePostContext } from "@/contexts/CreatePostContext";
 import { formatFileDuration, formatFileSize } from "@/lib/video/video";
 // import { BlueskyContext } from "@/services/post/bluesky/Context";

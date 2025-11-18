@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { FaCheck, FaCircleExclamation } from "react-icons/fa6";
 
-import { Spinner } from "@/components/Spinner";
+import { Spinner } from "@/components/general/Spinner";
 
 interface Props {
   brandColor: string;

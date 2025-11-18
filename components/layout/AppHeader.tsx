@@ -1,5 +1,5 @@
-import { AppHeaderUser } from "@/components/AppHeaderUser";
-import { AppLogo } from "@/components/AppLogo";
+import { AppHeaderUser } from "@/components/layout/AppHeaderUser";
+import { AppLogo } from "@/components/layout/AppLogo";
 
 function AppHeader() {
   return (
