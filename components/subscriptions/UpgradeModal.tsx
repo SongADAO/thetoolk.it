@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { use } from "react";
 
-import { SubscriptionManager } from "@/components/SubscriptionManager";
-import { UpgradeOverlay } from "@/components/UpgradeOverlay";
+import { ModalOverlay } from "@/components/ModalOverlay";
+import { SubscriptionManager } from "@/components/subscriptions/SubscriptionManager";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function UpgradeModal() {
@@ -14,7 +14,7 @@ function UpgradeModal() {
   if (loading || subscriptionIsLoading) {
     return (
       <div>
-        <UpgradeOverlay />
+        <ModalOverlay />
       </div>
     );
   }
@@ -26,7 +26,7 @@ function UpgradeModal() {
   if (!user) {
     return (
       <div>
-        <UpgradeOverlay />
+        <ModalOverlay />
         <div className="absolute top-1/4 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 -translate-y-1/2 transform rounded-md border-2 border-gray-500 bg-gray-200 p-6 shadow-lg">
           <div>
             <p className="mb-4 text-center">
@@ -71,7 +71,7 @@ function UpgradeModal() {
 
   return (
     <div>
-      <UpgradeOverlay />
+      <ModalOverlay />
       <div className="absolute top-1/4 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 -translate-y-1/2 transform rounded-md border-2 border-gray-500 bg-gray-200 p-6 shadow-lg">
         <div>
           {/* <p className="mb-4 text-center">

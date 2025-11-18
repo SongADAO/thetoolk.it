@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { UserProfile } from "@/components/auth/UserProfile";
-import { SubscriptionManager } from "@/components/SubscriptionManager";
+import { SubscriptionManager } from "@/components/subscriptions/SubscriptionManager";
 
 export const metadata: Metadata = {
   alternates: {

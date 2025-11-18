@@ -2,8 +2,8 @@
 
 import { use } from "react";
 
-import { ManageSubscriptionButton } from "@/components/ManageSubscriptionButton";
-import { SubscribeButton } from "@/components/SubscribeButton";
+import { ManageSubscriptionButton } from "@/components/subscriptions/ManageSubscriptionButton";
+import { SubscribeButton } from "@/components/subscriptions/SubscribeButton";
 import { AuthContext } from "@/contexts/AuthContext";
 import { getPriceName } from "@/lib/subscriptions";
 

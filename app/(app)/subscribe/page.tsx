@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SubscriptionManager } from "@/components/SubscriptionManager";
+import { SubscriptionManager } from "@/components/subscriptions/SubscriptionManager";
 
 export const metadata: Metadata = {
   alternates: {
