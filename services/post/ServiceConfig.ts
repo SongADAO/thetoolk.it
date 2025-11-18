@@ -2,12 +2,12 @@ import { ReactNode } from "react";
 
 import type { ServiceFormField } from "@/components/service/ServiceForm";
 import type {
-  CreatePostProps,
   OauthAuthorization,
   OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
   PostServiceAccount,
+  PostServiceCreatePostProps,
 } from "@/services/post/types";
 
 interface ServiceConfig {
@@ -83,7 +83,7 @@ interface ServiceConfig {
 
   // Post module
   postModule: {
-    createPost: (props: CreatePostProps) => Promise<string | null>;
+    createPost: (props: PostServiceCreatePostProps) => Promise<string | null>;
     VIDEO_MAX_DURATION: number;
     VIDEO_MAX_FILESIZE: number;
     VIDEO_MIN_DURATION: number;

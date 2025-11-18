@@ -4,7 +4,10 @@ import { BlobRef } from "@atproto/lexicon";
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import { createAgent } from "@/services/post/bluesky/oauth-client-browser";
-import type { CreatePostProps, OauthCredentials } from "@/services/post/types";
+import type {
+  OauthCredentials,
+  PostServiceCreatePostProps,
+} from "@/services/post/types";
 
 // 100MB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 100;
@@ -223,7 +226,7 @@ async function createPost({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   videoHSLUrl,
   videoUrl,
-}: Readonly<CreatePostProps>): Promise<string | null> {
+}: Readonly<PostServiceCreatePostProps>): Promise<string | null> {
   let progressInterval = null;
 
   try {

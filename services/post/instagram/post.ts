@@ -1,6 +1,6 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { CreatePostProps } from "@/services/post/types";
+import type { PostServiceCreatePostProps } from "@/services/post/types";
 
 let DEBUG_STATUS_STEP = 0;
 
@@ -256,7 +256,7 @@ async function createPost({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   videoHSLUrl,
   videoUrl,
-}: Readonly<CreatePostProps>): Promise<string | null> {
+}: Readonly<PostServiceCreatePostProps>): Promise<string | null> {
   try {
     if (DEBUG_POST) {
       // eslint-disable-next-line no-param-reassign

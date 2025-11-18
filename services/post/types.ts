@@ -51,7 +51,7 @@ interface PostServicePostProps {
   videoUrl: string;
 }
 
-interface CreatePostProps {
+interface PostServiceCreatePostProps {
   accessToken: string;
   credentials: OauthCredentials;
   options: {
@@ -94,7 +94,6 @@ const defaultOauthCredentials: OauthCredentials = {
 };
 
 export {
-  type CreatePostProps,
   defaultOauthAuthorization,
   defaultOauthCredentials,
   defaultOauthExpiration,
@@ -103,5 +102,6 @@ export {
   type OauthCredentials,
   type OauthExpiration,
   type PostServiceAccount,
+  type PostServiceCreatePostProps,
   type PostServicePostProps,
 };
