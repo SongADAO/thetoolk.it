@@ -15,17 +15,5 @@ export function ServiceProgressWithContext<T extends ServiceProgressProps>({
 }: Props<T>) {
   const contextValue = use(context);
 
-  const props: ServiceProgressProps = {
-    brandColor: contextValue.brandColor,
-    icon: contextValue.icon,
-    isEnabled: contextValue.isEnabled,
-    isProcessing: contextValue.isProcessing,
-    isUsable: contextValue.isUsable,
-    label: contextValue.label,
-    processError: contextValue.processError,
-    processProgress: contextValue.processProgress,
-    processStatus: contextValue.processStatus,
-  };
-
-  return <ServiceProgress {...props} />;
+  return <ServiceProgress {...contextValue} />;
 }
