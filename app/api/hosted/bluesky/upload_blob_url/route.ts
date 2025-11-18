@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 
+import { getBaseUrlFromRequest } from "@/lib/request";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import {
@@ -10,7 +11,6 @@ import { createAgent } from "@/services/post/bluesky/oauth-client-node";
 import { agentUploadBlob } from "@/services/post/bluesky/post";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
-import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
   const serviceId = "bluesky";

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+import { getBaseUrlFromRequest } from "@/lib/request";
 import { initServerAuth } from "@/lib/supabase/server-auth";
-import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
   try {

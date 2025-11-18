@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getBaseUrlFromRequest } from "@/lib/request";
 import { getClientMetadata } from "@/services/post/bluesky/oauth-client-browser";
-import { getBaseUrlFromRequest } from "@/services/post/hosted";
 
 export function GET(request: NextRequest) {
   const metadata = getClientMetadata(getBaseUrlFromRequest(request));

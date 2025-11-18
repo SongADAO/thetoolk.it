@@ -4,10 +4,11 @@ import {
   generateCodeChallenge,
   generateCodeVerifier,
 } from "@/lib/code-verifier";
+import { getBaseUrlFromRequest } from "@/lib/request";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateCodeVerifier } from "@/lib/supabase/service";
-import { getAuthorizeUrl, getBaseUrlFromRequest } from "@/services/post/hosted";
+import { getAuthorizeUrl } from "@/services/post/hosted";
 
 export async function POST(request: NextRequest) {
   try {

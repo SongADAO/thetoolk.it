@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getBaseUrlFromRequest } from "@/lib/request";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { updateServiceAccounts } from "@/lib/supabase/service";
@@ -10,7 +11,7 @@ import {
 } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
-import { getBaseUrlFromRequest, getOauthUrls } from "@/services/post/hosted";
+import { getOauthUrls } from "@/services/post/hosted";
 
 export async function GET(request: NextRequest) {
   const serviceId = "bluesky";
