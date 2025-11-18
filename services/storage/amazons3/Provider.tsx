@@ -24,7 +24,7 @@ import {
 import {
   type AmazonS3Credentials,
   defaultAmazonS3Credentials,
-  type ServiceAccount,
+  type StorageServiceAccount,
 } from "@/services/storage/types";
 
 interface Props {
@@ -112,7 +112,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
 
   const authorizationExpiresAt = "0";
 
-  const accounts: ServiceAccount[] = [];
+  const accounts: StorageServiceAccount[] = [];
 
   function authorize() {
     // No auth needed.

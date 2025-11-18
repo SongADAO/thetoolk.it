@@ -1,4 +1,4 @@
-interface ServiceAccount {
+interface StorageServiceAccount {
   id: string;
   username: string;
 }
@@ -36,5 +36,5 @@ export {
   defaultAmazonS3Credentials,
   defaultPinataCredentials,
   type PinataCredentials,
-  type ServiceAccount,
+  type StorageServiceAccount,
 };

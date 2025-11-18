@@ -10,7 +10,7 @@ import type {
   OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 
 interface FacebookTokenResponse {
@@ -430,7 +430,7 @@ async function getFacebookPages(token: string): Promise<FacebookPage[]> {
 
 async function getUserInfoFromPage(
   page: FacebookPage,
-): Promise<ServiceAccount> {
+): Promise<PostServiceAccount> {
   console.log(`Checking page: ${page.name} (ID: ${page.id})`);
 
   const params = new URLSearchParams({
@@ -465,7 +465,7 @@ async function getAccounts(
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode: "hosted" | "self",
-): Promise<ServiceAccount[]> {
+): Promise<PostServiceAccount[]> {
   const facebookPages = await getFacebookPages(token);
 
   const accounts = [];

@@ -4,13 +4,13 @@ import type {
   ServiceFormField,
   ServiceFormState,
 } from "@/components/service/ServiceForm";
-import type { PostProps, ServiceAccount } from "@/services/post/types";
+import type { PostProps, PostServiceAccount } from "@/services/post/types";
 
 interface PostServiceContextType {
   VIDEO_MAX_DURATION: number;
   VIDEO_MAX_FILESIZE: number;
   VIDEO_MIN_DURATION: number;
-  accounts: ServiceAccount[];
+  accounts: PostServiceAccount[];
   authorizationExpiresAt: string;
   authorize: () => void;
   brandColor: string;

@@ -1,4 +1,4 @@
-interface ServiceAccount {
+interface PostServiceAccount {
   id: string;
   username: string;
   permissions?: {
@@ -103,5 +103,5 @@ export {
   type OauthCredentials,
   type OauthExpiration,
   type PostProps,
-  type ServiceAccount,
+  type PostServiceAccount,
 };

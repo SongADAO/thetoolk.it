@@ -26,7 +26,7 @@ import {
 import {
   defaultPinataCredentials,
   type PinataCredentials,
-  type ServiceAccount,
+  type StorageServiceAccount,
 } from "@/services/storage/types";
 
 interface Props {
@@ -110,7 +110,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
 
   const authorizationExpiresAt = "0";
 
-  const accounts: ServiceAccount[] = [];
+  const accounts: StorageServiceAccount[] = [];
 
   function authorize() {
     // No auth needed.

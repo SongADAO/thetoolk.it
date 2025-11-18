@@ -9,7 +9,7 @@ import type {
   OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 
 interface TiktokTokenResponse {
@@ -357,7 +357,7 @@ async function refreshAccessToken(
 async function getUserInfo(
   token: string,
   mode: "hosted" | "self",
-): Promise<ServiceAccount> {
+): Promise<PostServiceAccount> {
   console.log(`Checking Tiktok user info`);
 
   const params = new URLSearchParams({
@@ -417,7 +417,7 @@ async function getAccounts(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   mode: "hosted" | "self",
-): Promise<ServiceAccount[]> {
+): Promise<PostServiceAccount[]> {
   const accounts = [];
 
   const account = await getUserInfo(token, mode);

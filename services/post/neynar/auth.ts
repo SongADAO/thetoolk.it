@@ -3,7 +3,7 @@ import type {
   OauthAuthorization,
   OauthCredentials,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 
 const HOSTED_CREDENTIALS: OauthCredentials = {
@@ -34,7 +34,7 @@ function getAuthorizationExpiresAt(expiration: OauthExpiration): string {
 // -----------------------------------------------------------------------------
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-async function getAccounts(token: string): Promise<ServiceAccount[]> {
+async function getAccounts(token: string): Promise<PostServiceAccount[]> {
   return Promise.resolve([]);
 }
 
@@ -43,7 +43,7 @@ async function getAccounts(token: string): Promise<ServiceAccount[]> {
 async function setAuthorizationHosted(
   authorization: OauthAuthorization | null,
   expiration: OauthExpiration,
-  accounts: ServiceAccount[],
+  accounts: PostServiceAccount[],
 ) {
   const response = await fetch("/api/hosted/neynar/store-auth", {
     body: JSON.stringify({

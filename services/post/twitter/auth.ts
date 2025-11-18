@@ -9,7 +9,7 @@ import type {
   OauthAuthorizationAndExpiration,
   OauthCredentials,
   OauthExpiration,
-  ServiceAccount,
+  PostServiceAccount,
 } from "@/services/post/types";
 
 interface TwitterTokenResponse {
@@ -368,7 +368,7 @@ async function refreshAccessToken(
 async function getUserInfo(
   token: string,
   mode: "hosted" | "self",
-): Promise<ServiceAccount> {
+): Promise<PostServiceAccount> {
   console.log(`Checking Twitter user info`);
 
   const endpoint =
@@ -404,7 +404,7 @@ async function getAccounts(
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mode: "hosted" | "self",
-): Promise<ServiceAccount[]> {
+): Promise<PostServiceAccount[]> {
   const accounts = [];
 
   const account = await getUserInfo(token, mode);
