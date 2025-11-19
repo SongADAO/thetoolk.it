@@ -10,22 +10,54 @@ import { TwitterContext } from "@/services/post/twitter/Context";
 import { YoutubeContext } from "@/services/post/youtube/Context";
 
 const POST_CONTEXTS = [
-  { context: BlueskyContext, id: "bluesky", modes: ["hosted", "self"] },
+  {
+    context: BlueskyContext,
+    hasPostFields: false,
+    id: "bluesky",
+    modes: ["hosted", "self"],
+  },
   {
     context: FacebookContext,
+    hasPostFields: false,
     id: "facebook",
     modes: ["hosted", "self"],
   },
   {
     context: InstagramContext,
+    hasPostFields: false,
     id: "instagram",
     modes: ["hosted", "self"],
   },
-  { context: NeynarContext, id: "neynar", modes: ["hosted", "self"] },
-  { context: ThreadsContext, id: "threads", modes: ["hosted", "self"] },
-  { context: TiktokContext, id: "tiktok", modes: ["hosted"] },
-  { context: TwitterContext, id: "twitter", modes: ["hosted", "self"] },
-  { context: YoutubeContext, id: "youtube", modes: ["hosted", "self"] },
+  {
+    context: NeynarContext,
+    hasPostFields: false,
+    id: "neynar",
+    modes: ["hosted", "self"],
+  },
+  {
+    context: ThreadsContext,
+    hasPostFields: false,
+    id: "threads",
+    modes: ["hosted", "self"],
+  },
+  {
+    context: TiktokContext,
+    hasPostFields: true,
+    id: "tiktok",
+    modes: ["hosted"],
+  },
+  {
+    context: TwitterContext,
+    hasPostFields: false,
+    id: "twitter",
+    modes: ["hosted", "self"],
+  },
+  {
+    context: YoutubeContext,
+    hasPostFields: true,
+    id: "youtube",
+    modes: ["hosted", "self"],
+  },
 ];
 
 export { POST_CONTEXTS };
