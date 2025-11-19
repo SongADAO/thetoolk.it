@@ -8,14 +8,7 @@ import { FaCircleExclamation } from "react-icons/fa6";
 import { Spinner } from "@/components/general/Spinner";
 import { CreatePostContext } from "@/contexts/CreatePostContext";
 import { formatFileDuration, formatFileSize } from "@/lib/video/video";
-// import { BlueskyContext } from "@/services/post/bluesky/Context";
-// import { FacebookContext } from "@/services/post/facebook/Context";
-// import { InstagramContext } from "@/services/post/instagram/Context";
-// import { NeynarContext } from "@/services/post/neynar/Context";
-// import { ThreadsContext } from "@/services/post/threads/Context";
-import { TiktokContext } from "@/services/post/tiktok/Context";
-// import { TwitterContext } from "@/services/post/twitter/Context";
-import { YoutubeContext } from "@/services/post/youtube/Context";
+import { POST_CONTEXTS } from "@/services/post/contexts";
 
 interface FormState {
   facebookPrivacy: string;
@@ -64,15 +57,13 @@ function fromFormData(formData: FormData): FormState {
 }
 
 function PostForm() {
-  // Post services.
-  // const bluesky = use(BlueskyContext);
-  // const facebook = use(FacebookContext);
-  // const instagram = use(InstagramContext);
-  // const neynar = use(NeynarContext);
-  // const threads = use(ThreadsContext);
-  const tiktok = use(TiktokContext);
-  // const twitter = use(TwitterContext);
-  const youtube = use(YoutubeContext);
+  // Post services
+  // ---------------------------------------------------------------------------
+  const postPlatforms = Object.fromEntries(
+    POST_CONTEXTS.filter((context) => context.hasPostFields).map(
+      ({ context, id }) => [id, use(context)],
+    ),
+  );
 
   const {
     canPostToAllServices,
@@ -176,11 +167,30 @@ function PostForm() {
   const isFormDisabled =
     isPending || !canPostToAllServices || !canStoreToAllServices;
 
+  // Facebook Settings
+  // ---------------------------------------------------------------------------
+
+  // const facebookPrivacyOptions = [
+  //   { label: "Only Me", value: "SELF" },
+  //   { label: "All Friends", value: "ALL_FRIENDS" },
+  //   { label: "Public", value: "EVERYONE" },
+  // ];
+
+  // const facebookIsEnabled = postPlatforms.facebook.isEnabled;
+
+  // YouTube Settings
+  // ---------------------------------------------------------------------------
+
   const youtubePrivacyOptions = [
     { label: "Private", value: "private" },
     { label: "Public", value: "public" },
     { label: "Unlisted", value: "unlisted" },
   ];
+
+  const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
+
+  // TikTok Settings
+  // ---------------------------------------------------------------------------
 
   const allTiktokPrivacyOptions = [
     { label: "Followers", value: "FOLLOWER_OF_CREATOR" },
@@ -191,29 +201,29 @@ function PostForm() {
     { label: "Only You", value: "SELF_ONLY" },
   ];
 
+  const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
+
   const tiktokPrivacyOptions = allTiktokPrivacyOptions.filter((option) =>
-    tiktok.accounts[0]?.permissions?.privacy_level_options?.includes(
+    postPlatforms.tiktok.accounts[0]?.permissions?.privacy_level_options?.includes(
       option.value,
     ),
   );
 
   const canTiktokComment =
-    tiktok.accounts.length &&
-    !tiktok.accounts[0]?.permissions?.comment_disabled;
+    postPlatforms.tiktok.accounts.length &&
+    !postPlatforms.tiktok.accounts[0]?.permissions?.comment_disabled;
+
   const canTiktokDuet =
-    tiktok.accounts.length && !tiktok.accounts[0]?.permissions?.duet_disabled;
+    postPlatforms.tiktok.accounts.length &&
+    !postPlatforms.tiktok.accounts[0]?.permissions?.duet_disabled;
+
   const canTiktokStitch =
-    tiktok.accounts.length && !tiktok.accounts[0]?.permissions?.stitch_disabled;
+    postPlatforms.tiktok.accounts.length &&
+    !postPlatforms.tiktok.accounts[0]?.permissions?.stitch_disabled;
 
   // const canTiktokComment = true;
   // const canTiktokDuet = true;
   // const canTiktokStitch = true;
-
-  // const facebookPrivacyOptions = [
-  //   { label: "Only Me", value: "SELF" },
-  //   { label: "All Friends", value: "ALL_FRIENDS" },
-  //   { label: "Public", value: "EVERYONE" },
-  // ];
 
   return (
     <div>
@@ -300,13 +310,15 @@ function PostForm() {
           </div>
         </Form.Field>
 
-        {/* {facebook.isEnabled ? (
+        {/* {facebookIsEnabled ? (
           <Form.Field
             className="mb-4 flex flex-col"
             key="facebookPrivacy"
             name="facebookPrivacy"
           >
-            <Form.Label className="mb-2 font-semibold">Facebook Privacy Settings</Form.Label>
+            <Form.Label className="mb-2 font-semibold">
+              Facebook Privacy Settings
+            </Form.Label>
             <Form.Control
               asChild
               className="w-full rounded text-black"
@@ -349,7 +361,7 @@ function PostForm() {
           </Form.Field>
         )} */}
 
-        {youtube.isEnabled ? (
+        {youtubeIsEnabled ? (
           <section className="mb-4 rounded bg-gray-200 p-2">
             <h4 className="mb-2 font-semibold">YouTube Settings</h4>
             <Form.Field
@@ -397,7 +409,7 @@ function PostForm() {
           <input name="youtubePrivacy" type="hidden" value="" />
         )}
 
-        {tiktok.isEnabled ? (
+        {tiktokIsEnabled ? (
           <section className="mb-4 rounded bg-gray-200 p-2">
             <h4 className="mb-2 font-semibold">TikTok Settings</h4>
 
