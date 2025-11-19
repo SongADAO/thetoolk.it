@@ -1,11 +1,12 @@
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.text();
-    const sig = req.headers.get("stripe-signature") ?? "";
+    const body = await request.text();
+    const sig = request.headers.get("stripe-signature") ?? "";
 
     const supabaseAdmin = createAdminClient();
 
@@ -61,9 +62,9 @@ export async function POST(req: Request) {
         throw new Error(`Unhandled event type: ${event.type}`);
     }
 
-    return Response.json({ received: true });
+    return NextResponse.json({ received: true });
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Webhook failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

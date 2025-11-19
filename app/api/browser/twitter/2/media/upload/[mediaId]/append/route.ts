@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   request: NextRequest,
@@ -9,7 +9,7 @@ export async function POST(
 
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
-      return Response.json(
+      return NextResponse.json(
         { error: "Authorization header required" },
         { status: 401 },
       );
@@ -28,16 +28,16 @@ export async function POST(
 
     if (!response.ok) {
       const errorText = await response.text();
-      return Response.json(
+      return NextResponse.json(
         { error: `Chunk upload failed: ${errorText}` },
         { status: response.status },
       );
     }
 
     // Twitter returns empty response for successful APPEND
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Append failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

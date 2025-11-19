@@ -23,6 +23,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(servicesData);
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

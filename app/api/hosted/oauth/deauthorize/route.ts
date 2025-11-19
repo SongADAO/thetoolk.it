@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
@@ -28,10 +28,10 @@ export async function POST(request: NextRequest) {
       serviceId,
     });
 
-    return Response.json({ success: true });
+    return NextResponse.json({ success: true });
   } catch (err: unknown) {
     console.error(err);
     const errMessage = err instanceof Error ? err.message : "Auth failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

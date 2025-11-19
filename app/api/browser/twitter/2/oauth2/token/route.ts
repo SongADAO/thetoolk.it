@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,17 +20,17 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      return Response.json(
+      return NextResponse.json(
         { error: errorData.error_description ?? errorData.error },
         { status: response.status },
       );
     }
 
     const tokens = await response.json();
-    return Response.json(tokens);
+    return NextResponse.json(tokens);
   } catch (err: unknown) {
     const errMessage =
       err instanceof Error ? err.message : "Authentication failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

@@ -20,7 +20,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!subscription?.stripe_customer_id) {
-      return Response.json({ error: "No subscription found" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No subscription found" },
+        { status: 400 },
+      );
     }
 
     // Create a portal session
@@ -36,6 +39,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Post failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }
