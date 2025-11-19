@@ -108,7 +108,8 @@ export function UserStorageProvider({
             // Disabled: Service authorizations are server side only.
           } else {
             const serviceRecord = servicesData?.find(
-              (record) => record.service_id === serviceId,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (record: any) => record.service_id === serviceId,
             );
             if (serviceRecord?.[serviceField] !== undefined) {
               value = serviceRecord[serviceField];
