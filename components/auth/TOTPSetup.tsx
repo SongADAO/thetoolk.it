@@ -1,7 +1,6 @@
 "use client";
 
 import type { Factor } from "@supabase/supabase-js";
-import QRCode from "qrcode";
 import { use, useEffect, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
@@ -50,10 +49,9 @@ function TOTPSetup() {
     if (data) {
       console.log("TOTP Enrollment Data", data);
       try {
-        const qrCodeUrl = await QRCode.toDataURL(data.totp.uri);
         setEnrollmentState({
           factorId: data.id,
-          qrCode: qrCodeUrl,
+          qrCode: data.totp.qr_code,
           secret: data.totp.secret,
           verifyCode: "",
         });
