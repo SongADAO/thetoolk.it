@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      return Response.json(
+      return NextResponse.json(
         {
           details: errorData,
           error: `Instagram API Error: ${errorData.error?.message ?? response.statusText}`,
@@ -31,10 +31,10 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await response.json();
-    return Response.json(result);
+    return NextResponse.json(result);
   } catch (err: unknown) {
     console.error(err);
     const errMessage = err instanceof Error ? err.message : "Auth failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

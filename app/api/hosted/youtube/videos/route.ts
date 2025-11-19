@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
@@ -28,6 +28,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Upload failed";
-    return Response.json({ error: { message: errMessage } }, { status: 500 });
+    return NextResponse.json(
+      { error: { message: errMessage } },
+      { status: 500 },
+    );
   }
 }

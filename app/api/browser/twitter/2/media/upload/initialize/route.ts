@@ -1,10 +1,10 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
-      return Response.json(
+      return NextResponse.json(
         { error: "Authorization header required" },
         { status: 401 },
       );
@@ -24,16 +24,16 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      return Response.json(
+      return NextResponse.json(
         { error: `Upload initialization failed: ${errorText}` },
         { status: response.status },
       );
     }
 
     const result = await response.json();
-    return Response.json(result);
+    return NextResponse.json(result);
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Initialize failed";
-    return Response.json({ error: errMessage }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

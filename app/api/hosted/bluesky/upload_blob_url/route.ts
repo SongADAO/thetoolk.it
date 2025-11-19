@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getBaseUrlFromRequest } from "@/lib/request";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const { videoUrl, videoType } = await request.json();
 
     if (!videoUrl) {
-      return Response.json(
+      return NextResponse.json(
         { error: { message: "videoUrl is required" } },
         { status: 400 },
       );
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const videoResponse = await fetch(videoUrl);
 
     if (!videoResponse.ok) {
-      return Response.json(
+      return NextResponse.json(
         {
           error: {
             message: `Failed to fetch video from URL: ${videoResponse.status} ${videoResponse.statusText}`,
@@ -84,9 +84,12 @@ export async function POST(request: NextRequest) {
       serviceId,
     });
 
-    return Response.json(result);
+    return NextResponse.json(result);
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Upload failed";
-    return Response.json({ error: { message: errMessage } }, { status: 500 });
+    return NextResponse.json(
+      { error: { message: errMessage } },
+      { status: 500 },
+    );
   }
 }
