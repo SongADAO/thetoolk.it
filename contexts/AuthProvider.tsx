@@ -170,8 +170,8 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   async function verifyTOTPEnrollment(code: string) {
     const factors = await supabase.auth.mfa.listFactors();
-    if (factors.data?.totp && factors.data.totp.length > 0) {
-      const factorId = factors.data.totp[0].id;
+    if (factors.data?.all && factors.data.all.length > 0) {
+      const factorId = factors.data.all[0].id;
       const { data, error } = await supabase.auth.mfa.challengeAndVerify({
         code,
         factorId,

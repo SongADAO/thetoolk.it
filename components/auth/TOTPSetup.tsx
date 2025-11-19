@@ -29,8 +29,8 @@ function TOTPSetup() {
   async function loadFactors() {
     const factorsData = await supabase.auth.mfa.listFactors();
     console.log("loadFactors", { factorsData });
-    if (factorsData.data?.totp) {
-      setFactors(factorsData.data.totp);
+    if (factorsData.data?.all) {
+      setFactors(factorsData.data.all);
     }
   }
 
