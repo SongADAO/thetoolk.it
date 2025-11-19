@@ -31,48 +31,6 @@ interface Props {
 }
 
 export function CreatePostProvider({ children }: Readonly<Props>) {
-  // Post services.
-  const bluesky = use(BlueskyContext);
-  const facebook = use(FacebookContext);
-  const instagram = use(InstagramContext);
-  const neynar = use(NeynarContext);
-  const threads = use(ThreadsContext);
-  const tiktok = use(TiktokContext);
-  const twitter = use(TwitterContext);
-  const youtube = use(YoutubeContext);
-
-  // Storage services.
-  const pinata = use(PinataContext);
-  const amazonS3 = use(AmazonS3Context);
-
-  function resetPostState(): void {
-    bluesky.resetProcessState();
-    facebook.resetProcessState();
-    instagram.resetProcessState();
-    neynar.resetProcessState();
-    threads.resetProcessState();
-    tiktok.resetProcessState();
-    twitter.resetProcessState();
-    youtube.resetProcessState();
-  }
-
-  function resetStoreState(): void {
-    pinata.resetProcessState();
-    amazonS3.resetProcessState();
-  }
-
-  const isStoring = pinata.isProcessing || amazonS3.isProcessing;
-
-  const isPosting =
-    bluesky.isProcessing ||
-    facebook.isProcessing ||
-    instagram.isProcessing ||
-    neynar.isProcessing ||
-    threads.isProcessing ||
-    tiktok.isProcessing ||
-    twitter.isProcessing ||
-    youtube.isProcessing;
-
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>("");
   const [videoFileSize, setVideoFileSize] = useState<number>(0);
   const [videoDuration, setVideoDuration] = useState<number>(0);
@@ -93,42 +51,61 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
   const [hlsConversionError, setHLSConversionError] = useState("");
   const [isHLSConverting, setIsHLSConverting] = useState(false);
 
-  const canPostToAllServices = useMemo(
-    () =>
-      (!bluesky.isEnabled || bluesky.isUsable) &&
-      (!facebook.isEnabled || facebook.isUsable) &&
-      (!instagram.isEnabled || instagram.isUsable) &&
-      (!neynar.isEnabled || neynar.isUsable) &&
-      (!threads.isEnabled || threads.isUsable) &&
-      (!tiktok.isEnabled || tiktok.isUsable) &&
-      (!twitter.isEnabled || twitter.isUsable) &&
-      (!youtube.isEnabled || youtube.isUsable),
-    [
-      bluesky.isEnabled,
-      bluesky.isUsable,
-      facebook.isEnabled,
-      facebook.isUsable,
-      instagram.isEnabled,
-      instagram.isUsable,
-      neynar.isEnabled,
-      neynar.isUsable,
-      threads.isEnabled,
-      threads.isUsable,
-      tiktok.isEnabled,
-      tiktok.isUsable,
-      twitter.isEnabled,
-      twitter.isUsable,
-      youtube.isEnabled,
-      youtube.isUsable,
-    ],
+  // Post services.
+  const bluesky = use(BlueskyContext);
+  const facebook = use(FacebookContext);
+  const instagram = use(InstagramContext);
+  const neynar = use(NeynarContext);
+  const threads = use(ThreadsContext);
+  const tiktok = use(TiktokContext);
+  const twitter = use(TwitterContext);
+  const youtube = use(YoutubeContext);
+
+  // Storage services.
+  const pinata = use(PinataContext);
+  const amazonS3 = use(AmazonS3Context);
+
+  const postPlatforms = [
+    bluesky,
+    facebook,
+    instagram,
+    neynar,
+    threads,
+    tiktok,
+    twitter,
+    youtube,
+  ];
+
+  const storagePlatforms = [pinata, amazonS3];
+
+  const isPosting = postPlatforms.some((platform) => platform.isProcessing);
+
+  const isStoring = storagePlatforms.some((platform) => platform.isProcessing);
+
+  const canPostToAllServices = postPlatforms.every(
+    (platform) => !platform.isEnabled || platform.isUsable,
   );
 
-  const canStoreToAllServices = useMemo(
-    () =>
-      (!pinata.isEnabled || pinata.isUsable) &&
-      (!amazonS3.isEnabled || amazonS3.isUsable),
-    [pinata.isEnabled, pinata.isUsable, amazonS3.isEnabled, amazonS3.isUsable],
+  const canStoreToAllServices = storagePlatforms.every(
+    (platform) => !platform.isEnabled || platform.isUsable,
   );
+
+  const hasStoragePlatform = storagePlatforms.some(
+    (platform) => platform.isEnabled && platform.isUsable,
+  );
+
+  const needsHls = neynar.isEnabled;
+
+  // const needsS3 = tiktok.isEnabled;
+  const needsS3: true | false = false;
+
+  function resetPostState(): void {
+    postPlatforms.forEach((platform) => platform.resetProcessState());
+  }
+
+  function resetStoreState(): void {
+    storagePlatforms.forEach((platform) => platform.resetProcessState());
+  }
 
   async function getVideoInfo(video: File | null): Promise<void> {
     setVideoPreviewUrl("");
@@ -146,27 +123,20 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
   async function preparePostVideo(
     video: File,
   ): Promise<Record<string, PostVideo>> {
-    const needsHls = neynar.isEnabled;
-    // const needsS3 = tiktok.isEnabled;
-
-    if (!pinata.isUsable && !amazonS3.isUsable) {
+    if (!hasStoragePlatform) {
       throw new Error("You must enable a storage provider.");
     }
 
-    // if (needsS3 && !amazonS3.isUsable && tiktok.isUsable) {
-    //   throw new Error(
-    //     "To use TikTok at least one non-ipfs storage provider must be enabled. (Amazon S3).",
-    //   );
-    // }
+    if (needsS3 && !amazonS3.isUsable) {
+      throw new Error(
+        "To use TikTok at least one non-ipfs storage provider must be enabled. (Amazon S3).",
+      );
+    }
 
     if (needsHls && !pinata.isUsable) {
       throw new Error(
         "To use Farcaster or Lens at least one enabled storage provider must support IPFS or Arweave. (Pinata).",
       );
-    }
-
-    if (!pinata.isUsable && !amazonS3.isUsable) {
-      throw new Error("You must enable a storage provider.");
     }
 
     // Convert video if file is selected.
@@ -200,16 +170,7 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
     console.log("Converting HLS video before upload...");
     const videos = await trimPlatformVideos({
-      platforms: [
-        bluesky,
-        facebook,
-        instagram,
-        neynar,
-        threads,
-        tiktok,
-        twitter,
-        youtube,
-      ],
+      platforms: postPlatforms,
       setIsProcessing: setIsVideoTrimming,
       setProcessError: setVideoTrimError,
       setProcessProgress: setVideoTrimProgress,
@@ -363,55 +324,25 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     videos,
     youtubePrivacy,
   }: Readonly<CreatePostProps>): Promise<void> {
-    const props = {
-      facebookPrivacy,
-      text,
-      tiktokComment,
-      tiktokDisclose,
-      tiktokDiscloseBrandOther,
-      tiktokDiscloseBrandSelf,
-      tiktokDuet,
-      tiktokPrivacy,
-      tiktokStitch,
-      title,
-      videos,
-      youtubePrivacy,
-    };
-
-    const allResults = await Promise.allSettled([
-      platformCreatePost({
-        ...props,
-        platform: bluesky,
-      }),
-      platformCreatePost({
-        ...props,
-        platform: facebook,
-      }),
-      platformCreatePost({
-        ...props,
-        platform: instagram,
-      }),
-      platformCreatePost({
-        ...props,
-        platform: neynar,
-      }),
-      platformCreatePost({
-        ...props,
-        platform: threads,
-      }),
-      platformCreatePost({
-        ...props,
-        platform: tiktok,
-      }),
-      platformCreatePost({
-        ...props,
-        platform: twitter,
-      }),
-      platformCreatePost({
-        ...props,
-        platform: youtube,
-      }),
-    ]);
+    const allResults = await Promise.allSettled(
+      postPlatforms.map(async (platform) =>
+        platformCreatePost({
+          facebookPrivacy,
+          platform,
+          text,
+          tiktokComment,
+          tiktokDisclose,
+          tiktokDiscloseBrandOther,
+          tiktokDiscloseBrandSelf,
+          tiktokDuet,
+          tiktokPrivacy,
+          tiktokStitch,
+          title,
+          videos,
+          youtubePrivacy,
+        }),
+      ),
+    );
 
     console.log("All results:", allResults);
   }
