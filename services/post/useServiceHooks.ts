@@ -85,11 +85,11 @@ function useServiceStorage(
  */
 // eslint-disable-next-line max-params
 function useOAuthFlow(
+  mode: "server" | "browser",
   credentials: OauthCredentials,
   authorization: OauthAuthorization,
   expiration: OauthExpiration,
   codeVerifier: string,
-  mode: "server" | "browser",
   authModule: {
     disconnectHosted: () => Promise<OauthAuthorization>;
     exchangeCodeForTokens: (

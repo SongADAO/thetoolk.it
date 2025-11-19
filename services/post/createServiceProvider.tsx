@@ -44,11 +44,11 @@ function createServiceProvider(
     );
 
     const oauth = useOAuthFlow(
+      mode,
       storage.credentials,
       storage.authorization,
       storage.expiration,
       storage.codeVerifier,
-      mode,
       config.authModule,
       config.defaultAuthorization,
       config.defaultExpiration,
