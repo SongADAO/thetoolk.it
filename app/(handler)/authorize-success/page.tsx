@@ -1,7 +1,17 @@
+import type { Metadata } from "next";
+
 import { AuthorizeSuccess } from "@/components/poster/AuthorizeSuccess";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
 import { PostProviders } from "@/services/post/PostProviders";
 import { StorageProviders } from "@/services/storage/StorageProviders";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/authorize-success",
+  },
+  description: "You have authorized TheToolk.it",
+  title: "Authorize Success - TheToolk.it",
+};
 
 export default function AuthorizeSuccessPage() {
   return (
