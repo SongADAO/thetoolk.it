@@ -47,8 +47,8 @@ interface PostServicePostProps {
   userId: string;
   username: string;
   video: File | null;
-  videoHSLUrl: string;
-  videoUrl: string;
+  videoHSLUrl: string | null;
+  videoUrl: string | null;
 }
 
 interface PostServiceCreatePostProps {
