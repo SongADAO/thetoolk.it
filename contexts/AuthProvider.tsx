@@ -158,9 +158,10 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     return { error };
   }
 
-  async function enrollTOTP() {
+  async function enrollTOTP(friendlyName?: string) {
     const { data, error } = await supabase.auth.mfa.enroll({
       factorType: "totp",
+      friendlyName: friendlyName || `TOTP-${crypto.randomUUID()}`,
     });
     console.log("enrollTOTP", { data, error });
 

@@ -31,7 +31,7 @@ interface AuthContextType {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any;
   }>;
-  enrollTOTP: () => Promise<{
+  enrollTOTP: (friendlyName?: string) => Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
