@@ -194,8 +194,8 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
         title,
         userId,
         video,
-        videoHSLUrl,
-        videoUrl,
+        videoHSLUrl: String(videoHSLUrl),
+        videoUrl: String(videoUrl),
       });
     } catch (err: unknown) {
       console.error("Post error:", err);

@@ -3,21 +3,18 @@
 import { ReactNode, use, useMemo, useState } from "react";
 
 import {
-  DEBUG_DOWNLOAD_MEDIA,
-  DEBUG_MEDIA,
   DEBUG_STOP_AFTER_CONVERSION,
   DEBUG_STOP_AFTER_STORAGE,
 } from "@/config/constants";
 import {
+  type CreatePlatformPostProps,
   CreatePostContext,
   type CreatePostProps,
   type PostVideo,
 } from "@/contexts/CreatePostContext";
-import { sleep } from "@/lib/utils";
-import { convertToHLS, type HLSFiles } from "@/lib/video/hls";
-import { convertVideoMediabunny } from "@/lib/video/mediabunny";
-import { trimVideo } from "@/lib/video/trim";
-import { downloadFile, getVideoDuration } from "@/lib/video/video";
+import { convertHLSVideo, convertVideo, trimPlatformVideos } from "@/lib/post";
+import type { HLSFiles } from "@/lib/video/hls";
+import { getVideoDuration } from "@/lib/video/video";
 import { BlueskyContext } from "@/services/post/bluesky/Context";
 import { FacebookContext } from "@/services/post/facebook/Context";
 import { InstagramContext } from "@/services/post/instagram/Context";
@@ -134,312 +131,20 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
   );
 
   async function getVideoInfo(video: File | null): Promise<void> {
-    if (video) {
-      setVideoPreviewUrl(URL.createObjectURL(video));
-      setVideoFileSize(video.size);
-      setVideoDuration(await getVideoDuration(video));
-
-      return;
-    }
-
     setVideoPreviewUrl("");
     setVideoFileSize(0);
     setVideoDuration(0);
     setVideoCodecInfo("");
-  }
 
-  // Convert video file to optimized format
-  async function convertVideo(video: File): Promise<File> {
-    try {
-      setIsVideoConverting(true);
-      setVideoConversionProgress(0);
-      setVideoConversionStatus("Preparing video...");
-
-      if (DEBUG_MEDIA) {
-        console.log("DEBUG MODE: Skipping video conversion.");
-        await sleep(1);
-        setVideoConversionProgress(100);
-        // await sleep(1000);
-        // setVideoConversionProgress(20);
-        // await sleep(1000);
-        // setVideoConversionProgress(40);
-        // await sleep(1000);
-        // setVideoConversionProgress(60);
-        // await sleep(1000);
-        // setVideoConversionProgress(80);
-        // await sleep(1000);
-        // setVideoConversionProgress(100);
-
-        return video;
-      }
-
-      console.log("Starting video conversion...");
-      const convertedData = await convertVideoMediabunny(
-        video,
-        {
-          audioBitrate: 128000,
-          audioSampleRate: 48000,
-          // duration: videoDuration,
-          // maxFileSizeMB: 20,
-          maxFps: 60,
-          maxWidth: 1920,
-        },
-        setVideoConversionProgress,
-        setVideoConversionStatus,
-      );
-
-      // Convert Uint8Array back to File object
-      const convertedVideo = new File(
-        [convertedData as BlobPart],
-        `converted_${video.name}`,
-        { type: "video/mp4" },
-      );
-      console.log(convertedVideo);
-
-      console.log(
-        `Conversion complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB -> Converted: ${(convertedVideo.size / 1024 / 1024).toFixed(2)}MB`,
-      );
-      setVideoConversionProgress(100);
-
-      if (DEBUG_DOWNLOAD_MEDIA) {
-        downloadFile(convertedVideo);
-        throw new Error("TESTING CONVERSION ONLY");
-      }
-
-      return convertedVideo;
-    } catch (err: unknown) {
-      console.error("Video conversion failed:", err);
-      setVideoConversionError("Failed to convert video.");
-      throw err;
-    } finally {
-      setIsVideoConverting(false);
-      setVideoConversionProgress(0);
-    }
-  }
-
-  async function convertHLSVideo(video: File): Promise<HLSFiles> {
-    try {
-      setIsHLSConverting(true);
-      setHLSConversionStatus(
-        "Creating HLS video for optimal Farcaster display...",
-      );
-      setHLSConversionProgress(0);
-
-      if (DEBUG_MEDIA) {
-        console.log("DEBUG MODE: Skipping HLS conversion.");
-        await sleep(1);
-        setHLSConversionProgress(100);
-        // await sleep(1000);
-        // setHLSConversionProgress(20);
-        // await sleep(1000);
-        // setHLSConversionProgress(40);
-        // await sleep(1000);
-        // setHLSConversionProgress(60);
-        // await sleep(1000);
-        // setHLSConversionProgress(80);
-        // await sleep(1000);
-        // setHLSConversionProgress(100);
-
-        return {
-          masterManifest: video,
-          segments: [],
-          streamManifest: video,
-          thumbnail: video,
-        };
-      }
-
-      // Convert to HLS (try copy first, fallback to encoding if needed)
-      console.log("Converting video to HLS format...");
-      const hlsFiles = await convertToHLS(video, setHLSConversionProgress);
-      console.log(hlsFiles);
-
-      console.log("HLS conversion successful");
-
-      return hlsFiles;
-    } catch (err: unknown) {
-      console.error("HLS conversion/upload failed:", err);
-      setHLSConversionError("Failed to convert video to HLS format.");
-      throw err;
-    } finally {
-      setIsHLSConverting(false);
-      setHLSConversionProgress(0);
-    }
-  }
-
-  async function trimPlatformVideos(
-    videos: Record<string, PostVideo>,
-  ): Promise<Record<string, PostVideo>> {
-    try {
-      setIsVideoTrimming(true);
-      setVideoTrimStatus("Trimming videos for platform constraints...");
-      setVideoTrimProgress(0);
-
-      if (videos.full.video === null) {
-        throw new Error("Base video is missing.");
-      }
-
-      /* eslint-disable require-atomic-updates */
-      if (bluesky.isEnabled) {
-        setVideoTrimStatus("Trimming bluesky video if needed...");
-        videos.bluesky = {
-          video: DEBUG_MEDIA
-            ? videos.full.video
-            : await trimVideo({
-                label: "bluesky",
-                maxDuration: bluesky.VIDEO_MAX_DURATION,
-                maxFilesize: bluesky.VIDEO_MAX_FILESIZE,
-                minDuration: bluesky.VIDEO_MIN_DURATION,
-                onProgress: setVideoTrimProgress,
-                video: videos.full.video,
-              }),
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-
-      if (facebook.isEnabled) {
-        setVideoTrimStatus("Trimming facebook video if needed...");
-        videos.facebook = {
-          video: DEBUG_MEDIA
-            ? videos.full.video
-            : await trimVideo({
-                label: facebook.id,
-                maxDuration: facebook.VIDEO_MAX_DURATION,
-                maxFilesize: facebook.VIDEO_MAX_FILESIZE,
-                minDuration: facebook.VIDEO_MIN_DURATION,
-                onProgress: setVideoTrimProgress,
-                video: videos.full.video,
-              }),
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-
-      if (instagram.isEnabled) {
-        setVideoTrimStatus("Trimming instagram video if needed...");
-        videos.instagram = {
-          video: DEBUG_MEDIA
-            ? videos.full.video
-            : await trimVideo({
-                label: instagram.id,
-                maxDuration: instagram.VIDEO_MAX_DURATION,
-                maxFilesize: instagram.VIDEO_MAX_FILESIZE,
-                minDuration: instagram.VIDEO_MIN_DURATION,
-                onProgress: setVideoTrimProgress,
-                video: videos.full.video,
-              }),
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-
-      if (neynar.isEnabled) {
-        setVideoTrimStatus("Trimming farcaster video if needed...");
-        videos.neynar = {
-          // video: DEBUG_MEDIA
-          //   ? videos.full.video
-          //   : await trimVideo({
-          //       label: neynar.id,
-          //       maxDuration: neynar.VIDEO_MAX_DURATION,
-          //       maxFilesize: neynar.VIDEO_MAX_FILESIZE,
-          //       minDuration: neynar.VIDEO_MIN_DURATION,
-          //       onProgress: setVideoTrimProgress,
-          //       video: videos.full.video,
-          //     }),
-          video: null,
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-
-      if (threads.isEnabled) {
-        setVideoTrimStatus("Trimming threads video if needed...");
-        videos.threads = {
-          video: DEBUG_MEDIA
-            ? videos.full.video
-            : await trimVideo({
-                label: threads.id,
-                maxDuration: threads.VIDEO_MAX_DURATION,
-                maxFilesize: threads.VIDEO_MAX_FILESIZE,
-                minDuration: threads.VIDEO_MIN_DURATION,
-                onProgress: setVideoTrimProgress,
-                video: videos.full.video,
-              }),
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-
-      if (tiktok.isEnabled) {
-        setVideoTrimStatus("Trimming tiktok video if needed...");
-        videos.tiktok = {
-          video: DEBUG_MEDIA
-            ? videos.full.video
-            : await trimVideo({
-                label: tiktok.id,
-                maxDuration:
-                  tiktok.accounts[0]?.permissions
-                    ?.max_video_post_duration_sec ?? tiktok.VIDEO_MAX_DURATION,
-                maxFilesize: tiktok.VIDEO_MAX_FILESIZE,
-                minDuration: tiktok.VIDEO_MIN_DURATION,
-                onProgress: setVideoTrimProgress,
-                video: videos.full.video,
-              }),
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-
-      if (twitter.isEnabled) {
-        setVideoTrimStatus("Trimming twitter video if needed...");
-        videos.twitter = {
-          video: DEBUG_MEDIA
-            ? videos.full.video
-            : await trimVideo({
-                label: twitter.id,
-                maxDuration: twitter.VIDEO_MAX_DURATION,
-                maxFilesize: twitter.VIDEO_MAX_FILESIZE,
-                minDuration: twitter.VIDEO_MIN_DURATION,
-                onProgress: setVideoTrimProgress,
-                video: videos.full.video,
-              }),
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-
-      if (youtube.isEnabled) {
-        setVideoTrimStatus("Trimming youtube video if needed...");
-        videos.youtube = {
-          video: DEBUG_MEDIA
-            ? videos.full.video
-            : await trimVideo({
-                label: youtube.id,
-                maxDuration: youtube.VIDEO_MAX_DURATION,
-                maxFilesize: youtube.VIDEO_MAX_FILESIZE,
-                minDuration: youtube.VIDEO_MIN_DURATION,
-                onProgress: setVideoTrimProgress,
-                video: videos.full.video,
-              }),
-          videoHSLUrl: "",
-          videoUrl: "",
-        };
-      }
-      /* eslint-enable require-atomic-updates */
-
-      return videos;
-    } catch (err: unknown) {
-      console.error("Platform video trimming failed:", err);
-      setVideoTrimError("Failed to trim some videos.");
-      throw err;
-    } finally {
-      setIsVideoTrimming(false);
-      setVideoTrimProgress(0);
+    if (video) {
+      setVideoPreviewUrl(URL.createObjectURL(video));
+      setVideoFileSize(video.size);
+      setVideoDuration(await getVideoDuration(video));
     }
   }
 
   async function preparePostVideo(
-    selectedFile: File,
+    video: File,
   ): Promise<Record<string, PostVideo>> {
     const needsHls = neynar.isEnabled;
     // const needsS3 = tiktok.isEnabled;
@@ -464,39 +169,57 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
       throw new Error("You must enable a storage provider.");
     }
 
-    let videos: Record<string, PostVideo> = {
-      full: {
-        video: null,
-        videoHSLUrl: "",
-        videoUrl: "",
-      },
-    };
-
     // Convert video if file is selected.
     // -------------------------------------------------------------------------
     console.log("Converting video to H264/AAC before upload...");
-    videos.full.video = await convertVideo(selectedFile);
-    // videos.full.video = selectedFile;
+    const fullConvertedVideo = await convertVideo({
+      setIsProcessing: setIsVideoConverting,
+      setProcessError: setVideoConversionError,
+      setProcessProgress: setVideoConversionProgress,
+      setProcessStatus: setVideoConversionStatus,
+      video,
+    });
+    // const fullConvertedVideo = video;
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video
     // -------------------------------------------------------------------------
-    let hlsFiles: HLSFiles | null = null;
-    if (needsHls) {
-      console.log("Converting HLS video before upload...");
-      hlsFiles = await convertHLSVideo(videos.full.video);
-    }
+    console.log("Converting HLS video before upload...");
+    const hlsFiles: HLSFiles | null = needsHls
+      ? await convertHLSVideo({
+          setIsProcessing: setIsHLSConverting,
+          setProcessError: setHLSConversionError,
+          setProcessProgress: setHLSConversionProgress,
+          setProcessStatus: setHLSConversionStatus,
+          video: fullConvertedVideo,
+        })
+      : null;
     // -------------------------------------------------------------------------
 
     // Trim platform specific videos
     // -------------------------------------------------------------------------
     console.log("Converting HLS video before upload...");
-    videos = await trimPlatformVideos(videos);
-    // -------------------------------------------------------------------------
-
-    // -------------------------------------------------------------------------
+    const videos = await trimPlatformVideos({
+      platforms: [
+        bluesky,
+        facebook,
+        instagram,
+        neynar,
+        threads,
+        tiktok,
+        twitter,
+        youtube,
+      ],
+      setIsProcessing: setIsVideoTrimming,
+      setProcessError: setVideoTrimError,
+      setProcessProgress: setVideoTrimProgress,
+      setProcessStatus: setVideoTrimStatus,
+      video: fullConvertedVideo,
+    });
     console.log(videos);
+    // -------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------
     if (DEBUG_STOP_AFTER_CONVERSION) {
       throw new Error("TESTING CONVERSION ONLY");
     }
@@ -508,24 +231,23 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
 
     for (const [videoId, videoData] of Object.entries(videos)) {
       if (videoData.video) {
-        let videoUrl = "";
-
         // eslint-disable-next-line no-await-in-loop
         const s3VideoResult = await amazonS3.storeVideo(
           videoData.video,
           videoId,
         );
-        if (s3VideoResult) {
-          videoUrl = s3VideoResult;
-        }
 
         // eslint-disable-next-line no-await-in-loop
         const pinataVideoResult = await pinata.storeVideo(
           videoData.video,
           videoId,
         );
+
+        let videoUrl = "";
         if (pinataVideoResult) {
           videoUrl = pinataVideoResult;
+        } else if (s3VideoResult) {
+          videoUrl = s3VideoResult;
         }
 
         // TikTok can't work with IPFS as the domain cannot be verified.
@@ -577,6 +299,56 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     return videos;
   }
 
+  async function platformCreatePost({
+    facebookPrivacy,
+    platform,
+    text,
+    tiktokComment,
+    tiktokDisclose,
+    tiktokDiscloseBrandOther,
+    tiktokDiscloseBrandSelf,
+    tiktokDuet,
+    tiktokPrivacy,
+    tiktokStitch,
+    title,
+    videos,
+    youtubePrivacy,
+  }: Readonly<CreatePlatformPostProps>): Promise<string | null> {
+    const params = {
+      options: {},
+      privacy: "",
+      text,
+      title,
+      userId: platform.accounts[0]?.id,
+      username: platform.accounts[0]?.username,
+      video: videos[platform.id].video ?? videos.full.video,
+      videoHSLUrl: videos[platform.id].videoHSLUrl ?? videos.full.videoHSLUrl,
+      videoUrl: videos[platform.id].videoUrl ?? videos.full.videoUrl,
+    };
+
+    if (platform.id === "tiktok") {
+      params.options = {
+        disclose: tiktokDisclose,
+        discloseBrandOther: tiktokDiscloseBrandOther,
+        discloseBrandSelf: tiktokDiscloseBrandSelf,
+        permissionComment: tiktokComment,
+        permissionDuet: tiktokDuet,
+        permissionStitch: tiktokStitch,
+      };
+      params.privacy = tiktokPrivacy;
+    }
+
+    if (platform.id === "youtube") {
+      params.privacy = youtubePrivacy;
+    }
+
+    if (platform.id === "facebook") {
+      params.privacy = facebookPrivacy;
+    }
+
+    return platform.post(params);
+  }
+
   async function createPost({
     facebookPrivacy,
     text,
@@ -591,105 +363,55 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     videos,
     youtubePrivacy,
   }: Readonly<CreatePostProps>): Promise<void> {
-    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
+    const props = {
+      facebookPrivacy,
+      text,
+      tiktokComment,
+      tiktokDisclose,
+      tiktokDiscloseBrandOther,
+      tiktokDiscloseBrandSelf,
+      tiktokDuet,
+      tiktokPrivacy,
+      tiktokStitch,
+      title,
+      videos,
+      youtubePrivacy,
+    };
+
     const allResults = await Promise.allSettled([
-      bluesky.post({
-        options: {},
-        privacy: "",
-        text,
-        title,
-        userId: bluesky.accounts[0]?.id,
-        username: bluesky.accounts[0]?.username,
-        video: videos.bluesky?.video || videos.full.video,
-        videoHSLUrl: videos.bluesky?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.bluesky?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: bluesky,
       }),
-      facebook.post({
-        options: {},
-        privacy: facebookPrivacy,
-        text,
-        title,
-        userId: facebook.accounts[0]?.id,
-        username: facebook.accounts[0]?.username,
-        video: videos.facebook?.video || videos.full.video,
-        videoHSLUrl: videos.facebook?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.facebook?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: facebook,
       }),
-      instagram.post({
-        options: {},
-        privacy: "",
-        text,
-        title,
-        userId: instagram.accounts[0]?.id,
-        username: instagram.accounts[0]?.username,
-        video: videos.instagram?.video || videos.full.video,
-        videoHSLUrl: videos.instagram?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.instagram?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: instagram,
       }),
-      neynar.post({
-        options: {},
-        privacy: "",
-        text,
-        title,
-        userId: neynar.accounts[0]?.id,
-        username: neynar.accounts[0]?.username,
-        video: videos.neynar?.video || videos.full.video,
-        videoHSLUrl: videos.neynar?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.neynar?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: neynar,
       }),
-      threads.post({
-        options: {},
-        privacy: "",
-        text,
-        title,
-        userId: threads.accounts[0]?.id,
-        username: threads.accounts[0]?.username,
-        video: videos.threads?.video || videos.full.video,
-        videoHSLUrl: videos.threads?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.threads?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: threads,
       }),
-      tiktok.post({
-        options: {
-          disclose: tiktokDisclose,
-          discloseBrandOther: tiktokDiscloseBrandOther,
-          discloseBrandSelf: tiktokDiscloseBrandSelf,
-          permissionComment: tiktokComment,
-          permissionDuet: tiktokDuet,
-          permissionStitch: tiktokStitch,
-        },
-        privacy: tiktokPrivacy,
-        text,
-        title,
-        userId: tiktok.accounts[0]?.id,
-        username: tiktok.accounts[0]?.username,
-        video: videos.tiktok?.video || videos.full.video,
-        videoHSLUrl: videos.tiktok?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.tiktok?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: tiktok,
       }),
-      twitter.post({
-        options: {},
-        privacy: "",
-        text,
-        title,
-        userId: twitter.accounts[0]?.id,
-        username: twitter.accounts[0]?.username,
-        video: videos.twitter?.video || videos.full.video,
-        videoHSLUrl: videos.twitter?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.twitter?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: twitter,
       }),
-      youtube.post({
-        options: {},
-        privacy: youtubePrivacy,
-        text,
-        title,
-        userId: youtube.accounts[0]?.id,
-        username: youtube.accounts[0]?.username,
-        video: videos.youtube?.video || videos.full.video,
-        videoHSLUrl: videos.youtube?.videoHSLUrl || videos.full.videoHSLUrl,
-        videoUrl: videos.youtube?.videoUrl || videos.full.videoUrl,
+      platformCreatePost({
+        ...props,
+        platform: youtube,
       }),
     ]);
-    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing, @typescript-eslint/no-unnecessary-condition */
 
     console.log("All results:", allResults);
   }

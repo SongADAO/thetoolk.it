@@ -1,9 +1,11 @@
 import { createContext } from "react";
 
+import type { PostServiceContextType } from "@/services/post/PostServiceContext";
+
 interface PostVideo {
   video: File | null;
-  videoUrl: string;
-  videoHSLUrl: string;
+  videoUrl: string | null;
+  videoHSLUrl: string | null;
 }
 
 interface CreatePostProps {
@@ -19,6 +21,10 @@ interface CreatePostProps {
   title: string;
   videos: Record<string, PostVideo>;
   youtubePrivacy: string;
+}
+
+interface CreatePlatformPostProps extends CreatePostProps {
+  platform: PostServiceContextType;
 }
 
 interface CreatePostContextType {
@@ -84,4 +90,9 @@ const CreatePostContext = createContext<CreatePostContextType>({
   videoTrimStatus: "",
 });
 
-export { CreatePostContext, type CreatePostProps, type PostVideo };
+export {
+  type CreatePlatformPostProps,
+  CreatePostContext,
+  type CreatePostProps,
+  type PostVideo,
+};
