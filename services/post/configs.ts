@@ -1,6 +1,7 @@
 import { blueskyServiceConfig } from "@/services/post/bluesky/ServiceConfig";
 import { facebookServiceConfig } from "@/services/post/facebook/ServiceConfig";
 import { instagramServiceConfig } from "@/services/post/instagram/ServiceConfig";
+// import { neynarServiceConfig } from "@/services/post/neynar/ServiceConfig";
 import { threadsServiceConfig } from "@/services/post/threads/ServiceConfig";
 import { tiktokServiceConfig } from "@/services/post/tiktok/ServiceConfig";
 import { twitterServiceConfig } from "@/services/post/twitter/ServiceConfig";
