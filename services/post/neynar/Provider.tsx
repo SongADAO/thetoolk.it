@@ -243,8 +243,8 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
 
   const providerKey =
     mode === "server"
-      ? `hosted-${HOSTED_CREDENTIALS.clientId}-${user?.id}`
-      : `self-${credentials.clientId}`;
+      ? `server-${HOSTED_CREDENTIALS.clientId}-${user?.id}`
+      : `browser-${credentials.clientId}`;
 
   const providerValues = useMemo(
     () => ({
