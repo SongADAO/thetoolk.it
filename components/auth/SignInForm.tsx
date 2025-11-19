@@ -1,19 +1,27 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { FormEvent, use, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, Suspense, use, useEffect, useState } from "react";
 
 import { TOTPVerification } from "@/components/auth/TOTPVerification";
 import { AuthContext } from "@/contexts/AuthContext";
 
-function SignInForm() {
+function SignInFormContent() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [needsTOTP, setNeedsTOTP] = useState<boolean>(false);
-  const { signIn } = use(AuthContext);
+  const { signIn, signOut } = use(AuthContext);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam === "mfa_required") {
+      setError("Two-factor authentication is required to sign in.");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
@@ -53,9 +61,12 @@ function SignInForm() {
     router.push("/pro");
   }
 
-  function handleTOTPCancel() {
+  async function handleTOTPCancel() {
     setNeedsTOTP(false);
     setPassword("");
+    // Sign out the user since they cancelled MFA verification
+    await signOut("local");
+    setError("Two-factor authentication is required to sign in.");
   }
 
   if (needsTOTP) {
@@ -113,4 +124,13 @@ function SignInForm() {
     </form>
   );
 }
+
+function SignInForm() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInFormContent />
+    </Suspense>
+  );
+}
+
 export { SignInForm };
