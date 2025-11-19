@@ -162,6 +162,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     const { data, error } = await supabase.auth.mfa.enroll({
       factorType: "totp",
     });
+    console.log("enrollTOTP", { data, error });
 
     return { data, error };
   }
