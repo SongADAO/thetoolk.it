@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   },
   description:
     "You cancelled your subscription checkout before completing it. You have not been charged. Click the button below to return to TheToolk.it.",
+  robots: {
+    follow: false,
+    index: false,
+  },
   title: "Subscribe Cancelled - TheToolk.it",
 };
 

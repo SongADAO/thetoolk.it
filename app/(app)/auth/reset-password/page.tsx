@@ -8,6 +8,10 @@ export const metadata: Metadata = {
     canonical: "/auth/reset-password",
   },
   description: "Reset your password for TheToolk.it account.",
+  robots: {
+    follow: false,
+    index: false,
+  },
   title: "Reset Password - TheToolk.it",
 };
 export default function ResetPasswordPage() {
