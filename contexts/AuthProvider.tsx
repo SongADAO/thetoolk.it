@@ -185,16 +185,12 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   async function verifyTOTP(code: string) {
     const factors = await supabase.auth.mfa.listFactors();
+    console.log("verifyTOTP", { factors });
     if (factors.data?.totp && factors.data.totp.length > 0) {
       const factorId = factors.data.totp[0].id;
-      const challenge = await supabase.auth.mfa.challenge({ factorId });
 
-      if (challenge.error) {
-        return { data: null, error: challenge.error };
-      }
-
-      const { data, error } = await supabase.auth.mfa.verify({
-        challengeId: challenge.data.id,
+      // Use challengeAndVerify for atomic operation (same as enrollment)
+      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
         code,
         factorId,
       });
