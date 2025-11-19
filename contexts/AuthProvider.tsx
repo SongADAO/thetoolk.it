@@ -178,17 +178,27 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   async function verifyTOTP(code: string) {
     const factors = await supabase.auth.mfa.listFactors();
-    console.log("verifyTOTP", { factors });
+
     if (factors.data?.totp && factors.data.totp.length > 0) {
-      const factorId = factors.data.totp[0].id;
+      // Try each factor until one succeeds
+      for (const factor of factors.data.totp) {
+        // eslint-disable-next-line no-await-in-loop
+        const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+          code,
+          factorId: factor.id,
+        });
 
-      // Use challengeAndVerify for atomic operation (same as enrollment)
-      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
-        code,
-        factorId,
-      });
+        // If verification succeeds, return immediately
+        if (!error) {
+          return { data, error: null };
+        }
+      }
 
-      return { data, error };
+      // If all factors failed, return error
+      return {
+        data: null,
+        error: new Error("TOTP code did not match any enrolled factors"),
+      };
     }
 
     return { data: null, error: new Error("No TOTP factor found") };
