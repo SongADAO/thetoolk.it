@@ -28,7 +28,7 @@ export function UserStorageProvider({
   mode,
 }: {
   readonly children: ReactNode;
-  readonly mode: "hosted" | "self";
+  readonly mode: "hosted" | "browser";
 }) {
   const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
   const supabase = createClient();
@@ -226,7 +226,7 @@ export function UserStorageProvider({
 
         // Local
         // ---------------------------------------------------------------------
-        if (mode === "self") {
+        if (mode === "browser") {
           // Load from localStorage for each key
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const localData = new Map<string, any>();
@@ -324,7 +324,7 @@ export function UserStorageProvider({
 
         // Local
         // ---------------------------------------------------------------------
-        if (mode === "self") {
+        if (mode === "browser") {
           initializedKeys.forEach((key) => {
             const localValue = localStorage.getItem(key);
             if (localValue) {
@@ -398,7 +398,7 @@ export function UserStorageProvider({
 
           // Local
           // ---------------------------------------------------------------------
-          if (mode === "self") {
+          if (mode === "browser") {
             // Refresh from localStorage
             setStorage((prev) => {
               const next = new Map(prev);
@@ -480,7 +480,7 @@ export function UserStorageProvider({
 
       // Local
       // ---------------------------------------------------------------------
-      if (mode === "self") {
+      if (mode === "browser") {
         localStorage.setItem(key, JSON.stringify(newValue));
       }
       // ---------------------------------------------------------------------

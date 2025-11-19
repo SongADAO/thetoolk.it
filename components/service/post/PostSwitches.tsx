@@ -5,7 +5,7 @@ import { ServiceSwitchWithContext } from "@/components/service/ServiceSwitchWith
 import { POST_CONTEXTS } from "@/services/post/contexts";
 
 interface PostSwitchesProps {
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 function PostSwitches({ mode }: Readonly<PostSwitchesProps>) {

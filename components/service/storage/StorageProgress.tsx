@@ -4,7 +4,7 @@ import { ServiceProgressWithContext } from "@/components/service/ServiceProgress
 import { STORAGE_CONTEXTS } from "@/services/storage/contexts";
 
 interface StorageProgressProps {
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 function StorageProgress({ mode }: Readonly<StorageProgressProps>) {

@@ -89,7 +89,7 @@ function useOAuthFlow(
   authorization: OauthAuthorization,
   expiration: OauthExpiration,
   codeVerifier: string,
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
   authModule: {
     disconnectHosted: () => Promise<OauthAuthorization>;
     exchangeCodeForTokens: (
@@ -100,13 +100,13 @@ function useOAuthFlow(
       codeVerifier: string,
       credentials: OauthCredentials,
       requestUrl: string,
-      mode: "hosted" | "self",
+      mode: "hosted" | "browser",
     ) => Promise<OauthAuthorizationAndExpiration>;
     getAccounts: (
       credentials: OauthCredentials,
       token: string,
       requestUrl: string,
-      mode: "hosted" | "self",
+      mode: "hosted" | "browser",
     ) => Promise<PostServiceAccount[]>;
     getAuthorizationUrl: (
       credentials: OauthCredentials,
@@ -123,7 +123,7 @@ function useOAuthFlow(
       credentials: OauthCredentials,
       expiration: OauthExpiration,
       requestUrl: string,
-      mode: "hosted" | "self",
+      mode: "hosted" | "browser",
     ) => Promise<OauthAuthorizationAndExpiration>;
     refreshAccessTokenHosted: () => Promise<OauthAuthorization>;
   },
@@ -147,7 +147,7 @@ function useOAuthFlow(
         codeVerifier,
         credentials,
         window.location.origin,
-        "self",
+        "browser",
       );
       setAuthorization(newAuthorization.authorization);
       setExpiration(newAuthorization.expiration);
@@ -156,7 +156,7 @@ function useOAuthFlow(
         credentials,
         newAuthorization.authorization.accessToken,
         window.location.origin,
-        "self",
+        "browser",
       );
       setAccounts(newAccounts);
 
@@ -192,7 +192,7 @@ function useOAuthFlow(
       credentials,
       expiration,
       window.location.origin,
-      "self",
+      "browser",
     );
 
     setAuthorization(newAuthorization.authorization);

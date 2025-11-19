@@ -7,11 +7,11 @@ import { StorageProviders } from "@/services/storage/StorageProviders";
 
 export default function Authorize() {
   return (
-    <UserStorageProvider mode="self">
-      <StorageProviders mode="self">
-        <PostProviders mode="self">
+    <UserStorageProvider mode="browser">
+      <StorageProviders mode="browser">
+        <PostProviders mode="browser">
           <Suspense>
-            <PostRedirectHandlers mode="self" />
+            <PostRedirectHandlers mode="browser" />
           </Suspense>
         </PostProviders>
       </StorageProviders>

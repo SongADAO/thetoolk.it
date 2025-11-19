@@ -10,12 +10,12 @@ import { StorageSwitches } from "@/components/service/storage/StorageSwitches";
 import { CreatePostProvider } from "@/contexts/CreatePostProvider";
 
 interface PosterProps {
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 function Poster({ mode }: Readonly<PosterProps>) {
-  const showInstructions = mode === "self";
-  const showStorageSwitches = mode === "self";
+  const showInstructions = mode === "browser";
+  const showStorageSwitches = mode === "browser";
 
   return (
     <div>

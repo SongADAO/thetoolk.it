@@ -39,7 +39,7 @@ import {
 
 interface Props {
   children: ReactNode;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 export function NeynarProvider({ children, mode }: Readonly<Props>) {
@@ -121,7 +121,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     (mode === "hosted" && !hasHostedCredentials) ||
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     (mode === "hosted" && hasHostedCredentials && isCompleteOwnCredentials) ||
-    (mode === "self" && isCompleteOwnCredentials);
+    (mode === "browser" && isCompleteOwnCredentials);
 
   const isAuthorized = hasCompleteAuthorization(expiration);
 

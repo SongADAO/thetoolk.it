@@ -14,31 +14,31 @@ const POST_CONTEXTS = [
     context: BlueskyContext,
     hasPostFields: false,
     id: "bluesky",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
   {
     context: FacebookContext,
     hasPostFields: false,
     id: "facebook",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
   {
     context: InstagramContext,
     hasPostFields: false,
     id: "instagram",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
   {
     context: NeynarContext,
     hasPostFields: false,
     id: "neynar",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
   {
     context: ThreadsContext,
     hasPostFields: false,
     id: "threads",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
   {
     context: TiktokContext,
@@ -50,13 +50,13 @@ const POST_CONTEXTS = [
     context: TwitterContext,
     hasPostFields: false,
     id: "twitter",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
   {
     context: YoutubeContext,
     hasPostFields: true,
     id: "youtube",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
 ];
 

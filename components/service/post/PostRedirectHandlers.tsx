@@ -4,7 +4,7 @@ import { ServiceRedirectHandlerWithContext } from "@/components/service/ServiceR
 import { POST_CONTEXTS } from "@/services/post/contexts";
 
 interface PostRedirectHandlersProps {
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 function PostRedirectHandlers({ mode }: Readonly<PostRedirectHandlersProps>) {
