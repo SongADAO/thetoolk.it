@@ -65,6 +65,67 @@ function PostForm() {
     ),
   );
 
+  // Facebook Settings
+  // ---------------------------------------------------------------------------
+
+  // const facebookPrivacyOptions = [
+  //   { label: "Only Me", value: "SELF" },
+  //   { label: "All Friends", value: "ALL_FRIENDS" },
+  //   { label: "Public", value: "EVERYONE" },
+  // ];
+
+  // const facebookIsEnabled = postPlatforms.facebook.isEnabled;
+
+  // YouTube Settings
+  // ---------------------------------------------------------------------------
+
+  const youtubePrivacyOptions = [
+    { label: "Private", value: "private" },
+    { label: "Public", value: "public" },
+    { label: "Unlisted", value: "unlisted" },
+  ];
+
+  const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
+
+  // TikTok Settings
+  // ---------------------------------------------------------------------------
+
+  const allTiktokPrivacyOptions = [
+    { label: "Followers", value: "FOLLOWER_OF_CREATOR" },
+    {
+      label: "Friends (Followers you follow back)",
+      value: "MUTUAL_FOLLOW_FRIENDS",
+    },
+    { label: "Only You", value: "SELF_ONLY" },
+  ];
+
+  const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
+
+  const tiktokPrivacyOptions = allTiktokPrivacyOptions.filter((option) =>
+    postPlatforms.tiktok.accounts[0]?.permissions?.privacy_level_options?.includes(
+      option.value,
+    ),
+  );
+
+  const canTiktokComment =
+    postPlatforms.tiktok.accounts.length &&
+    !postPlatforms.tiktok.accounts[0]?.permissions?.comment_disabled;
+
+  const canTiktokDuet =
+    postPlatforms.tiktok.accounts.length &&
+    !postPlatforms.tiktok.accounts[0]?.permissions?.duet_disabled;
+
+  const canTiktokStitch =
+    postPlatforms.tiktok.accounts.length &&
+    !postPlatforms.tiktok.accounts[0]?.permissions?.stitch_disabled;
+
+  // const canTiktokComment = true;
+  // const canTiktokDuet = true;
+  // const canTiktokStitch = true;
+
+  // Posting Form
+  // ---------------------------------------------------------------------------
+
   const {
     canPostToAllServices,
     canStoreToAllServices,
@@ -166,64 +227,6 @@ function PostForm() {
   // Check if we should disable the form
   const isFormDisabled =
     isPending || !canPostToAllServices || !canStoreToAllServices;
-
-  // Facebook Settings
-  // ---------------------------------------------------------------------------
-
-  // const facebookPrivacyOptions = [
-  //   { label: "Only Me", value: "SELF" },
-  //   { label: "All Friends", value: "ALL_FRIENDS" },
-  //   { label: "Public", value: "EVERYONE" },
-  // ];
-
-  // const facebookIsEnabled = postPlatforms.facebook.isEnabled;
-
-  // YouTube Settings
-  // ---------------------------------------------------------------------------
-
-  const youtubePrivacyOptions = [
-    { label: "Private", value: "private" },
-    { label: "Public", value: "public" },
-    { label: "Unlisted", value: "unlisted" },
-  ];
-
-  const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
-
-  // TikTok Settings
-  // ---------------------------------------------------------------------------
-
-  const allTiktokPrivacyOptions = [
-    { label: "Followers", value: "FOLLOWER_OF_CREATOR" },
-    {
-      label: "Friends (Followers you follow back)",
-      value: "MUTUAL_FOLLOW_FRIENDS",
-    },
-    { label: "Only You", value: "SELF_ONLY" },
-  ];
-
-  const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
-
-  const tiktokPrivacyOptions = allTiktokPrivacyOptions.filter((option) =>
-    postPlatforms.tiktok.accounts[0]?.permissions?.privacy_level_options?.includes(
-      option.value,
-    ),
-  );
-
-  const canTiktokComment =
-    postPlatforms.tiktok.accounts.length &&
-    !postPlatforms.tiktok.accounts[0]?.permissions?.comment_disabled;
-
-  const canTiktokDuet =
-    postPlatforms.tiktok.accounts.length &&
-    !postPlatforms.tiktok.accounts[0]?.permissions?.duet_disabled;
-
-  const canTiktokStitch =
-    postPlatforms.tiktok.accounts.length &&
-    !postPlatforms.tiktok.accounts[0]?.permissions?.stitch_disabled;
-
-  // const canTiktokComment = true;
-  // const canTiktokDuet = true;
-  // const canTiktokStitch = true;
 
   return (
     <div>
