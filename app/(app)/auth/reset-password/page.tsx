@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   },
   title: "Reset Password - TheToolk.it",
 };
+
 export default function ResetPasswordPage() {
   return (
     <div className="flex items-center justify-center p-4 md:pt-20">
