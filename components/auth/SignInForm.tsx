@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, use, useState } from "react";
 
+import { TOTPVerification } from "@/components/auth/TOTPVerification";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function SignInForm() {
@@ -10,6 +11,7 @@ function SignInForm() {
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [needsTOTP, setNeedsTOTP] = useState<boolean>(false);
   const { signIn } = use(AuthContext);
   const router = useRouter();
 
@@ -22,7 +24,18 @@ function SignInForm() {
     const { data, error: signInError } = await signIn(email, password);
 
     if (signInError) {
-      setError(signInError.message);
+      // Check if the error is due to MFA being required
+      if (
+        signInError.message?.includes("MFA") ||
+        signInError.message?.includes("factor")
+      ) {
+        setNeedsTOTP(true);
+      } else {
+        setError(signInError.message);
+      }
+    } else if (data?.user?.factors && data.user.factors.length > 0) {
+      // User has MFA enabled
+      setNeedsTOTP(true);
     } else {
       setPassword("");
       setEmail("");
@@ -31,6 +44,27 @@ function SignInForm() {
     }
 
     setLoading(false);
+  }
+
+  function handleTOTPVerified() {
+    setPassword("");
+    setEmail("");
+    setNeedsTOTP(false);
+    router.push("/pro");
+  }
+
+  function handleTOTPCancel() {
+    setNeedsTOTP(false);
+    setPassword("");
+  }
+
+  if (needsTOTP) {
+    return (
+      <TOTPVerification
+        onCancel={handleTOTPCancel}
+        onVerified={handleTOTPVerified}
+      />
+    );
   }
 
   return (
