@@ -15,16 +15,8 @@ import {
 import { convertHLSVideo, convertVideo, trimPlatformVideos } from "@/lib/post";
 import type { HLSFiles } from "@/lib/video/hls";
 import { getVideoDuration } from "@/lib/video/video";
-import { BlueskyContext } from "@/services/post/bluesky/Context";
-import { FacebookContext } from "@/services/post/facebook/Context";
-import { InstagramContext } from "@/services/post/instagram/Context";
-import { NeynarContext } from "@/services/post/neynar/Context";
-import { ThreadsContext } from "@/services/post/threads/Context";
-import { TiktokContext } from "@/services/post/tiktok/Context";
-import { TwitterContext } from "@/services/post/twitter/Context";
-import { YoutubeContext } from "@/services/post/youtube/Context";
-import { AmazonS3Context } from "@/services/storage/amazons3/Context";
-import { PinataContext } from "@/services/storage/pinata/Context";
+import { POST_CONTEXTS } from "@/services/post/contexts";
+import { STORAGE_CONTEXTS } from "@/services/storage/contexts";
 
 interface Props {
   children: ReactNode;
@@ -51,61 +43,60 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
   const [hlsConversionError, setHLSConversionError] = useState("");
   const [isHLSConverting, setIsHLSConverting] = useState(false);
 
-  // Post services.
-  const bluesky = use(BlueskyContext);
-  const facebook = use(FacebookContext);
-  const instagram = use(InstagramContext);
-  const neynar = use(NeynarContext);
-  const threads = use(ThreadsContext);
-  const tiktok = use(TiktokContext);
-  const twitter = use(TwitterContext);
-  const youtube = use(YoutubeContext);
+  // Post services
+  // ---------------------------------------------------------------------------
+  const postPlatforms = Object.fromEntries(
+    POST_CONTEXTS.map(({ context, id }) => [id, use(context)]),
+  );
 
-  // Storage services.
-  const pinata = use(PinataContext);
-  const amazonS3 = use(AmazonS3Context);
+  const postPlatformsArray = Object.values(postPlatforms);
 
-  const postPlatforms = [
-    bluesky,
-    facebook,
-    instagram,
-    neynar,
-    threads,
-    tiktok,
-    twitter,
-    youtube,
-  ];
+  const isPosting = postPlatformsArray.some(
+    (platform) => platform.isProcessing,
+  );
 
-  const storagePlatforms = [pinata, amazonS3];
-
-  const isPosting = postPlatforms.some((platform) => platform.isProcessing);
-
-  const isStoring = storagePlatforms.some((platform) => platform.isProcessing);
-
-  const canPostToAllServices = postPlatforms.every(
+  const canPostToAllServices = postPlatformsArray.every(
     (platform) => !platform.isEnabled || platform.isUsable,
   );
 
-  const canStoreToAllServices = storagePlatforms.every(
+  function resetPostState(): void {
+    postPlatformsArray.forEach((platform) => platform.resetProcessState());
+  }
+
+  // Storage services
+  // ---------------------------------------------------------------------------
+  const storagePlatforms = Object.fromEntries(
+    STORAGE_CONTEXTS.map(({ context, id }) => [id, use(context)]),
+  );
+
+  const storagePlatformsArray = Object.values(storagePlatforms);
+
+  const isStoring = storagePlatformsArray.some(
+    (platform) => platform.isProcessing,
+  );
+
+  const canStoreToAllServices = storagePlatformsArray.every(
     (platform) => !platform.isEnabled || platform.isUsable,
   );
 
-  const hasStoragePlatform = storagePlatforms.some(
+  const hasStoragePlatform = storagePlatformsArray.some(
     (platform) => platform.isEnabled && platform.isUsable,
   );
 
-  const needsHls = neynar.isEnabled;
+  function resetStoreState(): void {
+    storagePlatformsArray.forEach((platform) => platform.resetProcessState());
+  }
+
+  // Service Requirements
+  // ---------------------------------------------------------------------------
+
+  const needsHls = postPlatforms.neynar.isEnabled;
 
   // const needsS3 = tiktok.isEnabled;
   const needsS3: true | false = false;
 
-  function resetPostState(): void {
-    postPlatforms.forEach((platform) => platform.resetProcessState());
-  }
-
-  function resetStoreState(): void {
-    storagePlatforms.forEach((platform) => platform.resetProcessState());
-  }
+  // Post Logic.
+  // ---------------------------------------------------------------------------
 
   async function getVideoInfo(video: File | null): Promise<void> {
     setVideoPreviewUrl("");
@@ -127,13 +118,13 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
       throw new Error("You must enable a storage provider.");
     }
 
-    if (needsS3 && !amazonS3.isUsable) {
+    if (needsS3 && !storagePlatforms.amazons3.isUsable) {
       throw new Error(
         "To use TikTok at least one non-ipfs storage provider must be enabled. (Amazon S3).",
       );
     }
 
-    if (needsHls && !pinata.isUsable) {
+    if (needsHls && !storagePlatforms.pinata.isUsable) {
       throw new Error(
         "To use Farcaster or Lens at least one enabled storage provider must support IPFS or Arweave. (Pinata).",
       );
@@ -169,7 +160,7 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     // -------------------------------------------------------------------------
     console.log("Converting HLS video before upload...");
     const videos = await trimPlatformVideos({
-      platforms: postPlatforms,
+      platforms: postPlatformsArray,
       setIsProcessing: setIsVideoTrimming,
       setProcessError: setVideoTrimError,
       setProcessProgress: setVideoTrimProgress,
@@ -192,13 +183,13 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     for (const [videoId, videoData] of Object.entries(videos)) {
       if (videoData.video) {
         // eslint-disable-next-line no-await-in-loop
-        const s3VideoResult = await amazonS3.storeVideo(
+        const s3VideoResult = await storagePlatforms.amazons3.storeVideo(
           videoData.video,
           videoId,
         );
 
         // eslint-disable-next-line no-await-in-loop
-        const pinataVideoResult = await pinata.storeVideo(
+        const pinataVideoResult = await storagePlatforms.pinata.storeVideo(
           videoData.video,
           videoId,
         );
@@ -232,7 +223,7 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     if (needsHls && hlsFiles) {
       // Upload HLS files to Pinata
       console.log("Uploading HLS files to Pinata...");
-      const videoHSLUrl = await pinata.storeHLSFolder(
+      const videoHSLUrl = await storagePlatforms.pinata.storeHLSFolder(
         hlsFiles,
         `hls-video-${Date.now()}`,
         "HLS",
@@ -324,7 +315,7 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     youtubePrivacy,
   }: Readonly<CreatePostProps>): Promise<void> {
     const allResults = await Promise.allSettled(
-      postPlatforms.map(async (platform) =>
+      postPlatformsArray.map(async (platform) =>
         platformCreatePost({
           facebookPrivacy,
           platform,
