@@ -15,7 +15,6 @@ import {
   UserStorageContext,
   type UserStorageContextType,
 } from "@/contexts/UserStorageContext";
-import { createClient } from "@/lib/supabase/client";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface StorageValue<T = any> {
@@ -31,7 +30,6 @@ export function UserStorageProvider({
   readonly mode: "server" | "browser";
 }) {
   const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
-  const supabase = createClient();
 
   // Store all values in a Map
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,30 +75,28 @@ export function UserStorageProvider({
         if (serviceIds.length === 0) return new Map();
 
         // Fetch all services data in one query
-        const { data: servicesData, error: servicesError } = await supabase
-          .from("services")
-          .select("*")
-          .eq("user_id", user.id)
-          .in("service_id", serviceIds);
+        const params = new URLSearchParams({
+          service_ids: serviceIds.join(","),
+        });
 
-        if (servicesError) {
-          console.error("Error loading services from Supabase:", servicesError);
+        const response = await fetch(
+          `/api/user/services/get/?${params.toString()}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "GET",
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            `Could not load service data: ${errorData.error_description ?? errorData.error}`,
+          );
         }
 
-        // Disabled: Service authorizations are server side only.
-        // Fetch all service authorizations in one query
-        // const { data: authData, error: authError } = await supabase
-        //   .from("service_authorizations")
-        //   .select("*")
-        //   .eq("user_id", user.id)
-        //   .in("service_id", serviceIds);
-
-        // if (authError) {
-        //   console.error(
-        //     "Error loading authorizations from Supabase:",
-        //     authError,
-        //   );
-        // }
+        const servicesData = await response.json();
 
         // Map the fetched data back to keys
         for (const [key, defaultValue] of keys.entries()) {
@@ -110,12 +106,6 @@ export function UserStorageProvider({
 
           if (serviceField === "service_authorization") {
             // Disabled: Service authorizations are server side only.
-            // const authRecord = authData?.find(
-            //   (record) => record.service_id === serviceId,
-            // );
-            // if (authRecord?.[serviceField] !== undefined) {
-            //   value = authRecord[serviceField];
-            // }
           } else {
             const serviceRecord = servicesData?.find(
               (record) => record.service_id === serviceId,
@@ -134,7 +124,7 @@ export function UserStorageProvider({
         return new Map();
       }
     },
-    [user?.id, supabase],
+    [user?.id],
   );
 
   // Save to Supabase
@@ -145,24 +135,25 @@ export function UserStorageProvider({
 
       const { serviceId, serviceField } = parseKey(key);
 
+      if (serviceField === "service_authorization") {
+        // Disabled: Service authorizations are server side only.
+        return false;
+      }
+
       try {
-        const table =
-          serviceField === "service_authorization"
-            ? "service_authorizations"
-            : "services";
-
-        const { error } = await supabase.from(table).upsert(
-          {
-            [serviceField]: value,
-            service_id: serviceId,
-            user_id: user.id,
+        const response = await fetch(`/api/user/services/update/`, {
+          body: JSON.stringify({ serviceField, serviceId, value }),
+          headers: {
+            "Content-Type": "application/json",
           },
-          { onConflict: "user_id,service_id" },
-        );
+          method: "POST",
+        });
 
-        if (error) {
-          console.error("Error saving to Supabase:", error);
-          return false;
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            `Could not save service data: ${errorData.error_description ?? errorData.error}`,
+          );
         }
 
         return true;
@@ -171,7 +162,7 @@ export function UserStorageProvider({
         return false;
       }
     },
-    [user?.id, supabase],
+    [user?.id],
   );
 
   // Notify all subscribers of a key
