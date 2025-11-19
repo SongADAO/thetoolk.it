@@ -263,6 +263,7 @@ function useOAuthFlow(
  * Hook for managing token refresh
  */
 function useTokenRefresh(
+  mode: "server" | "browser",
   expiration: OauthExpiration,
   loading: boolean,
   authLoading: boolean,
@@ -293,6 +294,12 @@ function useTokenRefresh(
   useEffect(() => {
     if (loading || authLoading) {
       // Wait for user data to load.
+      return;
+    }
+
+    if (mode === "server") {
+      // For server mode, tokens can be expected to have long lives.
+      // They will be refreshed when actions are taken.
       return;
     }
 

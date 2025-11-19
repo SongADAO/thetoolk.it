@@ -59,6 +59,7 @@ function createServiceProvider(
     );
 
     useTokenRefresh(
+      mode,
       storage.expiration,
       storage.loading,
       authLoading,
