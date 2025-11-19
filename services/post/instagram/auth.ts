@@ -242,7 +242,7 @@ async function exchangeCodeForTokens(
   const endpoint =
     mode === "server"
       ? "https://api.instagram.com/oauth/access_token"
-      : "/api/self/instagram/oauth/access_token";
+      : "/api/browser/instagram/oauth/access_token";
 
   const response = await fetch(endpoint, {
     body: new URLSearchParams({
