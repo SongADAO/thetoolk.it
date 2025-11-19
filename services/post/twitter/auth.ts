@@ -220,7 +220,7 @@ async function exchangeCodeForTokens(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
     throw new Error(
@@ -325,7 +325,7 @@ async function refreshAccessToken(
   expiration: OauthExpiration,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
@@ -367,7 +367,7 @@ async function refreshAccessToken(
 
 async function getUserInfo(
   token: string,
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
 ): Promise<PostServiceAccount> {
   console.log(`Checking Twitter user info`);
 
@@ -403,7 +403,7 @@ async function getAccounts(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
 ): Promise<PostServiceAccount[]> {
   const accounts = [];
 

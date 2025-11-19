@@ -31,7 +31,7 @@ import {
 
 interface Props {
   children: ReactNode;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 export function PinataProvider({ children, mode }: Readonly<Props>) {
@@ -98,12 +98,12 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
     (mode === "hosted" && !hasHostedCredentials) ||
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     (mode === "hosted" && hasHostedCredentials && isCompleteOwnCredentials) ||
-    (mode === "self" && isCompleteOwnCredentials);
+    (mode === "browser" && isCompleteOwnCredentials);
 
   const isAuthorized = isComplete;
 
   const isHostedEnabled = mode === "hosted";
-  const isSelfEnabled = mode === "self" && isClientEnabled;
+  const isSelfEnabled = mode === "browser" && isClientEnabled;
   const isEnabled = isHostedEnabled || isSelfEnabled;
 
   const isUsable = isEnabled && isComplete && isAuthorized;

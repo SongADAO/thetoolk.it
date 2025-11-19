@@ -7,7 +7,7 @@ import { PostProviders } from "@/services/post/PostProviders";
 import { StorageProviders } from "@/services/storage/StorageProviders";
 
 interface Props {
-  mode: "self" | "hosted";
+  mode: "browser" | "hosted";
   children: ReactNode;
 }
 

@@ -44,7 +44,7 @@ interface TwitterStatusUploadResponse {
 
 interface InitializeUploadVideoProps {
   accessToken: string;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
   videoSize: number;
   videoType: string;
 }
@@ -107,7 +107,7 @@ interface AppendUploadVideoProps {
   accessToken: string;
   chunk: Blob;
   mediaId: string;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
   segmentIndex: number;
 }
 async function appendUploadVideo({
@@ -166,7 +166,7 @@ async function appendUploadVideo({
 interface FinalizeUploadVideoProps {
   accessToken: string;
   mediaId: string;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 async function finalizeUploadVideo({
   accessToken,
@@ -230,7 +230,7 @@ async function finalizeUploadVideo({
 interface StatusUploadVideoProps {
   accessToken: string;
   mediaId: string;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 async function statusUploadVideo({
   accessToken,
@@ -298,7 +298,7 @@ async function statusUploadVideo({
 
 interface UploadVideoProps {
   accessToken: string;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
   setProcessProgress: (progress: number) => void;
   setProcessStatus: (status: string) => void;
   video: File;
@@ -419,7 +419,7 @@ async function uploadVideo({
 interface PublishPostProps {
   accessToken: string;
   mediaIds: string[];
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
   text: string;
 }
 async function publishPost({
@@ -512,7 +512,7 @@ async function createPost({
       // Upload video to Twitter
       const mediaId = await uploadVideo({
         accessToken,
-        mode: "self",
+        mode: "browser",
         setProcessProgress,
         setProcessStatus,
         video,
@@ -525,7 +525,7 @@ async function createPost({
       postId = await publishPost({
         accessToken,
         mediaIds: [mediaId],
-        mode: "self",
+        mode: "browser",
         text,
       });
     } else {

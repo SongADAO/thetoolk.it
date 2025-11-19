@@ -215,7 +215,7 @@ async function exchangeCodeForTokens(
   credentials: OauthCredentials,
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Processing OAuth callback...");
@@ -288,7 +288,7 @@ async function refreshAccessToken(
   expiration: OauthExpiration,
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   try {
     console.log("Refreshing access token...");
@@ -342,7 +342,7 @@ async function getAccounts(
   accessToken: string,
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "self",
+  mode: "hosted" | "browser",
 ): Promise<PostServiceAccount[]> {
   try {
     console.log("Getting user accounts...");

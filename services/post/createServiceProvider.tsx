@@ -18,7 +18,7 @@ import {
 
 interface CreateServiceProviderProps {
   children: ReactNode;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 /**
@@ -90,7 +90,9 @@ function createServiceProvider(
         isCompleteOwnCredentials,
     );
 
-    const isSelfComplete = Boolean(mode === "self" && isCompleteOwnCredentials);
+    const isSelfComplete = Boolean(
+      mode === "browser" && isCompleteOwnCredentials,
+    );
 
     const isComplete = Boolean(
       isHostedWithoutCredsComplete ||

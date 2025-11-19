@@ -11,7 +11,7 @@ const VIDEO_MAX_DURATION = 600;
 
 interface UploadVideoProps {
   accessToken: string;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
   options: {
     disclose?: boolean;
     discloseBrandOther?: boolean;
@@ -152,7 +152,7 @@ async function createPost({
     if (videoUrl) {
       postId = await uploadVideo({
         accessToken,
-        mode: "self",
+        mode: "browser",
         options,
         privacy,
         text,

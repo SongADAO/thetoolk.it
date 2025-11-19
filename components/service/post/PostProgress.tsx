@@ -4,7 +4,7 @@ import { ServiceProgressWithContext } from "@/components/service/ServiceProgress
 import { POST_CONTEXTS } from "@/services/post/contexts";
 
 interface PostProgressProps {
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
 }
 
 function PostProgress({ mode }: Readonly<PostProgressProps>) {

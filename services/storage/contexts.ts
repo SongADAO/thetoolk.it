@@ -7,9 +7,9 @@ const STORAGE_CONTEXTS = [
   {
     context: AmazonS3Context,
     id: "amazons3",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
-  { context: PinataContext, id: "pinata", modes: ["hosted", "self"] },
+  { context: PinataContext, id: "pinata", modes: ["hosted", "browser"] },
 ];
 
 export { STORAGE_CONTEXTS };

@@ -28,7 +28,7 @@ interface Props {
   isComplete: boolean;
   isEnabled: boolean;
   label: string;
-  mode: "hosted" | "self";
+  mode: "hosted" | "browser";
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
@@ -70,7 +70,7 @@ function ServiceSwitch({
     }
   }, [isEnabled, isComplete, credentialsId]);
 
-  const hasCredentials = Boolean(mode === "self" || hasHostedCredentials);
+  const hasCredentials = Boolean(mode === "browser" || hasHostedCredentials);
 
   const needsCredentials = Boolean(isEnabled && !isComplete);
 

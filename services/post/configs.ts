@@ -8,22 +8,22 @@ import { twitterServiceConfig } from "@/services/post/twitter/ServiceConfig";
 import { youtubeServiceConfig } from "@/services/post/youtube/ServiceConfig";
 
 const POST_CONFIGS = [
-  { config: blueskyServiceConfig, id: "bluesky", modes: ["hosted", "self"] },
+  { config: blueskyServiceConfig, id: "bluesky", modes: ["hosted", "browser"] },
   {
     config: facebookServiceConfig,
     id: "facebook",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
   {
     config: instagramServiceConfig,
     id: "instagram",
-    modes: ["hosted", "self"],
+    modes: ["hosted", "browser"],
   },
-  // { config: neynarServiceConfig, id: "neynar", modes: ["hosted", "self"] },
-  { config: threadsServiceConfig, id: "threads", modes: ["hosted", "self"] },
+  // { config: neynarServiceConfig, id: "neynar", modes: ["hosted", "browser"] },
+  { config: threadsServiceConfig, id: "threads", modes: ["hosted", "browser"] },
   { config: tiktokServiceConfig, id: "tiktok", modes: ["hosted"] },
-  { config: twitterServiceConfig, id: "twitter", modes: ["hosted", "self"] },
-  { config: youtubeServiceConfig, id: "youtube", modes: ["hosted", "self"] },
+  { config: twitterServiceConfig, id: "twitter", modes: ["hosted", "browser"] },
+  { config: youtubeServiceConfig, id: "youtube", modes: ["hosted", "browser"] },
 ];
 
 export { POST_CONFIGS };

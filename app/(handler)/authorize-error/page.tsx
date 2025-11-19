@@ -5,9 +5,9 @@ import { StorageProviders } from "@/services/storage/StorageProviders";
 
 export default function AuthorizeErrorPage() {
   return (
-    <UserStorageProvider mode="self">
-      <StorageProviders mode="self">
-        <PostProviders mode="self">
+    <UserStorageProvider mode="browser">
+      <StorageProviders mode="browser">
+        <PostProviders mode="browser">
           <AuthorizeError />
         </PostProviders>
       </StorageProviders>

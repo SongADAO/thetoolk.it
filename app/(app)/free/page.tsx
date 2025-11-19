@@ -17,8 +17,8 @@ export default function FreePage() {
   return (
     <div>
       <FreeBanner />
-      <PosterProviders mode="self">
-        <Poster mode="self" />
+      <PosterProviders mode="browser">
+        <Poster mode="browser" />
       </PosterProviders>
     </div>
   );
