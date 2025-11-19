@@ -10,7 +10,7 @@ async function getUser(supabase: SupabaseClient): Promise<User> {
     throw new Error("Unauthorized");
   }
 
-  // Then check MFA level
+  // Check MFA level
   const { data: mfaData } =
     await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
