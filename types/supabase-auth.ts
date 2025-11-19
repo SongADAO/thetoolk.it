@@ -31,13 +31,16 @@ interface AuthContextType {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any;
   }>;
-  enrollTOTP: (friendlyName?: string) => Promise<{
+  enrollTOTP: (friendlyName: string) => Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any;
   }>;
-  verifyTOTPEnrollment: (code: string) => Promise<{
+  verifyTOTPEnrollment: (
+    factorId: string,
+    code: string,
+  ) => Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
