@@ -43,7 +43,7 @@ async function uploadVideo({
   const endpoint =
     mode === "server"
       ? "https://open.tiktokapis.com/v2/post/publish/video/init/"
-      : "/api/self/tiktok/v2/post/publish/video/init/";
+      : "/api/browser/tiktok/v2/post/publish/video/init/";
 
   // Single API call with both video source and post data
   const response =

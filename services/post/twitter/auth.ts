@@ -244,7 +244,7 @@ async function exchangeCodeForTokens(
   const endpoint =
     mode === "server"
       ? "https://api.twitter.com/2/oauth2/token"
-      : "/api/self/twitter/2/oauth2/token";
+      : "/api/browser/twitter/2/oauth2/token";
 
   const response = await fetch(endpoint, {
     body: JSON.stringify({
@@ -334,7 +334,7 @@ async function refreshAccessToken(
   const endpoint =
     mode === "server"
       ? "https://api.twitter.com/2/oauth2/token"
-      : "/api/self/twitter/2/oauth2/token";
+      : "/api/browser/twitter/2/oauth2/token";
 
   const response = await fetch(endpoint, {
     body: JSON.stringify({
@@ -374,7 +374,7 @@ async function getUserInfo(
   const endpoint =
     mode === "server"
       ? "https://api.twitter.com/2/users/me"
-      : "/api/self/twitter/2/users/me";
+      : "/api/browser/twitter/2/users/me";
 
   const response = await fetch(endpoint, {
     headers: {

@@ -385,7 +385,7 @@ async function getUserInfo(
   const endpoint =
     mode === "server"
       ? "https://open.tiktokapis.com/v2/post/publish/creator_info/query/"
-      : "/api/self/tiktok/v2/post/publish/creator_info/query/";
+      : "/api/browser/tiktok/v2/post/publish/creator_info/query/";
 
   // Fetch creator info
   const creatorResponse = await fetch(endpoint, {

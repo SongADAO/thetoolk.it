@@ -63,7 +63,7 @@ async function initializeUploadVideo({
   const endpoint =
     mode === "server"
       ? "https://api.x.com/2/media/upload/initialize"
-      : "/api/self/twitter/2/media/upload/initialize";
+      : "/api/browser/twitter/2/media/upload/initialize";
 
   const response =
     accessToken === "server"
@@ -129,7 +129,7 @@ async function appendUploadVideo({
   const endpoint =
     mode === "server"
       ? `https://api.x.com/2/media/upload/${mediaId}/append`
-      : `/api/self/twitter/2/media/upload/${mediaId}/append`;
+      : `/api/browser/twitter/2/media/upload/${mediaId}/append`;
 
   const formData = new FormData();
   if (accessToken === "server") {
@@ -194,7 +194,7 @@ async function finalizeUploadVideo({
   const endpoint =
     mode === "server"
       ? `https://api.x.com/2/media/upload/${mediaId}/finalize`
-      : `/api/self/twitter/2/media/upload/${mediaId}/finalize`;
+      : `/api/browser/twitter/2/media/upload/${mediaId}/finalize`;
 
   const finalizeResponse =
     accessToken === "server"
@@ -266,7 +266,7 @@ async function statusUploadVideo({
   const endpoint =
     mode === "server"
       ? `https://api.x.com/2/media/upload?${params.toString()}`
-      : `/api/self/twitter/2/media/upload?${params.toString()}`;
+      : `/api/browser/twitter/2/media/upload?${params.toString()}`;
 
   const response =
     accessToken === "server"
@@ -437,7 +437,7 @@ async function publishPost({
   const endpoint =
     mode === "server"
       ? "https://api.x.com/2/posts"
-      : "/api/self/twitter/2/posts";
+      : "/api/browser/twitter/2/posts";
 
   const response =
     accessToken === "server"
