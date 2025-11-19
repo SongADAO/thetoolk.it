@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const publishId = await uploadVideo({
       ...data,
       accessToken: authorization.authorization.accessToken,
-      mode: "hosted",
+      mode: "server",
     });
 
     return Response.json({ data: { publish_id: publishId } });

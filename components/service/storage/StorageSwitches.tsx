@@ -5,7 +5,7 @@ import { ServiceSwitchWithContext } from "@/components/service/ServiceSwitchWith
 import { STORAGE_CONTEXTS } from "@/services/storage/contexts";
 
 interface StorageSwitchesProps {
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 
 function StorageSwitches({ mode }: Readonly<StorageSwitchesProps>) {

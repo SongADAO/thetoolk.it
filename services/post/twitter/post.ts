@@ -44,7 +44,7 @@ interface TwitterStatusUploadResponse {
 
 interface InitializeUploadVideoProps {
   accessToken: string;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   videoSize: number;
   videoType: string;
 }
@@ -61,12 +61,12 @@ async function initializeUploadVideo({
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://api.x.com/2/media/upload/initialize"
       : "/api/self/twitter/2/media/upload/initialize";
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/twitter/media/initialize`, {
           body: JSON.stringify({
             videoSize,
@@ -107,7 +107,7 @@ interface AppendUploadVideoProps {
   accessToken: string;
   chunk: Blob;
   mediaId: string;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   segmentIndex: number;
 }
 async function appendUploadVideo({
@@ -127,12 +127,12 @@ async function appendUploadVideo({
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? `https://api.x.com/2/media/upload/${mediaId}/append`
       : `/api/self/twitter/2/media/upload/${mediaId}/append`;
 
   const formData = new FormData();
-  if (accessToken === "hosted") {
+  if (accessToken === "server") {
     formData.append("chunk", chunk);
     formData.append("mediaId", mediaId);
     formData.append("segmentIndex", segmentIndex.toString());
@@ -142,7 +142,7 @@ async function appendUploadVideo({
   }
 
   const appendResponse =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/twitter/media/append`, {
           body: formData,
           method: "POST",
@@ -166,7 +166,7 @@ async function appendUploadVideo({
 interface FinalizeUploadVideoProps {
   accessToken: string;
   mediaId: string;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 async function finalizeUploadVideo({
   accessToken,
@@ -192,12 +192,12 @@ async function finalizeUploadVideo({
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? `https://api.x.com/2/media/upload/${mediaId}/finalize`
       : `/api/self/twitter/2/media/upload/${mediaId}/finalize`;
 
   const finalizeResponse =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/twitter/media/finalize`, {
           body: JSON.stringify({
             mediaId,
@@ -230,7 +230,7 @@ async function finalizeUploadVideo({
 interface StatusUploadVideoProps {
   accessToken: string;
   mediaId: string;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 async function statusUploadVideo({
   accessToken,
@@ -264,12 +264,12 @@ async function statusUploadVideo({
   });
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? `https://api.x.com/2/media/upload?${params.toString()}`
       : `/api/self/twitter/2/media/upload?${params.toString()}`;
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/twitter/media/status`, {
           body: JSON.stringify({
             mediaId,
@@ -298,7 +298,7 @@ async function statusUploadVideo({
 
 interface UploadVideoProps {
   accessToken: string;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   setProcessProgress: (progress: number) => void;
   setProcessStatus: (status: string) => void;
   video: File;
@@ -419,7 +419,7 @@ async function uploadVideo({
 interface PublishPostProps {
   accessToken: string;
   mediaIds: string[];
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   text: string;
 }
 async function publishPost({
@@ -435,12 +435,12 @@ async function publishPost({
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://api.x.com/2/posts"
       : "/api/self/twitter/2/posts";
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/twitter/posts`, {
           body: JSON.stringify({
             mediaIds,

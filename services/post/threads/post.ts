@@ -35,7 +35,7 @@ async function createMediaContainer({
   console.log("Creating Threads media container");
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/threads/media`, {
           body: JSON.stringify({
             text,
@@ -118,7 +118,7 @@ async function checkMediaStatus({
   });
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/threads/media_status`, {
           body: JSON.stringify({
             creationId,
@@ -166,7 +166,7 @@ async function publishMedia({
   }
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/threads/media_publish`, {
           body: JSON.stringify({
             creationId,

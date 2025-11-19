@@ -35,7 +35,7 @@ async function createMediaContainer({
   console.log("Creating Instagram media container");
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/instagram/media`, {
           body: JSON.stringify({
             text,
@@ -132,7 +132,7 @@ async function checkMediaStatus({
   });
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/instagram/media_status`, {
           body: JSON.stringify({
             creationId,
@@ -180,7 +180,7 @@ async function publishMedia({
   }
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/instagram/media_publish`, {
           body: JSON.stringify({
             creationId,

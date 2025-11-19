@@ -218,7 +218,7 @@ async function exchangeCodeForTokens(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
     throw new Error(
@@ -240,7 +240,7 @@ async function exchangeCodeForTokens(
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://api.instagram.com/oauth/access_token"
       : "/api/self/instagram/oauth/access_token";
 
@@ -347,7 +347,7 @@ async function refreshAccessToken(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
@@ -413,7 +413,7 @@ async function getAccounts(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<PostServiceAccount[]> {
   const accounts = [];
 

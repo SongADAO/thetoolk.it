@@ -89,7 +89,7 @@ function useOAuthFlow(
   authorization: OauthAuthorization,
   expiration: OauthExpiration,
   codeVerifier: string,
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
   authModule: {
     disconnectHosted: () => Promise<OauthAuthorization>;
     exchangeCodeForTokens: (
@@ -100,13 +100,13 @@ function useOAuthFlow(
       codeVerifier: string,
       credentials: OauthCredentials,
       requestUrl: string,
-      mode: "hosted" | "browser",
+      mode: "server" | "browser",
     ) => Promise<OauthAuthorizationAndExpiration>;
     getAccounts: (
       credentials: OauthCredentials,
       token: string,
       requestUrl: string,
-      mode: "hosted" | "browser",
+      mode: "server" | "browser",
     ) => Promise<PostServiceAccount[]>;
     getAuthorizationUrl: (
       credentials: OauthCredentials,
@@ -123,7 +123,7 @@ function useOAuthFlow(
       credentials: OauthCredentials,
       expiration: OauthExpiration,
       requestUrl: string,
-      mode: "hosted" | "browser",
+      mode: "server" | "browser",
     ) => Promise<OauthAuthorizationAndExpiration>;
     refreshAccessTokenHosted: () => Promise<OauthAuthorization>;
   },
@@ -177,7 +177,7 @@ function useOAuthFlow(
   }
 
   async function refreshTokens(): Promise<OauthAuthorization> {
-    if (mode === "hosted") {
+    if (mode === "server") {
       await authModule.refreshAccessTokenHosted();
 
       console.log("Access token refreshed successfully");
@@ -205,7 +205,7 @@ function useOAuthFlow(
 
   async function authorize(setCodeVerifier: (verifier: string) => void) {
     const authUrl =
-      mode === "hosted"
+      mode === "server"
         ? await authModule.getAuthorizationUrlHosted(credentials)
         : await authModule.getAuthorizationUrl(
             credentials,
@@ -220,7 +220,7 @@ function useOAuthFlow(
   async function disconnect() {
     setExpiration(defaultExpiration);
     setAccounts([]);
-    if (mode === "hosted") {
+    if (mode === "server") {
       await authModule.disconnectHosted();
     } else {
       setAuthorization(defaultAuthorization);

@@ -31,7 +31,7 @@ import {
 
 interface Props {
   children: ReactNode;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 
 export function PinataProvider({ children, mode }: Readonly<Props>) {
@@ -95,14 +95,14 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
 
   const isComplete =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (mode === "hosted" && !hasHostedCredentials) ||
+    (mode === "server" && !hasHostedCredentials) ||
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (mode === "hosted" && hasHostedCredentials && isCompleteOwnCredentials) ||
+    (mode === "server" && hasHostedCredentials && isCompleteOwnCredentials) ||
     (mode === "browser" && isCompleteOwnCredentials);
 
   const isAuthorized = isComplete;
 
-  const isHostedEnabled = mode === "hosted";
+  const isHostedEnabled = mode === "server";
   const isSelfEnabled = mode === "browser" && isClientEnabled;
   const isEnabled = isHostedEnabled || isSelfEnabled;
 
@@ -200,7 +200,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
       return "";
     }
 
-    if (mode === "hosted") {
+    if (mode === "server") {
       return await uploadVideoWithPresignedURL({
         file,
         serviceLabel,
@@ -231,7 +231,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
       return "";
     }
 
-    if (mode === "hosted") {
+    if (mode === "server") {
       return await uploadHLSFolderWithPresignedURL({
         folderName,
         hlsFiles,

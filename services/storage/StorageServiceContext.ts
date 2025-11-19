@@ -27,7 +27,7 @@ interface StorageServiceContextType {
   isUsable: boolean;
   label: string;
   loading: boolean;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   processError: string;
   processProgress: number;
   processStatus: string;
@@ -65,7 +65,7 @@ const storageServiceContextDefault = {
   isUsable: false,
   label: "",
   loading: true,
-  mode: "browser" as "hosted" | "browser",
+  mode: "browser" as "server" | "browser",
   processError: "",
   processProgress: 0,
   processStatus: "",

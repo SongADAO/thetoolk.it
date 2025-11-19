@@ -10,7 +10,7 @@ import { StorageSwitches } from "@/components/service/storage/StorageSwitches";
 import { CreatePostProvider } from "@/contexts/CreatePostProvider";
 
 interface PosterProps {
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 
 function Poster({ mode }: Readonly<PosterProps>) {

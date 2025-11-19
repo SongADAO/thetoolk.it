@@ -39,7 +39,7 @@ import {
 
 interface Props {
   children: ReactNode;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 
 export function NeynarProvider({ children, mode }: Readonly<Props>) {
@@ -118,9 +118,9 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
 
   const isComplete =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (mode === "hosted" && !hasHostedCredentials) ||
+    (mode === "server" && !hasHostedCredentials) ||
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (mode === "hosted" && hasHostedCredentials && isCompleteOwnCredentials) ||
+    (mode === "server" && hasHostedCredentials && isCompleteOwnCredentials) ||
     (mode === "browser" && isCompleteOwnCredentials);
 
   const isAuthorized = hasCompleteAuthorization(expiration);
@@ -181,7 +181,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       const accessToken = await getValidAccessToken();
 
       return await createPost({
-        accessToken: mode === "hosted" ? "hosted" : accessToken,
+        accessToken: mode === "server" ? "server" : accessToken,
         credentials,
         options,
         privacy,
@@ -239,10 +239,10 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   }
 
   const clientId =
-    mode === "hosted" ? HOSTED_CREDENTIALS.clientId : credentials.clientId;
+    mode === "server" ? HOSTED_CREDENTIALS.clientId : credentials.clientId;
 
   const providerKey =
-    mode === "hosted"
+    mode === "server"
       ? `hosted-${HOSTED_CREDENTIALS.clientId}-${user?.id}`
       : `self-${credentials.clientId}`;
 
@@ -345,7 +345,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       },
     ];
 
-    if (mode === "hosted") {
+    if (mode === "server") {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setAuthorizationHosted(newAuthorization, newExpiration, newAccounts);
     } else {
@@ -360,7 +360,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   function onSignout() {
     console.log("Neynar Signout Callback");
 
-    if (mode === "hosted") {
+    if (mode === "server") {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setAuthorizationHosted(null, defaultOauthExpiration, []);
     } else {

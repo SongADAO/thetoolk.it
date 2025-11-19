@@ -34,7 +34,7 @@ async function initiateResumableUpload({
   });
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/youtube/videos`, {
           body: JSON.stringify({
             metadata,
@@ -92,7 +92,7 @@ async function uploadFileChunk({
   uploadUrl,
   uploadedBytes,
 }: Readonly<UploadFileChunk>): Promise<Response> {
-  if (accessToken === "hosted") {
+  if (accessToken === "server") {
     const formData = new FormData();
     formData.append("chunk", chunk);
     formData.append("chunkEnd", chunkEnd.toString());

@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 export default function ProPage() {
   return (
     <div>
-      <PosterProviders mode="hosted">
-        <Poster mode="hosted" />
+      <PosterProviders mode="server">
+        <Poster mode="server" />
       </PosterProviders>
       <UpgradeModal />
     </div>

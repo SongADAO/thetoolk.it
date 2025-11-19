@@ -11,7 +11,7 @@ const VIDEO_MAX_DURATION = 600;
 
 interface UploadVideoProps {
   accessToken: string;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   options: {
     disclose?: boolean;
     discloseBrandOther?: boolean;
@@ -41,13 +41,13 @@ async function uploadVideo({
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://open.tiktokapis.com/v2/post/publish/video/init/"
       : "/api/self/tiktok/v2/post/publish/video/init/";
 
   // Single API call with both video source and post data
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/tiktok/video`, {
           body: JSON.stringify({
             options,

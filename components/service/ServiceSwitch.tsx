@@ -28,7 +28,7 @@ interface Props {
   isComplete: boolean;
   isEnabled: boolean;
   label: string;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   setIsEnabled: (isEnabled: boolean) => void;
 }
 
