@@ -220,7 +220,7 @@ async function exchangeCodeForTokens(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
     throw new Error(
@@ -242,7 +242,7 @@ async function exchangeCodeForTokens(
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://api.twitter.com/2/oauth2/token"
       : "/api/self/twitter/2/oauth2/token";
 
@@ -325,14 +325,14 @@ async function refreshAccessToken(
   expiration: OauthExpiration,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
   }
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://api.twitter.com/2/oauth2/token"
       : "/api/self/twitter/2/oauth2/token";
 
@@ -367,12 +367,12 @@ async function refreshAccessToken(
 
 async function getUserInfo(
   token: string,
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<PostServiceAccount> {
   console.log(`Checking Twitter user info`);
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://api.twitter.com/2/users/me"
       : "/api/self/twitter/2/users/me";
 
@@ -403,7 +403,7 @@ async function getAccounts(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<PostServiceAccount[]> {
   const accounts = [];
 

@@ -215,7 +215,7 @@ async function exchangeCodeForTokens(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!codeVerifier) {
     throw new Error(
@@ -317,7 +317,7 @@ async function refreshAccessToken(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<OauthAuthorizationAndExpiration> {
   if (!authorization.refreshToken) {
     throw new Error("No refresh token available");
@@ -356,7 +356,7 @@ async function refreshAccessToken(
 
 async function getUserInfo(
   token: string,
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<PostServiceAccount> {
   console.log(`Checking Tiktok user info`);
 
@@ -383,7 +383,7 @@ async function getUserInfo(
   console.log("Tiktok user info:", userInfo);
 
   const endpoint =
-    mode === "hosted"
+    mode === "server"
       ? "https://open.tiktokapis.com/v2/post/publish/creator_info/query/"
       : "/api/self/tiktok/v2/post/publish/creator_info/query/";
 
@@ -416,7 +416,7 @@ async function getAccounts(
   token: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestUrl: string,
-  mode: "hosted" | "browser",
+  mode: "server" | "browser",
 ): Promise<PostServiceAccount[]> {
   const accounts = [];
 

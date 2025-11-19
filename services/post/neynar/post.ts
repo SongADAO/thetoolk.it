@@ -28,7 +28,7 @@ async function createCast({
   }
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch("/api/hosted/neynar/cast", {
           body: JSON.stringify({
             text,
@@ -125,7 +125,7 @@ async function createPost({
       postId = await createCast({
         accessToken,
         clientSecret:
-          accessToken === "hosted" ? "hosted" : credentials.clientSecret,
+          accessToken === "server" ? "server" : credentials.clientSecret,
         text,
         videoHSLUrl,
       });

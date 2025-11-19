@@ -28,7 +28,7 @@ export function UserStorageProvider({
   mode,
 }: {
   readonly children: ReactNode;
-  readonly mode: "hosted" | "browser";
+  readonly mode: "server" | "browser";
 }) {
   const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
   const supabase = createClient();
@@ -207,7 +207,7 @@ export function UserStorageProvider({
 
         // Hosted
         // ---------------------------------------------------------------------
-        if (mode === "hosted" && isAuthenticated && user) {
+        if (mode === "server" && isAuthenticated && user) {
           // Batch fetch all data at once
           const batchData = await loadAllFromSupabase(keysToInit);
 
@@ -303,7 +303,7 @@ export function UserStorageProvider({
 
         // Hosted
         // ---------------------------------------------------------------------
-        if (mode === "hosted" && isAuthenticated && user) {
+        if (mode === "server" && isAuthenticated && user) {
           const batchData = await loadAllFromSupabase(keysToReload);
           setStorage((prev) => {
             const next = new Map(prev);
@@ -370,7 +370,7 @@ export function UserStorageProvider({
         setTimeout(async () => {
           // Hosted
           // ---------------------------------------------------------------------
-          if (mode === "hosted" && isAuthenticated && user) {
+          if (mode === "server" && isAuthenticated && user) {
             // Refresh from Supabase
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const keysToRefresh = new Map<string, any>();
@@ -473,7 +473,7 @@ export function UserStorageProvider({
 
       // Hosted
       // ---------------------------------------------------------------------
-      if (mode === "hosted" && isAuthenticated && user) {
+      if (mode === "server" && isAuthenticated && user) {
         await saveToSupabase(key, newValue);
       }
       // ---------------------------------------------------------------------

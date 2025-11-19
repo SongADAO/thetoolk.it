@@ -85,7 +85,7 @@ async function uploadVideoBlob({
   }
 
   try {
-    if (accessToken === "hosted") {
+    if (accessToken === "server") {
       // const formData = new FormData();
       // formData.append("video", video);
       // formData.append("videoType", videoType.toString());
@@ -158,7 +158,7 @@ async function createRecord({
   }
 
   try {
-    if (accessToken === "hosted") {
+    if (accessToken === "server") {
       const response = await fetch(`/api/hosted/bluesky/post`, {
         body: JSON.stringify({
           blobRef,

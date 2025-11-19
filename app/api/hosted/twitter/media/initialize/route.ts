@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const mediaId = await initializeUploadVideo({
       ...(await request.json()),
       accessToken: authorization.authorization.accessToken,
-      mode: "hosted",
+      mode: "server",
     });
 
     return Response.json({ data: { id: mediaId } });

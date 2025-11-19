@@ -41,13 +41,13 @@ interface ServiceConfig {
       codeVerifier: string,
       credentials: OauthCredentials,
       requestUrl: string,
-      mode: "hosted" | "browser",
+      mode: "server" | "browser",
     ) => Promise<OauthAuthorizationAndExpiration>;
     getAccounts: (
       credentials: OauthCredentials,
       token: string,
       requestUrl: string,
-      mode: "hosted" | "browser",
+      mode: "server" | "browser",
     ) => Promise<PostServiceAccount[]>;
     getAuthorizationExpiresAt: (expiration: OauthExpiration) => string;
     getAuthorizationUrl: (
@@ -74,7 +74,7 @@ interface ServiceConfig {
       credentials: OauthCredentials,
       expiration: OauthExpiration,
       requestUrl: string,
-      mode: "hosted" | "browser",
+      mode: "server" | "browser",
     ) => Promise<OauthAuthorizationAndExpiration>;
     refreshAccessTokenHosted: () => Promise<OauthAuthorization>;
     shouldHandleAuthCallback: (searchParams: URLSearchParams) => boolean;

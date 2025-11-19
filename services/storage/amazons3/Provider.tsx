@@ -29,7 +29,7 @@ import {
 
 interface Props {
   children: ReactNode;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -94,15 +94,15 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
 
   const isComplete =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (mode === "hosted" && !hasHostedCredentials) ||
+    (mode === "server" && !hasHostedCredentials) ||
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (mode === "hosted" && hasHostedCredentials && isCompleteOwnCredentials) ||
+    (mode === "server" && hasHostedCredentials && isCompleteOwnCredentials) ||
     (mode === "browser" && isCompleteOwnCredentials);
 
   const isAuthorized = isComplete;
 
   // TODO: Create S3 hosted version.
-  // const isHostedEnabled = mode === "hosted";
+  // const isHostedEnabled = mode === "server";
   const isHostedEnabled = false;
   const isSelfEnabled = mode === "browser" && isClientEnabled;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

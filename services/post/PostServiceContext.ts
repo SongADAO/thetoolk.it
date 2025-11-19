@@ -36,7 +36,7 @@ interface PostServiceContextType {
   isUsable: boolean;
   label: string;
   loading: boolean;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
   post: (props: PostServicePostProps) => Promise<string | null>;
   processError: string;
   processProgress: number;
@@ -74,7 +74,7 @@ const postServiceContextDefault = {
   isUsable: false,
   label: "",
   loading: true,
-  mode: "browser" as "hosted" | "browser",
+  mode: "browser" as "server" | "browser",
   post: async (props: PostServicePostProps) => Promise.resolve(null),
   processError: "",
   processProgress: 0,

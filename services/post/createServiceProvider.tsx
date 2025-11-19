@@ -18,7 +18,7 @@ import {
 
 interface CreateServiceProviderProps {
   children: ReactNode;
-  mode: "hosted" | "browser";
+  mode: "server" | "browser";
 }
 
 /**
@@ -81,11 +81,11 @@ function createServiceProvider(
     );
 
     const isHostedWithoutCredsComplete = Boolean(
-      mode === "hosted" && !config.hasHostedCredentials,
+      mode === "server" && !config.hasHostedCredentials,
     );
 
     const isHostedWithCredsComplete = Boolean(
-      mode === "hosted" &&
+      mode === "server" &&
         config.hasHostedCredentials &&
         isCompleteOwnCredentials,
     );
@@ -144,7 +144,7 @@ function createServiceProvider(
         const accessToken = await getValidAccessToken();
 
         return await config.postModule.createPost({
-          accessToken: mode === "hosted" ? "hosted" : accessToken,
+          accessToken: mode === "server" ? "server" : accessToken,
           credentials: storage.credentials,
           options,
           privacy,

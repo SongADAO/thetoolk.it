@@ -65,7 +65,7 @@ async function exchangeCodeForTokens(
     codeVerifier,
     serviceConfig.authModule.HOSTED_CREDENTIALS,
     "",
-    "hosted",
+    "server",
   );
 }
 
@@ -81,7 +81,7 @@ async function getAccounts(
     serviceConfig.authModule.HOSTED_CREDENTIALS,
     authorization.accessToken,
     "",
-    "hosted",
+    "server",
   );
 }
 
@@ -99,7 +99,7 @@ async function refreshAccessToken(
     serviceConfig.authModule.HOSTED_CREDENTIALS,
     expiration,
     "",
-    "hosted",
+    "server",
   );
 }
 

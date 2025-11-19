@@ -36,7 +36,7 @@ async function uploadVideo({
   }
 
   const response =
-    accessToken === "hosted"
+    accessToken === "server"
       ? await fetch(`/api/hosted/facebook/videos`, {
           body: JSON.stringify({
             privacy,
