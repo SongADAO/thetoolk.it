@@ -38,7 +38,9 @@ function TOTPSetup() {
     setLoading(true);
     setError("");
 
-    const { data, error: enrollError } = await enrollTOTP();
+    const { data, error: enrollError } = await enrollTOTP(
+      `TOTP-${crypto.randomUUID()}`,
+    );
 
     if (enrollError) {
       setError(enrollError.message);
@@ -72,6 +74,7 @@ function TOTPSetup() {
     setError("");
 
     const { error: verifyError } = await verifyTOTPEnrollment(
+      enrollmentState.factorId,
       enrollmentState.verifyCode,
     );
 
@@ -250,7 +253,7 @@ function TOTPSetup() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">
-                      {factor.friendly_name || "TOTP Factor"}
+                      {factor.friendly_name}
                     </span>
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-medium ${

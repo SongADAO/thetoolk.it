@@ -158,29 +158,22 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     return { error };
   }
 
-  async function enrollTOTP(friendlyName?: string) {
+  async function enrollTOTP(friendlyName: string) {
     const { data, error } = await supabase.auth.mfa.enroll({
       factorType: "totp",
-      friendlyName: friendlyName || `TOTP-${crypto.randomUUID()}`,
+      friendlyName,
     });
-    console.log("enrollTOTP", { data, error });
 
     return { data, error };
   }
 
-  async function verifyTOTPEnrollment(code: string) {
-    const factors = await supabase.auth.mfa.listFactors();
-    if (factors.data?.all && factors.data.all.length > 0) {
-      const factorId = factors.data.all[0].id;
-      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
-        code,
-        factorId,
-      });
+  async function verifyTOTPEnrollment(factorId: string, code: string) {
+    const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+      code,
+      factorId,
+    });
 
-      return { data, error };
-    }
-
-    return { data: null, error: new Error("No TOTP factor found") };
+    return { data, error };
   }
 
   async function verifyTOTP(code: string) {
