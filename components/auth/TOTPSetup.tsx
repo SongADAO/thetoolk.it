@@ -29,6 +29,7 @@ function TOTPSetup() {
 
   async function loadFactors() {
     const factorsData = await supabase.auth.mfa.listFactors();
+    console.log("loadFactors", { factorsData });
     if (factorsData.data?.totp) {
       setFactors(factorsData.data.totp);
     }
@@ -47,12 +48,13 @@ function TOTPSetup() {
     }
 
     if (data) {
+      console.log("TOTP Enrollment Data", data);
       try {
-        const qrCodeUrl = await QRCode.toDataURL(data.uri);
+        const qrCodeUrl = await QRCode.toDataURL(data.totp.uri);
         setEnrollmentState({
           factorId: data.id,
           qrCode: qrCodeUrl,
-          secret: data.secret,
+          secret: data.totp.secret,
           verifyCode: "",
         });
       } catch (err) {
