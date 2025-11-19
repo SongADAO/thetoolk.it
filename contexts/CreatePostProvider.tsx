@@ -149,7 +149,6 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
       setProcessStatus: setVideoConversionStatus,
       video,
     });
-    // const fullConvertedVideo = video;
     // -------------------------------------------------------------------------
 
     // Make HLS Streamable video

@@ -149,20 +149,6 @@ function PostForm() {
 
       const videos = await preparePostVideo(selectedFile);
 
-      // const videos = selectedFile
-      //   ? await preparePostVideo(selectedFile)
-      //   : {
-      //       full: {
-      //         video: null,
-      //         videoHSLUrl: "",
-      //         videoUrl: "",
-      //       },
-      //     };
-
-      // const video = selectedFile;
-      // const videoUrl = "https://thetoolkit-test.s3.us-east-1.amazonaws.com/example2.mp4";
-      // const videoHSLUrl = "https://songaday.mypinata.cloud/ipfs/bafybeiaf2wbvugi6ijcrphiwjosu4oyoeqsyakhix2ubyxgolzjtysfcua/manifest.m3u8";
-
       await createPost({
         facebookPrivacy: newFormState.facebookPrivacy,
         text: newFormState.text,
