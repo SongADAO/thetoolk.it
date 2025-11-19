@@ -8,6 +8,10 @@ export const metadata: Metadata = {
     canonical: "/auth/confirm-email",
   },
   description: "Confirm your email address.",
+  robots: {
+    follow: false,
+    index: false,
+  },
   title: "Confirm Email - TheToolk.it",
 };
 

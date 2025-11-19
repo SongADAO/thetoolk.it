@@ -10,6 +10,10 @@ export const metadata: Metadata = {
     canonical: "/authorize-error",
   },
   description: "There was an error during authorization TheToolk.it",
+  robots: {
+    follow: false,
+    index: false,
+  },
   title: "Authorization Error - TheToolk.it",
 };
 

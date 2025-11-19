@@ -10,6 +10,10 @@ export const metadata: Metadata = {
     canonical: "/authorize-success",
   },
   description: "You have authorized TheToolk.it",
+  robots: {
+    follow: false,
+    index: false,
+  },
   title: "Authorization Success - TheToolk.it",
 };
 
