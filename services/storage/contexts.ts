@@ -6,10 +6,10 @@ import { PinataContext } from "@/services/storage/pinata/Context";
 const STORAGE_CONTEXTS = [
   {
     context: AmazonS3Context,
-    id: "AmazonS3Context",
+    id: "amazons3",
     modes: ["hosted", "self"],
   },
-  { context: PinataContext, id: "PinataContext", modes: ["hosted", "self"] },
+  { context: PinataContext, id: "pinata", modes: ["hosted", "self"] },
 ];
 
 export { STORAGE_CONTEXTS };
