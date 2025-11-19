@@ -31,6 +31,30 @@ interface AuthContextType {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any;
   }>;
+  enrollTOTP: () => Promise<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error: any;
+  }>;
+  verifyTOTPEnrollment: (code: string) => Promise<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error: any;
+  }>;
+  verifyTOTP: (code: string) => Promise<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error: any;
+  }>;
+  unenrollTOTP: (factorId: string) => Promise<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error: any;
+  }>;
   subscription?: Subscription;
   subscriptionError?: Error;
   subscriptionIsLoading: boolean;

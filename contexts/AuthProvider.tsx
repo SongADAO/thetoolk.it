@@ -158,8 +158,60 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     return { error };
   }
 
+  async function enrollTOTP() {
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: "totp",
+    });
+
+    return { data, error };
+  }
+
+  async function verifyTOTPEnrollment(code: string) {
+    const factors = await supabase.auth.mfa.listFactors();
+    if (factors.data?.totp && factors.data.totp.length > 0) {
+      const factorId = factors.data.totp[0].id;
+      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+        code,
+        factorId,
+      });
+
+      return { data, error };
+    }
+
+    return { data: null, error: new Error("No TOTP factor found") };
+  }
+
+  async function verifyTOTP(code: string) {
+    const factors = await supabase.auth.mfa.listFactors();
+    if (factors.data?.totp && factors.data.totp.length > 0) {
+      const factorId = factors.data.totp[0].id;
+      const challenge = await supabase.auth.mfa.challenge({ factorId });
+
+      if (challenge.error) {
+        return { data: null, error: challenge.error };
+      }
+
+      const { data, error } = await supabase.auth.mfa.verify({
+        challengeId: challenge.data.id,
+        code,
+        factorId,
+      });
+
+      return { data, error };
+    }
+
+    return { data: null, error: new Error("No TOTP factor found") };
+  }
+
+  async function unenrollTOTP(factorId: string) {
+    const { data, error } = await supabase.auth.mfa.unenroll({ factorId });
+
+    return { data, error };
+  }
+
   const providerValues: AuthContextType = useMemo(
     () => ({
+      enrollTOTP,
       isAuthenticated,
       loading,
       signIn,
@@ -169,7 +221,10 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       subscriptionError,
       subscriptionIsLoading,
       subscriptionMutate,
+      unenrollTOTP,
       user,
+      verifyTOTP,
+      verifyTOTPEnrollment,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
