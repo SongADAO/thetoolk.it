@@ -146,6 +146,7 @@ function createServiceProvider(
       triggerLogClientEvent({
         eventData: {},
         eventType: "post",
+        mode,
         serviceId: config.id,
       });
 

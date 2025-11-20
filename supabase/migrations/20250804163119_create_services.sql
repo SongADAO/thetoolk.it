@@ -105,6 +105,7 @@ ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 -- Create logs table
 CREATE TABLE client_event_logs (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  mode VARCHAR NOT NULL,
   service_id VARCHAR NOT NULL,
   event_type VARCHAR NOT NULL,
   event_data JSONB,

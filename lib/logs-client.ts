@@ -1,12 +1,14 @@
 interface TriggerLogClientEventProps {
   eventData: object;
   eventType: string;
+  mode: string;
   serviceId: string;
 }
 
 async function triggerLogClientEvent({
   eventData,
   eventType,
+  mode,
   serviceId,
 }: TriggerLogClientEventProps): Promise<void> {
   try {
@@ -14,6 +16,7 @@ async function triggerLogClientEvent({
       body: JSON.stringify({
         eventData,
         eventType,
+        mode,
         serviceId,
       }),
       headers: {

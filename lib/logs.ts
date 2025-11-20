@@ -39,6 +39,7 @@ interface LogClientEventProps {
   eventData: object;
   eventType: string;
   ipAddress: string;
+  mode: string;
   serviceId: string;
   supabaseAdmin: SupabaseClient;
 }
@@ -47,6 +48,7 @@ async function logClientEvent({
   eventData,
   eventType,
   ipAddress,
+  mode,
   serviceId,
   supabaseAdmin,
 }: LogClientEventProps): Promise<void> {
@@ -58,6 +60,7 @@ async function logClientEvent({
           event_data: eventData,
           event_type: eventType,
           ip_address: ipAddress,
+          mode,
           service_id: serviceId,
         },
         {},
