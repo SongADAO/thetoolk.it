@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabaseAdmin = createAdminClient();
 
-    const { serviceId, eventData, eventType } = await request.json();
+    const { eventData, eventType, mode, serviceId } = await request.json();
 
     // Extract IP address from request headers
     const ipAddress = getIpAddressFromRequest(request);
@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
       eventData,
       eventType,
       ipAddress,
+      mode,
       serviceId,
       supabaseAdmin,
     });
