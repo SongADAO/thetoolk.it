@@ -1,24 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { logServerPost } from "@/lib/logs";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { publishPost } from "@/services/post/twitter/post";
 
 export async function POST(request: NextRequest) {
+  const serviceId = "twitter";
+
   try {
     const serverAuth = await initServerAuth();
     await gateHasActiveSubscription({ ...serverAuth });
 
     const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
-      serviceId: "twitter",
+      serviceId,
     });
 
+    const { mediaIds, text } = await request.json();
+
     const postId = await publishPost({
-      ...(await request.json()),
       accessToken: authorization.authorization.accessToken,
+      mediaIds,
       mode: "server",
+      text,
+    });
+
+    await logServerPost({
+      ...serverAuth,
+      postData: {
+        mediaIds,
+        postId,
+        text,
+      },
+      serviceId,
+      statusId: 2,
     });
 
     return NextResponse.json({ data: { id: postId } });

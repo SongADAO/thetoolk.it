@@ -6,13 +6,15 @@ import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { appendUploadVideo } from "@/services/post/twitter/post";
 
 export async function POST(request: NextRequest) {
+  const serviceId = "twitter";
+
   try {
     const serverAuth = await initServerAuth();
     await gateHasActiveSubscription({ ...serverAuth });
 
     const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
-      serviceId: "twitter",
+      serviceId,
     });
 
     // Parse FormData instead of JSON
@@ -24,16 +26,12 @@ export async function POST(request: NextRequest) {
     const mediaId = String(formData.get("mediaId"));
     const segmentIndex = parseInt(String(formData.get("segmentIndex")), 10);
 
-    const data = {
+    const response = await appendUploadVideo({
+      accessToken: authorization.authorization.accessToken,
       chunk,
       mediaId,
-      segmentIndex,
-    };
-
-    const response = await appendUploadVideo({
-      ...data,
-      accessToken: authorization.authorization.accessToken,
       mode: "server",
+      segmentIndex,
     });
 
     return new Response(response.body, {

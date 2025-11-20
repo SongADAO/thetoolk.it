@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     await logServerPost({
       ...serverAuth,
       postData: {
+        castHash,
         text,
         videoHSLUrl,
       },
