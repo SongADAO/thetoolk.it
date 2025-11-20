@@ -182,6 +182,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     triggerLogClientEvent({
       eventData: {},
       eventType: "post",
+      mode,
       serviceId: id,
     });
 
