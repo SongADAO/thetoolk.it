@@ -45,3 +45,6 @@ certificates
 .eslintcache
 /demo
 /public/tiktok*
+
+# Sentry Config File
+.env.sentry-build-plugin
