@@ -6,18 +6,22 @@ import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { checkMediaStatus } from "@/services/post/instagram/post";
 
 export async function POST(request: NextRequest) {
+  const serviceId = "instagram";
+
   try {
     const serverAuth = await initServerAuth();
     await gateHasActiveSubscription({ ...serverAuth });
 
     const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
-      serviceId: "instagram",
+      serviceId,
     });
 
+    const { creationId } = await request.json();
+
     const statusCode = await checkMediaStatus({
-      ...(await request.json()),
       accessToken: authorization.authorization.accessToken,
+      creationId,
     });
 
     return NextResponse.json({ status_code: statusCode });

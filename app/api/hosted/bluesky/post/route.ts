@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
       postData: {
         blobRef,
         postUri: result.uri,
-        // text,
-        // title,
+        text,
+        title,
       },
       serviceId,
       statusId: 2,

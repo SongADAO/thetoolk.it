@@ -1,23 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { logServerPost } from "@/lib/logs";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
 import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { publishMedia } from "@/services/post/instagram/post";
 
 export async function POST(request: NextRequest) {
+  const serviceId = "instagram";
+
   try {
     const serverAuth = await initServerAuth();
     await gateHasActiveSubscription({ ...serverAuth });
 
     const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
-      serviceId: "instagram",
+      serviceId,
     });
 
+    const { creationId, userId } = await request.json();
+
     const postId = await publishMedia({
-      ...(await request.json()),
       accessToken: authorization.authorization.accessToken,
+      creationId,
+      userId,
+    });
+
+    await logServerPost({
+      ...serverAuth,
+      postData: {
+        creationId,
+      },
+      serviceId,
+      statusId: 2,
     });
 
     return NextResponse.json({ id: postId });
