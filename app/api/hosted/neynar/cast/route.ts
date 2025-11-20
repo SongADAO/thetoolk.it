@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
-      serviceId: "neynar",
+      serviceId,
     });
 
     const { text, videoHSLUrl } = await request.json();
