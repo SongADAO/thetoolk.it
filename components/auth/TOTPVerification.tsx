@@ -33,7 +33,7 @@ function TOTPVerification({
     }
 
     setLoading(false);
-    onVerified?.();
+    onVerified();
   }
 
   return (
@@ -69,15 +69,13 @@ function TOTPVerification({
         >
           {loading ? "Verifying..." : "Verify"}
         </button>
-        {onCancel ? (
-          <button
-            className="cursor-pointer rounded border border-gray-300 px-4 py-2 hover:bg-gray-100"
-            onClick={onCancel}
-            type="button"
-          >
-            Cancel
-          </button>
-        ) : null}
+        <button
+          className="cursor-pointer rounded border border-gray-300 px-4 py-2 hover:bg-gray-100"
+          onClick={onCancel}
+          type="button"
+        >
+          Cancel
+        </button>
       </div>
     </form>
   );
