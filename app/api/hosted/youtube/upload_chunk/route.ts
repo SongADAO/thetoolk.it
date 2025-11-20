@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return new Response(response.body, {
+    return new NextResponse(response.body, {
       status: response.status,
       statusText: response.statusText,
     });

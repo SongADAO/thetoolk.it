@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       segmentIndex,
     });
 
-    return new Response(response.body, {
+    return new NextResponse(response.body, {
       status: response.status,
       statusText: response.statusText,
     });

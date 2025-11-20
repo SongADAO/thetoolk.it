@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       statusId: 1,
     });
 
-    return new Response(null, {
+    return new NextResponse(null, {
       headers: {
         Location: uploadUrl,
       },
