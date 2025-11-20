@@ -85,3 +85,33 @@ ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- CREATE POLICY "Users can update own subscriptions" ON subscriptions
 --   FOR UPDATE USING (auth.uid() = user_id);
+
+-- Create posts table
+CREATE TABLE posts (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  service_id VARCHAR NOT NULL,
+  status_id UNSIGNED INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create index for faster lookups
+CREATE INDEX idx_posts_user_id ON posts(user_id);
+
+-- Enable RLS
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+
+-- Create logs table
+CREATE TABLE client_event_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  service_id VARCHAR NOT NULL,
+  event_type VARCHAR NOT NULL,
+  event_data JSONB,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE client_event_logs ENABLE ROW LEVEL SECURITY;
+
