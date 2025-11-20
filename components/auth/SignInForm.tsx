@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, use, useEffect, useState } from "react";
+import { FormEvent, use, useEffect, useState } from "react";
 
 import { TOTPVerification } from "@/components/auth/TOTPVerification";
 import { AuthContext } from "@/contexts/AuthContext";
 
-function SignInFormContent() {
+function SignInForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -21,6 +21,7 @@ function SignInFormContent() {
     if (errorParam === "mfa_required") {
       setError("Two-factor authentication is required to sign in.");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
@@ -122,14 +123,6 @@ function SignInFormContent() {
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </form>
-  );
-}
-
-function SignInForm() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SignInFormContent />
-    </Suspense>
   );
 }
 

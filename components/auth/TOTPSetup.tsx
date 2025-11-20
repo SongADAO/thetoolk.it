@@ -125,6 +125,7 @@ function TOTPSetup() {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     loadFactors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase.auth]);
 
   if (showTotpSetup) {
