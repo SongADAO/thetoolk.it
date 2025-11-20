@@ -53,6 +53,16 @@ export async function POST(request: NextRequest) {
       agent,
     });
 
+    await logServerPost({
+      ...serverAuth,
+      postData: {
+        blobRef: result.data.blob,
+        videoUrl: "direct_upload",
+      },
+      serviceId,
+      statusId: 1,
+    });
+
     // Refresh token is renewed whenever used.
     const now = new Date();
     const refreshTokenExpiresAt = new Date(
@@ -65,16 +75,6 @@ export async function POST(request: NextRequest) {
       serviceAuthorization: authorization.authorization,
       serviceExpiration: authorization.expiration,
       serviceId,
-    });
-
-    await logServerPost({
-      ...serverAuth,
-      postData: {
-        blobRef: result.data.blob,
-        videoUrl: "direct_upload",
-      },
-      serviceId,
-      statusId: 1,
     });
 
     return NextResponse.json(result);

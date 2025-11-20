@@ -44,6 +44,18 @@ export async function POST(request: NextRequest) {
       title,
     });
 
+    await logServerPost({
+      ...serverAuth,
+      postData: {
+        blobRef,
+        postUri: result.uri,
+        text,
+        title,
+      },
+      serviceId,
+      statusId: 2,
+    });
+
     // Refresh token is renewed whenever used.
     const now = new Date();
     const refreshTokenExpiresAt = new Date(
@@ -56,18 +68,6 @@ export async function POST(request: NextRequest) {
       serviceAuthorization: authorization.authorization,
       serviceExpiration: authorization.expiration,
       serviceId,
-    });
-
-    await logServerPost({
-      ...serverAuth,
-      postData: {
-        blobRef,
-        postUri: result.uri,
-        text,
-        title,
-      },
-      serviceId,
-      statusId: 2,
     });
 
     return NextResponse.json(result);
