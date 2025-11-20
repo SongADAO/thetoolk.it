@@ -3,6 +3,7 @@ import { Context, ReactNode, use, useMemo, useState } from "react";
 import type { ServiceFormState } from "@/components/service/ServiceForm";
 import { DEBUG_POST } from "@/config/constants";
 import { AuthContext } from "@/contexts/AuthContext";
+import { triggerLogClientEvent } from "@/lib/logs-client";
 import type { PostServiceContextType } from "@/services/post/PostServiceContext";
 import type { ServiceConfig } from "@/services/post/ServiceConfig";
 import type {
@@ -139,6 +140,18 @@ function createServiceProvider(
         posting.isProcessing
       ) {
         return null;
+      }
+
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        triggerLogClientEvent({
+          eventData: {},
+          eventType: "post",
+          serviceId: config.id,
+        });
+      } catch (err: unknown) {
+        // Allow client logs to fail.
+        console.error("Failed to log client event:", err);
       }
 
       try {

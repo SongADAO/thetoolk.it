@@ -11,6 +11,7 @@ import type {
 import { DEBUG_POST } from "@/config/constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useUserStorage } from "@/hooks/useUserStorage";
+import { triggerLogClientEvent } from "@/lib/logs-client";
 import {
   getAuthorizationExpiresAt,
   getCredentialsId,
@@ -175,6 +176,18 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   }: Readonly<PostServicePostProps>): Promise<string | null> {
     if (!isEnabled || !isComplete || !isAuthorized || isProcessing) {
       return null;
+    }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      triggerLogClientEvent({
+        eventData: {},
+        eventType: "post",
+        serviceId: id,
+      });
+    } catch (err: unknown) {
+      // Allow client logs to fail.
+      console.error("Failed to log client event:", err);
     }
 
     try {
