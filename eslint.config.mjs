@@ -79,7 +79,7 @@ export default tseslint.config(
       "vite.network.config.js",
       "vite.dashboard.config.js",
       "pwa-assets.config.js",
-      "next.config.ts",
+      // "next.config.ts",
       "vite-env.d.ts",
       "next-env.d.ts",
       "public/fonts/**",
