@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       ...serverAuth,
       postData: {
         creationId,
+        postId,
       },
       serviceId,
       statusId: 2,

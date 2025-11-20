@@ -6,18 +6,22 @@ import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { statusUploadVideo } from "@/services/post/twitter/post";
 
 export async function POST(request: NextRequest) {
+  const serviceId = "twitter";
+
   try {
     const serverAuth = await initServerAuth();
     await gateHasActiveSubscription({ ...serverAuth });
 
     const authorization = await getServiceAuthorizationAndExpiration({
       ...serverAuth,
-      serviceId: "twitter",
+      serviceId,
     });
 
+    const { mediaId } = await request.json();
+
     const statusData = await statusUploadVideo({
-      ...(await request.json()),
       accessToken: authorization.authorization.accessToken,
+      mediaId,
       mode: "server",
     });
 
