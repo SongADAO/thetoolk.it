@@ -16,7 +16,7 @@ async function logServerPost({
   user,
 }: LogServerPostProps): Promise<void> {
   try {
-    const { error: errorLog } = await supabaseAdmin.from("posts").upsert(
+    const { error: errorLog } = await supabaseAdmin.from("posts").insert(
       {
         post_data: postData,
         service_id: serviceId,
@@ -38,6 +38,7 @@ async function logServerPost({
 interface LogClientEventProps {
   eventData: object;
   eventType: string;
+  ipAddress: string;
   serviceId: string;
   supabaseAdmin: SupabaseClient;
 }
@@ -45,16 +46,18 @@ interface LogClientEventProps {
 async function logClientEvent({
   eventData,
   eventType,
+  ipAddress,
   serviceId,
   supabaseAdmin,
 }: LogClientEventProps): Promise<void> {
   try {
     const { error: errorLog } = await supabaseAdmin
       .from("client_event_logs")
-      .upsert(
+      .insert(
         {
           event_data: eventData,
           event_type: eventType,
+          ip_address: ipAddress,
           service_id: serviceId,
         },
         {},

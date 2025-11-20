@@ -108,6 +108,7 @@ CREATE TABLE client_event_logs (
   service_id VARCHAR NOT NULL,
   event_type VARCHAR NOT NULL,
   event_data JSONB,
+  ip_address VARCHAR NOT NULL,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );

@@ -18,4 +18,16 @@ function getBaseUrlFromRequest(request: NextRequest) {
   return `${protocol}://${host}`;
 }
 
-export { getBaseUrlFromRequest };
+function getIpAddressFromRequest(request: NextRequest) {
+  /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    request.headers.get("x-real-ip") ||
+    // Cloudflare
+    request.headers.get("cf-connecting-ip") ||
+    "unknown"
+  );
+  /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+}
+
+export { getBaseUrlFromRequest, getIpAddressFromRequest };
