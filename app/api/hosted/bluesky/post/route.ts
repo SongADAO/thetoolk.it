@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { logServerPost } from "@/lib/logs";
 import { getBaseUrlFromRequest } from "@/lib/request";
 import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
@@ -34,9 +35,13 @@ export async function POST(request: NextRequest) {
       getBaseUrlFromRequest(request),
     );
 
+    const { blobRef, text, title } = await request.json();
+
     const result = await agentPostVideo({
-      ...(await request.json()),
       agent,
+      blobRef,
+      text,
+      title,
     });
 
     // Refresh token is renewed whenever used.
@@ -51,6 +56,18 @@ export async function POST(request: NextRequest) {
       serviceAuthorization: authorization.authorization,
       serviceExpiration: authorization.expiration,
       serviceId,
+    });
+
+    await logServerPost({
+      ...serverAuth,
+      postData: {
+        blobRef,
+        postUri: result.uri,
+        // text,
+        // title,
+      },
+      serviceId,
+      statusId: 2,
     });
 
     return NextResponse.json(result);
