@@ -5,11 +5,14 @@ import { use, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 
 interface TOTPVerificationProps {
-  readonly onVerified?: () => void;
-  readonly onCancel?: () => void;
+  onCancel: () => void;
+  onVerified: () => void;
 }
 
-function TOTPVerification({ onVerified, onCancel }: TOTPVerificationProps) {
+function TOTPVerification({
+  onCancel,
+  onVerified,
+}: Readonly<TOTPVerificationProps>) {
   const [code, setCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
