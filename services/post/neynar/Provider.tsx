@@ -178,17 +178,12 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       return null;
     }
 
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      triggerLogClientEvent({
-        eventData: {},
-        eventType: "post",
-        serviceId: id,
-      });
-    } catch (err: unknown) {
-      // Allow client logs to fail.
-      console.error("Failed to log client event:", err);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    triggerLogClientEvent({
+      eventData: {},
+      eventType: "post",
+      serviceId: id,
+    });
 
     try {
       const accessToken = await getValidAccessToken();
