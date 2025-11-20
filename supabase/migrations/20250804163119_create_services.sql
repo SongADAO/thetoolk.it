@@ -18,17 +18,17 @@ ADD CONSTRAINT unique_user_service UNIQUE (user_id, service_id);
 ALTER TABLE services ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for services
-CREATE POLICY "Users can view own services" ON services
-  FOR SELECT USING (auth.uid() = user_id);
+-- CREATE POLICY "Users can view own services" ON services
+--   FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can create services" ON services
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- CREATE POLICY "Users can create services" ON services
+--   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update own services" ON services
-  FOR UPDATE USING (auth.uid() = user_id);
+-- CREATE POLICY "Users can update own services" ON services
+--   FOR UPDATE USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete own services" ON services
-  FOR DELETE USING (auth.uid() = user_id);
+-- CREATE POLICY "Users can delete own services" ON services
+--   FOR DELETE USING (auth.uid() = user_id);
 
 
 -- Create services table with updated_at column
@@ -80,8 +80,8 @@ CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for subscriptions
-CREATE POLICY "Users can view own subscriptions" ON subscriptions
-  FOR SELECT USING (auth.uid() = user_id);
+-- CREATE POLICY "Users can view own subscriptions" ON subscriptions
+--   FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can update own subscriptions" ON subscriptions
-  FOR UPDATE USING (auth.uid() = user_id);
+-- CREATE POLICY "Users can update own subscriptions" ON subscriptions
+--   FOR UPDATE USING (auth.uid() = user_id);
