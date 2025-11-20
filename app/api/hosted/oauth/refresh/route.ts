@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    console.error(err);
     const errMessage = err instanceof Error ? err.message : "Auth failed";
     return NextResponse.json({ error: errMessage }, { status: 500 });
   }
