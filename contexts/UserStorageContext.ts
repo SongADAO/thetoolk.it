@@ -1,7 +1,6 @@
 import { createContext } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface StorageValue<T = any> {
+interface StorageValue<T> {
   value: T;
   isLoading: boolean;
 }
@@ -9,8 +8,7 @@ interface StorageValue<T = any> {
 interface UserStorageContextType {
   getValue: <T>(key: string, defaultValue: T) => StorageValue<T>;
   refresh: (key: string) => Promise<void>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  requestInit: (key: string, defaultValue: any) => void;
+  requestInit: (key: string, defaultValue: unknown) => void;
   setValue: <T>(key: string, value: T | ((prev: T) => T)) => Promise<void>;
   subscribersRef: { current: Map<string, Set<() => void>> };
 }
