@@ -16,11 +16,32 @@ import {
   type UserStorageContextType,
 } from "@/contexts/UserStorageContext";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface StorageValue<T = any> {
+// Constants
+const BATCH_LOAD_DEBOUNCE_MS = 50;
+const VISIBILITY_REFRESH_DELAY_MS = 100;
+
+// Types
+interface StorageValue<T> {
   value: T;
   isLoading: boolean;
 }
+
+interface ParsedKey {
+  serviceField: string;
+  serviceId: string;
+}
+
+type StorageMap = Map<string, unknown>;
+type PendingKeysMap = Map<string, unknown>;
+
+// Utility Functions
+const parseKey = (key: string): ParsedKey => {
+  const keyParts = key.split("-");
+  return {
+    serviceField: `service_${keyParts[2]}`,
+    serviceId: keyParts[1],
+  };
+};
 
 export function UserStorageProvider({
   children,
@@ -31,140 +52,167 @@ export function UserStorageProvider({
 }) {
   const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
 
-  // Store all values in a Map
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [storage, setStorage] = useState<Map<string, any>>(new Map());
+  // State
+  const [storage, setStorage] = useState<StorageMap>(new Map());
   const [loadingKeys, setLoadingKeys] = useState<Set<string>>(new Set());
   const [initializedKeys, setInitializedKeys] = useState<Set<string>>(
     new Set(),
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pendingKeysRef = useRef<Map<string, any>>(new Map());
+  const [initTrigger, setInitTrigger] = useState(0);
+
+  // Refs
+  const pendingKeysRef = useRef<PendingKeysMap>(new Map());
   const previousUserIdRef = useRef<string | null>(null);
   const subscribersRef = useRef<Map<string, Set<() => void>>>(new Map());
-  const [initTrigger, setInitTrigger] = useState(0);
   const hasLoadedBatch = useRef(false);
+  const initializedKeysRef = useRef<Set<string>>(new Set());
+  const storageRef = useRef<StorageMap>(new Map());
 
-  // Parse key to get service info
-  const parseKey = (key: string) => {
-    const keyParts = key.split("-");
-    return {
-      serviceField: `service_${keyParts[2]}`,
-      serviceId: keyParts[1],
-    };
-  };
+  // Keep refs in sync with state
+  storageRef.current = storage;
+  initializedKeysRef.current = initializedKeys;
 
-  // Load ALL data from Supabase in a single batch
-  const loadAllFromSupabase = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, react-hooks/preserve-manual-memoization
-    async (keys: Map<string, any>): Promise<Map<string, any>> => {
-      if (!user?.id || keys.size === 0) return new Map();
+  // Storage Handlers - abstracted to reduce duplication
+  const serverStorageHandler = useMemo(
+    () => ({
+      async load(keys: PendingKeysMap): Promise<Map<string, unknown>> {
+        if (!user?.id || keys.size === 0) return new Map();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result = new Map<string, any>();
+        const result = new Map<string, unknown>();
 
-      try {
-        // Get all unique service IDs from keys
-        const serviceIds = Array.from(
-          new Set(
-            Array.from(keys.keys()).map((key) => parseKey(key).serviceId),
-          ),
-        );
-
-        // Don't query if there are no service IDs
-        if (serviceIds.length === 0) return new Map();
-
-        // Fetch all services data in one query
-        const params = new URLSearchParams({
-          service_ids: serviceIds.join(","),
-        });
-
-        const response = await fetch(
-          `/api/user/services/get/?${params.toString()}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: "GET",
-          },
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            `Could not load service data: ${errorData.error_description ?? errorData.error}`,
+        try {
+          const serviceIds = Array.from(
+            new Set(
+              Array.from(keys.keys()).map((key) => parseKey(key).serviceId),
+            ),
           );
-        }
 
-        const servicesData = await response.json();
+          if (serviceIds.length === 0) return new Map();
 
-        // Map the fetched data back to keys
-        for (const [key, defaultValue] of keys.entries()) {
-          const { serviceId, serviceField } = parseKey(key);
+          const params = new URLSearchParams({
+            service_ids: serviceIds.join(","),
+          });
 
-          let value = defaultValue;
+          const response = await fetch(
+            `/api/user/services/get/?${params.toString()}`,
+            {
+              headers: { "Content-Type": "application/json" },
+              method: "GET",
+            },
+          );
 
-          if (serviceField === "service_authorization") {
-            // Disabled: Service authorizations are server side only.
-          } else {
-            const serviceRecord = servicesData?.find(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (record: any) => record.service_id === serviceId,
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              `Could not load service data: ${errorData.error_description ?? errorData.error}`,
             );
-            if (serviceRecord?.[serviceField] !== undefined) {
-              value = serviceRecord[serviceField];
-            }
           }
 
-          result.set(key, value);
+          const servicesData = await response.json();
+
+          for (const [key, defaultValue] of keys.entries()) {
+            const { serviceId, serviceField } = parseKey(key);
+            let value = defaultValue;
+
+            if (serviceField !== "service_authorization") {
+              const serviceRecord = servicesData?.find(
+                (record: { service_id: string }) =>
+                  record.service_id === serviceId,
+              );
+              if (serviceRecord?.[serviceField] !== undefined) {
+                value = serviceRecord[serviceField];
+              }
+            }
+
+            result.set(key, value);
+          }
+
+          return result;
+        } catch (err) {
+          console.error("Error loading from Supabase:", err);
+          return new Map();
+        }
+      },
+
+      async save(key: string, value: unknown): Promise<boolean> {
+        if (!user?.id) return false;
+
+        const { serviceId, serviceField } = parseKey(key);
+
+        if (serviceField === "service_authorization") {
+          return false;
         }
 
-        return result;
-      } catch (err) {
-        console.error("Error loading from Supabase:", err);
-        return new Map();
-      }
-    },
+        try {
+          const response = await fetch(`/api/user/services/update/`, {
+            body: JSON.stringify({ serviceField, serviceId, value }),
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              `Could not save service data: ${errorData.error_description ?? errorData.error}`,
+            );
+          }
+
+          return true;
+        } catch (err) {
+          console.error("Error saving to Supabase:", err);
+          return false;
+        }
+      },
+    }),
     [user?.id],
   );
 
-  // Save to Supabase
-  const saveToSupabase = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters, react-hooks/preserve-manual-memoization
-    async <T,>(key: string, value: T): Promise<boolean> => {
-      if (!user?.id) return false;
-
-      const { serviceId, serviceField } = parseKey(key);
-
-      if (serviceField === "service_authorization") {
-        // Disabled: Service authorizations are server side only.
-        return false;
-      }
-
-      try {
-        const response = await fetch(`/api/user/services/update/`, {
-          body: JSON.stringify({ serviceField, serviceId, value }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            `Could not save service data: ${errorData.error_description ?? errorData.error}`,
+  const browserStorageHandler = useMemo(
+    () => ({
+      // eslint-disable-next-line @typescript-eslint/require-await
+      async load(keys: PendingKeysMap): Promise<Map<string, unknown>> {
+        const localData = new Map<string, unknown>();
+        keys.forEach((defaultValue, key) => {
+          const localValue = localStorage.getItem(key);
+          localData.set(
+            key,
+            localValue ? JSON.parse(localValue) : defaultValue,
           );
-        }
+        });
+        return localData;
+      },
 
+      // eslint-disable-next-line @typescript-eslint/require-await
+      async save(key: string, value: unknown): Promise<boolean> {
+        localStorage.setItem(key, JSON.stringify(value));
         return true;
-      } catch (err) {
-        console.error("Error saving to Supabase:", err);
-        return false;
-      }
-    },
-    [user?.id],
+      },
+    }),
+    [],
   );
+
+  const storageHandler =
+    mode === "server" ? serverStorageHandler : browserStorageHandler;
+
+  // Helper to update storage and notify subscribers
+  const updateStorageAndNotify = useCallback((data: Map<string, unknown>) => {
+    setStorage((prev) => {
+      const next = new Map(prev);
+      data.forEach((value, key) => {
+        next.set(key, value);
+      });
+      return next;
+    });
+
+    queueMicrotask(() => {
+      data.forEach((_, key) => {
+        const subscribers = subscribersRef.current.get(key);
+        if (subscribers) {
+          subscribers.forEach((callback) => callback());
+        }
+      });
+    });
+  }, []);
 
   // Notify all subscribers of a key
   const notifySubscribers = useCallback((key: string) => {
@@ -174,21 +222,19 @@ export function UserStorageProvider({
     }
   }, []);
 
-  // Handle pending key initialization - batch fetch all at once with debounce
+  // Batch initialization effect
   useEffect(() => {
-    if (authLoading || hasLoadedBatch.current) return;
+    if (authLoading || hasLoadedBatch.current) return undefined;
 
-    // Debounce to allow all initial keys to accumulate
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    const timeoutId = setTimeout(async () => {
+    const timeoutId = setTimeout(() => {
       if (pendingKeysRef.current.size === 0) return;
 
-      async function initializePendingKeys(): Promise<void> {
+      const initializePendingKeys = async () => {
         const keysToInit = new Map(pendingKeysRef.current);
         pendingKeysRef.current.clear();
         hasLoadedBatch.current = true;
 
-        console.log(`Batch loading ${keysToInit.size} keys from Supabase`);
+        console.log(`Batch loading ${keysToInit.size} keys`);
 
         // Mark all keys as loading
         setLoadingKeys((prev) => {
@@ -197,50 +243,24 @@ export function UserStorageProvider({
           return next;
         });
 
-        // Hosted
-        // ---------------------------------------------------------------------
+        // Load data based on mode
+        let batchData = new Map<string, unknown>();
         if (mode === "server" && isAuthenticated && user) {
-          // Batch fetch all data at once
-          const batchData = await loadAllFromSupabase(keysToInit);
-
-          // Update storage with all fetched data
-          setStorage((prev) => {
-            const next = new Map(prev);
-            batchData.forEach((value, key) => {
-              next.set(key, value);
-            });
-            return next;
-          });
-
+          batchData = await storageHandler.load(keysToInit);
           previousUserIdRef.current = user.id;
-        }
-        // ---------------------------------------------------------------------
-
-        // Local
-        // ---------------------------------------------------------------------
-        if (mode === "browser") {
-          // Load from localStorage for each key
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const localData = new Map<string, any>();
-          keysToInit.forEach((defaultValue, key) => {
-            const localValue = localStorage.getItem(key);
-            localData.set(
-              key,
-              localValue ? JSON.parse(localValue) : defaultValue,
-            );
-          });
-
-          setStorage((prev) => {
-            const next = new Map(prev);
-            localData.forEach((value, key) => {
-              next.set(key, value);
-            });
-            return next;
-          });
-
+        } else {
+          batchData = await storageHandler.load(keysToInit);
           previousUserIdRef.current = null;
         }
-        // ---------------------------------------------------------------------
+
+        // Update storage
+        setStorage((prev) => {
+          const next = new Map(prev);
+          batchData.forEach((value, key) => {
+            next.set(key, value);
+          });
+          return next;
+        });
 
         // Clear loading state and mark as initialized
         setLoadingKeys((prev) => {
@@ -255,194 +275,144 @@ export function UserStorageProvider({
           return next;
         });
 
-        // Notify all subscribers
-        keysToInit.forEach((_, key) => notifySubscribers(key));
-      }
+        // Notify subscribers
+        queueMicrotask(() => {
+          batchData.forEach((_, key) => {
+            notifySubscribers(key);
+          });
+        });
+      };
 
-      await initializePendingKeys();
-      // 50ms debounce to collect all initial keys
-    }, 50);
+      initializePendingKeys().catch((err: unknown) => {
+        console.error("Error initializing pending keys:", err);
+      });
+    }, BATCH_LOAD_DEBOUNCE_MS);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-return
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [
     authLoading,
     initTrigger,
     isAuthenticated,
     user,
-    loadAllFromSupabase,
+    storageHandler,
     notifySubscribers,
     mode,
   ]);
 
   // Handle user changes
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading) return undefined;
 
     const currentUserId = user?.id ?? null;
     const previousUserId = previousUserIdRef.current;
 
     if (currentUserId !== previousUserId) {
-      async function handleUserChange(): Promise<void> {
+      const handleUserChange = async () => {
         hasLoadedBatch.current = false;
 
-        // Collect all initialized keys with their default values
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const keysToReload = new Map<string, any>();
-        initializedKeys.forEach((key) => {
-          keysToReload.set(key, storage.get(key));
+        // Capture keys to reload BEFORE clearing state
+        const keysToReload = new Map<string, unknown>();
+        initializedKeysRef.current.forEach((key) => {
+          keysToReload.set(key, storageRef.current.get(key));
         });
 
-        // Hosted
-        // ---------------------------------------------------------------------
-        if (mode === "server" && isAuthenticated && user) {
-          const batchData = await loadAllFromSupabase(keysToReload);
-          setStorage((prev) => {
-            const next = new Map(prev);
-            batchData.forEach((value, key) => {
-              next.set(key, value);
-            });
-            return next;
-          });
+        if (mode === "server") {
+          // If logging out or changing user reset to initial state
+          if (previousUserId) {
+            setStorage(new Map());
+            setLoadingKeys(new Set());
+            setInitializedKeys(new Set());
+            pendingKeysRef.current.clear();
+            previousUserIdRef.current = currentUserId;
 
-          // Notify subscribers AFTER state update completes
-          queueMicrotask(() => {
-            batchData.forEach((_, key) => {
-              notifySubscribers(key);
-            });
-          });
-        }
-        // ---------------------------------------------------------------------
-
-        // Local
-        // ---------------------------------------------------------------------
-        if (mode === "browser") {
-          initializedKeys.forEach((key) => {
-            const localValue = localStorage.getItem(key);
-            if (localValue) {
-              setStorage((prev) => {
-                const next = new Map(prev);
-                next.set(key, JSON.parse(localValue));
-                return next;
+            // Notify all subscribers that their values have been reset
+            queueMicrotask(() => {
+              subscribersRef.current.forEach((subscribers) => {
+                subscribers.forEach((callback) => callback());
               });
-            }
-          });
-
-          // Notify subscribers AFTER state update completes
-          queueMicrotask(() => {
-            initializedKeys.forEach((key) => {
-              notifySubscribers(key);
             });
-          });
+          }
         }
-        // ---------------------------------------------------------------------
+
+        if (mode === "browser" || (isAuthenticated && user)) {
+          const batchData = await storageHandler.load(keysToReload);
+          updateStorageAndNotify(batchData);
+
+          // Restore initialized keys after loading
+          setInitializedKeys(new Set(keysToReload.keys()));
+        }
 
         previousUserIdRef.current = currentUserId;
-      }
+      };
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleUserChange();
+      handleUserChange().catch((err: unknown) => {
+        console.error("Error handling user change:", err);
+      });
     }
+
+    return undefined;
   }, [
     isAuthenticated,
     user,
     authLoading,
-    initializedKeys,
-    storage,
-    loadAllFromSupabase,
-    notifySubscribers,
+    storageHandler,
+    updateStorageAndNotify,
     mode,
   ]);
 
   // Handle visibility changes
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden && initializedKeys.size > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        setTimeout(async () => {
-          // Hosted
-          // ---------------------------------------------------------------------
-          if (mode === "server" && isAuthenticated && user) {
-            // Refresh from Supabase
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const keysToRefresh = new Map<string, any>();
-            initializedKeys.forEach((key) => {
-              keysToRefresh.set(key, storage.get(key));
+      if (!document.hidden && initializedKeysRef.current.size > 0) {
+        setTimeout(() => {
+          const refreshData = async () => {
+            const keysToRefresh = new Map<string, unknown>();
+            initializedKeysRef.current.forEach((key) => {
+              keysToRefresh.set(key, storageRef.current.get(key));
             });
 
-            const batchData = await loadAllFromSupabase(keysToRefresh);
-            setStorage((prev) => {
-              const next = new Map(prev);
-              batchData.forEach((value, key) => {
-                next.set(key, value);
-              });
-              return next;
-            });
+            if (mode === "browser" || (isAuthenticated && user)) {
+              const batchData = await storageHandler.load(keysToRefresh);
+              updateStorageAndNotify(batchData);
+            }
+          };
 
-            // Notify subscribers AFTER state update completes
-            queueMicrotask(() => {
-              batchData.forEach((_, key) => {
-                notifySubscribers(key);
-              });
-            });
-          }
-          // ---------------------------------------------------------------------
-
-          // Local
-          // ---------------------------------------------------------------------
-          if (mode === "browser") {
-            // Refresh from localStorage
-            setStorage((prev) => {
-              const next = new Map(prev);
-              initializedKeys.forEach((key) => {
-                const localValue = localStorage.getItem(key);
-                if (localValue) {
-                  next.set(key, JSON.parse(localValue));
-                }
-              });
-              return next;
-            });
-
-            // Notify subscribers AFTER state update completes
-            queueMicrotask(() => {
-              initializedKeys.forEach((key) => {
-                notifySubscribers(key);
-              });
-            });
-          }
-          // ---------------------------------------------------------------------
-        }, 100);
+          refreshData().catch((err: unknown) => {
+            console.error("Error refreshing data on visibility change:", err);
+          });
+        }, VISIBILITY_REFRESH_DELAY_MS);
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () =>
+    window.addEventListener("focus", handleVisibilityChange);
+    return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [
-    isAuthenticated,
-    user,
-    initializedKeys,
-    storage,
-    loadAllFromSupabase,
-    notifySubscribers,
-    mode,
-  ]);
+      window.removeEventListener("focus", handleVisibilityChange);
+    };
+  }, [isAuthenticated, user, storageHandler, updateStorageAndNotify, mode]);
 
+  // Context API methods
   const getValue = useCallback(
-    <T,>(key: string, defaultValue: T): StorageValue<T> => ({
-      isLoading: loadingKeys.has(key) || !initializedKeys.has(key),
-      value: storage.get(key) ?? defaultValue,
-    }),
+    <T,>(key: string, defaultValue: T): StorageValue<T> => {
+      const storedValue = storage.get(key);
+      return {
+        isLoading: loadingKeys.has(key) || !initializedKeys.has(key),
+        // Type assertion is safe here: caller specifies T and provides matching defaultValue
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+        value: (storedValue ?? defaultValue) as T,
+      };
+    },
     [storage, loadingKeys, initializedKeys],
   );
 
   const requestInit = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (key: string, defaultValue: any) => {
+    (key: string, defaultValue: unknown) => {
       const wasEmpty = pendingKeysRef.current.size === 0;
       if (!initializedKeys.has(key) && !pendingKeysRef.current.has(key)) {
         pendingKeysRef.current.set(key, defaultValue);
-        // Only trigger once when going from empty to having keys
         if (wasEmpty) {
           setInitTrigger((prev) => prev + 1);
         }
@@ -452,40 +422,41 @@ export function UserStorageProvider({
   );
 
   const setValue = useCallback(
-    async <T,>(key: string, valueOrUpdater: T | ((prev: T) => T)) => {
-      const currentValue = storage.get(key);
-      const newValue =
+    async <T,>(
+      key: string,
+      valueOrUpdater: T | ((prev: T) => T),
+    ): Promise<void> => {
+      // Type assertion is safe here: caller specifies T when calling setValue
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+      const currentValue = storage.get(key) as T;
+
+      // Determine the new value
+      // If valueOrUpdater is a function, treat it as an updater
+      // Note: To store a function value, wrap it: setValue(key, () => myFunction)
+      const newValue: T =
         typeof valueOrUpdater === "function"
           ? // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
             (valueOrUpdater as (prev: T) => T)(currentValue)
           : valueOrUpdater;
 
+      // Update in-memory storage
       setStorage((prev) => new Map(prev).set(key, newValue));
       notifySubscribers(key);
 
-      // Hosted
-      // ---------------------------------------------------------------------
-      if (mode === "server" && isAuthenticated && user) {
-        await saveToSupabase(key, newValue);
+      // Persist to backend
+      if (mode === "browser" || (isAuthenticated && user)) {
+        await storageHandler.save(key, newValue);
       }
-      // ---------------------------------------------------------------------
-
-      // Local
-      // ---------------------------------------------------------------------
-      if (mode === "browser") {
-        localStorage.setItem(key, JSON.stringify(newValue));
-      }
-      // ---------------------------------------------------------------------
     },
-    [storage, isAuthenticated, user, saveToSupabase, notifySubscribers, mode],
+    [storage, isAuthenticated, user, storageHandler, notifySubscribers, mode],
   );
 
   const refresh = useCallback(
-    async (key: string) => {
-      if (!isAuthenticated || !user) return;
+    async (key: string): Promise<void> => {
+      if (mode === "server" && (!isAuthenticated || !user)) return;
 
       const keysToRefresh = new Map([[key, storage.get(key)]]);
-      const batchData = await loadAllFromSupabase(keysToRefresh);
+      const batchData = await storageHandler.load(keysToRefresh);
 
       const value = batchData.get(key);
       if (value !== undefined) {
@@ -493,7 +464,7 @@ export function UserStorageProvider({
         notifySubscribers(key);
       }
     },
-    [isAuthenticated, user, storage, loadAllFromSupabase, notifySubscribers],
+    [isAuthenticated, user, storage, storageHandler, notifySubscribers, mode],
   );
 
   const providerValues: UserStorageContextType = useMemo(
