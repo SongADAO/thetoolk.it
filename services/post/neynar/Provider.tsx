@@ -77,33 +77,29 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
     `thetoolkit-${id}-enabled`,
     false,
-    { initializeWithValue: false },
   );
 
   const [credentials, setCredentials, isCredentialsLoading] =
     useUserStorage<OauthCredentials>(
       `thetoolkit-${id}-credentials`,
       defaultOauthCredentials,
-      { initializeWithValue: true },
     );
 
   const [authorization, setAuthorization, isAuthorizationLoading] =
     useUserStorage<OauthAuthorization>(
       `thetoolkit-${id}-authorization`,
       defaultOauthAuthorization,
-      { initializeWithValue: true },
     );
 
   const [expiration, setExpiration, isExpirationLoading] =
     useUserStorage<OauthExpiration>(
       `thetoolkit-${id}-expiration`,
       defaultOauthExpiration,
-      { initializeWithValue: false },
     );
 
   const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
     PostServiceAccount[]
-  >(`thetoolkit-${id}-accounts`, [], { initializeWithValue: true });
+  >(`thetoolkit-${id}-accounts`, []);
 
   const loading =
     authLoading ||
