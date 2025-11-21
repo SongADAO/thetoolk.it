@@ -59,6 +59,7 @@ const browserStorageHandler = {
     if (typeof window === "undefined") {
       return defaultValue;
     }
+
     const localValue = localStorage.getItem(key);
     return localValue ? JSON.parse(localValue) : defaultValue;
   },
@@ -67,6 +68,7 @@ const browserStorageHandler = {
     if (typeof window === "undefined") {
       return;
     }
+
     localStorage.setItem(key, JSON.stringify(value));
   },
 };
@@ -79,9 +81,6 @@ export function UserStorageProvider({
   readonly mode: "server" | "browser";
 }) {
   const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
-
-  // Track hydration state for browser mode to prevent hydration errors
-  const isHydratedRef = useRef(false);
 
   // SWR for server mode - fetches all services at once
   const {
@@ -104,6 +103,9 @@ export function UserStorageProvider({
     },
   );
 
+  // Track hydration state for browser mode to prevent hydration errors
+  const isHydratedRef = useRef(false);
+
   // Subscriber management for cross-component reactivity
   const subscribersRef = useRef<Map<string, Set<() => void>>>(new Map());
 
@@ -122,14 +124,6 @@ export function UserStorageProvider({
     });
   }, []);
 
-  // Hydration effect for browser mode
-  useEffect(() => {
-    if (mode === "browser" && !isHydratedRef.current) {
-      isHydratedRef.current = true;
-      notifyAllSubscribers();
-    }
-  }, [mode, notifyAllSubscribers]);
-
   // Get value for a specific key
   const getValue = useCallback(
     <T,>(key: string, defaultValue: T) => {
@@ -143,6 +137,7 @@ export function UserStorageProvider({
         }
 
         const value = browserStorageHandler.load(key, defaultValue);
+
         return {
           isLoading: false,
           // Type assertion is safe here: caller specifies T and provides matching defaultValue
@@ -271,6 +266,14 @@ export function UserStorageProvider({
     },
     [mode, mutate, notifySubscribers],
   );
+
+  // Hydration effect for browser mode
+  useEffect(() => {
+    if (mode === "browser" && !isHydratedRef.current) {
+      isHydratedRef.current = true;
+      notifyAllSubscribers();
+    }
+  }, [mode, notifyAllSubscribers]);
 
   // Browser mode: listen for focus events to refresh from localStorage
   useEffect(() => {
