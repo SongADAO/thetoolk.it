@@ -18,8 +18,6 @@ import {
 export function useUserStorage<T>(
   key: string,
   defaultValue: T,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  options?: { initializeWithValue?: boolean },
 ): [
   T,
   (value: T | ((prevValue: T) => T)) => void,
@@ -31,14 +29,19 @@ export function useUserStorage<T>(
   // eslint-disable-next-line react/hook-use-state
   const [, forceUpdate] = useState({});
 
-  const { getValue, setValue, refresh, requestInit, subscribersRef } = context;
+  const { getValue, setValue, refresh, subscribersRef } = context;
 
-  // Request initialization in an effect, not during render
-  useEffect(() => {
-    requestInit(key, defaultValue);
-    // Only re-init if key changes, not defaultValue
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+  const { value, isLoading } = getValue<T>(key, defaultValue);
+
+  const updateValue = useCallback(
+    (newValue: T | ((prevValue: T) => T)) => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      setValue<T>(key, newValue);
+    },
+    [key, setValue],
+  );
+
+  const refreshValue = useCallback(async () => refresh(key), [key, refresh]);
 
   // Subscribe to changes for this key
   useEffect(() => {
@@ -47,27 +50,14 @@ export function useUserStorage<T>(
     if (!subscribersRef.current.has(key)) {
       subscribersRef.current.set(key, new Set());
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    subscribersRef.current.get(key)!.add(callback);
+
+    subscribersRef.current.get(key)?.add(callback);
 
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       subscribersRef.current.get(key)?.delete(callback);
     };
   }, [key, subscribersRef]);
-
-  const { value, isLoading } = getValue<T>(key, defaultValue);
-
-  const updateValue = useCallback(
-    (newValue: T | ((prevValue: T) => T)) => {
-      // Fire and forget - explicitly mark promise as ignored
-      // eslint-disable-next-line no-void
-      void setValue<T>(key, newValue);
-    },
-    [key, setValue],
-  );
-
-  const refreshValue = useCallback(async () => refresh(key), [key, refresh]);
 
   return [value, updateValue, isLoading, refreshValue];
 }

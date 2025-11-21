@@ -22,33 +22,29 @@ function useServiceStorage(
   const [isEnabled, setIsEnabled, isEnabledLoading] = useUserStorage<boolean>(
     `thetoolkit-${serviceId}-enabled`,
     false,
-    { initializeWithValue: false },
   );
 
   const [credentials, setCredentials, isCredentialsLoading] =
     useUserStorage<OauthCredentials>(
       `thetoolkit-${serviceId}-credentials`,
       defaultCredentials,
-      { initializeWithValue: true },
     );
 
   const [authorization, setAuthorization, isAuthorizationLoading] =
     useUserStorage<OauthAuthorization>(
       `thetoolkit-${serviceId}-authorization`,
       defaultAuthorization,
-      { initializeWithValue: true },
     );
 
   const [expiration, setExpiration, isExpirationLoading] =
     useUserStorage<OauthExpiration>(
       `thetoolkit-${serviceId}-expiration`,
       defaultExpiration,
-      { initializeWithValue: false },
     );
 
   const [accounts, setAccounts, isAccountsLoading] = useUserStorage<
     PostServiceAccount[]
-  >(`thetoolkit-${serviceId}-accounts`, [], { initializeWithValue: true });
+  >(`thetoolkit-${serviceId}-accounts`, []);
 
   const [codeVerifier, setCodeVerifier] = useLocalStorage<string>(
     `thetoolkit-${serviceId}-code-verifier`,

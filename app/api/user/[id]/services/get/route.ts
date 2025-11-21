@@ -1,20 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 import { initServerAuth } from "@/lib/supabase/server-auth";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const serverAuth = await initServerAuth();
 
-    const searchParams = request.nextUrl.searchParams;
-    const serviceIds = searchParams.get("service_ids")?.split(",") ?? [];
-
+    // Always return all services for the authenticated user
     const { data: servicesData, error: servicesError } =
       await serverAuth.supabaseAdmin
         .from("services")
         .select("*")
-        .eq("user_id", serverAuth.user.id)
-        .in("service_id", serviceIds);
+        .eq("user_id", serverAuth.user.id);
 
     if (servicesError) {
       throw new Error("Error loading services from Supabase:", servicesError);
