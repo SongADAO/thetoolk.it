@@ -9,12 +9,12 @@ import { ScreenshotButton } from "@/components/instructions/ScreenshotButton";
 function Instructions() {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
-  const toggleSection = (section: string) => {
+  function toggleSection(section: string) {
     setOpenSections((prev) => ({
       ...prev,
       [section]: !prev[section],
     }));
-  };
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
