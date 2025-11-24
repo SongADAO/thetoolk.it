@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { Form } from "radix-ui";
 import { FormEvent, use, useEffect, useState } from "react";
 
 import { TOTPVerification } from "@/components/auth/TOTPVerification";
@@ -85,45 +86,63 @@ function SignInForm() {
   }
 
   return (
-    <form className="mx-auto w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+    <Form.Root
+      className="mx-auto w-full max-w-md space-y-4"
+      onSubmit={handleSubmit}
+    >
       <h1 className="text-2xl font-bold">Sign In</h1>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor="email">
-          Email
-        </label>
-        <input
+      <Form.Field name="email">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">Email</Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please enter your email
+          </Form.Message>
+          <Form.Message className="text-xs text-red-600" match="typeMismatch">
+            Please provide a valid email
+          </Form.Message>
+        </div>
+        <Form.Control
           autoComplete="email"
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          id="email"
           onChange={(e) => setEmail(e.target.value)}
           required
           type="email"
           value={email}
         />
-      </div>
+      </Form.Field>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor="password">
-          Password
-        </label>
-        <input
+      <Form.Field name="password">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            Password
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please enter your password
+          </Form.Message>
+        </div>
+        <Form.Control
           autoComplete="current-password"
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          id="password"
           onChange={(e) => setPassword(e.target.value)}
           required
           type="password"
           value={password}
         />
-      </div>
+      </Form.Field>
 
-      <Button disabled={loading} type="submit" width="full">
-        {loading ? "Signing in..." : "Sign In"}
-      </Button>
+      <Form.Submit asChild>
+        <Button disabled={loading} type="submit" width="full">
+          {loading ? "Signing in..." : "Sign In"}
+        </Button>
+      </Form.Submit>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
-    </form>
+      {error ? (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      ) : null}
+    </Form.Root>
   );
 }
 

@@ -1,18 +1,21 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Form } from "radix-ui";
 import { FormEvent, useEffect, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { createClient } from "@/lib/supabase/client";
 
 function ResetPasswordForm() {
+  const supabase = createClient();
+
+  const searchParams = useSearchParams();
+
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const supabase = createClient();
-  const searchParams = useSearchParams();
 
   // Check for errors in URL on mount (both query params and hash)
   useEffect(() => {
@@ -97,54 +100,68 @@ function ResetPasswordForm() {
   }
 
   return (
-    <form className="mx-auto max-w-md space-y-4" onSubmit={handleSubmit}>
+    <Form.Root className="mx-auto max-w-md space-y-4" onSubmit={handleSubmit}>
       <h1 className="text-2xl font-bold">Set New Password</h1>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor="password">
-          New Password
-        </label>
-        <input
+      <Form.Field name="password">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            New Password
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please enter a password
+          </Form.Message>
+          <Form.Message className="text-xs text-red-600" match="tooShort">
+            Password must be at least 8 characters
+          </Form.Message>
+        </div>
+        <Form.Control
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          id="password"
           minLength={8}
           onChange={(e) => setPassword(e.target.value)}
           required
           type="password"
           value={password}
         />
-      </div>
+      </Form.Field>
 
-      <div>
-        <label
-          className="mb-1 block text-sm font-medium"
-          htmlFor="confirmPassword"
-        >
-          Confirm New Password
-        </label>
-        <input
+      <Form.Field name="confirmPassword">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            Confirm New Password
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please confirm your password
+          </Form.Message>
+          <Form.Message className="text-xs text-red-600" match="tooShort">
+            Password must be at least 8 characters
+          </Form.Message>
+        </div>
+        <Form.Control
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          id="confirmPassword"
           minLength={8}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
           type="password"
           value={confirmPassword}
         />
-      </div>
+      </Form.Field>
 
-      <Button disabled={loading} type="submit" width="full">
-        {loading ? "Updating..." : "Update Password"}
-      </Button>
+      <Form.Submit asChild>
+        <Button disabled={loading} type="submit" width="full">
+          {loading ? "Updating..." : "Update Password"}
+        </Button>
+      </Form.Submit>
 
       {message ? (
         <p
           className={`text-sm ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}
+          role="alert"
         >
           {message}
         </p>
       ) : null}
-    </form>
+    </Form.Root>
   );
 }
 

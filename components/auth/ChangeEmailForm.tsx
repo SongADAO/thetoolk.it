@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Form } from "radix-ui";
 import { FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
@@ -84,54 +85,63 @@ function ChangeEmailForm() {
         <h2 className="font-bold">Change Email</h2>
       </header>
       <div className="space-y-2 px-4">
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label
-              className="mb-1 block text-sm font-medium"
-              htmlFor="current-email"
-            >
+        <Form.Root className="space-y-4" onSubmit={handleSubmit}>
+          <Form.Field name="current-email">
+            <Form.Label className="block text-sm font-medium">
               Current Email
-            </label>
-            <input
+            </Form.Label>
+            <Form.Control
               autoComplete="email"
               className="w-full rounded border border-gray-300 bg-gray-50 px-3 py-2"
               disabled
-              id="current-email"
               type="email"
               value={user.email ?? ""}
             />
-          </div>
+          </Form.Field>
 
-          <div>
-            <label
-              className="mb-1 block text-sm font-medium"
-              htmlFor="new-email"
-            >
-              New Email
-            </label>
-            <input
+          <Form.Field name="new-email">
+            <div className="flex items-baseline justify-between">
+              <Form.Label className="block text-sm font-medium">
+                New Email
+              </Form.Label>
+              <Form.Message
+                className="text-xs text-red-600"
+                match="valueMissing"
+              >
+                Please enter a new email
+              </Form.Message>
+              <Form.Message
+                className="text-xs text-red-600"
+                match="typeMismatch"
+              >
+                Please provide a valid email
+              </Form.Message>
+            </div>
+            <Form.Control
               autoComplete="email"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              id="new-email"
               onChange={(e) => setEmail(e.target.value)}
               required
               type="email"
               value={email}
             />
-          </div>
+          </Form.Field>
 
-          <Button disabled={loading} type="submit">
-            {loading ? "Updating..." : "Update Email"}
-          </Button>
+          <Form.Submit asChild>
+            <Button disabled={loading} type="submit">
+              {loading ? "Updating..." : "Update Email"}
+            </Button>
+          </Form.Submit>
 
           {message ? (
             <p
               className={`text-sm ${message.includes("sent") ? "text-green-600" : "text-red-600"}`}
+              role="alert"
             >
               {message}
             </p>
           ) : null}
-        </form>
+        </Form.Root>
       </div>
     </section>
   );
