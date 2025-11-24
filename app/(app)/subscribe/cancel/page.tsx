@@ -24,7 +24,7 @@ export default function SubscribeCancelPage() {
 
       <Link
         className="cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
-        href="/"
+        href="/pro"
       >
         Return to TheToolk.it
       </Link>
