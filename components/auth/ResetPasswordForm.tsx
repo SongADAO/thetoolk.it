@@ -106,7 +106,7 @@ function ResetPasswordForm() {
         <input
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           id="password"
-          minLength={6}
+          minLength={8}
           onChange={(e) => setPassword(e.target.value)}
           required
           type="password"
@@ -124,7 +124,7 @@ function ResetPasswordForm() {
         <input
           className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           id="confirmPassword"
-          minLength={6}
+          minLength={8}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
           type="password"

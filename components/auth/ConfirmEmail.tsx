@@ -7,13 +7,15 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 function ConfirmEmail() {
+  const supabase = createClient();
+
+  const searchParams = useSearchParams();
+
   const [message, setMessage] = useState<string>(
     "Processing email confirmation...",
   );
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const searchParams = useSearchParams();
-  const supabase = createClient();
 
   useEffect(() => {
     async function handleEmailConfirmation(): Promise<void> {
