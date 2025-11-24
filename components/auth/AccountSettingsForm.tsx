@@ -25,16 +25,7 @@ function AccountSettingsForm() {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <h1 className="text-3xl font-bold">Account Settings</h1>
-
-      {/* Two-Factor Authentication Section */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold">
-          Two-Factor Authentication
-        </h2>
-
-        <TOTPSetup />
-      </div>
-
+      <TOTPSetup />
       <ChangeEmailForm />
       <ChangePasswordForm />
     </div>
