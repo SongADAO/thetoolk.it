@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LinkButton } from "@/components/general/LinkButton";
 
 export default function Home() {
   return (
@@ -37,12 +37,7 @@ export default function Home() {
           <section>
             <h2 className="mb-2 font-semibold">Get Started Now</h2>
             <div className="grid max-w-100 items-start justify-start gap-4 md:flex-row">
-              <Link
-                className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
-                href="/pro"
-              >
-                Access TheToolk.it Pro
-              </Link>
+              <LinkButton href="/pro">Access TheToolk.it Pro</LinkButton>
             </div>
           </section>
         </section>
