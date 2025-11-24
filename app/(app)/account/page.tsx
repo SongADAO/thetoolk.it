@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
-import { UserProfile } from "@/components/account/UserProfile";
-import { UserSubscription } from "@/components/account/UserSubscription";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Account } from "@/components/account/Account";
 
 export const metadata: Metadata = {
   alternates: {
@@ -15,12 +13,10 @@ export const metadata: Metadata = {
 
 export default function Dashboard() {
   return (
-    <ProtectedRoute>
-      <div className="flex flex-col items-center justify-center gap-8 p-4 pb-10 md:pt-20">
-        <UserProfile />
-
-        <UserSubscription />
+    <div className="flex items-center justify-center p-4 md:pt-20">
+      <div className="w-full">
+        <Account />
       </div>
-    </ProtectedRoute>
+    </div>
   );
 }

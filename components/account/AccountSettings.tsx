@@ -7,7 +7,7 @@ import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
 import { TOTPSetup } from "@/components/auth/TOTPSetup";
 import { AuthContext } from "@/contexts/AuthContext";
 
-function AccountSettingsForm() {
+function AccountSettings() {
   const { user, loading, isAuthenticated } = use(AuthContext);
 
   if (loading) {
@@ -32,4 +32,4 @@ function AccountSettingsForm() {
   );
 }
 
-export { AccountSettingsForm };
+export { AccountSettings };

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { AccountSettingsForm } from "@/components/auth/AccountSettingsForm";
+import { AccountSettings } from "@/components/account/AccountSettings";
 
 export const metadata: Metadata = {
   alternates: {
@@ -14,7 +14,7 @@ export default function SignInPage() {
   return (
     <div className="flex items-center justify-center p-4 md:pt-20">
       <div className="w-full">
-        <AccountSettingsForm />
+        <AccountSettings />
       </div>
     </div>
   );
