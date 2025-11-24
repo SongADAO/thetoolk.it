@@ -13,10 +13,11 @@ function TOTPVerification({
   onCancel,
   onVerified,
 }: Readonly<TOTPVerificationProps>) {
+  const { verifyTOTP } = use(AuthContext);
+
   const [code, setCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const { verifyTOTP } = use(AuthContext);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
