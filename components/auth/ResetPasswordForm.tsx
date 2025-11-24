@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Form } from "radix-ui";
-import { FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { createClient } from "@/lib/supabase/client";

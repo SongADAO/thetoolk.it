@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, use, useState } from "react";
+import { type FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";

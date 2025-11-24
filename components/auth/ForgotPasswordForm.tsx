@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { createClient } from "@/lib/supabase/client";
