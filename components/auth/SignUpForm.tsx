@@ -39,7 +39,7 @@ function SignUpForm() {
   }
 
   return (
-    <form className="mx-auto w-full max-w-lg space-y-4" onSubmit={handleSubmit}>
+    <form className="mx-auto w-full max-w-md space-y-4" onSubmit={handleSubmit}>
       <h1 className="text-2xl font-bold">Create an Account</h1>
 
       <div>
