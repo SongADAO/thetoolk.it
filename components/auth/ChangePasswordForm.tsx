@@ -24,7 +24,7 @@ function ChangePasswordForm() {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
@@ -37,7 +37,7 @@ function ChangePasswordForm() {
     try {
       e.preventDefault();
 
-      setLoading(true);
+      setIsLoading(true);
       setError("");
       setMessage("");
 
@@ -83,7 +83,7 @@ function ChangePasswordForm() {
         handleSignOut();
       }, 1500);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -201,8 +201,8 @@ function ChangePasswordForm() {
           </Form.Field>
 
           <Form.Submit asChild>
-            <Button disabled={loading} type="submit">
-              {loading ? "Updating..." : "Update Password"}
+            <Button disabled={isLoading} type="submit">
+              {isLoading ? "Updating..." : "Update Password"}
             </Button>
           </Form.Submit>
 

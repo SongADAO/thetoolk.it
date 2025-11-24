@@ -27,13 +27,13 @@ function TOTPSetup() {
 
   const [showTotpSetup, setShowTotpSetup] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   async function handleAddFactor() {
     try {
-      setLoading(true);
+      setIsLoading(true);
       setError("");
       setMessage("");
       setEnrollmentState(null);
@@ -62,7 +62,7 @@ function TOTPSetup() {
         }
       }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -74,7 +74,7 @@ function TOTPSetup() {
     }
 
     try {
-      setLoading(true);
+      setIsLoading(true);
       setError("");
 
       const { error: verifyError } = await verifyTOTPEnrollment(
@@ -94,13 +94,13 @@ function TOTPSetup() {
 
       await loadFactors();
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
   async function handleUnenroll(factorId: string) {
     try {
-      setLoading(true);
+      setIsLoading(true);
       setError("");
       setMessage("");
 
@@ -113,7 +113,7 @@ function TOTPSetup() {
         await loadFactors();
       }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -223,8 +223,8 @@ function TOTPSetup() {
 
               <div className="grid grid-cols-[1fr_auto] gap-2">
                 <Form.Submit asChild>
-                  <Button disabled={loading} type="submit">
-                    {loading ? "Verifying..." : "Verify and Enable"}
+                  <Button disabled={isLoading} type="submit">
+                    {isLoading ? "Verifying..." : "Verify and Enable"}
                   </Button>
                 </Form.Submit>
                 <Button onClick={onCancel} purpose="danger" type="button">
@@ -254,7 +254,11 @@ function TOTPSetup() {
             <h3 className="text-sm font-semibold">
               Your Authentication Factors
             </h3>
-            <Button disabled={loading} onClick={handleAddFactor} type="button">
+            <Button
+              disabled={isLoading}
+              onClick={handleAddFactor}
+              type="button"
+            >
               Add Factor
             </Button>
           </div>

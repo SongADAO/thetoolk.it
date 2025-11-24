@@ -22,7 +22,7 @@ function ChangeEmailForm() {
 
   const [email, setEmail] = useState<string>("");
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
@@ -35,7 +35,7 @@ function ChangeEmailForm() {
     try {
       e.preventDefault();
 
-      setLoading(true);
+      setIsLoading(true);
       setError("");
       setMessage("");
 
@@ -69,7 +69,7 @@ function ChangeEmailForm() {
         handleSignOut();
       }, 2000);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -134,8 +134,8 @@ function ChangeEmailForm() {
           </Form.Field>
 
           <Form.Submit asChild>
-            <Button disabled={loading} type="submit">
-              {loading ? "Updating..." : "Update Email"}
+            <Button disabled={isLoading} type="submit">
+              {isLoading ? "Updating..." : "Update Email"}
             </Button>
           </Form.Submit>
 

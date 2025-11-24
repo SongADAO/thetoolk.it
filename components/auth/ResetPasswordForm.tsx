@@ -15,7 +15,7 @@ function ResetPasswordForm() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
@@ -69,7 +69,7 @@ function ResetPasswordForm() {
     try {
       e.preventDefault();
 
-      setLoading(true);
+      setIsLoading(true);
       setError("");
       setMessage("");
 
@@ -103,7 +103,7 @@ function ResetPasswordForm() {
         "Password updated successfully! You can now log in with your new password.",
       );
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -156,8 +156,8 @@ function ResetPasswordForm() {
       </Form.Field>
 
       <Form.Submit asChild>
-        <Button disabled={loading} type="submit" width="full">
-          {loading ? "Updating..." : "Update Password"}
+        <Button disabled={isLoading} type="submit" width="full">
+          {isLoading ? "Updating..." : "Update Password"}
         </Button>
       </Form.Submit>
 
