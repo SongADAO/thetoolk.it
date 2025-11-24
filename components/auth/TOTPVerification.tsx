@@ -2,6 +2,7 @@
 
 import { type FormEvent, use, useState } from "react";
 
+import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 
 interface TOTPVerificationProps {
@@ -63,21 +64,13 @@ function TOTPVerification({
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-      <div className="flex gap-2">
-        <button
-          className="flex-1 cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-          disabled={loading}
-          type="submit"
-        >
+      <div className="grid grid-cols-[1fr_auto] gap-2">
+        <Button disabled={loading} type="submit">
           {loading ? "Verifying..." : "Verify"}
-        </button>
-        <button
-          className="cursor-pointer rounded border border-gray-300 px-4 py-2 hover:bg-gray-100"
-          onClick={onCancel}
-          type="button"
-        >
+        </Button>
+        <Button onClick={onCancel} purpose="danger" type="button">
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );
