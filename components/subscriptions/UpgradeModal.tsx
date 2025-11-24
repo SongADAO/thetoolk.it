@@ -52,18 +52,6 @@ function UpgradeModal() {
               </Link>
             </p>
           </div>
-
-          {/* <div className="mt-10">
-            <p className="mb-4 text-center">Not ready to subscribe?</p>
-            <p className="text-center">
-              <Link
-                className="cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
-                href="/free"
-              >
-                Try TheToolk.it Free Edition
-              </Link>
-            </p>
-          </div> */}
         </div>
       </div>
     );
@@ -74,18 +62,6 @@ function UpgradeModal() {
       <ModalOverlay />
       <div className="absolute top-1/4 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 -translate-y-1/2 transform rounded-md border-2 border-gray-500 bg-gray-200 p-6 shadow-lg">
         <div>
-          {/* <p className="mb-4 text-center">
-            To access TheToolk.it Pro subscribe to one of our plans.
-          </p>
-          <p className="text-center">
-            <Link
-              className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-              href="/subscribe"
-            >
-              Subscribe
-            </Link>
-          </p> */}
-
           <UserSubscription />
         </div>
       </div>
