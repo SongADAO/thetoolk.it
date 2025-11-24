@@ -7,7 +7,7 @@ import { SubscribeButton } from "@/components/subscriptions/SubscribeButton";
 import { AuthContext } from "@/contexts/AuthContext";
 import { getPriceName } from "@/lib/subscriptions";
 
-function SubscriptionManager() {
+function UserSubscription() {
   const { user, loading, subscriptionIsLoading, subscription } =
     use(AuthContext);
 
@@ -29,59 +29,51 @@ function SubscriptionManager() {
     );
   }
 
-  // const currentPeriodEnd = subscription.current_period_end
-  //   ? new Date(subscription.current_period_end)
-  //   : null;
-
   if (subscription.status === "active") {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-4 p-4">
-        <h2 className="text-center text-xl font-bold">
-          Your TheToolk.it Pro Subscription
-        </h2>
-        <div>
+      <section className="mx-auto space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-2xl font-bold">Current Subscription</h2>
+        <div className="space-y-2">
+          <p>
+            <strong>Plan:</strong> TheToolk.it Pro
+          </p>
           {subscription.price_type ? (
-            <div>
-              <strong>Plan: {getPriceName(subscription.price_type)}</strong>
-            </div>
+            <p>
+              <strong>Price:</strong> {getPriceName(subscription.price_type)}
+            </p>
           ) : null}
-          <div>
-            <strong>
-              Status: <span className="capitalize">{subscription.status}</span>
-            </strong>
-          </div>
-          {/* {currentPeriodEnd ? (
-            <div>
-              <strong>Renewal: {currentPeriodEnd.toLocaleDateString()}</strong>
-            </div>
-          ) : null} */}
+          <p>
+            <strong>Status:</strong>{" "}
+            <span className="capitalize">{subscription.status}</span>
+          </p>
         </div>
-        <div>
+        <div className="mt-4 flex gap-4">
           <ManageSubscriptionButton />
         </div>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div>
-      <div className="flex h-full flex-col items-center justify-center gap-2 p-4">
-        <h2 className="text-center text-xl font-bold">
-          Subscribe to TheToolk.it Pro
-        </h2>
-        <h3 className="pt-4 text-center font-bold">Features</h3>
-        <ul className="text-center">
+    <section className="mx-auto space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <h2 className="text-2xl font-bold">Subscribe to TheToolk.it Pro</h2>
+      <section className="space-y-2">
+        <h3 className="font-bold">Pro Features</h3>
+        <ul className="list-inside list-disc">
           <li>No API setup required</li>
           <li>Ability to post to TikTok</li>
           <li>Easily use the same accounts across devices</li>
         </ul>
-        <div className="flex items-center justify-center gap-4 pt-8">
+      </section>
+      <section className="space-y-2">
+        <h3 className="font-bold">Choose Your Price</h3>
+        <div className="mt-4 flex items-center justify-start gap-4">
           <SubscribeButton label={getPriceName("pro-month")} type="pro-month" />
           <SubscribeButton label={getPriceName("pro-year")} type="pro-year" />
         </div>
-      </div>
-    </div>
+      </section>
+    </section>
   );
 }
 
-export { SubscriptionManager };
+export { UserSubscription };
