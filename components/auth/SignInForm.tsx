@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Form } from "radix-ui";
-import { FormEvent, use, useEffect, useState } from "react";
+import { type FormEvent, use, useEffect, useState } from "react";
 
 import { TOTPVerification } from "@/components/auth/TOTPVerification";
 import { Button } from "@/components/general/Button";

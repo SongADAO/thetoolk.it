@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, use, useState } from "react";
+import { type FormEvent, use, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
