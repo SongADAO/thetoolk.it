@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Form } from "radix-ui";
 import { FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
@@ -98,7 +99,7 @@ function ChangePasswordForm() {
         <h2 className="font-bold">Change Password</h2>
       </header>
       <div className="space-y-2 px-4">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <Form.Root className="space-y-4" onSubmit={handleSubmit}>
           <div className="sr-only">
             <label htmlFor="username">Username</label>
             <input
@@ -112,17 +113,24 @@ function ChangePasswordForm() {
             />
           </div>
 
-          <div>
-            <label
-              className="mb-1 block text-sm font-medium"
-              htmlFor="current-password"
-            >
-              Current Password
-            </label>
-            <input
+          <Form.Field name="current-password">
+            <div className="flex items-baseline justify-between">
+              <Form.Label className="block text-sm font-medium">
+                Current Password
+              </Form.Label>
+              <Form.Message
+                className="text-xs text-red-600"
+                match="valueMissing"
+              >
+                Please enter your current password
+              </Form.Message>
+              <Form.Message className="text-xs text-red-600" match="tooShort">
+                Password must be at least 8 characters
+              </Form.Message>
+            </div>
+            <Form.Control
               autoComplete="current-password"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              id="current-password"
               minLength={8}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
@@ -132,58 +140,75 @@ function ChangePasswordForm() {
             <p className="mt-1 text-xs">
               For security, please enter your current password
             </p>
-          </div>
+          </Form.Field>
 
-          <div>
-            <label
-              className="mb-1 block text-sm font-medium"
-              htmlFor="new-password"
-            >
-              New Password
-            </label>
-            <input
+          <Form.Field name="new-password">
+            <div className="flex items-baseline justify-between">
+              <Form.Label className="block text-sm font-medium">
+                New Password
+              </Form.Label>
+              <Form.Message
+                className="text-xs text-red-600"
+                match="valueMissing"
+              >
+                Please enter a new password
+              </Form.Message>
+              <Form.Message className="text-xs text-red-600" match="tooShort">
+                Password must be at least 8 characters
+              </Form.Message>
+            </div>
+            <Form.Control
               autoComplete="new-password"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              id="new-password"
               minLength={8}
               onChange={(e) => setNewPassword(e.target.value)}
               required
               type="password"
               value={newPassword}
             />
-          </div>
+          </Form.Field>
 
-          <div>
-            <label
-              className="mb-1 block text-sm font-medium"
-              htmlFor="confirm-password"
-            >
-              Confirm New Password
-            </label>
-            <input
+          <Form.Field name="confirm-password">
+            <div className="flex items-baseline justify-between">
+              <Form.Label className="block text-sm font-medium">
+                Confirm New Password
+              </Form.Label>
+              <Form.Message
+                className="text-xs text-red-600"
+                match="valueMissing"
+              >
+                Please confirm your password
+              </Form.Message>
+              <Form.Message className="text-xs text-red-600" match="tooShort">
+                Password must be at least 8 characters
+              </Form.Message>
+            </div>
+            <Form.Control
               autoComplete="new-password"
               className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              id="confirm-password"
               minLength={8}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               type="password"
               value={confirmPassword}
             />
-          </div>
+          </Form.Field>
 
-          <Button disabled={loading} type="submit">
-            {loading ? "Updating..." : "Update Password"}
-          </Button>
+          <Form.Submit asChild>
+            <Button disabled={loading} type="submit">
+              {loading ? "Updating..." : "Update Password"}
+            </Button>
+          </Form.Submit>
 
           {message ? (
             <p
               className={`text-sm ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}
+              role="alert"
             >
               {message}
             </p>
           ) : null}
-        </form>
+        </Form.Root>
       </div>
     </section>
   );
