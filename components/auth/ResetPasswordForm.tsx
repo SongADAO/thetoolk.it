@@ -14,15 +14,17 @@ function ResetPasswordForm() {
 
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   // Check for errors in URL on mount (both query params and hash)
   useEffect(() => {
     // Check query parameters
-    const error = searchParams.get("error");
-    const errorDescription = searchParams.get("error_description");
-    const errorCode = searchParams.get("error_code");
+    const paramError = searchParams.get("error");
+    const paramErrorDescription = searchParams.get("error_description");
+    const paramErrorCode = searchParams.get("error_code");
 
     // Also check hash parameters (Supabase uses hash for some errors)
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -31,11 +33,11 @@ function ResetPasswordForm() {
     const hashErrorCode = hashParams.get("error_code");
 
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    const finalError = error || hashError;
+    const finalError = paramError || hashError;
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    const finalErrorDescription = errorDescription || hashErrorDescription;
+    const finalErrorDescription = paramErrorDescription || hashErrorDescription;
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    const finalErrorCode = errorCode || hashErrorCode;
+    const finalErrorCode = paramErrorCode || hashErrorCode;
 
     if (finalError) {
       let errorMessage =
@@ -59,44 +61,50 @@ function ResetPasswordForm() {
       }
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMessage(errorMessage);
+      setError(errorMessage);
     }
   }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+    try {
+      e.preventDefault();
 
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
-      setLoading(false);
-      return;
-    }
+      setLoading(true);
+      setError("");
+      setMessage("");
 
-    // Validate password length
-    if (password.length < 6) {
-      setMessage("Password must be at least 6 characters");
-      setLoading(false);
-      return;
-    }
+      // Validate passwords match
+      if (password !== confirmPassword) {
+        setError("Passwords do not match");
 
-    const { error } = await supabase.auth.updateUser({
-      password,
-    });
+        return;
+      }
 
-    if (error) {
-      setMessage(error.message);
-    } else {
+      // Validate password length
+      if (password.length < 6) {
+        setError("Password must be at least 6 characters");
+
+        return;
+      }
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        password,
+      });
+
+      if (updateError) {
+        setError(updateError.message);
+
+        return;
+      }
+
       setPassword("");
       setConfirmPassword("");
       setMessage(
         "Password updated successfully! You can now log in with your new password.",
       );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
@@ -154,11 +162,14 @@ function ResetPasswordForm() {
       </Form.Submit>
 
       {message ? (
-        <p
-          className={`text-sm ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}
-          role="alert"
-        >
+        <p className="text-sm text-green-600" role="alert">
           {message}
+        </p>
+      ) : null}
+
+      {error ? (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
         </p>
       ) : null}
     </Form.Root>

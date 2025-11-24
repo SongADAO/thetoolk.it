@@ -305,19 +305,15 @@ function TOTPSetup() {
         </div>
 
         {message ? (
-          <p
-            className={`text-sm ${
-              message.includes("successfully")
-                ? "text-green-600"
-                : "text-red-600"
-            }`}
-          >
+          <p className="text-sm text-green-600" role="alert">
             {message}
           </p>
         ) : null}
 
-        {error && !showTotpSetup ? (
-          <p className="text-sm text-red-600">{error}</p>
+        {error ? (
+          <p className="text-sm text-red-600" role="alert">
+            {error}
+          </p>
         ) : null}
       </div>
     </section>

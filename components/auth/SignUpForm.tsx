@@ -12,28 +12,35 @@ function SignUpForm() {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+    try {
+      e.preventDefault();
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { data, error: signUpError } = await signUp(email, password, {
-      emailRedirectTo: `${window.location.origin}/pro`,
-    });
+      setLoading(true);
+      setError("");
+      setMessage("");
 
-    if (signUpError) {
-      setMessage(signUpError.message);
-    } else {
+      const { error: signUpError } = await signUp(email, password, {
+        emailRedirectTo: `${window.location.origin}/pro`,
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+
+        return;
+      }
+
       setPassword("");
       setEmail("");
       setMessage("Check your email for confirmation link!");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
@@ -125,11 +132,14 @@ function SignUpForm() {
       </Form.Submit>
 
       {message ? (
-        <p
-          className={`text-sm ${message.includes("Check") ? "text-green-600" : "text-red-600"}`}
-          role="alert"
-        >
+        <p className="text-sm text-green-600" role="alert">
           {message}
+        </p>
+      ) : null}
+
+      {error ? (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
         </p>
       ) : null}
     </Form.Root>
