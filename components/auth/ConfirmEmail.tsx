@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { LinkButton } from "@/components/general/LinkButton";
 import { createClient } from "@/lib/supabase/client";
 
 function ConfirmEmail() {
@@ -11,62 +11,61 @@ function ConfirmEmail() {
 
   const searchParams = useSearchParams();
 
-  const [message, setMessage] = useState<string>(
-    "Processing email confirmation...",
-  );
-  const [isError, setIsError] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const [isPending, setIsPending] = useState<boolean>(true);
 
   useEffect(() => {
     async function handleEmailConfirmation(): Promise<void> {
-      // Check for errors in both query params and hash
-      const error = searchParams.get("error");
-      const errorDescription = searchParams.get("error_description");
+      try {
+        // Check for errors in both query params and hash
+        const paramError = searchParams.get("error");
+        const paramErrorDescription = searchParams.get("error_description");
 
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const hashError = hashParams.get("error");
-      const hashErrorDescription = hashParams.get("error_description");
+        const hashParams = new URLSearchParams(
+          window.location.hash.substring(1),
+        );
+        const hashError = hashParams.get("error");
+        const hashErrorDescription = hashParams.get("error_description");
 
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-      const finalError = error || hashError;
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-      const finalErrorDescription = errorDescription || hashErrorDescription;
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        const finalError = paramError || hashError;
+        const finalErrorDescription =
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+          paramErrorDescription || hashErrorDescription;
 
-      if (finalError) {
-        setIsError(true);
-        setIsPending(false);
+        if (finalError) {
+          // Provide user-friendly error messages
+          if (finalError === "access_denied") {
+            throw new Error(
+              "This confirmation link has already been used or is no longer valid.",
+            );
+          }
 
-        // Provide user-friendly error messages
-        if (finalError === "access_denied") {
-          setMessage(
-            "This confirmation link has already been used or is no longer valid.",
-          );
-        } else if (
-          finalError === "invalid_link" ||
-          finalError === "otp_expired"
-        ) {
-          setMessage(
-            "This confirmation link has expired. Please request a new email change from your account settings.",
-          );
-        } else {
-          setMessage(
+          if (finalError === "invalid_link" || finalError === "otp_expired") {
+            throw new Error(
+              "This confirmation link has expired. Please request a new email change from your account settings.",
+            );
+          }
+
+          throw new Error(
             // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             finalErrorDescription ||
               "There was an error confirming your email change. Please try again.",
           );
         }
-        return;
-      }
 
-      // Check if there's a confirmation success
-      const type = hashParams.get("type");
+        // Check if there's a confirmation success
+        const type = hashParams.get("type");
 
-      if (type === "email_change") {
-        setMessage(
-          "Email confirmation successful! You've confirmed one of the two required emails. Please check and confirm the other email if you haven't already. Once both are confirmed, you can sign in with your new email address.",
-        );
-        setIsPending(false);
-      } else {
+        if (type === "email_change") {
+          setMessage(
+            "Email confirmation successful! You've confirmed one of the two required emails. Please check and confirm the other email if you haven't already. Once both are confirmed, you can sign in with your new email address.",
+          );
+
+          return;
+        }
+
         // Get the current session
         const {
           data: { session },
@@ -76,11 +75,19 @@ function ConfirmEmail() {
           setMessage(
             "Email confirmation processed. If you've confirmed both emails (old and new), you can now sign in with your new email address.",
           );
-        } else {
-          setMessage(
-            "Email confirmation received. Please confirm both emails (if you haven't already), then sign in with your new email address.",
-          );
+
+          return;
         }
+
+        setMessage(
+          "Email confirmation received. Please confirm both emails (if you haven't already), then sign in with your new email address.",
+        );
+      } catch (err: unknown) {
+        console.error(err);
+        const errMessage = err instanceof Error ? err.message : "Form failed";
+        setError(errMessage);
+        setMessage("");
+      } finally {
         setIsPending(false);
       }
     }
@@ -96,17 +103,25 @@ function ConfirmEmail() {
       {isPending ? (
         <div className="flex flex-col items-center space-y-4">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
-          <p className="text-sm text-gray-600">{message}</p>
+          <p className="text-sm text-gray-600">
+            Processing email confirmation...
+          </p>
         </div>
       ) : (
         <>
-          <p
-            className={`text-sm ${isError ? "text-red-600" : "text-green-600"}`}
-          >
-            {message}
-          </p>
+          {message ? (
+            <p className="text-sm text-green-600" role="alert">
+              {message}
+            </p>
+          ) : null}
 
-          {!isError && (
+          {error ? (
+            <p className="text-sm text-red-600" role="alert">
+              {error}
+            </p>
+          ) : null}
+
+          {error ? (
             <div className="rounded-lg bg-blue-50 p-4 text-sm text-blue-800">
               <p className="mb-2 font-medium">Important:</p>
               <ul className="list-inside list-disc space-y-1">
@@ -116,15 +131,10 @@ function ConfirmEmail() {
                 <li>After both are confirmed, sign in with your new email</li>
               </ul>
             </div>
-          )}
+          ) : null}
 
           <div className="flex flex-col space-y-2">
-            <Link
-              className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-              href="/auth/signin"
-            >
-              Go to Sign In
-            </Link>
+            <LinkButton href="/auth/signin">Go to Sign In</LinkButton>
           </div>
         </>
       )}
