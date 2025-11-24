@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
-import { type FormEvent, use, useEffect, useState } from "react";
+import { type FormEvent, use, useState } from "react";
 
 import { TOTPVerification } from "@/components/auth/TOTPVerification";
 import { Button } from "@/components/general/Button";
@@ -13,22 +13,12 @@ function SignInForm() {
 
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-
   const [needsTOTP, setNeedsTOTP] = useState<boolean>(false);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    const errorParam = searchParams.get("error");
-    if (errorParam === "mfa_required") {
-      setError("Two-factor authentication is required to sign in.");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
