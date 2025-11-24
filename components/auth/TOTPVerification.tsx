@@ -18,14 +18,14 @@ function TOTPVerification({
   const { verifyTOTP } = use(AuthContext);
 
   const [code, setCode] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     try {
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
 
       const { error: verifyError } = await verifyTOTP(code);
@@ -38,7 +38,7 @@ function TOTPVerification({
 
       onVerified();
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
       setCode("");
     }
   }
@@ -85,8 +85,8 @@ function TOTPVerification({
 
       <div className="grid grid-cols-[1fr_auto] gap-2">
         <Form.Submit asChild>
-          <Button disabled={isLoading} type="submit">
-            {isLoading ? "Verifying..." : "Verify"}
+          <Button disabled={isPending} type="submit">
+            {isPending ? "Verifying..." : "Verify"}
           </Button>
         </Form.Submit>
         <Button onClick={onCancel} purpose="danger" type="button">

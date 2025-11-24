@@ -9,12 +9,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
 function ChangePasswordForm() {
-  const {
-    user,
-    isLoading: authIsLoading,
-    isAuthenticated,
-    signOut,
-  } = use(AuthContext);
+  const { user, isLoading, isAuthenticated, signOut } = use(AuthContext);
 
   const supabase = createClient();
 
@@ -24,7 +19,7 @@ function ChangePasswordForm() {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
@@ -37,7 +32,7 @@ function ChangePasswordForm() {
     try {
       e.preventDefault();
 
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
       setMessage("");
 
@@ -83,11 +78,11 @@ function ChangePasswordForm() {
         handleSignOut();
       }, 1500);
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
-  if (authIsLoading) {
+  if (isLoading) {
     return <div className="p-4 text-center">Loading...</div>;
   }
 
@@ -201,8 +196,8 @@ function ChangePasswordForm() {
           </Form.Field>
 
           <Form.Submit asChild>
-            <Button disabled={isLoading} type="submit">
-              {isLoading ? "Updating..." : "Update Password"}
+            <Button disabled={isPending} type="submit">
+              {isPending ? "Updating..." : "Update Password"}
             </Button>
           </Form.Submit>
 

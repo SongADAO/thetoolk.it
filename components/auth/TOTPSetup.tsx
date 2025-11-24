@@ -27,13 +27,13 @@ function TOTPSetup() {
 
   const [showTotpSetup, setShowTotpSetup] = useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   async function handleAddFactor() {
     try {
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
       setMessage("");
       setEnrollmentState(null);
@@ -62,7 +62,7 @@ function TOTPSetup() {
         }
       }
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
@@ -74,7 +74,7 @@ function TOTPSetup() {
     }
 
     try {
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
 
       const { error: verifyError } = await verifyTOTPEnrollment(
@@ -94,13 +94,13 @@ function TOTPSetup() {
 
       await loadFactors();
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
   async function handleUnenroll(factorId: string) {
     try {
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
       setMessage("");
 
@@ -113,7 +113,7 @@ function TOTPSetup() {
         await loadFactors();
       }
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
@@ -133,7 +133,7 @@ function TOTPSetup() {
   }
 
   if (showTotpSetup) {
-    if (isLoading && !enrollmentState) {
+    if (isPending && !enrollmentState) {
       return (
         <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
           <header className="bg-gray-300 px-4 py-2">
@@ -223,8 +223,8 @@ function TOTPSetup() {
 
               <div className="grid grid-cols-[1fr_auto] gap-2">
                 <Form.Submit asChild>
-                  <Button disabled={isLoading} type="submit">
-                    {isLoading ? "Verifying..." : "Verify and Enable"}
+                  <Button disabled={isPending} type="submit">
+                    {isPending ? "Verifying..." : "Verify and Enable"}
                   </Button>
                 </Form.Submit>
                 <Button onClick={onCancel} purpose="danger" type="button">
@@ -255,7 +255,7 @@ function TOTPSetup() {
               Your Authentication Factors
             </h3>
             <Button
-              disabled={isLoading}
+              disabled={isPending}
               onClick={handleAddFactor}
               type="button"
             >
@@ -292,7 +292,7 @@ function TOTPSetup() {
                     </div>
                   </div>
                   <Button
-                    disabled={isLoading}
+                    disabled={isPending}
                     onClick={async () => handleUnenroll(factor.id)}
                     purpose="danger"
                     type="button"

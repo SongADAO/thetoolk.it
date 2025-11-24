@@ -18,12 +18,12 @@ function SignInForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
-    setIsLoading(true);
+    setIsPending(true);
     setError("");
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -54,7 +54,7 @@ function SignInForm() {
       router.push("/pro");
     }
 
-    setIsLoading(false);
+    setIsPending(false);
   }
 
   function handleTOTPVerified() {
@@ -125,8 +125,8 @@ function SignInForm() {
       </Form.Field>
 
       <Form.Submit asChild>
-        <Button disabled={isLoading} type="submit" width="full">
-          {isLoading ? "Signing in..." : "Sign In"}
+        <Button disabled={isPending} type="submit" width="full">
+          {isPending ? "Signing in..." : "Sign In"}
         </Button>
       </Form.Submit>
 

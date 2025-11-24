@@ -15,7 +15,7 @@ function ConfirmEmail() {
     "Processing email confirmation...",
   );
   const [isError, setIsError] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isPending, setIsPending] = useState<boolean>(true);
 
   useEffect(() => {
     async function handleEmailConfirmation(): Promise<void> {
@@ -34,7 +34,7 @@ function ConfirmEmail() {
 
       if (finalError) {
         setIsError(true);
-        setIsLoading(false);
+        setIsPending(false);
 
         // Provide user-friendly error messages
         if (finalError === "access_denied") {
@@ -65,7 +65,7 @@ function ConfirmEmail() {
         setMessage(
           "Email confirmation successful! You've confirmed one of the two required emails. Please check and confirm the other email if you haven't already. Once both are confirmed, you can sign in with your new email address.",
         );
-        setIsLoading(false);
+        setIsPending(false);
       } else {
         // Get the current session
         const {
@@ -81,7 +81,7 @@ function ConfirmEmail() {
             "Email confirmation received. Please confirm both emails (if you haven't already), then sign in with your new email address.",
           );
         }
-        setIsLoading(false);
+        setIsPending(false);
       }
     }
 
@@ -93,7 +93,7 @@ function ConfirmEmail() {
     <div className="mx-auto max-w-md space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
       <h1 className="text-center text-2xl font-bold">Email Confirmation</h1>
 
-      {isLoading ? (
+      {isPending ? (
         <div className="flex flex-col items-center space-y-4">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
           <p className="text-sm text-gray-600">{message}</p>

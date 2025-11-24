@@ -11,7 +11,7 @@ function ForgotPasswordForm() {
 
   const [email, setEmail] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
@@ -19,7 +19,7 @@ function ForgotPasswordForm() {
     try {
       e.preventDefault();
 
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
       setMessage("");
 
@@ -39,7 +39,7 @@ function ForgotPasswordForm() {
       setEmail("");
       setMessage("Check your email for password reset instructions!");
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
@@ -67,8 +67,8 @@ function ForgotPasswordForm() {
       </Form.Field>
 
       <Form.Submit asChild>
-        <Button disabled={isLoading} type="submit" width="full">
-          {isLoading ? "Sending..." : "Send Reset Email"}
+        <Button disabled={isPending} type="submit" width="full">
+          {isPending ? "Sending..." : "Send Reset Email"}
         </Button>
       </Form.Submit>
 
