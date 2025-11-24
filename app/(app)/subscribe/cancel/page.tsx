@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function SubscribeCancelPage() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-4 md:pt-20">
+    <div className="flex flex-col items-center justify-center gap-4 p-4 md:py-20">
       <p>
         You cancelled your subscription checkout before completing it. You have
         not been charged.

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function SubscribeSuccessPage() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-4 md:pt-20">
+    <div className="flex flex-col items-center justify-center gap-4 p-4 md:py-20">
       <p>Thanks for subscribing! Your payment was successful.</p>
       <LinkButton href="/pro">Start Using TheToolk.it Pro</LinkButton>
     </div>
