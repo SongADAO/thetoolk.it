@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
-function StartPasswordResetForm() {
+function ForgotPasswordForm() {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -31,7 +31,7 @@ function StartPasswordResetForm() {
 
   return (
     <form className="mx-auto max-w-md space-y-4" onSubmit={handleSubmit}>
-      <h1 className="text-2xl font-bold">Reset Password</h1>
+      <h1 className="text-2xl font-bold">Forgot Password</h1>
 
       <div>
         <label className="mb-1 block text-sm font-medium" htmlFor="email">
@@ -66,4 +66,4 @@ function StartPasswordResetForm() {
   );
 }
 
-export { StartPasswordResetForm };
+export { ForgotPasswordForm };
