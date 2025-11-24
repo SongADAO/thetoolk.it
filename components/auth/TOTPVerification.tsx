@@ -1,5 +1,6 @@
 "use client";
 
+import { Form } from "radix-ui";
 import { type FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
@@ -20,7 +21,7 @@ function TOTPVerification({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -40,39 +41,58 @@ function TOTPVerification({
   }
 
   return (
-    <form className="mx-auto w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+    <Form.Root
+      className="mx-auto w-full max-w-md space-y-4"
+      onSubmit={handleSubmit}
+    >
       <h2 className="text-xl font-bold">Two-Factor Authentication</h2>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor="totp-code">
-          Enter authentication code from your app
-        </label>
-        <input
+      <Form.Field name="totp-code">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            Enter authentication code from your app
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please enter your code
+          </Form.Message>
+          <Form.Message
+            className="text-xs text-red-600"
+            match="patternMismatch"
+          >
+            Code must be 6 digits
+          </Form.Message>
+        </div>
+        <Form.Control
           autoComplete="off"
           autoFocus
           className="w-full rounded border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          id="totp-code"
           maxLength={6}
           onChange={(e) => setCode(e.target.value.replace(/\D/gu, ""))}
           pattern="\d{6}"
           placeholder="000000"
           required
-          type="text"
+          type="number"
           value={code}
         />
-      </div>
+      </Form.Field>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       <div className="grid grid-cols-[1fr_auto] gap-2">
-        <Button disabled={loading} type="submit">
-          {loading ? "Verifying..." : "Verify"}
-        </Button>
+        <Form.Submit asChild>
+          <Button disabled={loading} type="submit">
+            {loading ? "Verifying..." : "Verify"}
+          </Button>
+        </Form.Submit>
         <Button onClick={onCancel} purpose="danger" type="button">
           Cancel
         </Button>
       </div>
-    </form>
+    </Form.Root>
   );
 }
 
