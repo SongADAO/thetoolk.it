@@ -9,12 +9,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
 function ChangeEmailForm() {
-  const {
-    user,
-    isLoading: authIsLoading,
-    isAuthenticated,
-    signOut,
-  } = use(AuthContext);
+  const { user, isLoading, isAuthenticated, signOut } = use(AuthContext);
 
   const supabase = createClient();
 
@@ -22,7 +17,7 @@ function ChangeEmailForm() {
 
   const [email, setEmail] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
@@ -35,7 +30,7 @@ function ChangeEmailForm() {
     try {
       e.preventDefault();
 
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
       setMessage("");
 
@@ -69,11 +64,11 @@ function ChangeEmailForm() {
         handleSignOut();
       }, 2000);
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
-  if (authIsLoading) {
+  if (isLoading) {
     return <div className="p-4 text-center">Loading...</div>;
   }
 
@@ -134,8 +129,8 @@ function ChangeEmailForm() {
           </Form.Field>
 
           <Form.Submit asChild>
-            <Button disabled={isLoading} type="submit">
-              {isLoading ? "Updating..." : "Update Email"}
+            <Button disabled={isPending} type="submit">
+              {isPending ? "Updating..." : "Update Email"}
             </Button>
           </Form.Submit>
 

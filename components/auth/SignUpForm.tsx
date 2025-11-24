@@ -13,7 +13,7 @@ function SignUpForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
@@ -21,7 +21,7 @@ function SignUpForm() {
     try {
       e.preventDefault();
 
-      setIsLoading(true);
+      setIsPending(true);
       setError("");
       setMessage("");
 
@@ -39,7 +39,7 @@ function SignUpForm() {
       setEmail("");
       setMessage("Check your email for confirmation link!");
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
@@ -126,8 +126,8 @@ function SignUpForm() {
       </Form.Field>
 
       <Form.Submit asChild>
-        <Button disabled={isLoading} type="submit" width="full">
-          {isLoading ? "Creating account..." : "Create Account"}
+        <Button disabled={isPending} type="submit" width="full">
+          {isPending ? "Creating account..." : "Create Account"}
         </Button>
       </Form.Submit>
 
