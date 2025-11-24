@@ -31,9 +31,11 @@ function UserSubscription() {
 
   if (subscription.status === "active") {
     return (
-      <section className="mx-auto space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-bold">Current Subscription</h2>
-        <div className="space-y-2">
+      <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+        <header className="bg-gray-300 px-4 py-2">
+          <h2 className="font-bold">Current Subscription</h2>
+        </header>
+        <div className="space-y-2 px-4">
           <p>
             <strong>Plan:</strong> TheToolk.it Pro
           </p>
@@ -47,7 +49,7 @@ function UserSubscription() {
             <span className="capitalize">{subscription.status}</span>
           </p>
         </div>
-        <div className="mt-4 flex gap-4">
+        <div className="mt-4 flex items-center gap-4 px-4">
           <ManageSubscriptionButton />
         </div>
       </section>
@@ -55,19 +57,25 @@ function UserSubscription() {
   }
 
   return (
-    <section className="mx-auto space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="text-2xl font-bold">Subscribe to TheToolk.it Pro</h2>
-      <section className="space-y-2">
-        <h3 className="font-bold">Pro Features</h3>
+    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+      <header className="bg-gray-300 px-4 py-2">
+        <h2 className="font-bold">Subscribe to TheToolk.it Pro</h2>
+      </header>
+      <section className="space-y-2 px-4">
+        <header>
+          <h3 className="font-bold">Pro Features</h3>
+        </header>
         <ul className="list-inside list-disc">
           <li>No API setup required</li>
           <li>Ability to post to TikTok</li>
           <li>Easily use the same accounts across devices</li>
         </ul>
       </section>
-      <section className="space-y-2">
-        <h3 className="font-bold">Choose Your Price</h3>
-        <div className="mt-4 flex items-center justify-start gap-4">
+      <section className="space-y-2 px-4">
+        <header>
+          <h3 className="font-bold">Choose Your Price</h3>
+        </header>
+        <div className="mt-4 flex items-center gap-4">
           <SubscribeButton label={getPriceName("pro-month")} type="pro-month" />
           <SubscribeButton label={getPriceName("pro-year")} type="pro-year" />
         </div>
