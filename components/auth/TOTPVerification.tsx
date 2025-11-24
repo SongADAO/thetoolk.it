@@ -34,6 +34,7 @@ function TOTPVerification({
     }
 
     setLoading(false);
+    setCode("");
     onVerified();
   }
 

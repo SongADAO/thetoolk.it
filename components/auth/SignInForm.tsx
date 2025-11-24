@@ -44,11 +44,16 @@ function SignInForm() {
         signInError.message?.includes("MFA") ||
         signInError.message?.includes("factor")
       ) {
+        setPassword("");
+        setEmail("");
+        // User must complete MFA verification
         setNeedsTOTP(true);
       } else {
         setError(signInError.message);
       }
     } else if (data?.user?.factors && data.user.factors.length > 0) {
+      setPassword("");
+      setEmail("");
       // User has MFA enabled
       setNeedsTOTP(true);
     } else {
@@ -62,15 +67,12 @@ function SignInForm() {
   }
 
   function handleTOTPVerified() {
-    setPassword("");
-    setEmail("");
     setNeedsTOTP(false);
     router.push("/pro");
   }
 
   async function handleTOTPCancel() {
     setNeedsTOTP(false);
-    setPassword("");
     // Sign out the user since they cancelled MFA verification
     await signOut("local");
     setError("Two-factor authentication is required to sign in.");
