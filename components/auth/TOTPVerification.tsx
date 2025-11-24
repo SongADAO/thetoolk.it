@@ -23,21 +23,24 @@ function TOTPVerification({
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    const { error: verifyError } = await verifyTOTP(code);
+    try {
+      setLoading(true);
+      setError("");
 
-    if (verifyError) {
-      setError(verifyError.message);
+      const { error: verifyError } = await verifyTOTP(code);
+
+      if (verifyError) {
+        setError(verifyError.message);
+
+        return;
+      }
+
+      onVerified();
+    } finally {
       setLoading(false);
       setCode("");
-      return;
     }
-
-    setLoading(false);
-    setCode("");
-    onVerified();
   }
 
   return (
@@ -66,9 +69,7 @@ function TOTPVerification({
           autoComplete="off"
           autoFocus
           className="w-full rounded border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          maxLength={6}
           onChange={(e) => setCode(e.target.value.replace(/\D/gu, ""))}
-          pattern="\d{6}"
           placeholder="000000"
           required
           type="number"
