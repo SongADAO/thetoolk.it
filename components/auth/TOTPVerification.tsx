@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { FormEvent, use, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
@@ -19,7 +19,7 @@ function TOTPVerification({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
