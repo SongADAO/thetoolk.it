@@ -6,9 +6,9 @@ import { LinkButton } from "@/components/general/LinkButton";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function UserProfile() {
-  const { user, loading, isAuthenticated } = use(AuthContext);
+  const { user, isLoading, isAuthenticated } = use(AuthContext);
 
-  if (loading) {
+  if (isLoading) {
     return <div className="p-4 text-center">Loading...</div>;
   }
 

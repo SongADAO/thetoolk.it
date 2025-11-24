@@ -11,7 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 function ChangePasswordForm() {
   const {
     user,
-    loading: userLoading,
+    isLoading: authIsLoading,
     isAuthenticated,
     signOut,
   } = use(AuthContext);
@@ -87,7 +87,7 @@ function ChangePasswordForm() {
     }
   }
 
-  if (userLoading) {
+  if (authIsLoading) {
     return <div className="p-4 text-center">Loading...</div>;
   }
 

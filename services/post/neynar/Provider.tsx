@@ -44,7 +44,7 @@ interface Props {
 }
 
 export function NeynarProvider({ children, mode }: Readonly<Props>) {
-  const { loading: authLoading, user } = use(AuthContext);
+  const { isLoading: authIsLoading, user } = use(AuthContext);
 
   const id = "neynar";
 
@@ -101,8 +101,8 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     PostServiceAccount[]
   >(`thetoolkit-${id}-accounts`, []);
 
-  const loading =
-    authLoading ||
+  const isLoading =
+    authIsLoading ||
     isEnabledLoading ||
     isCredentialsLoading ||
     isAuthorizationLoading ||
@@ -278,7 +278,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       isProcessing,
       isUsable,
       label,
-      loading,
+      isLoading,
       mode,
       post,
       processError,
@@ -313,7 +313,7 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
       isProcessing,
       isUsable,
       label,
-      loading,
+      isLoading,
       processError,
       processProgress,
       processStatus,

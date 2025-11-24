@@ -8,10 +8,10 @@ import { ModalOverlay } from "@/components/general/ModalOverlay";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function UpgradeModal() {
-  const { user, loading, subscriptionIsLoading, subscription } =
+  const { user, isLoading, subscriptionIsLoading, subscription } =
     use(AuthContext);
 
-  if (loading || subscriptionIsLoading) {
+  if (isLoading || subscriptionIsLoading) {
     return (
       <div>
         <ModalOverlay />

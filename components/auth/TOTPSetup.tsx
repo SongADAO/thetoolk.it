@@ -133,7 +133,7 @@ function TOTPSetup() {
   }
 
   if (showTotpSetup) {
-    if (loading && !enrollmentState) {
+    if (isLoading && !enrollmentState) {
       return (
         <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
           <header className="bg-gray-300 px-4 py-2">
@@ -292,7 +292,7 @@ function TOTPSetup() {
                     </div>
                   </div>
                   <Button
-                    disabled={loading}
+                    disabled={isLoading}
                     onClick={async () => handleUnenroll(factor.id)}
                     purpose="danger"
                     type="button"

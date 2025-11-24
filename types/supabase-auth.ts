@@ -17,8 +17,8 @@ interface AuthContextType {
   }>;
   factors: Factor[];
   isAuthenticated: boolean;
+  isLoading: boolean;
   loadFactors: () => Promise<void>;
-  loading: boolean;
   signIn: (
     email: string,
     password: string,

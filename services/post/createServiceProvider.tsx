@@ -33,7 +33,7 @@ function createServiceProvider(
     children,
     mode,
   }: Readonly<CreateServiceProviderProps>) {
-    const { loading: authLoading } = use(AuthContext);
+    const { isLoading: authIsLoading } = use(AuthContext);
 
     const [error, setError] = useState("");
 
@@ -62,8 +62,8 @@ function createServiceProvider(
     useTokenRefresh(
       mode,
       storage.expiration,
-      storage.loading,
-      authLoading,
+      storage.isLoading,
+      authIsLoading,
       config.label,
       config.authModule.needsRefreshTokenRenewal,
       oauth.refreshTokens,
@@ -72,7 +72,7 @@ function createServiceProvider(
 
     const posting = usePostingState();
 
-    const loading = Boolean(authLoading || storage.loading);
+    const isLoading = Boolean(authIsLoading || storage.isLoading);
 
     const credentialsId = config.authModule.getCredentialsId(
       storage.credentials,
@@ -246,10 +246,10 @@ function createServiceProvider(
         isComplete,
         isEnabled: storage.isEnabled,
         isHandlingAuth: oauth.isHandlingAuth,
+        isLoading,
         isProcessing: posting.isProcessing,
         isUsable,
         label: config.label,
-        loading,
         mode,
         post,
         processError: posting.processError,
@@ -274,8 +274,8 @@ function createServiceProvider(
         initial,
         isAuthorized,
         isComplete,
+        isLoading,
         isUsable,
-        loading,
         oauth.disconnect,
         oauth.hasCompletedAuth,
         oauth.isHandlingAuth,

@@ -11,7 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 function ChangeEmailForm() {
   const {
     user,
-    loading: userLoading,
+    isLoading: authIsLoading,
     isAuthenticated,
     signOut,
   } = use(AuthContext);
@@ -73,7 +73,7 @@ function ChangeEmailForm() {
     }
   }
 
-  if (userLoading) {
+  if (authIsLoading) {
     return <div className="p-4 text-center">Loading...</div>;
   }
 
