@@ -117,10 +117,19 @@ function TOTPSetup() {
     setLoading(false);
   }
 
-  function onCancel() {
+  async function onCancel() {
+    try {
+      if (enrollmentState?.factorId) {
+        await handleUnenroll(enrollmentState.factorId);
+      }
+    } catch (err: unknown) {
+      console.error("Failed to unenroll TOTP factor:", err);
+    }
+
     setShowTotpSetup(false);
     setEnrollmentState(null);
     setError("");
+    setMessage("");
   }
 
   useEffect(() => {
