@@ -31,7 +31,7 @@ function UserSubscription() {
 
   if (subscription.status === "active") {
     return (
-      <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+      <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
         <header className="bg-gray-300 px-4 py-2">
           <h2 className="font-bold">Current Subscription</h2>
         </header>
@@ -57,7 +57,7 @@ function UserSubscription() {
   }
 
   return (
-    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
       <header className="bg-gray-300 px-4 py-2">
         <h2 className="font-bold">Subscribe to TheToolk.it Pro</h2>
       </header>

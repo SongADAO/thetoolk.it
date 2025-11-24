@@ -141,7 +141,7 @@ function TOTPSetup() {
   if (showTotpSetup) {
     if (loading && !enrollmentState) {
       return (
-        <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+        <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
           <header className="bg-gray-300 px-4 py-2">
             <h2 className="font-bold">Enable Two-Factor Authentication</h2>
           </header>
@@ -156,7 +156,7 @@ function TOTPSetup() {
 
     if (enrollmentState) {
       return (
-        <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+        <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
           <header className="bg-gray-300 px-4 py-2">
             <h2 className="font-bold">Enable Two-Factor Authentication</h2>
           </header>
@@ -239,7 +239,7 @@ function TOTPSetup() {
   }
 
   return (
-    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
       <header className="bg-gray-300 px-4 py-2">
         <h2 className="font-bold">Two-Factor Authentication</h2>
       </header>
