@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, use, useState } from "react";
 
+import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
@@ -119,13 +120,9 @@ function ChangeEmailForm() {
             />
           </div>
 
-          <button
-            className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-            disabled={loading}
-            type="submit"
-          >
+          <Button disabled={loading} type="submit">
             {loading ? "Updating..." : "Update Email"}
-          </button>
+          </Button>
 
           {message ? (
             <p

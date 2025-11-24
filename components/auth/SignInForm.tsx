@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, use, useEffect, useState } from "react";
 
 import { TOTPVerification } from "@/components/auth/TOTPVerification";
+import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function SignInForm() {
@@ -113,13 +114,9 @@ function SignInForm() {
         />
       </div>
 
-      <button
-        className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-        disabled={loading}
-        type="submit"
-      >
+      <Button disabled={loading} type="submit" width="full">
         {loading ? "Signing in..." : "Sign In"}
-      </button>
+      </Button>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </form>

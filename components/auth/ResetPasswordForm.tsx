@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
+import { Button } from "@/components/general/Button";
 import { createClient } from "@/lib/supabase/client";
 
 function ResetPasswordForm() {
@@ -132,13 +133,9 @@ function ResetPasswordForm() {
         />
       </div>
 
-      <button
-        className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-        disabled={loading}
-        type="submit"
-      >
+      <Button disabled={loading} type="submit" width="full">
         {loading ? "Updating..." : "Update Password"}
-      </button>
+      </Button>
 
       {message ? (
         <p

@@ -4,6 +4,7 @@ import Link from "next/link";
 // import { useRouter } from "next/navigation";
 import { FormEvent, use, useState } from "react";
 
+import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function SignUpForm() {
@@ -100,13 +101,9 @@ function SignUpForm() {
         </label>
       </div>
 
-      <button
-        className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-        disabled={loading}
-        type="submit"
-      >
+      <Button disabled={loading} type="submit" width="full">
         {loading ? "Creating account..." : "Create Account"}
-      </button>
+      </Button>
 
       {message ? (
         <p

@@ -39,7 +39,7 @@ function UserProfile() {
       </div>
       <div className="flex items-center gap-4 px-4">
         <Link
-          className="cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800"
+          className="cursor-pointer rounded bg-black px-4 py-2 text-white hover:bg-blue-800"
           href="/account/manage"
         >
           Manage Account

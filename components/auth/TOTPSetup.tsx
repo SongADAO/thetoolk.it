@@ -3,6 +3,7 @@
 import type { Factor } from "@supabase/supabase-js";
 import { use, useEffect, useState } from "react";
 
+import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
@@ -215,21 +216,13 @@ function TOTPSetup() {
 
               {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-              <div className="flex gap-2">
-                <button
-                  className="flex-1 cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-                  disabled={loading}
-                  type="submit"
-                >
+              <div className="grid grid-cols-[1fr_auto] gap-2">
+                <Button disabled={loading} type="submit">
                   {loading ? "Verifying..." : "Verify and Enable"}
-                </button>
-                <button
-                  className="cursor-pointer rounded border border-gray-300 bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                  onClick={onCancel}
-                  type="button"
-                >
+                </Button>
+                <Button onClick={onCancel} purpose="danger" type="button">
                   Cancel
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -254,18 +247,13 @@ function TOTPSetup() {
             <h3 className="text-sm font-semibold">
               Your Authentication Factors
             </h3>
-            <button
-              className="cursor-pointer rounded bg-gray-500 px-3 py-1.5 text-sm text-white hover:bg-gray-800 disabled:opacity-50"
-              disabled={loading}
-              onClick={handleAddFactor}
-              type="button"
-            >
+            <Button disabled={loading} onClick={handleAddFactor} type="button">
               Add Factor
-            </button>
+            </Button>
           </div>
 
           {factors.length === 0 ? (
-            <div className="rounded border border-gray-200 bg-white p-4 text-center text-sm text-gray-500">
+            <div className="rounded border border-gray-200 bg-white p-4 text-center text-sm">
               No two-factor authentication factors configured yet.
             </div>
           ) : (
@@ -295,14 +283,13 @@ function TOTPSetup() {
                       {new Date(factor.created_at).toLocaleDateString()}
                     </div>
                   </div>
-                  <button
-                    className="cursor-pointer rounded bg-red-500 px-3 py-1.5 text-sm text-white hover:bg-red-600 disabled:opacity-50"
+                  <Button
                     disabled={loading}
                     onClick={async () => handleUnenroll(factor.id)}
                     type="button"
                   >
                     Remove
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
