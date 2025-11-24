@@ -276,11 +276,8 @@ function TOTPSetup() {
                         {factor.friendly_name}
                       </span>
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                          factor.status === "verified"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
+                        className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 data-[status=verified]:bg-green-100 data-[status=verified]:text-green-800"
+                        data-status={factor.status}
                       >
                         {factor.status}
                       </span>
