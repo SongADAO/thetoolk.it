@@ -23,10 +23,10 @@ interface StorageServiceContextType {
   isAuthorized: boolean;
   isComplete: boolean;
   isEnabled: boolean;
+  isLoading: boolean;
   isProcessing: boolean;
   isUsable: boolean;
   label: string;
-  isLoading: boolean;
   mode: "server" | "browser";
   processError: string;
   processProgress: number;
@@ -61,10 +61,10 @@ const storageServiceContextDefault = {
   isAuthorized: false,
   isComplete: false,
   isEnabled: false,
+  isLoading: true,
   isProcessing: false,
   isUsable: false,
   label: "",
-  isLoading: true,
   mode: "browser" as "server" | "browser",
   processError: "",
   processProgress: 0,
