@@ -97,48 +97,59 @@ function ConfirmEmail() {
   }, [searchParams, supabase]);
 
   return (
-    <div className="mx-auto max-w-md space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-      <h1 className="text-center text-2xl font-bold">Email Confirmation</h1>
-
-      {isPending ? (
-        <div className="flex flex-col items-center space-y-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
-          <p className="text-sm text-gray-600">
-            Processing email confirmation...
-          </p>
-        </div>
-      ) : (
-        <>
-          {message ? (
-            <p className="text-sm text-green-600" role="alert">
-              {message}
+    <section className="mx-auto w-full max-w-lg space-y-4 rounded bg-gray-100 pb-4 contain-paint">
+      <header className="bg-gray-300 px-4 py-2">
+        <h1 className="font-bold">Email Confirmation</h1>
+      </header>
+      <div className="space-y-4 px-4">
+        {isPending ? (
+          <div className="flex flex-col items-center space-y-4">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+            <p className="text-sm text-gray-600">
+              Processing email confirmation...
             </p>
-          ) : null}
-
-          {error ? (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          ) : null}
-
-          {error ? (
-            <div className="rounded-lg bg-blue-50 p-4 text-sm text-blue-800">
-              <p className="mb-2 font-medium">Important:</p>
-              <ul className="list-inside list-disc space-y-1">
-                <li>You must confirm BOTH emails (old and new)</li>
-                <li>Check your old email inbox for the first confirmation</li>
-                <li>Check your new email inbox for the second confirmation</li>
-                <li>After both are confirmed, sign in with your new email</li>
-              </ul>
-            </div>
-          ) : null}
-
-          <div className="flex flex-col space-y-2">
-            <LinkButton href="/auth/signin">Go to Sign In</LinkButton>
           </div>
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            {message ? (
+              <p
+                className="rounded bg-white p-4 text-sm text-green-600"
+                role="alert"
+              >
+                {message}
+              </p>
+            ) : null}
+
+            {error ? (
+              <p
+                className="rounded bg-white p-4 text-sm text-red-600"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
+
+            {error ? (
+              <div className="rounded bg-white p-4 text-sm text-blue-800">
+                <p className="mb-2 font-medium">Important:</p>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>You must confirm BOTH emails (old and new)</li>
+                  <li>Check your old email inbox for the first confirmation</li>
+                  <li>
+                    Check your new email inbox for the second confirmation
+                  </li>
+                  <li>After both are confirmed, sign in with your new email</li>
+                </ul>
+              </div>
+            ) : null}
+
+            <div className="flex flex-col space-y-2">
+              <LinkButton href="/auth/signin">Go to Sign In</LinkButton>
+            </div>
+          </>
+        )}
+      </div>
+    </section>
   );
 }
 
