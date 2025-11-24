@@ -52,7 +52,7 @@ function useServiceStorage(
     { initializeWithValue: true },
   );
 
-  const loading =
+  const isLoading =
     isEnabledLoading ||
     isCredentialsLoading ||
     isAuthorizationLoading ||
@@ -66,7 +66,7 @@ function useServiceStorage(
     credentials,
     expiration,
     isEnabled,
-    loading,
+    isLoading,
     setAccounts,
     setAuthorization,
     setCodeVerifier,
@@ -261,8 +261,8 @@ function useOAuthFlow(
 function useTokenRefresh(
   mode: "server" | "browser",
   expiration: OauthExpiration,
-  loading: boolean,
-  authLoading: boolean,
+  isLoading: boolean,
+  authIsLoading: boolean,
   label: string,
   needsRefreshTokenRenewal: (exp: OauthExpiration) => boolean,
   refreshTokens: () => Promise<OauthAuthorization>,
@@ -288,7 +288,7 @@ function useTokenRefresh(
   }
 
   useEffect(() => {
-    if (loading || authLoading) {
+    if (isLoading || authIsLoading) {
       // Wait for user data to load.
       return;
     }
@@ -302,7 +302,7 @@ function useTokenRefresh(
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     renewRefreshTokenIfNeeded();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expiration.refreshTokenExpiresAt, loading, authLoading]);
+  }, [expiration.refreshTokenExpiresAt, isLoading, authIsLoading]);
 
   return { renewRefreshTokenIfNeeded };
 }

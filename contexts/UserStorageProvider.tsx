@@ -80,13 +80,13 @@ export function UserStorageProvider({
   readonly children: ReactNode;
   readonly mode: "server" | "browser";
 }) {
-  const { user, isAuthenticated, loading: authLoading } = use(AuthContext);
+  const { user, isAuthenticated, isLoading: authIsLoading } = use(AuthContext);
 
   // SWR for server mode - fetches all services at once
   const {
     data: servicesData,
     mutate,
-    isLoading: swrLoading,
+    isLoading: swrIsLoading,
   } = useSWR<ServiceRecord[]>(
     mode === "server" && isAuthenticated && user
       ? `/api/user/${user.id}/services/get`
@@ -147,7 +147,7 @@ export function UserStorageProvider({
       }
 
       // Server mode: read from SWR cache
-      const isLoading = authLoading || swrLoading;
+      const isLoading = authIsLoading || swrIsLoading;
 
       if (!servicesData) {
         return {
@@ -170,7 +170,7 @@ export function UserStorageProvider({
         value: value as T,
       };
     },
-    [mode, servicesData, authLoading, swrLoading],
+    [mode, servicesData, authIsLoading, swrIsLoading],
   );
 
   // Set value for a specific key

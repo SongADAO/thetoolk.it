@@ -12,7 +12,7 @@ interface Props {
   icon: ReactNode;
   isHandlingAuth: boolean;
   label: string;
-  loading: boolean;
+  isLoading: boolean;
 }
 
 function ServiceRedirectHandler({
@@ -22,20 +22,20 @@ function ServiceRedirectHandler({
   icon,
   isHandlingAuth,
   label,
-  loading,
+  isLoading,
 }: Readonly<Props>) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (loading) {
+    if (isLoading) {
       return;
     }
-    console.log("Loading", loading);
+    console.log("Loading", isLoading);
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleAuthRedirect(searchParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, loading]);
+  }, [searchParams, isLoading]);
 
   if (!isHandlingAuth) {
     return null;

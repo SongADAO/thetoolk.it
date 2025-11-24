@@ -32,10 +32,10 @@ interface PostServiceContextType {
   isComplete: boolean;
   isEnabled: boolean;
   isHandlingAuth: boolean;
+  isLoading: boolean;
   isProcessing: boolean;
   isUsable: boolean;
   label: string;
-  loading: boolean;
   mode: "server" | "browser";
   post: (props: PostServicePostProps) => Promise<string | null>;
   processError: string;
@@ -70,10 +70,10 @@ const postServiceContextDefault = {
   isComplete: false,
   isEnabled: false,
   isHandlingAuth: false,
+  isLoading: true,
   isProcessing: false,
   isUsable: false,
   label: "",
-  loading: true,
   mode: "browser" as "server" | "browser",
   post: async (props: PostServicePostProps) => Promise.resolve(null),
   processError: "",

@@ -29,7 +29,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   const [user, setUser] = useState<User | null>(null);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Derived state
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
@@ -159,7 +159,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-      setLoading(false);
+      setIsLoading(false);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -172,7 +172,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      setLoading(false);
+      setIsLoading(false);
     });
 
     // Periodically validate the session
@@ -238,8 +238,8 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       enrollTOTP,
       factors,
       isAuthenticated,
+      isLoading,
       loadFactors,
-      loading,
       signIn,
       signOut,
       signUp,
@@ -256,7 +256,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     [
       factors,
       isAuthenticated,
-      loading,
+      isLoading,
       subscription,
       subscriptionError,
       subscriptionIsLoading,

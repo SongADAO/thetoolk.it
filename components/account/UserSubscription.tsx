@@ -8,10 +8,10 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { getPriceName } from "@/lib/subscriptions";
 
 function UserSubscription() {
-  const { user, loading, subscriptionIsLoading, subscription } =
+  const { user, isLoading, subscriptionIsLoading, subscription } =
     use(AuthContext);
 
-  if (loading || subscriptionIsLoading) {
+  if (isLoading || subscriptionIsLoading) {
     return <div className="p-4 text-center">Loading subscription data...</div>;
   }
 

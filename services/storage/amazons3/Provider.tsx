@@ -34,7 +34,7 @@ interface Props {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
-  const { loading: authLoading } = use(AuthContext);
+  const { isLoading: authIsLoading } = use(AuthContext);
 
   const label = "AmazonS3";
 
@@ -86,7 +86,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
     { initializeWithValue: true },
   );
 
-  const loading = authLoading;
+  const isLoading = authIsLoading;
 
   const credentialsId = getCredentialsId(credentials);
 
@@ -251,10 +251,10 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       isAuthorized,
       isComplete,
       isEnabled,
+      isLoading,
       isProcessing,
       isUsable,
       label,
-      loading,
       mode,
       processError,
       processProgress,
@@ -284,10 +284,10 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       isAuthorized,
       isComplete,
       isEnabled,
+      isLoading,
       isProcessing,
       isUsable,
       label,
-      loading,
       processError,
       processProgress,
       processStatus,
