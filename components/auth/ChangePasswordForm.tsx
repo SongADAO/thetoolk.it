@@ -92,99 +92,103 @@ function ChangePasswordForm() {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-xl font-semibold">Change Password</h2>
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="sr-only">
-          <label htmlFor="username">Username</label>
-          <input
-            autoComplete="username"
-            id="username"
-            name="username"
-            readOnly
-            tabIndex={-1}
-            type="text"
-            value={user.email ?? ""}
-          />
-        </div>
+    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+      <header className="bg-gray-300 px-4 py-2">
+        <h2 className="font-bold">Change Password</h2>
+      </header>
+      <div className="space-y-2 px-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="sr-only">
+            <label htmlFor="username">Username</label>
+            <input
+              autoComplete="username"
+              id="username"
+              name="username"
+              readOnly
+              tabIndex={-1}
+              type="text"
+              value={user.email ?? ""}
+            />
+          </div>
 
-        <div>
-          <label
-            className="mb-1 block text-sm font-medium"
-            htmlFor="current-password"
+          <div>
+            <label
+              className="mb-1 block text-sm font-medium"
+              htmlFor="current-password"
+            >
+              Current Password
+            </label>
+            <input
+              autoComplete="current-password"
+              className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              id="current-password"
+              minLength={8}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              type="password"
+              value={currentPassword}
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              For security, please enter your current password
+            </p>
+          </div>
+
+          <div>
+            <label
+              className="mb-1 block text-sm font-medium"
+              htmlFor="new-password"
+            >
+              New Password
+            </label>
+            <input
+              autoComplete="new-password"
+              className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              id="new-password"
+              minLength={8}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              type="password"
+              value={newPassword}
+            />
+          </div>
+
+          <div>
+            <label
+              className="mb-1 block text-sm font-medium"
+              htmlFor="confirm-password"
+            >
+              Confirm New Password
+            </label>
+            <input
+              autoComplete="new-password"
+              className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              id="confirm-password"
+              minLength={8}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              type="password"
+              value={confirmPassword}
+            />
+          </div>
+
+          <button
+            className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
+            disabled={loading}
+            type="submit"
           >
-            Current Password
-          </label>
-          <input
-            autoComplete="current-password"
-            className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            id="current-password"
-            minLength={8}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            required
-            type="password"
-            value={currentPassword}
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            For security, please enter your current password
-          </p>
-        </div>
+            {loading ? "Updating..." : "Update Password"}
+          </button>
 
-        <div>
-          <label
-            className="mb-1 block text-sm font-medium"
-            htmlFor="new-password"
-          >
-            New Password
-          </label>
-          <input
-            autoComplete="new-password"
-            className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            id="new-password"
-            minLength={8}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-            type="password"
-            value={newPassword}
-          />
-        </div>
-
-        <div>
-          <label
-            className="mb-1 block text-sm font-medium"
-            htmlFor="confirm-password"
-          >
-            Confirm New Password
-          </label>
-          <input
-            autoComplete="new-password"
-            className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            id="confirm-password"
-            minLength={8}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            type="password"
-            value={confirmPassword}
-          />
-        </div>
-
-        <button
-          className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-          disabled={loading}
-          type="submit"
-        >
-          {loading ? "Updating..." : "Update Password"}
-        </button>
-
-        {message ? (
-          <p
-            className={`text-sm ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}
-          >
-            {message}
-          </p>
-        ) : null}
-      </form>
-    </div>
+          {message ? (
+            <p
+              className={`text-sm ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}
+            >
+              {message}
+            </p>
+          ) : null}
+        </form>
+      </div>
+    </section>
   );
 }
 
