@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { use } from "react";
 
+import { LinkButton } from "@/components/general/LinkButton";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function UserProfile() {
@@ -38,12 +38,7 @@ function UserProfile() {
         </p>
       </div>
       <div className="flex items-center gap-4 px-4">
-        <Link
-          className="cursor-pointer rounded bg-black px-4 py-2 text-white hover:bg-blue-800"
-          href="/account/manage"
-        >
-          Manage Account
-        </Link>
+        <LinkButton href="/account/manage">Manage Account</LinkButton>
       </div>
     </section>
   );
