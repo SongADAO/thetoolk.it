@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+
+import { LinkButton } from "@/components/general/LinkButton";
 
 export const metadata: Metadata = {
   alternates: {
@@ -21,13 +22,7 @@ export default function SubscribeCancelPage() {
         You cancelled your subscription checkout before completing it. You have
         not been charged.
       </p>
-
-      <Link
-        className="cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
-        href="/pro"
-      >
-        Return to TheToolk.it
-      </Link>
+      <LinkButton href="/pro">Return to TheToolk.it</LinkButton>
     </div>
   );
 }
