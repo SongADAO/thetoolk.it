@@ -9,17 +9,19 @@ function UserProfile() {
   const { user, loading, isAuthenticated } = use(AuthContext);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="p-4 text-center">Loading...</div>;
   }
 
   if (!isAuthenticated || !user) {
-    return <div>Not authenticated</div>;
+    return <div className="p-4 text-center">Not authenticated</div>;
   }
 
   return (
-    <section className="mx-auto space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h1 className="text-2xl font-bold">Profile</h1>
-      <div className="space-y-2">
+    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4">
+      <header className="bg-gray-300 px-4 py-2">
+        <h1 className="font-bold">Profile</h1>
+      </header>
+      <div className="space-y-2 px-4">
         <p>
           <strong>Email:</strong> {user.email}
         </p>
@@ -35,7 +37,7 @@ function UserProfile() {
           {user.email_confirmed_at ? "Yes" : "No"}
         </p>
       </div>
-      <div className="flex items-center justify-start gap-4">
+      <div className="flex items-center gap-4 px-4">
         <Link
           className="cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800"
           href="/account/manage"
