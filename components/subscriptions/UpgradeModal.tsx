@@ -52,6 +52,18 @@ function UpgradeModal() {
               </Link>
             </p>
           </div>
+
+          {/* <div className="mt-10">
+            <p className="mb-4 text-center">Not ready to subscribe?</p>
+            <p className="text-center">
+              <Link
+                className="cursor-pointer rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
+                href="/free"
+              >
+                Try TheToolk.it Free Edition
+              </Link>
+            </p>
+          </div> */}
         </div>
       </div>
     );
