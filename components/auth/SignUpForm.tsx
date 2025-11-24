@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
 import { FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
@@ -13,7 +12,6 @@ function SignUpForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const { signUp } = use(AuthContext);
-  // const router = useRouter();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
@@ -31,8 +29,6 @@ function SignUpForm() {
       setPassword("");
       setEmail("");
       setMessage("Check your email for confirmation link!");
-      // Redirect after successful login
-      // router.push("/pro");
     }
 
     setLoading(false);
