@@ -60,7 +60,7 @@ function UpgradeModal() {
   return (
     <div>
       <ModalOverlay />
-      <div className="absolute top-1/4 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 -translate-y-1/2 transform rounded-md border-2 border-gray-500 bg-gray-200 p-6 shadow-lg">
+      <div className="absolute top-1/4 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 -translate-y-1/2 transform rounded-md border-2 border-gray-500 bg-white shadow-lg contain-paint">
         <div>
           <UserSubscription />
         </div>
