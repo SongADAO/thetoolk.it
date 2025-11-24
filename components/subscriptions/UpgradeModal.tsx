@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { use } from "react";
 
+import { UserSubscription } from "@/components/account/UserSubscription";
 import { ModalOverlay } from "@/components/general/ModalOverlay";
-import { SubscriptionManager } from "@/components/subscriptions/SubscriptionManager";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function UpgradeModal() {
@@ -86,7 +86,7 @@ function UpgradeModal() {
             </Link>
           </p> */}
 
-          <SubscriptionManager />
+          <UserSubscription />
         </div>
       </div>
     </div>

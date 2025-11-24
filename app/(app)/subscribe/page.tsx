@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SubscriptionManager } from "@/components/subscriptions/SubscriptionManager";
+import { UserSubscription } from "@/components/account/UserSubscription";
 
 export const metadata: Metadata = {
   alternates: {
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function SubscribePage() {
   return (
     <div className="pt-20">
-      <SubscriptionManager />
+      <UserSubscription />
     </div>
   );
 }
