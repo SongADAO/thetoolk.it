@@ -43,9 +43,7 @@ function TOTPSetup() {
       );
 
       if (enrollError) {
-        setError(enrollError.message);
-
-        return;
+        throw new Error(enrollError.message);
       }
 
       if (data) {
@@ -58,9 +56,13 @@ function TOTPSetup() {
           });
           setShowTotpSetup(true);
         } catch {
-          setError("Failed to generate QR code");
+          throw new Error("Failed to generate QR code");
         }
       }
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }
@@ -83,9 +85,7 @@ function TOTPSetup() {
       );
 
       if (verifyError) {
-        setError(verifyError.message);
-
-        return;
+        throw new Error(verifyError.message);
       }
 
       setShowTotpSetup(false);
@@ -93,6 +93,10 @@ function TOTPSetup() {
       setMessage("Two-factor authentication enabled successfully!");
 
       await loadFactors();
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }
@@ -107,11 +111,16 @@ function TOTPSetup() {
       const { error: unenrollError } = await unenrollTOTP(factorId);
 
       if (unenrollError) {
-        setError(unenrollError.message);
-      } else {
-        setMessage("Two-factor authentication factor removed successfully");
-        await loadFactors();
+        throw new Error(unenrollError.message);
       }
+
+      setMessage("Two-factor authentication factor removed successfully");
+
+      await loadFactors();
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }

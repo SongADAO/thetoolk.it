@@ -30,14 +30,16 @@ function SignUpForm() {
       });
 
       if (signUpError) {
-        setError(signUpError.message);
-
-        return;
+        throw new Error(signUpError.message);
       }
 
       setPassword("");
       setEmail("");
       setMessage("Check your email for confirmation link!");
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }

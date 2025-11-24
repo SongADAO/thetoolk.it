@@ -36,9 +36,7 @@ function ChangeEmailForm() {
 
       // Validate email is different
       if (email === user?.email) {
-        setError("New email must be different from current email");
-
-        return;
+        throw new Error("New email must be different from current email");
       }
 
       const { error: updateError } = await supabase.auth.updateUser(
@@ -51,9 +49,7 @@ function ChangeEmailForm() {
       );
 
       if (updateError) {
-        setError(updateError.message);
-
-        return;
+        throw new Error(updateError.message);
       }
 
       setMessage("Confirmation email sent! Logging out for security...");
@@ -63,6 +59,10 @@ function ChangeEmailForm() {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         handleSignOut();
       }, 2000);
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }
