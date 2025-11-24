@@ -31,13 +31,15 @@ function ForgotPasswordForm() {
       );
 
       if (resetError) {
-        setError(resetError.message);
-
-        return;
+        throw new Error(resetError.message);
       }
 
       setEmail("");
       setMessage("Check your email for password reset instructions!");
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }

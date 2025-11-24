@@ -40,7 +40,7 @@ function SignInForm() {
         // User must complete MFA verification
         setNeedsTOTP(true);
       } else {
-        setError(signInError.message);
+        throw new Error(signInError.message);
       }
     } else if (data?.user?.factors && data.user.factors.length > 0) {
       setPassword("");

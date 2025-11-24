@@ -75,16 +75,12 @@ function ResetPasswordForm() {
 
       // Validate passwords match
       if (password !== confirmPassword) {
-        setError("Passwords do not match");
-
-        return;
+        throw new Error("Passwords do not match");
       }
 
       // Validate password length
       if (password.length < 6) {
-        setError("Password must be at least 6 characters");
-
-        return;
+        throw new Error("Password must be at least 6 characters");
       }
 
       const { error: updateError } = await supabase.auth.updateUser({
@@ -92,9 +88,7 @@ function ResetPasswordForm() {
       });
 
       if (updateError) {
-        setError(updateError.message);
-
-        return;
+        throw new Error(updateError.message);
       }
 
       setPassword("");
@@ -102,6 +96,10 @@ function ResetPasswordForm() {
       setMessage(
         "Password updated successfully! You can now log in with your new password.",
       );
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }

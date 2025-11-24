@@ -31,12 +31,14 @@ function TOTPVerification({
       const { error: verifyError } = await verifyTOTP(code);
 
       if (verifyError) {
-        setError(verifyError.message);
-
-        return;
+        throw new Error(verifyError.message);
       }
 
       onVerified();
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
       setCode("");

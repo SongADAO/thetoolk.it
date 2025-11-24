@@ -38,23 +38,17 @@ function ChangePasswordForm() {
 
       // Validate passwords match
       if (newPassword !== confirmPassword) {
-        setError("New passwords do not match");
-
-        return;
+        throw new Error("New passwords do not match");
       }
 
       // Validate password length
       if (newPassword.length < 6) {
-        setError("Password must be at least 6 characters");
-
-        return;
+        throw new Error("Password must be at least 6 characters");
       }
 
       // Validate passwords are different
       if (currentPassword === newPassword) {
-        setError("New password must be different from current password");
-
-        return;
+        throw new Error("New password must be different from current password");
       }
 
       const { error: updateError } = await supabase.auth.updateUser({
@@ -62,9 +56,7 @@ function ChangePasswordForm() {
       });
 
       if (updateError) {
-        setError(updateError.message);
-
-        return;
+        throw new Error(updateError.message);
       }
 
       setCurrentPassword("");
@@ -77,6 +69,10 @@ function ChangePasswordForm() {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         handleSignOut();
       }, 1500);
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
     } finally {
       setIsPending(false);
     }
