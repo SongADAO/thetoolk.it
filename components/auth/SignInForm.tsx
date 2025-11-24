@@ -8,14 +8,18 @@ import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function SignInForm() {
+  const { signIn, signOut } = use(AuthContext);
+
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const [needsTOTP, setNeedsTOTP] = useState<boolean>(false);
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [needsTOTP, setNeedsTOTP] = useState<boolean>(false);
-  const { signIn, signOut } = use(AuthContext);
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const errorParam = searchParams.get("error");
