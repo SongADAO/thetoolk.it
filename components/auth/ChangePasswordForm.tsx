@@ -23,7 +23,9 @@ function ChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   async function handleSignOut(): Promise<void> {
@@ -34,48 +36,52 @@ function ChangePasswordForm() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     try {
       e.preventDefault();
+
       setLoading(true);
+      setError("");
       setMessage("");
 
       // Validate passwords match
       if (newPassword !== confirmPassword) {
-        setMessage("New passwords do not match");
-        setLoading(false);
+        setError("New passwords do not match");
+
         return;
       }
 
       // Validate password length
       if (newPassword.length < 6) {
-        setMessage("Password must be at least 6 characters");
-        setLoading(false);
+        setError("Password must be at least 6 characters");
+
         return;
       }
 
       // Validate passwords are different
       if (currentPassword === newPassword) {
-        setMessage("New password must be different from current password");
-        setLoading(false);
+        setError("New password must be different from current password");
+
         return;
       }
 
-      const { error } = await supabase.auth.updateUser({
+      const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword,
       });
 
-      if (error) {
-        setMessage(error.message);
-      } else {
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        setMessage("Password updated successfully! Logging out...");
+      if (updateError) {
+        setError(updateError.message);
 
-        // Log out and redirect after a brief delay
-        setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          handleSignOut();
-        }, 1500);
+        return;
       }
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setMessage("Password updated successfully! Logging out...");
+
+      // Log out and redirect after a brief delay
+      setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        handleSignOut();
+      }, 1500);
     } finally {
       setLoading(false);
     }
@@ -201,11 +207,14 @@ function ChangePasswordForm() {
           </Form.Submit>
 
           {message ? (
-            <p
-              className={`text-sm ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}
-              role="alert"
-            >
+            <p className="text-sm text-green-600" role="alert">
               {message}
+            </p>
+          ) : null}
+
+          {error ? (
+            <p className="text-sm text-red-600" role="alert">
+              {error}
             </p>
           ) : null}
         </Form.Root>

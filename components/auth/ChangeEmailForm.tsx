@@ -21,7 +21,9 @@ function ChangeEmailForm() {
   const router = useRouter();
 
   const [email, setEmail] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   async function handleSignOut(): Promise<void> {
@@ -32,17 +34,19 @@ function ChangeEmailForm() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     try {
       e.preventDefault();
+
       setLoading(true);
+      setError("");
       setMessage("");
 
       // Validate email is different
       if (email === user?.email) {
-        setMessage("New email must be different from current email");
-        setLoading(false);
+        setError("New email must be different from current email");
+
         return;
       }
 
-      const { error } = await supabase.auth.updateUser(
+      const { error: updateError } = await supabase.auth.updateUser(
         {
           email,
         },
@@ -51,17 +55,19 @@ function ChangeEmailForm() {
         },
       );
 
-      if (error) {
-        setMessage(error.message);
-      } else {
-        setMessage("Confirmation email sent! Logging out for security...");
+      if (updateError) {
+        setError(updateError.message);
 
-        // Log out and redirect after a brief delay
-        setTimeout(() => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          handleSignOut();
-        }, 2000);
+        return;
       }
+
+      setMessage("Confirmation email sent! Logging out for security...");
+
+      // Log out and redirect after a brief delay
+      setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        handleSignOut();
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -134,11 +140,14 @@ function ChangeEmailForm() {
           </Form.Submit>
 
           {message ? (
-            <p
-              className={`text-sm ${message.includes("sent") ? "text-green-600" : "text-red-600"}`}
-              role="alert"
-            >
+            <p className="text-sm text-green-600" role="alert">
               {message}
+            </p>
+          ) : null}
+
+          {error ? (
+            <p className="text-sm text-red-600" role="alert">
+              {error}
             </p>
           ) : null}
         </Form.Root>

@@ -10,26 +10,37 @@ function ForgotPasswordForm() {
   const supabase = createClient();
 
   const [email, setEmail] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+    try {
+      e.preventDefault();
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
-    });
+      setLoading(true);
+      setError("");
+      setMessage("");
 
-    if (error) {
-      setMessage(error.message);
-    } else {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: `${window.location.origin}/auth/reset-password`,
+        },
+      );
+
+      if (resetError) {
+        setError(resetError.message);
+
+        return;
+      }
+
       setEmail("");
       setMessage("Check your email for password reset instructions!");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
@@ -62,11 +73,14 @@ function ForgotPasswordForm() {
       </Form.Submit>
 
       {message ? (
-        <p
-          className={`text-sm ${message.includes("Check") ? "text-green-600" : "text-red-600"}`}
-          role="alert"
-        >
+        <p className="text-sm text-green-600" role="alert">
           {message}
+        </p>
+      ) : null}
+
+      {error ? (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
         </p>
       ) : null}
     </Form.Root>
