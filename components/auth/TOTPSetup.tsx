@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -61,9 +61,11 @@ function TOTPSetup() {
     setLoading(false);
   }
 
-  async function handleVerify(e: React.FormEvent) {
+  async function handleVerify(e: FormEvent) {
     e.preventDefault();
-    if (!enrollmentState) return;
+    if (!enrollmentState) {
+      return;
+    }
 
     setLoading(true);
     setError("");
