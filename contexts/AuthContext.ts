@@ -4,7 +4,9 @@ import type { AuthContextType } from "@/types/supabase-auth";
 
 const AuthContext = createContext<AuthContextType>({
   enrollTOTP: async () => Promise.resolve({ data: null, error: null }),
+  factors: [],
   isAuthenticated: false,
+  loadFactors: async () => Promise.resolve(undefined),
   loading: true,
   signIn: async () => Promise.resolve({ data: null, error: null }),
   signOut: async () => Promise.resolve({ error: null }),

@@ -1,4 +1,5 @@
 import type {
+  Factor,
   SignUpWithPasswordCredentials,
   User,
 } from "@supabase/supabase-js";
@@ -8,7 +9,15 @@ import type { KeyedMutator } from "swr";
 import type { Subscription } from "@/lib/subscriptions";
 
 interface AuthContextType {
+  enrollTOTP: (friendlyName: string) => Promise<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error: any;
+  }>;
+  factors: Factor[];
   isAuthenticated: boolean;
+  loadFactors: () => Promise<void>;
   loading: boolean;
   signIn: (
     email: string,
@@ -31,7 +40,18 @@ interface AuthContextType {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any;
   }>;
-  enrollTOTP: (friendlyName: string) => Promise<{
+  subscription?: Subscription;
+  subscriptionError?: Error;
+  subscriptionIsLoading: boolean;
+  subscriptionMutate: KeyedMutator<Subscription>;
+  unenrollTOTP: (factorId: string) => Promise<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error: any;
+  }>;
+  user: User | null;
+  verifyTOTP: (code: string) => Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,23 +66,6 @@ interface AuthContextType {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any;
   }>;
-  verifyTOTP: (code: string) => Promise<{
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    error: any;
-  }>;
-  unenrollTOTP: (factorId: string) => Promise<{
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    error: any;
-  }>;
-  subscription?: Subscription;
-  subscriptionError?: Error;
-  subscriptionIsLoading: boolean;
-  subscriptionMutate: KeyedMutator<Subscription>;
-  user: User | null;
 }
 
 interface AuthProviderProps {

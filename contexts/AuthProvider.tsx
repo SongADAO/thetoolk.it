@@ -1,6 +1,7 @@
 "use client";
 
 import type {
+  Factor,
   SignUpWithPasswordCredentials,
   User,
 } from "@supabase/supabase-js";
@@ -22,11 +23,13 @@ async function fetcher(url: string) {
 }
 
 export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
+  const supabase = createClient();
+
+  const [factors, setFactors] = useState<Factor[]>([]);
+
   const [user, setUser] = useState<User | null>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
-
-  const supabase = createClient();
 
   // Derived state
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
@@ -47,6 +50,101 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       revalidateOnReconnect: true,
     },
   );
+
+  // Authentication Functions
+  // ---------------------------------------------------------------------------
+
+  async function signUp(
+    email: string,
+    password: string,
+    options?: SignUpWithPasswordCredentials["options"],
+  ) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      options,
+      password,
+    });
+
+    return { data, error };
+  }
+
+  async function signIn(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    return { data, error };
+  }
+
+  async function signOut(scope: "local" | "global") {
+    const { error } = await supabase.auth.signOut({ scope });
+
+    return { error };
+  }
+
+  // 2 Factor Authentication Functions
+  // ---------------------------------------------------------------------------
+
+  async function loadFactors() {
+    const factorsData = await supabase.auth.mfa.listFactors();
+
+    if (factorsData.data?.all) {
+      setFactors(factorsData.data.all);
+    }
+  }
+
+  async function enrollTOTP(friendlyName: string) {
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: "totp",
+      friendlyName,
+    });
+
+    return { data, error };
+  }
+
+  async function verifyTOTPEnrollment(factorId: string, code: string) {
+    const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+      code,
+      factorId,
+    });
+
+    return { data, error };
+  }
+
+  async function verifyTOTP(code: string) {
+    const factorResp = await supabase.auth.mfa.listFactors();
+
+    if (factorResp.data?.totp && factorResp.data.totp.length > 0) {
+      // Try each factor until one succeeds
+      for (const factor of factorResp.data.totp) {
+        // eslint-disable-next-line no-await-in-loop
+        const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+          code,
+          factorId: factor.id,
+        });
+
+        // If verification succeeds, return immediately
+        if (!error) {
+          return { data, error: null };
+        }
+      }
+
+      // If all factors failed, return error
+      return {
+        data: null,
+        error: new Error("TOTP code did not match any enrolled factors"),
+      };
+    }
+
+    return { data: null, error: new Error("No TOTP factor found") };
+  }
+
+  async function unenrollTOTP(factorId: string) {
+    const { data, error } = await supabase.auth.mfa.unenroll({ factorId });
+
+    return { data, error };
+  }
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -129,91 +227,18 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     };
   }, [supabase.auth]);
 
-  async function signUp(
-    email: string,
-    password: string,
-    options?: SignUpWithPasswordCredentials["options"],
-  ) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      options,
-      password,
-    });
-
-    return { data, error };
-  }
-
-  async function signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    return { data, error };
-  }
-
-  async function signOut(scope: "local" | "global") {
-    const { error } = await supabase.auth.signOut({ scope });
-
-    return { error };
-  }
-
-  async function enrollTOTP(friendlyName: string) {
-    const { data, error } = await supabase.auth.mfa.enroll({
-      factorType: "totp",
-      friendlyName,
-    });
-
-    return { data, error };
-  }
-
-  async function verifyTOTPEnrollment(factorId: string, code: string) {
-    const { data, error } = await supabase.auth.mfa.challengeAndVerify({
-      code,
-      factorId,
-    });
-
-    return { data, error };
-  }
-
-  async function verifyTOTP(code: string) {
-    const factors = await supabase.auth.mfa.listFactors();
-
-    if (factors.data?.totp && factors.data.totp.length > 0) {
-      // Try each factor until one succeeds
-      for (const factor of factors.data.totp) {
-        // eslint-disable-next-line no-await-in-loop
-        const { data, error } = await supabase.auth.mfa.challengeAndVerify({
-          code,
-          factorId: factor.id,
-        });
-
-        // If verification succeeds, return immediately
-        if (!error) {
-          return { data, error: null };
-        }
-      }
-
-      // If all factors failed, return error
-      return {
-        data: null,
-        error: new Error("TOTP code did not match any enrolled factors"),
-      };
-    }
-
-    return { data: null, error: new Error("No TOTP factor found") };
-  }
-
-  async function unenrollTOTP(factorId: string) {
-    const { data, error } = await supabase.auth.mfa.unenroll({ factorId });
-
-    return { data, error };
-  }
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    loadFactors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase.auth]);
 
   const providerValues: AuthContextType = useMemo(
     () => ({
       enrollTOTP,
+      factors,
       isAuthenticated,
+      loadFactors,
       loading,
       signIn,
       signOut,
@@ -229,6 +254,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      factors,
       isAuthenticated,
       loading,
       subscription,
