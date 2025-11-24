@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, use, useState } from "react";
 
+import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
@@ -128,7 +129,7 @@ function ChangePasswordForm() {
               type="password"
               value={currentPassword}
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs">
               For security, please enter your current password
             </p>
           </div>
@@ -171,13 +172,9 @@ function ChangePasswordForm() {
             />
           </div>
 
-          <button
-            className="w-full cursor-pointer rounded bg-gray-500 px-4 py-2 text-center text-white hover:bg-gray-800 disabled:opacity-50"
-            disabled={loading}
-            type="submit"
-          >
+          <Button disabled={loading} type="submit">
             {loading ? "Updating..." : "Update Password"}
-          </button>
+          </Button>
 
           {message ? (
             <p
