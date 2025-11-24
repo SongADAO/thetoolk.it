@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 
 import { SignInForm } from "@/components/auth/SignInForm";
 
@@ -16,9 +15,7 @@ export default function SignInPage() {
   return (
     <div className="flex items-center justify-center p-4 md:pt-20">
       <div className="w-full">
-        <Suspense fallback={<div>Loading...</div>}>
-          <SignInForm />
-        </Suspense>
+        <SignInForm />
 
         <div className="mt-8 text-center">
           <h3 className="font-bold">Don&apos;t have an account?</h3>
