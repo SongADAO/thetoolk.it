@@ -1,11 +1,9 @@
 "use client";
 
-import type { Factor } from "@supabase/supabase-js";
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
-import { createClient } from "@/lib/supabase/client";
 
 interface EnrollmentState {
   factorId: string;
@@ -15,11 +13,13 @@ interface EnrollmentState {
 }
 
 function TOTPSetup() {
-  const { enrollTOTP, verifyTOTPEnrollment, unenrollTOTP } = use(AuthContext);
-
-  const supabase = createClient();
-
-  const [factors, setFactors] = useState<Factor[]>([]);
+  const {
+    enrollTOTP,
+    factors,
+    loadFactors,
+    unenrollTOTP,
+    verifyTOTPEnrollment,
+  } = use(AuthContext);
 
   const [enrollmentState, setEnrollmentState] =
     useState<EnrollmentState | null>(null);
@@ -29,13 +29,6 @@ function TOTPSetup() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-
-  async function loadFactors() {
-    const factorsData = await supabase.auth.mfa.listFactors();
-    if (factorsData.data?.all) {
-      setFactors(factorsData.data.all);
-    }
-  }
 
   async function setupTOTP() {
     setLoading(true);
@@ -132,12 +125,6 @@ function TOTPSetup() {
     setError("");
     setMessage("");
   }
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    loadFactors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [supabase.auth]);
 
   if (showTotpSetup) {
     if (loading && !enrollmentState) {
@@ -286,6 +273,7 @@ function TOTPSetup() {
                   <Button
                     disabled={loading}
                     onClick={async () => handleUnenroll(factor.id)}
+                    purpose="danger"
                     type="button"
                   >
                     Remove
