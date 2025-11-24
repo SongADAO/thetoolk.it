@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function ConfirmEmailPage() {
   return (
-    <div className="flex items-center justify-center p-4 md:pt-20">
+    <div className="flex items-center justify-center p-4 md:py-20">
       <div className="w-full">
         <Suspense
           fallback={
