@@ -31,87 +31,90 @@ function TOTPSetup() {
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
-  async function setupTOTP() {
-    setLoading(true);
-    setError("");
+  async function handleAddFactor() {
+    try {
+      setLoading(true);
+      setError("");
+      setMessage("");
+      setEnrollmentState(null);
 
-    const { data, error: enrollError } = await enrollTOTP(
-      `TOTP-${crypto.randomUUID()}`,
-    );
+      const { data, error: enrollError } = await enrollTOTP(
+        `TOTP-${crypto.randomUUID()}`,
+      );
 
-    if (enrollError) {
-      setError(enrollError.message);
-      setLoading(false);
-      return;
-    }
+      if (enrollError) {
+        setError(enrollError.message);
 
-    if (data) {
-      try {
-        setEnrollmentState({
-          factorId: data.id,
-          qrCode: data.totp.qr_code,
-          secret: data.totp.secret,
-          verifyCode: "",
-        });
-      } catch (err) {
-        setError("Failed to generate QR code");
-        console.error(err);
+        return;
       }
-    }
 
-    setLoading(false);
+      if (data) {
+        try {
+          setEnrollmentState({
+            factorId: data.id,
+            qrCode: data.totp.qr_code,
+            secret: data.totp.secret,
+            verifyCode: "",
+          });
+          setShowTotpSetup(true);
+        } catch {
+          setError("Failed to generate QR code");
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleVerify(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     if (!enrollmentState) {
       return;
     }
 
-    setLoading(true);
-    setError("");
+    try {
+      setLoading(true);
+      setError("");
 
-    const { error: verifyError } = await verifyTOTPEnrollment(
-      enrollmentState.factorId,
-      enrollmentState.verifyCode,
-    );
+      const { error: verifyError } = await verifyTOTPEnrollment(
+        enrollmentState.factorId,
+        enrollmentState.verifyCode,
+      );
 
-    if (verifyError) {
-      setError(verifyError.message);
+      if (verifyError) {
+        setError(verifyError.message);
+
+        return;
+      }
+
+      setShowTotpSetup(false);
+      setEnrollmentState(null);
+      setMessage("Two-factor authentication enabled successfully!");
+
+      await loadFactors();
+    } finally {
       setLoading(false);
-      return;
     }
-
-    setLoading(false);
-    setShowTotpSetup(false);
-    setEnrollmentState(null);
-    setMessage("Two-factor authentication enabled successfully!");
-    await loadFactors();
-  }
-
-  async function handleAddFactor() {
-    setShowTotpSetup(true);
-    setMessage("");
-    setError("");
-    setEnrollmentState(null);
-    await setupTOTP();
   }
 
   async function handleUnenroll(factorId: string) {
-    setLoading(true);
-    setMessage("");
-    setError("");
+    try {
+      setLoading(true);
+      setError("");
+      setMessage("");
 
-    const { error: unenrollError } = await unenrollTOTP(factorId);
+      const { error: unenrollError } = await unenrollTOTP(factorId);
 
-    if (unenrollError) {
-      setError(unenrollError.message);
-    } else {
-      setMessage("Two-factor authentication factor removed successfully");
-      await loadFactors();
+      if (unenrollError) {
+        setError(unenrollError.message);
+      } else {
+        setMessage("Two-factor authentication factor removed successfully");
+        await loadFactors();
+      }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   async function onCancel() {
@@ -123,10 +126,10 @@ function TOTPSetup() {
       console.error("Failed to unenroll TOTP factor:", err);
     }
 
-    setShowTotpSetup(false);
-    setEnrollmentState(null);
     setError("");
     setMessage("");
+    setEnrollmentState(null);
+    setShowTotpSetup(false);
   }
 
   if (showTotpSetup) {
@@ -199,14 +202,12 @@ function TOTPSetup() {
                 <Form.Control
                   autoComplete="off"
                   className="w-full rounded border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  maxLength={6}
                   onChange={(e) =>
                     setEnrollmentState({
                       ...enrollmentState,
                       verifyCode: e.target.value.replace(/\D/gu, ""),
                     })
                   }
-                  pattern="\d{6}"
                   placeholder="000000"
                   required
                   type="number"
