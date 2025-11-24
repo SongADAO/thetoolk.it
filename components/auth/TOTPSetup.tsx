@@ -280,7 +280,7 @@ function TOTPSetup() {
             <div className="space-y-2">
               {factors.map((factor) => (
                 <div
-                  className="flex items-center justify-between rounded border border-gray-200 bg-white p-3"
+                  className="flex flex-col items-center justify-between gap-2 rounded border border-gray-200 bg-white p-3 md:flex-row"
                   key={factor.id}
                 >
                   <div className="flex-1">
