@@ -1,5 +1,6 @@
 "use client";
 
+import { Form } from "radix-ui";
 import { type FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
@@ -61,7 +62,7 @@ function TOTPSetup() {
     setLoading(false);
   }
 
-  async function handleVerify(e: FormEvent) {
+  async function handleVerify(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!enrollmentState) {
       return;
@@ -176,18 +177,28 @@ function TOTPSetup() {
               </code>
             </div>
 
-            <form className="space-y-4" onSubmit={handleVerify}>
-              <div>
-                <label
-                  className="mb-1 block text-sm font-medium"
-                  htmlFor="verify-code"
-                >
-                  Enter verification code from your app
-                </label>
-                <input
+            <Form.Root className="space-y-4" onSubmit={handleVerify}>
+              <Form.Field name="verify-code">
+                <div className="flex items-baseline justify-between">
+                  <Form.Label className="block text-sm font-medium">
+                    Enter verification code from your app
+                  </Form.Label>
+                  <Form.Message
+                    className="text-xs text-red-600"
+                    match="valueMissing"
+                  >
+                    Please enter your code
+                  </Form.Message>
+                  <Form.Message
+                    className="text-xs text-red-600"
+                    match="patternMismatch"
+                  >
+                    Code must be 6 digits
+                  </Form.Message>
+                </div>
+                <Form.Control
                   autoComplete="off"
                   className="w-full rounded border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  id="verify-code"
                   maxLength={6}
                   onChange={(e) =>
                     setEnrollmentState({
@@ -198,22 +209,28 @@ function TOTPSetup() {
                   pattern="\d{6}"
                   placeholder="000000"
                   required
-                  type="text"
+                  type="number"
                   value={enrollmentState.verifyCode}
                 />
-              </div>
+              </Form.Field>
 
-              {error ? <p className="text-sm text-red-600">{error}</p> : null}
+              {error ? (
+                <p className="text-sm text-red-600" role="alert">
+                  {error}
+                </p>
+              ) : null}
 
               <div className="grid grid-cols-[1fr_auto] gap-2">
-                <Button disabled={loading} type="submit">
-                  {loading ? "Verifying..." : "Verify and Enable"}
-                </Button>
+                <Form.Submit asChild>
+                  <Button disabled={loading} type="submit">
+                    {loading ? "Verifying..." : "Verify and Enable"}
+                  </Button>
+                </Form.Submit>
                 <Button onClick={onCancel} purpose="danger" type="button">
                   Cancel
                 </Button>
               </div>
-            </form>
+            </Form.Root>
           </div>
         </section>
       );
