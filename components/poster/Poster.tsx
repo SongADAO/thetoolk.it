@@ -46,7 +46,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 </PosterSettingsMenu>
               </div>
             </header>
-            <div className="p-4">
+            <div className="m-4">
               <CreatePostProvider>
                 <PostForm />
               </CreatePostProvider>
@@ -73,10 +73,8 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   ) : null}
                 </div>
               </header>
-              <div className="p-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <StorageProgress mode={mode} />
-                </div>
+              <div className="m-4 grid grid-cols-2 gap-2">
+                <StorageProgress mode={mode} />
               </div>
             </section>
             <section className="rounded bg-gray-100 contain-paint">
@@ -94,10 +92,8 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   </PosterSettingsMenu>
                 </div>
               </header>
-              <div className="p-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <PostProgress mode={mode} />
-                </div>
+              <div className="m-4 grid grid-cols-2 gap-2">
+                <PostProgress mode={mode} />
               </div>
             </section>
           </div>
@@ -111,10 +107,8 @@ function Poster({ mode }: Readonly<PosterProps>) {
                   <h2 className="font-bold">Storage Service Settings</h2>
                   {showInstructions ? <InstructionsButton /> : null}
                 </header>
-                <div className="p-4">
-                  <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                    <StorageSwitches mode={mode} />
-                  </div>
+                <div className="m-4 grid grid-cols-1 gap-2 lg:grid-cols-2">
+                  <StorageSwitches mode={mode} />
                 </div>
               </section>
             ) : null}
@@ -123,10 +117,8 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 <h2 className="font-bold">Posting Service Settings</h2>
                 {showInstructions ? <InstructionsButton /> : null}
               </header>
-              <div className="p-4">
-                <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                  <PostSwitches mode={mode} />
-                </div>
+              <div className="m-4 grid grid-cols-1 gap-2 lg:grid-cols-2">
+                <PostSwitches mode={mode} />
               </div>
             </section>
           </div>
