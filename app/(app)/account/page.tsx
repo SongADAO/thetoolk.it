@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { Account } from "@/components/account/Account";
+import { RequireAuthentication } from "@/components/auth/RequireAuthentication";
 import { RequireTOTPVerification } from "@/components/auth/RequireTOTPVerification";
 
 export const metadata: Metadata = {
@@ -18,12 +19,14 @@ export const metadata: Metadata = {
 
 export default function Dashboard() {
   return (
-    <RequireTOTPVerification>
-      <div className="flex items-center justify-center p-4 md:py-20">
-        <div className="w-full">
-          <Account />
+    <RequireAuthentication>
+      <RequireTOTPVerification>
+        <div className="flex items-center justify-center p-4 md:py-20">
+          <div className="w-full">
+            <Account />
+          </div>
         </div>
-      </div>
-    </RequireTOTPVerification>
+      </RequireTOTPVerification>
+    </RequireAuthentication>
   );
 }
