@@ -83,8 +83,6 @@ function SignInForm() {
       className="mx-auto w-full max-w-md space-y-4"
       onSubmit={handleSubmit}
     >
-      <h1 className="text-2xl font-bold">Sign In</h1>
-
       <Form.Field name="email">
         <div className="flex items-baseline justify-between">
           <Form.Label className="block text-sm font-medium">Email</Form.Label>

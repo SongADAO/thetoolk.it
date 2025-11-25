@@ -5,6 +5,9 @@ import { use } from "react";
 import { ChangeEmailForm } from "@/components/auth/ChangeEmailForm";
 import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
 import { TOTPSetup } from "@/components/auth/TOTPSetup";
+import { Box } from "@/components/general/Box";
+import { BoxHeader } from "@/components/general/BoxHeader";
+import { BoxMain } from "@/components/general/BoxMain";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function AccountSettings() {
@@ -26,8 +29,24 @@ function AccountSettings() {
     <div className="mx-auto max-w-2xl space-y-8">
       <h1 className="text-3xl font-bold">Account Settings</h1>
       <TOTPSetup />
-      <ChangeEmailForm />
-      <ChangePasswordForm />
+
+      <Box>
+        <BoxHeader>
+          <h2 className="font-bold">Change Email</h2>
+        </BoxHeader>
+        <BoxMain>
+          <ChangeEmailForm />
+        </BoxMain>
+      </Box>
+
+      <Box>
+        <BoxHeader>
+          <h2 className="font-bold">Change Password</h2>
+        </BoxHeader>
+        <BoxMain>
+          <ChangePasswordForm />
+        </BoxMain>
+      </Box>
     </div>
   );
 }

@@ -14,10 +14,11 @@ export const metadata: Metadata = {
 export default function SignInPage() {
   return (
     <div className="flex items-center justify-center p-4 md:py-20">
-      <div className="w-full">
+      <section className="w-full">
+        <h1 className="mx-auto mb-4 max-w-md text-2xl font-bold">Sign In</h1>
         <SignInForm />
 
-        <div className="mt-8 text-center">
+        <section className="mt-8 text-center">
           <h3 className="font-bold">Don&apos;t have an account?</h3>
           <Link
             className="text-blue-600 underline hover:text-blue-800"
@@ -25,9 +26,9 @@ export default function SignInPage() {
           >
             Create an account
           </Link>
-        </div>
+        </section>
 
-        <div className="mt-8 text-center">
+        <section className="mt-8 text-center">
           <h3 className="font-bold">Forgot your password?</h3>
           <Link
             className="text-blue-600 underline hover:text-blue-800"
@@ -35,8 +36,8 @@ export default function SignInPage() {
           >
             Reset your password
           </Link>
-        </div>
-      </div>
+        </section>
+      </section>
     </div>
   );
 }
