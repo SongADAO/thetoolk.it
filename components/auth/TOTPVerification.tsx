@@ -50,8 +50,6 @@ function TOTPVerification({
       className="mx-auto w-full max-w-md space-y-4"
       onSubmit={handleSubmit}
     >
-      <h2 className="text-xl font-bold">Two-Factor Authentication</h2>
-
       <Form.Field name="totp-code">
         <div className="flex items-baseline justify-between">
           <Form.Label className="block text-sm font-medium">
