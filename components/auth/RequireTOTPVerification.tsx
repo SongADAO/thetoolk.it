@@ -42,6 +42,7 @@ function RequireTOTPVerification({
   }
 
   // Render children if TOTP verification is not needed
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
 }
 

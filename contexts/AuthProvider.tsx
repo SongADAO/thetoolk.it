@@ -177,20 +177,31 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   }, [user]);
 
   useEffect(() => {
+    async function updateUserData(sessionUser: User | null) {
+      setUser(sessionUser);
+
+      // Check MFA level
+      if (sessionUser?.factors?.length) {
+        const { data: mfaData } =
+          await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        setSessionAALNextLevel(mfaData?.nextLevel ?? "");
+        setSessionAALCurrentLevel(mfaData?.currentLevel ?? "");
+      } else {
+        setSessionAALNextLevel("");
+        setSessionAALCurrentLevel("");
+      }
+
+      setIsLoading(false);
+    }
+
     // Get initial session
     async function getSession(): Promise<void> {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-
-      // Check MFA level
-      const { data: mfaData } =
-        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-      setSessionAALNextLevel(mfaData?.nextLevel ?? "");
-      setSessionAALCurrentLevel(mfaData?.currentLevel ?? "");
-
-      setIsLoading(false);
+      console.log("Initial session:", session);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      updateUserData(session?.user ?? null);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -201,16 +212,10 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       // eslint-disable-next-line @typescript-eslint/no-shadow
       data: { subscription },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-
-      // Check MFA level
-      const { data: mfaData } =
-        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-      setSessionAALNextLevel(mfaData?.nextLevel ?? "");
-      setSessionAALCurrentLevel(mfaData?.currentLevel ?? "");
-
-      setIsLoading(false);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", { event, session });
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      updateUserData(session?.user ?? null);
     });
 
     // Periodically validate the session

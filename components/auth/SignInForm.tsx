@@ -26,7 +26,6 @@ function SignInForm() {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data, error: signInError } = await signIn(email, password);
-      console.log(data);
 
       if (signInError) {
         // Check if the error is due to MFA being required
