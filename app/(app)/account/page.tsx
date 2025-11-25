@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   },
   description:
     "Manage your account settings, view your subscription details, and update your profile information on TheToolk.it.",
+  robots: {
+    follow: false,
+    index: false,
+  },
   title: "My Account - TheToolk.it",
 };
 
