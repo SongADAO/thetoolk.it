@@ -267,6 +267,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("focus", handleFocus);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase.auth]);
 
   const providerValues: AuthContextType = useMemo(
