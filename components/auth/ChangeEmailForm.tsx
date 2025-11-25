@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
 import { type FormEvent, use, useState } from "react";
 
+import { Box } from "@/components/general/Box";
+import { BoxHeader } from "@/components/general/BoxHeader";
+import { BoxMain } from "@/components/general/BoxMain";
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
@@ -81,11 +84,11 @@ function ChangeEmailForm() {
   }
 
   return (
-    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
-      <header className="bg-gray-300 px-4 py-2">
+    <Box>
+      <BoxHeader>
         <h2 className="font-bold">Change Email</h2>
-      </header>
-      <div className="space-y-2 px-4">
+      </BoxHeader>
+      <BoxMain>
         <Form.Root className="space-y-4" onSubmit={handleSubmit}>
           <Form.Field name="current-email">
             <Form.Label className="block text-sm font-medium">
@@ -146,8 +149,8 @@ function ChangeEmailForm() {
             </p>
           ) : null}
         </Form.Root>
-      </div>
-    </section>
+      </BoxMain>
+    </Box>
   );
 }
 
