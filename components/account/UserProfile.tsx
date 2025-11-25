@@ -2,6 +2,9 @@
 
 import { use } from "react";
 
+import { Box } from "@/components/general/Box";
+import { BoxHeader } from "@/components/general/BoxHeader";
+import { BoxMain } from "@/components/general/BoxMain";
 import { LinkButton } from "@/components/general/LinkButton";
 import { AuthContext } from "@/contexts/AuthContext";
 
@@ -17,30 +20,34 @@ function UserProfile() {
   }
 
   return (
-    <section className="mx-auto w-full space-y-4 rounded bg-gray-100 pb-4 contain-paint">
-      <header className="bg-gray-300 px-4 py-2">
+    <Box>
+      <BoxHeader>
         <h1 className="font-bold">Profile</h1>
-      </header>
-      <div className="space-y-2 px-4">
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-        <p>
-          <strong>User ID:</strong> {user.id}
-        </p>
-        <p>
-          <strong>Created:</strong>{" "}
-          {new Date(user.created_at).toLocaleDateString()}
-        </p>
-        <p>
-          <strong>Email Verified:</strong>{" "}
-          {user.email_confirmed_at ? "Yes" : "No"}
-        </p>
-      </div>
-      <div className="flex items-center gap-4 px-4">
-        <LinkButton href="/account/manage">Manage Account</LinkButton>
-      </div>
-    </section>
+      </BoxHeader>
+      <BoxMain>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+            <p>
+              <strong>User ID:</strong> {user.id}
+            </p>
+            <p>
+              <strong>Created:</strong>{" "}
+              {new Date(user.created_at).toLocaleDateString()}
+            </p>
+            <p>
+              <strong>Email Verified:</strong>{" "}
+              {user.email_confirmed_at ? "Yes" : "No"}
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <LinkButton href="/account/manage">Manage Account</LinkButton>
+          </div>
+        </div>
+      </BoxMain>
+    </Box>
   );
 }
 
