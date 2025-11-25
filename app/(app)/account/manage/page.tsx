@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AccountSettings } from "@/components/account/AccountSettings";
+import { RequireAuthentication } from "@/components/auth/RequireAuthentication";
 import { RequireTOTPVerification } from "@/components/auth/RequireTOTPVerification";
 
 export const metadata: Metadata = {
@@ -17,12 +18,14 @@ export const metadata: Metadata = {
 
 export default function SignInPage() {
   return (
-    <RequireTOTPVerification>
-      <div className="flex items-center justify-center p-4 md:py-20">
-        <div className="w-full">
-          <AccountSettings />
+    <RequireAuthentication>
+      <RequireTOTPVerification>
+        <div className="flex items-center justify-center p-4 md:py-20">
+          <div className="w-full">
+            <AccountSettings />
+          </div>
         </div>
-      </div>
-    </RequireTOTPVerification>
+      </RequireTOTPVerification>
+    </RequireAuthentication>
   );
 }

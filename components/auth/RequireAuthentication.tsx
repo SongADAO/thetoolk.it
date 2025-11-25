@@ -10,23 +10,23 @@ interface Props {
 }
 
 /**
- * Component that checks if user needs TOTP verification and redirects them
- * to the TOTP verification page if they do.
+ * Component that checks if user needs authentication and redirects them
+ * to the authentication page if they do.
  */
-function RequireTOTPVerification({ children }: Readonly<Props>) {
-  const { needsTOTPVerification, isLoading } = use(AuthContext);
+function RequireAuthentication({ children }: Readonly<Props>) {
+  const { isLoading, isAuthenticated } = use(AuthContext);
 
   const router = useRouter();
 
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isLoading && needsTOTPVerification) {
+    if (!isLoading && !isAuthenticated) {
       // Store the current path to redirect back after TOTP verification
       const redirectPath = encodeURIComponent(pathname);
-      router.push(`/auth/verify-totp?redirect=${redirectPath}`);
+      router.push(`/auth/signin?redirect=${redirectPath}`);
     }
-  }, [needsTOTPVerification, isLoading, router, pathname]);
+  }, [isAuthenticated, isLoading, router, pathname]);
 
   // Show loading state while checking
   if (isLoading) {
@@ -34,7 +34,7 @@ function RequireTOTPVerification({ children }: Readonly<Props>) {
   }
 
   // Show nothing while redirecting
-  if (needsTOTPVerification) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -43,4 +43,4 @@ function RequireTOTPVerification({ children }: Readonly<Props>) {
   return <>{children}</>;
 }
 
-export { RequireTOTPVerification };
+export { RequireAuthentication };
