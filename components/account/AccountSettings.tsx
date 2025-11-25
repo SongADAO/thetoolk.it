@@ -28,7 +28,15 @@ function AccountSettings() {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <h1 className="text-3xl font-bold">Account Settings</h1>
-      <TOTPSetup />
+
+      <Box>
+        <BoxHeader>
+          <h2 className="font-bold">Two-Factor Authentication</h2>
+        </BoxHeader>
+        <BoxMain>
+          <TOTPSetup />
+        </BoxMain>
+      </Box>
 
       <Box>
         <BoxHeader>

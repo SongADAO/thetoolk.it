@@ -71,10 +71,15 @@ function SignInForm() {
 
   if (needsTOTP) {
     return (
-      <TOTPVerification
-        onCancel={handleTOTPCancel}
-        onVerified={handleTOTPVerified}
-      />
+      <section>
+        <h2 className="mx-auto mb-4 max-w-md text-xl font-bold">
+          Two-Factor Authentication
+        </h2>
+        <TOTPVerification
+          onCancel={handleTOTPCancel}
+          onVerified={handleTOTPVerified}
+        />
+      </section>
     );
   }
 
