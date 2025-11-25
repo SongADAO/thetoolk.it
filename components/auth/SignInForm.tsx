@@ -6,6 +6,7 @@ import { type FormEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
+import { getSafeQueryRedirect } from "@/lib/redirects";
 
 function SignInForm() {
   const { signIn } = use(AuthContext);
@@ -55,8 +56,9 @@ function SignInForm() {
 
       setPassword("");
       setEmail("");
-      // Redirect after successful login
-      router.push("/pro");
+
+      const redirectTo = getSafeQueryRedirect("/pro");
+      router.push(redirectTo);
     } catch (err: unknown) {
       console.error(err);
       const errMessage = err instanceof Error ? err.message : "Form failed";
