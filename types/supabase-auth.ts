@@ -19,6 +19,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   loadFactors: () => Promise<void>;
+  needsTOTPVerification: boolean;
   signIn: (
     email: string,
     password: string,

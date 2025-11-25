@@ -8,6 +8,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isLoading: true,
   loadFactors: async () => Promise.resolve(undefined),
+  needsTOTPVerification: false,
   signIn: async () => Promise.resolve({ data: null, error: null }),
   signOut: async () => Promise.resolve({ error: null }),
   signUp: async () => Promise.resolve({ data: null, error: null }),

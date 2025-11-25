@@ -26,13 +26,36 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   const supabase = createClient();
 
   const [factors, setFactors] = useState<Factor[]>([]);
+  const [totpFactors, setTotpFactors] = useState<Factor[]>([]);
 
   const [user, setUser] = useState<User | null>(null);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const [sessionAALNextLevel, setSessionAALNextLevel] = useState<string>("");
+  const [sessionAALCurrentLevel, setSessionAALCurrentLevel] =
+    useState<string>("");
+
   // Derived state
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
+
+  // User needs TOTP verification if:
+  // 1. They are authenticated
+  // 2. They have factors
+  // 3. Their session AAL is aal1 (not aal2, which means MFA verified)
+  const needsTOTPVerification = useMemo(
+    () =>
+      isAuthenticated &&
+      factors.length > 0 &&
+      sessionAALNextLevel === "aal2" &&
+      sessionAALCurrentLevel === "aal1",
+    [
+      isAuthenticated,
+      factors.length,
+      sessionAALNextLevel,
+      sessionAALCurrentLevel,
+    ],
+  );
 
   // Fetch subscription status with SWR
   // Only fetch if user is authenticated
@@ -91,6 +114,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
     if (factorsData.data?.all) {
       setFactors(factorsData.data.all);
+      setTotpFactors(factorsData.data.totp);
     }
   }
 
@@ -159,6 +183,13 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
+
+      // Check MFA level
+      const { data: mfaData } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      setSessionAALNextLevel(mfaData?.nextLevel ?? "");
+      setSessionAALCurrentLevel(mfaData?.currentLevel ?? "");
+
       setIsLoading(false);
     }
 
@@ -170,8 +201,15 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       // eslint-disable-next-line @typescript-eslint/no-shadow
       data: { subscription },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
+
+      // Check MFA level
+      const { data: mfaData } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      setSessionAALNextLevel(mfaData?.nextLevel ?? "");
+      setSessionAALCurrentLevel(mfaData?.currentLevel ?? "");
+
       setIsLoading(false);
     });
 
@@ -240,6 +278,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       isAuthenticated,
       isLoading,
       loadFactors,
+      needsTOTPVerification,
       signIn,
       signOut,
       signUp,
@@ -247,6 +286,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       subscriptionError,
       subscriptionIsLoading,
       subscriptionMutate,
+      totpFactors,
       unenrollTOTP,
       user,
       verifyTOTP,
@@ -257,9 +297,12 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       factors,
       isAuthenticated,
       isLoading,
+      needsTOTPVerification,
       subscription,
       subscriptionError,
       subscriptionIsLoading,
+      totpFactors,
+      totpFactors,
       user,
     ],
   );
