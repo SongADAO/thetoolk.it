@@ -125,80 +125,92 @@ function ServiceSwitch({
           </Collapsible.Content>
         ) : null}
 
-        {isClient && hasAuthorizationStep && isComplete ? (
+        {isClient &&
+        hasAuthorizationStep &&
+        isComplete &&
+        (isEnabled || (isAuthorized && accounts.length > 0)) ? (
           <div className="gap-2 bg-[#fff2] p-2">
-            {isAuthorized && accounts.length > 0 ? (
-              <div className="flex items-center justify-between gap-2 pb-2">
-                {accounts.map((account) => (
-                  <div
-                    className="flex items-center gap-1 text-sm"
-                    key={account.id}
-                  >
-                    <FaCircleUser className="size-4" /> {account.username}{" "}
-                  </div>
-                ))}
-                {authorizationExpiresAt ? (
-                  <div className="flex items-center gap-1 text-sm">
-                    <FaRegCalendarXmark className="size-4" />{" "}
-                    {new Date(authorizationExpiresAt).toLocaleString("en", {
-                      day: "numeric",
-                      month: "numeric",
-                      year: "numeric",
-                    })}
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
+            <div className="space-y-2">
+              {isAuthorized && accounts.length > 0 ? (
+                <div className="flex items-center justify-between gap-2">
+                  {accounts.map((account) => (
+                    <div
+                      className="flex items-center gap-1 text-sm"
+                      key={account.id}
+                    >
+                      <FaCircleUser className="size-4" />{" "}
+                      {account.username}{" "}
+                    </div>
+                  ))}
+                  {authorizationExpiresAt ? (
+                    <div className="flex items-center gap-1 text-sm">
+                      <FaRegCalendarXmark className="size-4" />{" "}
+                      {new Date(authorizationExpiresAt).toLocaleString("en", {
+                        day: "numeric",
+                        month: "numeric",
+                        year: "numeric",
+                      })}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
 
-            <div className="flex items-center justify-between gap-2">
-              {label === "Farcaster" ? (
-                <NeynarAuthButton
-                  label="Log in with Neynar"
-                  style={{
-                    borderRadius: "0.25rem",
-                    boxShadow:
-                      "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
-                    fontWeight: "400",
-                    padding: "0.64rem 0.2rem",
-                    width: "100%",
-                  }}
-                />
-              ) : (
-                // eslint-disable-next-line react/jsx-no-useless-fragment
-                <>
-                  {isAuthorized && accounts.length > 0 ? (
-                    <div className="flex-1">
-                      <button
-                        className={`w-full cursor-pointer gap-2 rounded-sm bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
-                        data-authorized={isAuthorized}
-                        onClick={disconnect}
-                        type="button"
-                      >
-                        <div>
-                          <div className="flex items-center justify-center gap-2">
-                            {icon} Log out of {label}
-                          </div>
-                        </div>
-                      </button>
-                    </div>
+              {isEnabled || (isAuthorized && accounts.length > 0) ? (
+                <div className="flex items-center justify-between gap-2">
+                  {label === "Farcaster" ? (
+                    <NeynarAuthButton
+                      icon={icon}
+                      label={`Log in with ${label}`}
+                      style={{
+                        backgroundColor: "#fff",
+                        borderRadius: "0.25rem",
+                        boxShadow:
+                          "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
+                        color: "#000",
+                        fontWeight: "400",
+                        gap: "0.25rem",
+                        padding: "0.64rem 0.2rem",
+                        width: "100%",
+                      }}
+                    />
                   ) : (
-                    <div className="flex-1">
-                      <button
-                        className={`w-full cursor-pointer gap-2 rounded-sm bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
-                        data-authorized={isAuthorized}
-                        onClick={authorize}
-                        type="button"
-                      >
-                        <div>
-                          <div className="flex items-center justify-center gap-2">
-                            {icon} Log in with {label}
-                          </div>
+                    // eslint-disable-next-line react/jsx-no-useless-fragment
+                    <>
+                      {isAuthorized && accounts.length > 0 ? (
+                        <div className="flex-1">
+                          <button
+                            className="w-full cursor-pointer gap-2 rounded-sm bg-white px-4 py-2 text-black shadow-md hover:bg-gray-900 hover:text-white"
+                            data-authorized={isAuthorized}
+                            onClick={disconnect}
+                            type="button"
+                          >
+                            <div>
+                              <div className="flex items-center justify-center gap-2">
+                                {icon} Log out of {label}
+                              </div>
+                            </div>
+                          </button>
                         </div>
-                      </button>
-                    </div>
+                      ) : (
+                        <div className="flex-1">
+                          <button
+                            className="w-full cursor-pointer gap-2 rounded-sm bg-white px-4 py-2 text-black shadow-md hover:bg-gray-900 hover:text-white"
+                            data-authorized={isAuthorized}
+                            onClick={authorize}
+                            type="button"
+                          >
+                            <div>
+                              <div className="flex items-center justify-center gap-2">
+                                {icon} Log in with {label}
+                              </div>
+                            </div>
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
-                </>
-              )}
+                </div>
+              ) : null}
             </div>
           </div>
         ) : null}
