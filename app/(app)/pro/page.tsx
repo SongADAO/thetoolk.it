@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { RequireTOTPVerification } from "@/components/auth/RequireTOTPVerification";
 import { Poster } from "@/components/poster/Poster";
 import { PosterProviders } from "@/components/poster/PosterProviders";
 import { UpgradeModal } from "@/components/subscriptions/UpgradeModal";
@@ -15,11 +16,13 @@ export const metadata: Metadata = {
 
 export default function ProPage() {
   return (
-    <div>
-      <PosterProviders mode="server">
-        <Poster mode="server" />
-      </PosterProviders>
-      <UpgradeModal />
-    </div>
+    <RequireTOTPVerification>
+      <div>
+        <PosterProviders mode="server">
+          <Poster mode="server" />
+        </PosterProviders>
+        <UpgradeModal />
+      </div>
+    </RequireTOTPVerification>
   );
 }

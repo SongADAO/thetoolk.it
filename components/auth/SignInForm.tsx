@@ -4,16 +4,13 @@ import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
 import { type FormEvent, use, useState } from "react";
 
-import { TOTPVerification } from "@/components/auth/TOTPVerification";
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function SignInForm() {
-  const { signIn, signOut } = use(AuthContext);
+  const { signIn } = use(AuthContext);
 
   const router = useRouter();
-
-  const [needsTOTP, setNeedsTOTP] = useState<boolean>(false);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -22,65 +19,52 @@ function SignInForm() {
   const [error, setError] = useState<string>("");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
-    setIsPending(true);
-    setError("");
+    try {
+      e.preventDefault();
+      setIsPending(true);
+      setError("");
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { data, error: signInError } = await signIn(email, password);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { data, error: signInError } = await signIn(email, password);
+      console.log(data);
 
-    if (signInError) {
-      // Check if the error is due to MFA being required
-      if (
-        signInError.message?.includes("MFA") ||
-        signInError.message?.includes("factor")
-      ) {
-        setPassword("");
-        setEmail("");
-        // User must complete MFA verification
-        setNeedsTOTP(true);
-      } else {
+      if (signInError) {
+        // Check if the error is due to MFA being required
+        if (
+          signInError.message?.includes("MFA") ||
+          signInError.message?.includes("factor")
+        ) {
+          setPassword("");
+          setEmail("");
+          // Redirect to TOTP verification page
+          router.push("/auth/verify-totp");
+
+          return;
+        }
+
         throw new Error(signInError.message);
       }
-    } else if (data?.user?.factors && data.user.factors.length > 0) {
-      setPassword("");
-      setEmail("");
-      // User has MFA enabled
-      setNeedsTOTP(true);
-    } else {
+
+      if (data?.user?.factors && data.user.factors.length > 0) {
+        setPassword("");
+        setEmail("");
+        // User has MFA enabled - redirect to TOTP verification
+        router.push("/auth/verify-totp");
+
+        return;
+      }
+
       setPassword("");
       setEmail("");
       // Redirect after successful login
       router.push("/pro");
+    } catch (err: unknown) {
+      console.error(err);
+      const errMessage = err instanceof Error ? err.message : "Form failed";
+      setError(errMessage);
+    } finally {
+      setIsPending(false);
     }
-
-    setIsPending(false);
-  }
-
-  function handleTOTPVerified() {
-    setNeedsTOTP(false);
-    router.push("/pro");
-  }
-
-  async function handleTOTPCancel() {
-    setNeedsTOTP(false);
-    // Sign out the user since they cancelled MFA verification
-    await signOut("local");
-    setError("Two-factor authentication is required to sign in.");
-  }
-
-  if (needsTOTP) {
-    return (
-      <section>
-        <h2 className="mx-auto mb-4 max-w-md text-xl font-bold">
-          Two-Factor Authentication
-        </h2>
-        <TOTPVerification
-          onCancel={handleTOTPCancel}
-          onVerified={handleTOTPVerified}
-        />
-      </section>
-    );
   }
 
   return (
