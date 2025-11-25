@@ -5,6 +5,7 @@ import { use } from "react";
 
 import { TOTPVerification } from "@/components/auth/TOTPVerification";
 import { AuthContext } from "@/contexts/AuthContext";
+import { getSafeQueryRedirect } from "@/lib/redirects";
 
 function TOTPVerificationPage() {
   const { signOut, isAuthenticated, needsTOTPVerification, isLoading } =
@@ -13,9 +14,7 @@ function TOTPVerificationPage() {
   const router = useRouter();
 
   function handleTOTPVerified() {
-    // Redirect to the intended destination or default to /pro
-    const params = new URLSearchParams(window.location.search);
-    const redirectTo = params.get("redirect") ?? "/pro";
+    const redirectTo = getSafeQueryRedirect("/pro");
     router.push(redirectTo);
   }
 
