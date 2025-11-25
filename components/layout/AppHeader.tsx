@@ -3,7 +3,7 @@ import { AppLogo } from "@/components/layout/AppLogo";
 
 function AppHeader() {
   return (
-    <div className="flex items-center justify-between bg-gray-200 p-2 lg:px-4">
+    <div className="flex items-center justify-between border-b border-gray-400 bg-gray-300 p-2 lg:px-4">
       <div>
         <AppLogo />
       </div>
