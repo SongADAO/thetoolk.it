@@ -62,7 +62,7 @@ function SignUpForm() {
         </div>
         <Form.Control
           autoComplete="email"
-          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           onChange={(e) => setEmail(e.target.value)}
           required
           type="email"
@@ -84,7 +84,7 @@ function SignUpForm() {
         </div>
         <Form.Control
           autoComplete="new-password"
-          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           minLength={8}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -96,7 +96,7 @@ function SignUpForm() {
       <Form.Field name="agree">
         <div className="flex items-start gap-2">
           <Form.Control
-            className="size-[24px] rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="size-[24px] rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             required
             type="checkbox"
             value="1"

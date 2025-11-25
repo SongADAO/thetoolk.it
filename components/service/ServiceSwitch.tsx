@@ -77,18 +77,18 @@ function ServiceSwitch({
   return (
     <div className="flex flex-col gap-1">
       <Collapsible.Root
-        className={`group rounded bg-gray-300 data-[enabled=yes]:text-brand-${brandColor}-inverse data-[enabled=yes]:bg-brand-${brandColor}`}
+        className={`group rounded-sm bg-gray-300 data-[enabled=yes]:text-brand-${brandColor}-inverse data-[enabled=yes]:bg-brand-${brandColor}`}
         data-enabled={isEnabled ? "yes" : "no"}
         disabled={needsCredentials}
         onOpenChange={setOpen}
         open={Boolean(needsCredentials || open)}
       >
         <div
-          className={`flex items-center justify-between gap-2 rounded p-2 text-black group-data-[enabled=yes]:text-brand-${brandColor}-inverse group-data-[enabled=yes]:bg-brand-${brandColor}`}
+          className={`flex items-center justify-between gap-2 rounded-sm p-2 text-black group-data-[enabled=yes]:text-brand-${brandColor}-inverse group-data-[enabled=yes]:bg-brand-${brandColor}`}
         >
           <Checkbox.Root
             checked={isEnabled}
-            className="flex size-9 cursor-pointer appearance-none items-center justify-center rounded bg-white outline-none hover:bg-gray-200"
+            className="flex size-9 cursor-pointer appearance-none items-center justify-center rounded-sm bg-white outline-none hover:bg-gray-200"
             id="c1"
             onCheckedChange={(checked) => setIsEnabled(Boolean(checked))}
           >
@@ -100,7 +100,7 @@ function ServiceSwitch({
           </Checkbox.Root>
 
           <Collapsible.Trigger
-            className="group flex min-h-9 flex-1 items-center justify-between rounded bg-[#fff2] px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
+            className="group flex min-h-9 flex-1 items-center justify-between rounded-sm bg-[#fff2] px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
             data-clickable={
               hasCredentials && !needsCredentials ? "true" : "false"
             }
@@ -121,7 +121,7 @@ function ServiceSwitch({
 
         {hasCredentials ? (
           <Collapsible.Content className="overflow-hidden">
-            <div className="m-2 mt-0 rounded bg-[#fff2] p-2">{form}</div>
+            <div className="m-2 mt-0 rounded-sm bg-[#fff2] p-2">{form}</div>
           </Collapsible.Content>
         ) : null}
 
@@ -169,7 +169,7 @@ function ServiceSwitch({
                   {isAuthorized && accounts.length > 0 ? (
                     <div className="flex-1">
                       <button
-                        className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
+                        className={`w-full cursor-pointer gap-2 rounded-sm bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
                         data-authorized={isAuthorized}
                         onClick={disconnect}
                         type="button"
@@ -184,7 +184,7 @@ function ServiceSwitch({
                   ) : (
                     <div className="flex-1">
                       <button
-                        className={`w-full cursor-pointer gap-2 rounded bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
+                        className={`w-full cursor-pointer gap-2 rounded-sm bg-white px-4 py-2 text-black hover:bg-gray-900 hover:text-white group-data-[enabled=yes]:text-brand-${brandColor} shadow-md`}
                         data-authorized={isAuthorized}
                         onClick={authorize}
                         type="button"

@@ -162,7 +162,7 @@ function TOTPSetup() {
               <div className="flex justify-center">
                 <img
                   alt="TOTP QR Code"
-                  className="size-48 rounded bg-white"
+                  className="size-48 rounded-sm bg-white"
                   src={enrollmentState.qrCode}
                 />
               </div>
@@ -173,7 +173,7 @@ function TOTPSetup() {
             <p className="text-sm font-medium">
               Or enter this secret manually:
             </p>
-            <code className="block rounded bg-white p-2 font-mono text-sm break-all">
+            <code className="block rounded-sm bg-white p-2 font-mono text-sm break-all">
               {enrollmentState.secret}
             </code>
           </div>
@@ -199,7 +199,7 @@ function TOTPSetup() {
               </div>
               <Form.Control
                 autoComplete="off"
-                className="w-full rounded border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-sm border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 onChange={(e) =>
                   setEnrollmentState({
                     ...enrollmentState,
@@ -251,14 +251,14 @@ function TOTPSetup() {
         </div>
 
         {factors.length === 0 ? (
-          <div className="rounded border border-gray-200 bg-white p-4 text-center text-sm">
+          <div className="rounded-sm border border-gray-200 bg-white p-4 text-center text-sm">
             No two-factor authentication factors configured yet.
           </div>
         ) : (
           <div className="space-y-2">
             {factors.map((factor) => (
               <div
-                className="flex flex-col items-center justify-between gap-2 rounded border border-gray-200 bg-white p-3 md:flex-row"
+                className="flex flex-col items-center justify-between gap-2 rounded-sm border border-gray-200 bg-white p-3 md:flex-row"
                 key={factor.id}
               >
                 <div className="flex-1">

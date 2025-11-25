@@ -68,7 +68,7 @@ function TOTPVerification({
         <Form.Control
           autoComplete="off"
           autoFocus
-          className="w-full rounded border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-sm border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:outline-none"
           onChange={(e) => setCode(e.target.value.replace(/\D/gu, ""))}
           placeholder="000000"
           required

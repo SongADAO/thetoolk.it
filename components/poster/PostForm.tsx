@@ -237,7 +237,7 @@ function PostForm() {
           <Form.Control
             accept="video/mp4"
             autoComplete="off"
-            className="w-full rounded border bg-gray-500 p-2 text-white"
+            className="w-full rounded-sm border bg-gray-500 p-2 text-white"
             disabled={isFormDisabled}
             onChange={handleFileChange}
             placeholder="Title"
@@ -256,7 +256,7 @@ function PostForm() {
         <div className="mb-4 flex flex-col gap-2">
           <div>
             <video
-              className="max-w-full rounded border border-gray-300"
+              className="max-w-full rounded-sm border border-gray-300"
               controls
               src={videoPreviewUrl}
             />
@@ -276,7 +276,7 @@ function PostForm() {
           <Form.Label className="mb-2 font-semibold">Title</Form.Label>
           <Form.Control
             autoComplete="off"
-            className="w-full rounded text-black"
+            className="w-full rounded-sm text-black"
             disabled={isFormDisabled}
             onChange={(e) =>
               setState((prev) => ({ ...prev, title: e.target.value }))
@@ -297,7 +297,7 @@ function PostForm() {
           <Form.Control
             asChild
             autoComplete="off"
-            className="w-full rounded text-black"
+            className="w-full rounded-sm text-black"
             disabled={isFormDisabled}
             onChange={(e) =>
               setState((prev) => ({ ...prev, text: e.target.value }))
@@ -325,7 +325,7 @@ function PostForm() {
             </Form.Label>
             <Form.Control
               asChild
-              className="w-full rounded text-black"
+              className="w-full rounded-sm text-black"
               disabled={isFormDisabled}
               required
               title="Facebook Privacy"
@@ -366,7 +366,7 @@ function PostForm() {
         )} */}
 
         {youtubeIsEnabled ? (
-          <section className="mb-4 rounded bg-gray-200 p-2">
+          <section className="mb-4 rounded-sm bg-gray-200 p-2">
             <h4 className="mb-2 font-semibold">YouTube Settings</h4>
             <Form.Field
               className="flex flex-col"
@@ -378,7 +378,7 @@ function PostForm() {
               </Form.Label>
               <Form.Control
                 asChild
-                className="w-full rounded text-black"
+                className="w-full rounded-sm text-black"
                 disabled={isFormDisabled}
                 required
                 title="YouTube Privacy"
@@ -414,7 +414,7 @@ function PostForm() {
         )}
 
         {tiktokIsEnabled ? (
-          <section className="mb-4 rounded bg-gray-200 p-2">
+          <section className="mb-4 rounded-sm bg-gray-200 p-2">
             <h4 className="mb-2 font-semibold">TikTok Settings</h4>
 
             <Form.Field
@@ -427,7 +427,7 @@ function PostForm() {
               </Form.Label>
               <Form.Control
                 asChild
-                className="w-full rounded text-black"
+                className="w-full rounded-sm text-black"
                 disabled={isFormDisabled}
                 required
                 title="TikTok Privacy"
@@ -459,7 +459,7 @@ function PostForm() {
             </Form.Field>
 
             {canTiktokComment || canTiktokDuet || canTiktokStitch ? (
-              <section className="mt-4 rounded bg-gray-300 p-2">
+              <section className="mt-4 rounded-sm bg-gray-300 p-2">
                 <h4 className="mb-2 font-semibold">Allow users to</h4>
                 <div className="flex gap-8">
                   {canTiktokComment ? (
@@ -572,7 +572,7 @@ function PostForm() {
 
             <section>
               <div>
-                <div className="mt-4 rounded bg-gray-300 p-2">
+                <div className="mt-4 rounded-sm bg-gray-300 p-2">
                   <Form.Field
                     className="mb-1 flex flex-row items-center gap-2"
                     key="tiktokDisclose"
@@ -602,7 +602,7 @@ function PostForm() {
                     </Form.Label>
                   </Form.Field>
                   {state.tiktokDisclose ? (
-                    <div className="mb-2 flex items-start gap-3 rounded bg-blue-200 p-2 pl-3 text-sm">
+                    <div className="mb-2 flex items-start gap-3 rounded-sm bg-blue-200 p-2 pl-3 text-sm">
                       <div>
                         <FaCircleExclamation className="size-5 text-blue-600" />
                       </div>
@@ -621,7 +621,7 @@ function PostForm() {
                 </div>
 
                 {state.tiktokDisclose ? (
-                  <div className="mt-4 rounded bg-gray-300 p-2">
+                  <div className="mt-4 rounded-sm bg-gray-300 p-2">
                     <Form.Field
                       className="mb-1 flex flex-row items-center gap-2"
                       key="tiktokDiscloseBrandSelf"
@@ -664,7 +664,7 @@ function PostForm() {
                 )}
 
                 {state.tiktokDisclose ? (
-                  <div className="mt-4 rounded bg-gray-300 p-2">
+                  <div className="mt-4 rounded-sm bg-gray-300 p-2">
                     <Form.Field
                       className="mb-1 flex flex-row items-center gap-2"
                       key="tiktokDiscloseBrandOther"
@@ -709,7 +709,7 @@ function PostForm() {
             </section>
 
             {state.tiktokDisclose && state.tiktokDiscloseBrandOther ? (
-              <p className="mt-4 rounded bg-gray-300 p-2 text-sm">
+              <p className="mt-4 rounded-sm bg-gray-300 p-2 text-sm">
                 By posting, you agree to TikTok&apos;s{" "}
                 <Link
                   className="text-blue-800 underline"
@@ -729,7 +729,7 @@ function PostForm() {
                 .
               </p>
             ) : (
-              <p className="mt-4 rounded bg-gray-300 p-2 text-sm">
+              <p className="mt-4 rounded-sm bg-gray-300 p-2 text-sm">
                 By posting, you agree to TikTok&apos;s{" "}
                 <Link
                   className="text-blue-800 underline"
@@ -755,15 +755,15 @@ function PostForm() {
         )}
 
         {isVideoConverting ? (
-          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+          <div className="mb-4 rounded-sm bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">
               <Spinner />
               {videoConversionStatus}
             </div>
             <div className="mt-2">
-              <div className="h-2 w-full rounded bg-gray-600">
+              <div className="h-2 w-full rounded-sm bg-gray-600">
                 <div
-                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
+                  className="h-2 rounded-sm bg-yellow-600 transition-all duration-300"
                   style={{ width: `${videoConversionProgress}%` }}
                 />
               </div>
@@ -775,15 +775,15 @@ function PostForm() {
         ) : null}
 
         {isVideoTrimming ? (
-          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+          <div className="mb-4 rounded-sm bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">
               <Spinner />
               {videoTrimStatus}
             </div>
             <div className="mt-2">
-              <div className="h-2 w-full rounded bg-gray-600">
+              <div className="h-2 w-full rounded-sm bg-gray-600">
                 <div
-                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
+                  className="h-2 rounded-sm bg-yellow-600 transition-all duration-300"
                   style={{ width: `${videoTrimProgress}%` }}
                 />
               </div>
@@ -795,15 +795,15 @@ function PostForm() {
         ) : null}
 
         {isHLSConverting ? (
-          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+          <div className="mb-4 rounded-sm bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">
               <Spinner />
               {hlsConversionStatus}
             </div>
             <div className="mt-2">
-              <div className="h-2 w-full rounded bg-gray-600">
+              <div className="h-2 w-full rounded-sm bg-gray-600">
                 <div
-                  className="h-2 rounded bg-yellow-600 transition-all duration-300"
+                  className="h-2 rounded-sm bg-yellow-600 transition-all duration-300"
                   style={{ width: `${hlsConversionProgress}%` }}
                 />
               </div>
@@ -815,7 +815,7 @@ function PostForm() {
         ) : null}
 
         {isStoring ? (
-          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+          <div className="mb-4 rounded-sm bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">
               <Spinner />
               Uploading videos to storage...
@@ -824,7 +824,7 @@ function PostForm() {
         ) : null}
 
         {isPosting ? (
-          <div className="mb-4 rounded bg-gray-500 p-3 text-white">
+          <div className="mb-4 rounded-sm bg-gray-500 p-3 text-white">
             <div className="flex items-center gap-2">
               <Spinner />
               Submitting posts to services...
@@ -833,27 +833,27 @@ function PostForm() {
         ) : null}
 
         {error ? (
-          <p className="mb-4 rounded bg-red-800 p-2 text-center text-white">
+          <p className="mb-4 rounded-sm bg-red-800 p-2 text-center text-white">
             {error}
           </p>
         ) : null}
 
         {canPostToAllServices ? null : (
-          <p className="mb-4 rounded bg-red-800 p-2 text-center text-white">
+          <p className="mb-4 rounded-sm bg-red-800 p-2 text-center text-white">
             Some enabled posting services are not authorized. Finish authorizing
             them before posting.
           </p>
         )}
 
         {canStoreToAllServices ? null : (
-          <p className="mb-4 rounded bg-red-800 p-2 text-center text-white">
+          <p className="mb-4 rounded-sm bg-red-800 p-2 text-center text-white">
             Some enabled storage services are not authorized. Finish authorizing
             them before posting.
           </p>
         )}
 
         <Form.Submit
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-2 py-3 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-black px-2 py-3 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isFormDisabled}
         >
           {isPending ? <Spinner /> : null}

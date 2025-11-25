@@ -97,7 +97,7 @@ function ConfirmEmail() {
   }, [searchParams, supabase]);
 
   return (
-    <section className="mx-auto w-full max-w-lg space-y-4 rounded bg-gray-100 pb-4 contain-paint">
+    <section className="mx-auto w-full max-w-lg space-y-4 rounded-sm bg-gray-100 pb-4 contain-paint">
       <header className="bg-gray-300 px-4 py-2">
         <h1 className="font-bold">Email Confirmation</h1>
       </header>
@@ -113,7 +113,7 @@ function ConfirmEmail() {
           <>
             {message ? (
               <p
-                className="rounded bg-white p-4 text-sm text-green-600"
+                className="rounded-sm bg-white p-4 text-sm text-green-600"
                 role="alert"
               >
                 {message}
@@ -122,7 +122,7 @@ function ConfirmEmail() {
 
             {error ? (
               <p
-                className="rounded bg-white p-4 text-sm text-red-600"
+                className="rounded-sm bg-white p-4 text-sm text-red-600"
                 role="alert"
               >
                 {error}
@@ -130,7 +130,7 @@ function ConfirmEmail() {
             ) : null}
 
             {error ? (
-              <div className="rounded bg-white p-4 text-sm text-blue-800">
+              <div className="rounded-sm bg-white p-4 text-sm text-blue-800">
                 <p className="mb-2 font-medium">Important:</p>
                 <ul className="list-inside list-disc space-y-1">
                   <li>You must confirm BOTH emails (old and new)</li>

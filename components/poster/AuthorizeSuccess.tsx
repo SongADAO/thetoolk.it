@@ -10,7 +10,7 @@ function AuthorizeSuccess() {
         <p className="">Authorization Complete</p>
         <div className="flex items-center justify-center">
           <button
-            className="mt-4 cursor-pointer rounded bg-gray-500 px-4 py-2 text-white"
+            className="mt-4 cursor-pointer rounded-sm bg-gray-500 px-4 py-2 text-white"
             onClick={() => window.close()}
             type="button"
           >
