@@ -88,7 +88,7 @@ function ChangeEmailForm() {
         </Form.Label>
         <Form.Control
           autoComplete="email"
-          className="w-full rounded border border-gray-300 bg-gray-50 px-3 py-2"
+          className="w-full rounded-sm border border-gray-300 bg-gray-50 px-3 py-2"
           disabled
           type="email"
           value={user.email ?? ""}
@@ -109,7 +109,7 @@ function ChangeEmailForm() {
         </div>
         <Form.Control
           autoComplete="email"
-          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           onChange={(e) => setEmail(e.target.value)}
           required
           type="email"

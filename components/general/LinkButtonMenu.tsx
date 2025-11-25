@@ -10,7 +10,7 @@ interface Props {
   width?: "full" | "auto";
 }
 
-function LinkButton({
+function LinkButtonMenu({
   children,
   purpose = "primary",
   width = "auto",
@@ -18,7 +18,7 @@ function LinkButton({
 }: Readonly<Props>) {
   return (
     <Link
-      className="cursor-pointer rounded-sm bg-black px-4 py-2 text-center font-semibold text-white no-underline hover:bg-blue-800 disabled:opacity-50 data-[purpose=danger]:bg-red-500 data-[purpose=danger]:hover:bg-red-600 data-[width=full]:w-full"
+      className="inline-flex cursor-pointer items-center justify-center gap-3 rounded-sm bg-gray-500 px-4 py-3 font-bold text-white outline-none hover:bg-gray-800"
       data-purpose={purpose}
       data-width={width}
       {...otherProps}
@@ -28,4 +28,4 @@ function LinkButton({
   );
 }
 
-export { LinkButton };
+export { LinkButtonMenu };
