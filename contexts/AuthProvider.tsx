@@ -46,15 +46,9 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   const needsTOTPVerification = useMemo(
     () =>
       isAuthenticated &&
-      factors.length > 0 &&
       sessionAALNextLevel === "aal2" &&
       sessionAALCurrentLevel === "aal1",
-    [
-      isAuthenticated,
-      factors.length,
-      sessionAALNextLevel,
-      sessionAALCurrentLevel,
-    ],
+    [isAuthenticated, sessionAALNextLevel, sessionAALCurrentLevel],
   );
 
   // Fetch subscription status with SWR
@@ -112,10 +106,8 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
   async function loadFactors() {
     const factorsData = await supabase.auth.mfa.listFactors();
 
-    if (factorsData.data?.all) {
-      setFactors(factorsData.data.all);
-      setTotpFactors(factorsData.data.totp);
-    }
+    setFactors(factorsData.data?.all ?? []);
+    setTotpFactors(factorsData.data?.totp ?? []);
   }
 
   async function enrollTOTP(friendlyName: string) {
@@ -180,10 +172,17 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     async function updateUserData(sessionUser: User | null) {
       setUser(sessionUser);
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      loadFactors();
+
+      // console.log("Factor check");
+      // console.log(sessionUser?.factors?.length);
       // Check MFA level
       if (sessionUser?.factors?.length) {
         const { data: mfaData } =
           await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        // console.log("MFA Data:", mfaData);
+
         setSessionAALNextLevel(mfaData?.nextLevel ?? "");
         setSessionAALCurrentLevel(mfaData?.currentLevel ?? "");
       } else {
@@ -268,12 +267,6 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("focus", handleFocus);
     };
-  }, [supabase.auth]);
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    loadFactors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase.auth]);
 
   const providerValues: AuthContextType = useMemo(
