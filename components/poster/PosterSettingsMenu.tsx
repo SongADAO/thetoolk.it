@@ -3,6 +3,8 @@
 import { DropdownMenu, ScrollArea } from "radix-ui";
 import { ReactNode } from "react";
 
+import { ButtonMenu } from "@/components/general/ButtonMenu";
+
 interface Props {
   label: string;
   icon: ReactNode;
@@ -13,13 +15,9 @@ function PosterSettingsMenu({ label, icon, children }: Readonly<Props>) {
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
-        <button
-          className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm bg-gray-500 p-3 text-white outline-none hover:bg-gray-800"
-          title={label}
-          type="button"
-        >
+        <ButtonMenu title={label} type="button">
           {icon}
-        </button>
+        </ButtonMenu>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
