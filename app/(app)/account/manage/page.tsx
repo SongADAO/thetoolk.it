@@ -7,6 +7,10 @@ export const metadata: Metadata = {
     canonical: "/account/manage",
   },
   description: "Manage your account settings and preferences on TheToolk.it.",
+  robots: {
+    follow: false,
+    index: false,
+  },
   title: "Manage Account - TheToolk.it",
 };
 
