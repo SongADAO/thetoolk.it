@@ -18,7 +18,10 @@ export const metadata: Metadata = {
 export default function ResetPasswordPage() {
   return (
     <div className="flex items-center justify-center p-4 md:py-20">
-      <div className="w-full">
+      <section className="w-full">
+        <h1 className="mx-auto mb-4 max-w-md text-2xl font-bold">
+          Set New Password
+        </h1>
         <Suspense
           fallback={
             <div className="mx-auto max-w-md space-y-4">
@@ -28,7 +31,7 @@ export default function ResetPasswordPage() {
         >
           <ResetPasswordForm />
         </Suspense>
-      </div>
+      </section>
     </div>
   );
 }

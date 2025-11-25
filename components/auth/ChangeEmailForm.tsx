@@ -4,9 +4,6 @@ import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
 import { type FormEvent, use, useState } from "react";
 
-import { Box } from "@/components/general/Box";
-import { BoxHeader } from "@/components/general/BoxHeader";
-import { BoxMain } from "@/components/general/BoxMain";
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
@@ -84,73 +81,60 @@ function ChangeEmailForm() {
   }
 
   return (
-    <Box>
-      <BoxHeader>
-        <h2 className="font-bold">Change Email</h2>
-      </BoxHeader>
-      <BoxMain>
-        <Form.Root className="space-y-4" onSubmit={handleSubmit}>
-          <Form.Field name="current-email">
-            <Form.Label className="block text-sm font-medium">
-              Current Email
-            </Form.Label>
-            <Form.Control
-              autoComplete="email"
-              className="w-full rounded border border-gray-300 bg-gray-50 px-3 py-2"
-              disabled
-              type="email"
-              value={user.email ?? ""}
-            />
-          </Form.Field>
+    <Form.Root className="space-y-4" onSubmit={handleSubmit}>
+      <Form.Field name="current-email">
+        <Form.Label className="block text-sm font-medium">
+          Current Email
+        </Form.Label>
+        <Form.Control
+          autoComplete="email"
+          className="w-full rounded border border-gray-300 bg-gray-50 px-3 py-2"
+          disabled
+          type="email"
+          value={user.email ?? ""}
+        />
+      </Form.Field>
 
-          <Form.Field name="new-email">
-            <div className="flex items-baseline justify-between">
-              <Form.Label className="block text-sm font-medium">
-                New Email
-              </Form.Label>
-              <Form.Message
-                className="text-xs text-red-600"
-                match="valueMissing"
-              >
-                Please enter a new email
-              </Form.Message>
-              <Form.Message
-                className="text-xs text-red-600"
-                match="typeMismatch"
-              >
-                Please provide a valid email
-              </Form.Message>
-            </div>
-            <Form.Control
-              autoComplete="email"
-              className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              type="email"
-              value={email}
-            />
-          </Form.Field>
+      <Form.Field name="new-email">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            New Email
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please enter a new email
+          </Form.Message>
+          <Form.Message className="text-xs text-red-600" match="typeMismatch">
+            Please provide a valid email
+          </Form.Message>
+        </div>
+        <Form.Control
+          autoComplete="email"
+          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          type="email"
+          value={email}
+        />
+      </Form.Field>
 
-          <Form.Submit asChild>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "Updating..." : "Update Email"}
-            </Button>
-          </Form.Submit>
+      <Form.Submit asChild>
+        <Button disabled={isPending} type="submit">
+          {isPending ? "Updating..." : "Update Email"}
+        </Button>
+      </Form.Submit>
 
-          {message ? (
-            <p className="text-sm text-green-600" role="alert">
-              {message}
-            </p>
-          ) : null}
+      {message ? (
+        <p className="text-sm text-green-600" role="alert">
+          {message}
+        </p>
+      ) : null}
 
-          {error ? (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          ) : null}
-        </Form.Root>
-      </BoxMain>
-    </Box>
+      {error ? (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      ) : null}
+    </Form.Root>
   );
 }
 

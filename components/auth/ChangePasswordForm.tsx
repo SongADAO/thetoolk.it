@@ -4,9 +4,6 @@ import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
 import { type FormEvent, use, useState } from "react";
 
-import { Box } from "@/components/general/Box";
-import { BoxHeader } from "@/components/general/BoxHeader";
-import { BoxMain } from "@/components/general/BoxMain";
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
@@ -94,126 +91,110 @@ function ChangePasswordForm() {
   }
 
   return (
-    <Box>
-      <BoxHeader>
-        <h2 className="font-bold">Change Password</h2>
-      </BoxHeader>
-      <BoxMain>
-        <Form.Root className="space-y-4" onSubmit={handleSubmit}>
-          <div className="sr-only">
-            <label htmlFor="username">Username</label>
-            <input
-              autoComplete="username"
-              id="username"
-              name="username"
-              readOnly
-              tabIndex={-1}
-              type="text"
-              value={user.email ?? ""}
-            />
-          </div>
+    <Form.Root className="space-y-4" onSubmit={handleSubmit}>
+      <div className="sr-only">
+        <label htmlFor="username">Username</label>
+        <input
+          autoComplete="username"
+          id="username"
+          name="username"
+          readOnly
+          tabIndex={-1}
+          type="text"
+          value={user.email ?? ""}
+        />
+      </div>
 
-          <Form.Field name="current-password">
-            <div className="flex items-baseline justify-between">
-              <Form.Label className="block text-sm font-medium">
-                Current Password
-              </Form.Label>
-              <Form.Message
-                className="text-xs text-red-600"
-                match="valueMissing"
-              >
-                Please enter your current password
-              </Form.Message>
-              <Form.Message className="text-xs text-red-600" match="tooShort">
-                Password must be at least 8 characters
-              </Form.Message>
-            </div>
-            <Form.Control
-              autoComplete="current-password"
-              className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              minLength={8}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-              type="password"
-              value={currentPassword}
-            />
-            <p className="mt-1 text-xs">
-              For security, please enter your current password
-            </p>
-          </Form.Field>
+      <Form.Field name="current-password">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            Current Password
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please enter your current password
+          </Form.Message>
+          <Form.Message className="text-xs text-red-600" match="tooShort">
+            Password must be at least 8 characters
+          </Form.Message>
+        </div>
+        <Form.Control
+          autoComplete="current-password"
+          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          minLength={8}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          required
+          type="password"
+          value={currentPassword}
+        />
+        <p className="mt-1 text-xs">
+          For security, please enter your current password
+        </p>
+      </Form.Field>
 
-          <Form.Field name="new-password">
-            <div className="flex items-baseline justify-between">
-              <Form.Label className="block text-sm font-medium">
-                New Password
-              </Form.Label>
-              <Form.Message
-                className="text-xs text-red-600"
-                match="valueMissing"
-              >
-                Please enter a new password
-              </Form.Message>
-              <Form.Message className="text-xs text-red-600" match="tooShort">
-                Password must be at least 8 characters
-              </Form.Message>
-            </div>
-            <Form.Control
-              autoComplete="new-password"
-              className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              minLength={8}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              type="password"
-              value={newPassword}
-            />
-          </Form.Field>
+      <Form.Field name="new-password">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            New Password
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please enter a new password
+          </Form.Message>
+          <Form.Message className="text-xs text-red-600" match="tooShort">
+            Password must be at least 8 characters
+          </Form.Message>
+        </div>
+        <Form.Control
+          autoComplete="new-password"
+          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          minLength={8}
+          onChange={(e) => setNewPassword(e.target.value)}
+          required
+          type="password"
+          value={newPassword}
+        />
+      </Form.Field>
 
-          <Form.Field name="confirm-password">
-            <div className="flex items-baseline justify-between">
-              <Form.Label className="block text-sm font-medium">
-                Confirm New Password
-              </Form.Label>
-              <Form.Message
-                className="text-xs text-red-600"
-                match="valueMissing"
-              >
-                Please confirm your password
-              </Form.Message>
-              <Form.Message className="text-xs text-red-600" match="tooShort">
-                Password must be at least 8 characters
-              </Form.Message>
-            </div>
-            <Form.Control
-              autoComplete="new-password"
-              className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              minLength={8}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              type="password"
-              value={confirmPassword}
-            />
-          </Form.Field>
+      <Form.Field name="confirm-password">
+        <div className="flex items-baseline justify-between">
+          <Form.Label className="block text-sm font-medium">
+            Confirm New Password
+          </Form.Label>
+          <Form.Message className="text-xs text-red-600" match="valueMissing">
+            Please confirm your password
+          </Form.Message>
+          <Form.Message className="text-xs text-red-600" match="tooShort">
+            Password must be at least 8 characters
+          </Form.Message>
+        </div>
+        <Form.Control
+          autoComplete="new-password"
+          className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          minLength={8}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          type="password"
+          value={confirmPassword}
+        />
+      </Form.Field>
 
-          <Form.Submit asChild>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "Updating..." : "Update Password"}
-            </Button>
-          </Form.Submit>
+      <Form.Submit asChild>
+        <Button disabled={isPending} type="submit">
+          {isPending ? "Updating..." : "Update Password"}
+        </Button>
+      </Form.Submit>
 
-          {message ? (
-            <p className="text-sm text-green-600" role="alert">
-              {message}
-            </p>
-          ) : null}
+      {message ? (
+        <p className="text-sm text-green-600" role="alert">
+          {message}
+        </p>
+      ) : null}
 
-          {error ? (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          ) : null}
-        </Form.Root>
-      </BoxMain>
-    </Box>
+      {error ? (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      ) : null}
+    </Form.Root>
   );
 }
 
