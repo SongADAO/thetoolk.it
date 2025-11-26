@@ -2,7 +2,7 @@ import Link from "next/link";
 
 function AppFooter() {
   return (
-    <div className="flex items-center justify-center gap-2 border-t border-gray-400 bg-gray-300">
+    <div className="flex items-center justify-center gap-2 border-t border-gray-400 shadow-sm">
       <div className="flex flex-col items-center justify-center gap-4 p-2 text-center">
         <div className="flex items-center gap-8 text-sm">
           <Link
