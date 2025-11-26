@@ -84,12 +84,12 @@ function ServiceSwitch({
         open={Boolean(needsCredentials || open)}
       >
         <div
-          className={`flex items-center justify-between gap-2 rounded-xs p-2 text-black group-data-[enabled=yes]:text-white group-data-[enabled=yes]:bg-brand-${brandColor}`}
+          className={`flex items-center justify-between rounded-xs p-2 text-black group-data-[enabled=yes]:text-white group-data-[enabled=yes]:bg-brand-${brandColor}`}
         >
           <Checkbox.Root
             checked={isEnabled}
-            className="flex size-9 cursor-pointer appearance-none items-center justify-center rounded-xs border border-black bg-white outline-none hover:bg-gray-100"
-            id="c1"
+            className="flex size-10 cursor-pointer appearance-none items-center justify-center rounded-xs border border-black bg-white outline-none hover:bg-blue-100"
+            id={`service-switch-${label}`}
             onCheckedChange={(checked) => setIsEnabled(Boolean(checked))}
           >
             <Checkbox.Indicator
@@ -99,24 +99,27 @@ function ServiceSwitch({
             </Checkbox.Indicator>
           </Checkbox.Root>
 
-          <Collapsible.Trigger
-            className="group flex min-h-9 flex-1 items-center justify-between rounded-xs px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
-            data-clickable={
-              hasCredentials && !needsCredentials ? "true" : "false"
-            }
-            disabled={hasCredentials ? needsCredentials : false}
+          <label
+            className="group flex min-h-9 flex-1 cursor-pointer items-center justify-between rounded-xs px-2 py-1 pl-4 outline-none"
+            htmlFor={`service-switch-${label}`}
           >
             <span className="flex items-center gap-x-2">
               {icon} {label}
             </span>
+          </label>
 
-            {hasCredentials ? (
+          {hasCredentials ? (
+            <Collapsible.Trigger
+              className="ml-4 flex size-10 cursor-pointer items-center justify-center rounded-xs border border-black bg-white text-black data-[clickable=true]:hover:bg-gray-200"
+              data-clickable={needsCredentials ? "false" : "true"}
+              disabled={needsCredentials}
+            >
               <FaGear
                 aria-hidden
                 className="transition-transform duration-300 ease-[cubic-bezier(0.87,0,0.13,1)] group-data-[state=open]:rotate-180"
               />
-            ) : null}
-          </Collapsible.Trigger>
+            </Collapsible.Trigger>
+          ) : null}
         </div>
 
         {hasCredentials ? (
