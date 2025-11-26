@@ -6,7 +6,7 @@ interface Props {
 
 function Box({ children }: Readonly<Props>) {
   return (
-    <section className="mx-auto w-full rounded-sm border border-gray-400 bg-gray-50 contain-paint">
+    <section className="bg-gray-25 mx-auto w-full border border-gray-400 border-r-black border-b-black shadow-sm contain-paint">
       {children}
     </section>
   );
