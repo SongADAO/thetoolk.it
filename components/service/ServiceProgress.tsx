@@ -4,6 +4,7 @@ import { FaCheck, FaCircleExclamation } from "react-icons/fa6";
 import { Spinner } from "@/components/general/Spinner";
 
 interface Props {
+  authorize: () => void;
   brandColor: string;
   icon: ReactNode;
   isUsable: boolean;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 function ServiceProgress({
+  authorize,
   brandColor,
   icon,
   isUsable,
@@ -30,7 +32,20 @@ function ServiceProgress({
     return null;
   }
 
-  const showProgress = !processError && processProgress !== 100;
+  // In Progress
+  // isProcessing = true;
+  // processProgress = 40;
+  // processStatus = "Setting up...";
+
+  // Error
+  // processError = "Had an error...";
+
+  // Complete
+  // processProgress = 100;
+  // processStatus = "Process Complete...";
+
+  const showProgress =
+    !processError && processProgress !== 0 && processProgress !== 100;
 
   const hasError = Boolean(processError) || !isUsable;
 
@@ -38,9 +53,10 @@ function ServiceProgress({
 
   return (
     <div
-      className={`group relative rounded-xs text-brand-${brandColor}-inverse bg-[#6c7281] contain-paint data-[has-error=true]:bg-red-800 data-[is-complete=true]:bg-green-800`}
+      className={`group relative rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 font-semibold data-[has-error=true]:text-shadow-xs data-[is-complete=true]:text-shadow-xs data-[is-processing=true]:text-shadow-xs text-brand-${brandColor} contain-paint data-[has-error=true]:bg-red-800 data-[has-error=true]:text-white data-[is-complete=true]:bg-green-800 data-[is-complete=true]:text-white data-[is-processing=true]:bg-gray-600 data-[is-processing=true]:text-white`}
       data-has-error={hasError ? "true" : "false"}
       data-is-complete={isComplete ? "true" : "false"}
+      data-is-processing={showProgress ? "true" : "false"}
     >
       {showProgress ? (
         <div
@@ -51,31 +67,46 @@ function ServiceProgress({
         </div>
       ) : null}
 
-      <div className="relative z-20 flex items-center justify-between gap-2 p-2 2xl:py-3.5">
-        <div>{icon}</div>
+      {isUsable ? (
+        <div className="relative z-20 flex items-center justify-between gap-2 p-2 2xl:py-3.5">
+          <div>{icon}</div>
 
-        <div className="flex-1 text-left text-xs leading-none">
-          {processError ? <p>{processError}</p> : null}
+          <div className="flex-1 text-left text-xs leading-none">
+            {processError ? <p>{processError}</p> : null}
 
-          {!processError && processStatus ? <p>{processStatus}</p> : null}
+            {!processError && processStatus ? <p>{processStatus}</p> : null}
 
-          {!processError && !processStatus ? <p>{label}</p> : null}
+            {!processError && !processStatus ? <p>{label}</p> : null}
+          </div>
 
-          {isUsable ? null : <p>Not authorized</p>}
+          <div>
+            {isProcessing ? <Spinner /> : null}
+
+            {!isProcessing && processError ? (
+              <FaCircleExclamation className="size-6" />
+            ) : null}
+
+            {!isProcessing && !processError && processStatus ? (
+              <FaCheck className="size-4" />
+            ) : null}
+          </div>
         </div>
-
-        <div>
-          {isProcessing ? <Spinner /> : null}
-
-          {!isProcessing && (processError || !isUsable) ? (
-            <FaCircleExclamation className="size-6" />
-          ) : null}
-
-          {!isProcessing && !processError && processStatus ? (
+      ) : (
+        <button
+          className="relative z-20 flex w-full cursor-pointer items-center justify-between gap-2 p-2 hover:bg-gray-900 hover:text-white 2xl:py-3.5"
+          onClick={authorize}
+          type="button"
+        >
+          <div>{icon}</div>
+          <div className="flex-1 text-left text-xs leading-none">
+            <p>Not authorized</p>
+            <p>Log in with {label}</p>
+          </div>
+          <div>
             <FaCheck className="size-4" />
-          ) : null}
-        </div>
-      </div>
+          </div>
+        </button>
+      )}
     </div>
   );
 }
