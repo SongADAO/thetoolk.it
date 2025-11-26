@@ -77,14 +77,14 @@ function ServiceSwitch({
   return (
     <div className="flex flex-col gap-1">
       <Collapsible.Root
-        className={`group rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 data-[enabled=yes]:text-brand-${brandColor}-inverse data-[enabled=yes]:bg-brand-${brandColor}`}
+        className={`group rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 data-[enabled=yes]:text-white data-[enabled=yes]:bg-brand-${brandColor}`}
         data-enabled={isEnabled ? "yes" : "no"}
         disabled={needsCredentials}
         onOpenChange={setOpen}
         open={Boolean(needsCredentials || open)}
       >
         <div
-          className={`flex items-center justify-between gap-2 rounded-xs p-2 text-black group-data-[enabled=yes]:text-brand-${brandColor}-inverse group-data-[enabled=yes]:bg-brand-${brandColor}`}
+          className={`flex items-center justify-between gap-2 rounded-xs p-2 text-black group-data-[enabled=yes]:text-white group-data-[enabled=yes]:bg-brand-${brandColor}`}
         >
           <Checkbox.Root
             checked={isEnabled}
