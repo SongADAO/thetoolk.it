@@ -81,11 +81,11 @@ function UserSubscription() {
               <li>Easily use the same accounts across devices</li>
             </ul>
           </section>
-          <section className="space-y-2">
+          <section className="space-y-4">
             <header>
               <h3 className="font-bold">Choose Your Price</h3>
             </header>
-            <div className="mt-4 flex items-center gap-4">
+            <div className="flex items-center gap-4">
               <SubscribeButton
                 label={getPriceName("pro-month")}
                 type="pro-month"
