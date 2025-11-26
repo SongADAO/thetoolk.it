@@ -45,12 +45,12 @@ function ServiceForm({ fields, initial, saveData }: Readonly<Props>) {
           key={field.name}
           name={field.name}
         >
-          <Form.Label className="block w-auto rounded-t bg-[#fff] px-2 py-1 text-sm text-black">
+          <Form.Label className="block w-auto rounded-t-xs bg-[#fff] px-2 py-1 text-sm text-black">
             {field.label}
           </Form.Label>
           <Form.Control
             autoComplete="off"
-            className="rounded-b border-0 p-2 text-black"
+            className="rounded-b-xs border-0 p-2 text-black"
             defaultValue={state[field.name]}
             disabled={isPending}
             placeholder={field.placeholder}

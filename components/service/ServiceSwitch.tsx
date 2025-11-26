@@ -88,7 +88,7 @@ function ServiceSwitch({
         >
           <Checkbox.Root
             checked={isEnabled}
-            className="flex size-9 cursor-pointer appearance-none items-center justify-center rounded-xs bg-white outline-none hover:bg-gray-200"
+            className="flex size-9 cursor-pointer appearance-none items-center justify-center rounded-xs border border-black bg-white outline-none hover:bg-gray-100"
             id="c1"
             onCheckedChange={(checked) => setIsEnabled(Boolean(checked))}
           >
@@ -100,7 +100,7 @@ function ServiceSwitch({
           </Checkbox.Root>
 
           <Collapsible.Trigger
-            className="group flex min-h-9 flex-1 items-center justify-between rounded-xs bg-[#fff2] px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
+            className="group flex min-h-9 flex-1 items-center justify-between rounded-xs px-2 py-1 outline-none data-[clickable=true]:cursor-pointer data-[clickable=true]:hover:bg-[#fff4]"
             data-clickable={
               hasCredentials && !needsCredentials ? "true" : "false"
             }
@@ -121,7 +121,9 @@ function ServiceSwitch({
 
         {hasCredentials ? (
           <Collapsible.Content className="overflow-hidden">
-            <div className="m-2 mt-0 rounded-xs bg-[#fff2] p-2">{form}</div>
+            <div className="m-2 mt-0 rounded-xs border border-gray-600 border-r-black border-b-black bg-[#fff2] p-2">
+              {form}
+            </div>
           </Collapsible.Content>
         ) : null}
 
