@@ -4,29 +4,18 @@
 @theme {
   /* Storage */
   --color-brand-amazons3: #ed6d2d;
-  --color-brand-amazons3-inverse: #fff;
   --color-brand-pinata: #6a58f6;
-  --color-brand-pinata-inverse: #fff;
 
   /* Post */
   --color-brand-youtube: #ea333d;
-  --color-brand-youtube-inverse: #fff;
   --color-brand-facebook: #2c64f6;
-  --color-brand-facebook-inverse: #fff;
   --color-brand-instagram: #e9388e;
-  --color-brand-instagram-inverse: #fff;
   --color-brand-threads: #0a0a0a;
-  --color-brand-threads-inverse: #fff;
   --color-brand-bluesky: #3d83f7;
-  --color-brand-bluesky-inverse: #fff;
   --color-brand-tiktok: #ea4459;
-  --color-brand-tiktok-inverse: #fff;
   --color-brand-twitter: #000;
-  --color-brand-twitter-inverse: #fff;
   --color-brand-farcaster: #7966bb;
-  --color-brand-farcaster-inverse: #fff;
   --color-brand-lens: #2c2d30;
-  --color-brand-lens-inverse: #fff;
 
   /* Spinner */
   /* ------------------------------------------------------------------------ */
@@ -276,9 +265,6 @@
 
 /* prettier-ignore */
 @source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}");
-
-/* prettier-ignore */
-@source inline("{group-data-[enabled=yes]:,data-[enabled=yes]:,}text-brand-{amazons3,bluesky,facebook,farcaster,instagram,lens,pinata,threads,tiktok,twitter,youtube}-inverse");
 
 /* :root {
   --background: #ffffff;
