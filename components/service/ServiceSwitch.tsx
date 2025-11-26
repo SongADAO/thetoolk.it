@@ -77,7 +77,7 @@ function ServiceSwitch({
   return (
     <div className="flex flex-col gap-1">
       <Collapsible.Root
-        className={`group rounded-xs bg-gray-300 data-[enabled=yes]:text-brand-${brandColor}-inverse data-[enabled=yes]:bg-brand-${brandColor}`}
+        className={`group rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 data-[enabled=yes]:text-brand-${brandColor}-inverse data-[enabled=yes]:bg-brand-${brandColor}`}
         data-enabled={isEnabled ? "yes" : "no"}
         disabled={needsCredentials}
         onOpenChange={setOpen}
