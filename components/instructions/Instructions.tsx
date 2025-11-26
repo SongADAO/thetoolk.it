@@ -83,7 +83,7 @@ function Instructions() {
               </p>
             </div>
 
-            <div className="rounded-sm border border-blue-200 bg-blue-50 p-4">
+            <div className="rounded-xs border border-blue-200 bg-blue-50 p-4">
               <p className="text-gray-700">
                 Want to request a web2 or web3 integration?{" "}
                 <a
@@ -114,7 +114,7 @@ function Instructions() {
               <h3 className="mb-4 text-lg font-semibold text-gray-700">
                 Amazon S3
               </h3>
-              <div className="mb-4 rounded-sm border border-red-200 bg-red-50 p-4">
+              <div className="mb-4 rounded-xs border border-red-200 bg-red-50 p-4">
                 <p className="font-medium text-red-800">⚠️ Warning:</p>
                 <p className="mt-2 text-red-700">
                   If you need to follow a guide to setup an Amazon S3 account,
@@ -324,7 +324,7 @@ function Instructions() {
               </li>
               <li>
                 Click on <strong>SIWN</strong> and enter{" "}
-                <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                   https://www.thetoolk.it
                 </code>{" "}
                 under <strong>Authorized origins</strong>
@@ -365,7 +365,7 @@ function Instructions() {
           onToggle={() => toggleSection("metaPlatforms")}
           title="Instagram, Threads and Facebook"
         >
-          <div className="mb-6 rounded-sm border border-yellow-200 bg-yellow-50 p-4">
+          <div className="mb-6 rounded-xs border border-yellow-200 bg-yellow-50 p-4">
             <p className="font-medium text-yellow-800">⚠️ Complex Setup:</p>
             <p className="mt-2 text-yellow-700">
               This setup is more complex. You&apos;ll need to create
@@ -496,7 +496,7 @@ function Instructions() {
                   </li>
                   <li>
                     Enter the redirect url:{" "}
-                    <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                    <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                       https://www.thetoolk.it/authorize
                     </code>{" "}
                     and hit <strong>Save</strong>
@@ -567,7 +567,7 @@ function Instructions() {
                     <ul className="mt-2 ml-6 list-inside list-disc space-y-1">
                       <li>
                         Set App domains to:{" "}
-                        <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                        <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                           https://www.thetoolk.it
                         </code>
                       </li>
@@ -575,7 +575,7 @@ function Instructions() {
                         Switch User data deletion to{" "}
                         <strong>Data deletion callback URL</strong>, then set it
                         to:{" "}
-                        <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                        <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                           https://www.thetoolk.it/data-delete
                         </code>
                         <ScreenshotButton
@@ -732,20 +732,20 @@ function Instructions() {
                   </li>
                   <li>
                     Set Redirect Callback URLs to:{" "}
-                    <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                    <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                       https://www.thetoolk.it/authorize
                     </code>{" "}
                     (make sure to hit Enter)
                   </li>
                   <li>
                     Set Uninstall Callback URL to:{" "}
-                    <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                    <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                       https://www.thetoolk.it/deauthorize
                     </code>
                   </li>
                   <li>
                     Set Delete Callback URL to:{" "}
-                    <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                    <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                       https://www.thetoolk.it/delete-data
                     </code>
                   </li>
@@ -899,7 +899,7 @@ function Instructions() {
                     <ul className="mt-2 ml-6 list-inside list-disc space-y-1">
                       <li>
                         Set App domains to:{" "}
-                        <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                        <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                           https://www.thetoolk.it
                         </code>
                         <ScreenshotButton
@@ -911,7 +911,7 @@ function Instructions() {
                         Switch User data deletion to{" "}
                         <strong>Data deletion callback URL</strong>, then set it
                         to:{" "}
-                        <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                        <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                           https://www.thetoolk.it/data-delete
                         </code>
                       </li>
@@ -921,7 +921,7 @@ function Instructions() {
                     Click <strong>Facebook Login for Business</strong> and then{" "}
                     <strong>Settings</strong>. Under{" "}
                     <strong>Valid OAuth Redirect URIs</strong> enter:{" "}
-                    <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                    <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                       https://www.thetoolk.it/authorize
                     </code>
                     <ScreenshotButton
@@ -1020,13 +1020,13 @@ function Instructions() {
                 <ul className="mt-2 ml-6 list-inside list-disc space-y-1">
                   <li>
                     Callback URL:{" "}
-                    <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                    <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                       https://www.thetoolk.it/authorize
                     </code>
                   </li>
                   <li>
                     Website URL:{" "}
-                    <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                    <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                       https://www.thetoolk.it
                     </code>
                   </li>
@@ -1158,14 +1158,14 @@ function Instructions() {
               <li>
                 Click <strong>+Add URI</strong> for Authorized JavaScript
                 origins and enter:{" "}
-                <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                   https://www.thetoolk.it
                 </code>
               </li>
               <li>
                 Click <strong>+Add URI</strong> for Authorized redirect URIs and
                 enter:{" "}
-                <code className="rounded-sm bg-gray-100 px-2 py-1 text-sm">
+                <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
                   https://www.thetoolk.it/authorize
                 </code>
               </li>

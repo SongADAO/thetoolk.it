@@ -120,7 +120,7 @@ function ResetPasswordForm() {
           </Form.Message>
         </div>
         <Form.Control
-          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-xs border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           minLength={8}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -142,7 +142,7 @@ function ResetPasswordForm() {
           </Form.Message>
         </div>
         <Form.Control
-          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-xs border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           minLength={8}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required

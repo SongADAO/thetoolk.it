@@ -117,7 +117,7 @@ function ConfirmEmail() {
             <>
               {message ? (
                 <p
-                  className="rounded-sm bg-white p-4 text-sm text-green-600"
+                  className="rounded-xs bg-white p-4 text-sm text-green-600"
                   role="alert"
                 >
                   {message}
@@ -126,7 +126,7 @@ function ConfirmEmail() {
 
               {error ? (
                 <p
-                  className="rounded-sm bg-white p-4 text-sm text-red-600"
+                  className="rounded-xs bg-white p-4 text-sm text-red-600"
                   role="alert"
                 >
                   {error}
@@ -134,7 +134,7 @@ function ConfirmEmail() {
               ) : null}
 
               {error ? (
-                <div className="rounded-sm bg-white p-4 text-sm text-blue-800">
+                <div className="rounded-xs bg-white p-4 text-sm text-blue-800">
                   <p className="mb-2 font-medium">Important:</p>
                   <ul className="list-inside list-disc space-y-1">
                     <li>You must confirm BOTH emails (old and new)</li>
