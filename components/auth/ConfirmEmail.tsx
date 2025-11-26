@@ -3,6 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Box } from "@/components/general/Box";
+import { BoxHeader } from "@/components/general/BoxHeader";
+import { BoxMain } from "@/components/general/BoxMain";
 import { LinkButton } from "@/components/general/LinkButton";
 import { createClient } from "@/lib/supabase/client";
 
@@ -97,59 +100,65 @@ function ConfirmEmail() {
   }, [searchParams, supabase]);
 
   return (
-    <section className="mx-auto w-full max-w-lg space-y-4 rounded-sm bg-gray-100 pb-4 contain-paint">
-      <header className="bg-gray-300 px-4 py-2">
+    <Box>
+      <BoxHeader>
         <h1 className="font-bold">Email Confirmation</h1>
-      </header>
-      <div className="space-y-4 px-4">
-        {isPending ? (
-          <div className="flex flex-col items-center space-y-4">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
-            <p className="text-sm text-gray-600">
-              Processing email confirmation...
-            </p>
-          </div>
-        ) : (
-          <>
-            {message ? (
-              <p
-                className="rounded-sm bg-white p-4 text-sm text-green-600"
-                role="alert"
-              >
-                {message}
+      </BoxHeader>
+      <BoxMain>
+        <div className="space-y-4">
+          {isPending ? (
+            <div className="flex flex-col items-center space-y-4">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+              <p className="text-sm text-gray-600">
+                Processing email confirmation...
               </p>
-            ) : null}
-
-            {error ? (
-              <p
-                className="rounded-sm bg-white p-4 text-sm text-red-600"
-                role="alert"
-              >
-                {error}
-              </p>
-            ) : null}
-
-            {error ? (
-              <div className="rounded-sm bg-white p-4 text-sm text-blue-800">
-                <p className="mb-2 font-medium">Important:</p>
-                <ul className="list-inside list-disc space-y-1">
-                  <li>You must confirm BOTH emails (old and new)</li>
-                  <li>Check your old email inbox for the first confirmation</li>
-                  <li>
-                    Check your new email inbox for the second confirmation
-                  </li>
-                  <li>After both are confirmed, sign in with your new email</li>
-                </ul>
-              </div>
-            ) : null}
-
-            <div className="flex flex-col space-y-2">
-              <LinkButton href="/auth/signin">Go to Sign In</LinkButton>
             </div>
-          </>
-        )}
-      </div>
-    </section>
+          ) : (
+            <>
+              {message ? (
+                <p
+                  className="rounded-sm bg-white p-4 text-sm text-green-600"
+                  role="alert"
+                >
+                  {message}
+                </p>
+              ) : null}
+
+              {error ? (
+                <p
+                  className="rounded-sm bg-white p-4 text-sm text-red-600"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              ) : null}
+
+              {error ? (
+                <div className="rounded-sm bg-white p-4 text-sm text-blue-800">
+                  <p className="mb-2 font-medium">Important:</p>
+                  <ul className="list-inside list-disc space-y-1">
+                    <li>You must confirm BOTH emails (old and new)</li>
+                    <li>
+                      Check your old email inbox for the first confirmation
+                    </li>
+                    <li>
+                      Check your new email inbox for the second confirmation
+                    </li>
+                    <li>
+                      After both are confirmed, sign in with your new email
+                    </li>
+                  </ul>
+                </div>
+              ) : null}
+
+              <div className="flex flex-col space-y-2">
+                <LinkButton href="/auth/signin">Go to Sign In</LinkButton>
+              </div>
+            </>
+          )}
+        </div>
+      </BoxMain>
+    </Box>
   );
 }
 
