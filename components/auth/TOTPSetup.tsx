@@ -173,7 +173,7 @@ function TOTPSetup() {
             <p className="text-sm font-medium">
               Or enter this secret manually:
             </p>
-            <code className="block rounded-xs bg-white p-2 font-mono text-sm break-all">
+            <code className="block rounded-xs bg-gray-100 p-2 font-mono text-sm break-all">
               {enrollmentState.secret}
             </code>
           </div>
@@ -251,14 +251,14 @@ function TOTPSetup() {
         </div>
 
         {factors.length === 0 ? (
-          <div className="rounded-xs border border-gray-200 bg-white p-4 text-center text-sm">
+          <div className="rounded-xs border border-gray-200 bg-gray-50 p-4 text-center text-sm">
             No two-factor authentication factors configured yet.
           </div>
         ) : (
           <div className="space-y-2">
             {factors.map((factor) => (
               <div
-                className="flex flex-col items-center justify-between gap-2 rounded-xs border border-gray-200 bg-white p-3 md:flex-row"
+                className="flex flex-col items-center justify-between gap-2 rounded-xs border border-gray-200 bg-gray-50 p-3 md:flex-row"
                 key={factor.id}
               >
                 <div className="flex-1">
