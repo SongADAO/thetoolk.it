@@ -119,7 +119,7 @@ function ChangePasswordForm() {
         </div>
         <Form.Control
           autoComplete="current-password"
-          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-xs border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           minLength={8}
           onChange={(e) => setCurrentPassword(e.target.value)}
           required
@@ -145,7 +145,7 @@ function ChangePasswordForm() {
         </div>
         <Form.Control
           autoComplete="new-password"
-          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-xs border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           minLength={8}
           onChange={(e) => setNewPassword(e.target.value)}
           required
@@ -168,7 +168,7 @@ function ChangePasswordForm() {
         </div>
         <Form.Control
           autoComplete="new-password"
-          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-xs border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           minLength={8}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required

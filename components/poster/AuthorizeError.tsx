@@ -10,7 +10,7 @@ function AuthorizeError() {
         <p className="text-[#f00]">Failed to Authorize</p>
         <div className="flex items-center justify-center">
           <button
-            className="mt-4 cursor-pointer rounded-sm bg-gray-500 px-4 py-2 text-white"
+            className="mt-4 cursor-pointer rounded-xs bg-gray-500 px-4 py-2 text-white"
             onClick={() => window.close()}
             type="button"
           >
