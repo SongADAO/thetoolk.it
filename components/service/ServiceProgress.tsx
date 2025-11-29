@@ -2,8 +2,11 @@ import { ReactNode } from "react";
 import { FaCheck, FaCircleExclamation } from "react-icons/fa6";
 
 import { Spinner } from "@/components/general/Spinner";
+import type { PostServiceAccount } from "@/services/post/types";
+import type { StorageServiceAccount } from "@/services/storage/types";
 
 interface Props {
+  accounts: PostServiceAccount[] | StorageServiceAccount[];
   authorize: () => void;
   brandColor: string;
   icon: ReactNode;
@@ -17,6 +20,7 @@ interface Props {
 }
 
 function ServiceProgress({
+  accounts,
   authorize,
   brandColor,
   icon,
@@ -68,7 +72,7 @@ function ServiceProgress({
       ) : null}
 
       {isUsable ? (
-        <div className="relative z-20 flex items-center justify-between gap-2 p-2 2xl:py-3.5">
+        <div className="relative z-20 flex h-full items-center justify-between gap-2 p-2 2xl:py-3.5">
           <div>{icon}</div>
 
           <div className="flex-1 text-left text-xs leading-none">
@@ -76,7 +80,14 @@ function ServiceProgress({
 
             {!processError && processStatus ? <p>{processStatus}</p> : null}
 
-            {!processError && !processStatus ? <p>{label}</p> : null}
+            {!processError && !processStatus ? (
+              <div>
+                <p>{label}</p>
+                {accounts.map((account) => (
+                  <div key={account.id}>@{account.username}</div>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div>
@@ -93,7 +104,7 @@ function ServiceProgress({
         </div>
       ) : (
         <button
-          className="relative z-20 flex w-full cursor-pointer items-center justify-between gap-2 p-2 hover:bg-gray-900 hover:text-white 2xl:py-3.5"
+          className="relative z-20 flex h-full w-full cursor-pointer items-center justify-between gap-2 p-2 hover:bg-gray-900 hover:text-white 2xl:py-3.5"
           onClick={authorize}
           type="button"
         >
@@ -103,7 +114,7 @@ function ServiceProgress({
             <p>Log in with {label}</p>
           </div>
           <div>
-            <FaCheck className="size-4" />
+            <FaCircleExclamation className="size-4" />
           </div>
         </button>
       )}

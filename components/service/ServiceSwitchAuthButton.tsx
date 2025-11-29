@@ -30,7 +30,10 @@ function ServiceSwitchAuthButton({
         label={`Log in with ${label}`}
         style={{
           backgroundColor: "#fff",
-          borderRadius: "0.25rem",
+          border: "1px solid #000",
+          borderLeftColor: "lab(65.9269% -.832707 -8.17473)",
+          borderRadius: "0.125rem",
+          borderTopColor: "lab(65.9269% -.832707 -8.17473)",
           boxShadow:
             "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px",
           color: "#000",
@@ -46,7 +49,7 @@ function ServiceSwitchAuthButton({
   if (isAuthorized && accounts.length > 0) {
     return (
       <button
-        className="w-full cursor-pointer gap-2 rounded-xs bg-white px-4 py-2 text-black shadow-md hover:bg-gray-900 hover:text-white"
+        className="w-full cursor-pointer gap-2 rounded-xs border border-gray-400 border-r-black border-b-black bg-white px-4 py-2 text-black shadow-md hover:bg-gray-900 hover:text-white"
         data-authorized={isAuthorized}
         onClick={disconnect}
         type="button"
@@ -62,7 +65,7 @@ function ServiceSwitchAuthButton({
 
   return (
     <button
-      className="w-full cursor-pointer gap-2 rounded-xs bg-white px-4 py-2 text-black shadow-md hover:bg-gray-900 hover:text-white"
+      className="w-full cursor-pointer gap-2 rounded-xs border border-gray-400 border-r-black border-b-black bg-white px-4 py-2 text-black shadow-md hover:bg-gray-900 hover:text-white"
       data-authorized={isAuthorized}
       onClick={authorize}
       type="button"
