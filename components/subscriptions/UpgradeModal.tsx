@@ -54,7 +54,9 @@ function UpgradeModal() {
           <div className="mt-10">
             <p className="mb-4 text-center">Not ready to subscribe?</p>
             <p className="text-center">
-              <LinkButton href="/free">Try TheToolk.it Free Edition</LinkButton>
+              <LinkButton href="https://free.thetoolk.it" target="_blank">
+                Try TheToolk.it Free Edition
+              </LinkButton>
             </p>
           </div>
         </div>
