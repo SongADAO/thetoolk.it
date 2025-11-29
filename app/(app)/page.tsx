@@ -1,6 +1,12 @@
 import { LinkButton } from "@/components/general/LinkButton";
+import { PosterBrowserMode } from "@/components/poster/PosterBrowserMode";
+import { MODE } from "@/config/constants";
 
 export default function Home() {
+  if (MODE === "browser") {
+    return <PosterBrowserMode />;
+  }
+
   return (
     <div>
       <div className="mb-10 grid grid-cols-1 items-center justify-center gap-4 p-4 md:grid-cols-2 md:gap-8 md:p-4">

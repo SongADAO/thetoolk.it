@@ -1,5 +1,6 @@
 /* eslint-disable import/group-exports */
 
+export const MODE = process.env.NEXT_PUBLIC_MODE ?? "browser";
 export const DEBUG_DOWNLOAD_MEDIA = process.env.NEXT_PUBLIC_DEBUG_DOWNLOAD_MEDIA === "true";
 export const DEBUG_MEDIA = process.env.NEXT_PUBLIC_DEBUG_MEDIA === "true";
 export const DEBUG_POST = process.env.NEXT_PUBLIC_DEBUG_POST === "true";

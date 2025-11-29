@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
-import { FreeBanner } from "@/components/poster/FreeBanner";
-import { Poster } from "@/components/poster/Poster";
-import { PosterProviders } from "@/components/poster/PosterProviders";
+import { PosterBrowserMode } from "@/components/poster/PosterBrowserMode";
 
 export const metadata: Metadata = {
   alternates: {
@@ -14,12 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function FreePage() {
-  return (
-    <div>
-      <FreeBanner />
-      <PosterProviders mode="browser">
-        <Poster mode="browser" />
-      </PosterProviders>
-    </div>
-  );
+  return <PosterBrowserMode />;
 }
