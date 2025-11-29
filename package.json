@@ -45,7 +45,7 @@
     "@rainbow-me/rainbowkit": "^2.2.8",
     "@sentry/nextjs": "^10.26.0",
     "@stripe/stripe-js": "^8.1.0",
-    "@supabase/ssr": "^0.7.0",
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.53.0",
     "@tanstack/react-query": "^5.81.5",
     "babel-plugin-react-compiler": "^1.0.0",
