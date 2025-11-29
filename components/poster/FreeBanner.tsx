@@ -8,7 +8,7 @@ function FreeBanner() {
         <strong className="font-semibold">TheToolk.it Free Edition</strong>.
       </p>
       <p>
-        <LinkButton href="https://dev.thetoolk.it/pro">
+        <LinkButton href="https://dev.thetoolk.it/pro" target="_blank">
           Switch to TheToolk.it Pro
         </LinkButton>
       </p>
