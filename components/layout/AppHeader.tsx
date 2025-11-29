@@ -1,5 +1,6 @@
 import { AppHeaderUser } from "@/components/layout/AppHeaderUser";
 import { AppLogo } from "@/components/layout/AppLogo";
+import { MODE } from "@/config/constants";
 
 function AppHeader() {
   return (
@@ -7,7 +8,7 @@ function AppHeader() {
       <div>
         <AppLogo />
       </div>
-      <AppHeaderUser />
+      {MODE === "server" ? <AppHeaderUser /> : null}
     </div>
   );
 }
