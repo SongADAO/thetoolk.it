@@ -70,6 +70,10 @@ function ServiceSwitch({
 
   const needsCredentials = Boolean(isEnabled && !isComplete);
 
+  const canAuthorize = isClient && hasAuthorizationStep && isComplete;
+
+  const hasAuthorizedAccounts = isAuthorized && accounts.length > 0;
+
   return (
     <div className="flex flex-col gap-1">
       <Collapsible.Root
@@ -104,7 +108,7 @@ function ServiceSwitch({
             </span>
           </label>
 
-          {hasCredentials ? (
+          {hasCredentials || hasAuthorizedAccounts ? (
             <Collapsible.Trigger
               className="ml-4 flex size-10 cursor-pointer items-center justify-center rounded-xs border border-black bg-white text-black data-[clickable=true]:hover:bg-gray-200"
               data-clickable={needsCredentials ? "false" : "true"}
@@ -118,28 +122,16 @@ function ServiceSwitch({
           ) : null}
         </div>
 
-        {hasCredentials ? (
+        {hasCredentials || hasAuthorizedAccounts ? (
           <Collapsible.Content className="overflow-hidden">
-            <div className="m-2 mt-0 rounded-xs border border-gray-600 border-r-black border-b-black bg-[#fff2] p-2">
-              {form}
-            </div>
-          </Collapsible.Content>
-        ) : null}
+            {hasCredentials ? (
+              <div className="m-2 mt-0 rounded-xs border border-gray-600 border-r-black border-b-black bg-[#fff2] p-2">
+                {form}
+              </div>
+            ) : null}
 
-        {isClient &&
-        hasAuthorizationStep &&
-        isComplete &&
-        (isEnabled || (isAuthorized && accounts.length > 0)) ? (
-          <div className="gap-2 bg-[#fff2] p-2">
-            <div className="space-y-2">
-              {isAuthorized && accounts.length > 0 ? (
-                <ServiceSwitchUser
-                  accounts={accounts}
-                  authorizationExpiresAt={authorizationExpiresAt}
-                />
-              ) : null}
-
-              {isEnabled || (isAuthorized && accounts.length > 0) ? (
+            {hasAuthorizedAccounts ? (
+              <div className="m-2 mt-0">
                 <ServiceSwitchAuthButton
                   accounts={accounts}
                   authorize={authorize}
@@ -148,8 +140,34 @@ function ServiceSwitch({
                   isAuthorized={isAuthorized}
                   label={label}
                 />
-              ) : null}
-            </div>
+              </div>
+            ) : null}
+          </Collapsible.Content>
+        ) : null}
+
+        {canAuthorize ? (
+          <div className="bg-[#fff2]">
+            {hasAuthorizedAccounts ? (
+              <div className="p-2">
+                <ServiceSwitchUser
+                  accounts={accounts}
+                  authorizationExpiresAt={authorizationExpiresAt}
+                />
+              </div>
+            ) : null}
+
+            {!hasAuthorizedAccounts && (hasCredentials || isEnabled) ? (
+              <div className="p-2">
+                <ServiceSwitchAuthButton
+                  accounts={accounts}
+                  authorize={authorize}
+                  disconnect={disconnect}
+                  icon={icon}
+                  isAuthorized={isAuthorized}
+                  label={label}
+                />
+              </div>
+            ) : null}
           </div>
         ) : null}
       </Collapsible.Root>
