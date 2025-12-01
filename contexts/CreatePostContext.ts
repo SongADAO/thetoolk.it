@@ -1,6 +1,7 @@
 import { createContext } from "react";
 
 import type { PostServiceContextType } from "@/services/post/PostServiceContext";
+import type { StorageServiceContextType } from "@/services/storage/StorageServiceContext";
 
 interface PostVideo {
   video: File | null;
@@ -46,7 +47,7 @@ interface CreatePostContextType {
   resetPostState: () => void;
   resetStoreState: () => void;
   unauthorizedPostServices: PostServiceContextType[];
-  unauthorizedStorageServices: PostServiceContextType[];
+  unauthorizedStorageServices: StorageServiceContextType[];
   videoCodecInfo: string;
   videoConversionError: string | null;
   videoConversionProgress: number;
