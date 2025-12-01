@@ -872,7 +872,7 @@ function PostForm() {
             <div className="absolute top-0 right-0 bottom-0 left-0 z-20">
               {hasUnauthorizedPostServices ? (
                 <div className="mb-4 space-y-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-white p-2 text-black shadow-lg">
-                  <div className="text-center">
+                  <div className="text-center font-bold">
                     <p>Some posting services are not authorized.</p>
                     <p>Finish authorizing them before posting.</p>
                   </div>
@@ -893,7 +893,7 @@ function PostForm() {
 
               {hasUnauthorizedStorageServices ? (
                 <div className="mb-4 space-y-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-white p-2 text-black shadow-lg">
-                  <div className="text-center">
+                  <div className="text-center font-bold">
                     <p>Some storage services are not configured.</p>
                     <p>Finish configuring them before posting.</p>
                   </div>
