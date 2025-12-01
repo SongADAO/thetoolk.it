@@ -18,7 +18,7 @@ function LinkButton({
 }: Readonly<Props>) {
   return (
     <Link
-      className="inline-flex cursor-pointer items-center justify-center gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-black px-4 py-2 font-semibold text-white no-underline hover:bg-blue-800 disabled:opacity-50 data-[purpose=danger]:bg-red-700 data-[purpose=danger]:hover:bg-red-600 data-[width=full]:w-full"
+      className="inline-flex cursor-pointer items-center justify-center gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-black px-4 py-2 font-semibold text-white no-underline enabled:hover:bg-blue-800 disabled:opacity-50 data-[purpose=danger]:bg-red-700 data-[purpose=danger]:hover:bg-red-600 data-[width=full]:w-full"
       data-purpose={purpose}
       data-width={width}
       {...otherProps}

@@ -42,7 +42,7 @@ function SubscribeButton({ type, label }: Readonly<SubscribeButtonProps>) {
 
   return (
     <button
-      className="cursor-pointer rounded-xs bg-black px-4 py-2 text-white hover:bg-blue-800 disabled:opacity-50"
+      className="cursor-pointer rounded-xs bg-black px-4 py-2 text-white enabled:hover:bg-blue-800 disabled:opacity-50"
       onClick={handleCheckout}
       type="button"
     >

@@ -910,7 +910,7 @@ function PostForm() {
         ) : null}
 
         <Form.Submit
-          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xs bg-black px-2 py-3 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xs bg-black px-2 py-3 text-white enabled:hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isFormDisabled}
         >
           {isPending ? <Spinner /> : null}
