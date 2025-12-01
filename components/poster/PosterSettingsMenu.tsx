@@ -34,7 +34,7 @@ function PosterSettingsMenu({ label, icon, children }: Readonly<Props>) {
             className="w-full overflow-hidden overscroll-contain"
             type="auto"
           >
-            <ScrollArea.Viewport className="size-full max-h-[50vh] overscroll-contain rounded-xs">
+            <ScrollArea.Viewport className="size-full max-h-[50vh] overscroll-contain">
               <div className="p-3">{children}</div>
             </ScrollArea.Viewport>
             <ScrollArea.Scrollbar
@@ -43,7 +43,7 @@ function PosterSettingsMenu({ label, icon, children }: Readonly<Props>) {
             >
               <ScrollArea.Thumb className="relative flex-1 rounded-full bg-black before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2" />
             </ScrollArea.Scrollbar>
-            <ScrollArea.Corner className="bg-blackA5" />
+            <ScrollArea.Corner className="bg-black" />
           </ScrollArea.Root>
           <DropdownMenu.Arrow className="fill-gray-600" />
         </DropdownMenu.Content>
