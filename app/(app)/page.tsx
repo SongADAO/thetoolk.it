@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { LinkButton } from "@/components/general/LinkButton";
 import { PosterBrowserMode } from "@/components/poster/PosterBrowserMode";
 import { MODE } from "@/config/constants";
@@ -9,13 +11,15 @@ export default function Home() {
 
   return (
     <div>
-      <div className="mb-10 grid grid-cols-1 items-center justify-center gap-4 p-4 md:grid-cols-2 md:gap-8 md:p-4">
+      <div className="mt-2 mb-10 grid grid-cols-1 items-center justify-center gap-10 p-4 md:mt-20 md:grid-cols-2 md:gap-8 md:p-4">
         <div className="flex max-w-130 items-center justify-center md:m-auto lg:max-w-160">
-          <img
-            alt="TheToolk.it Pro Screenshot"
-            className="h-auto w-full rounded-lg border-8 border-gray-500 contain-paint"
-            src="/home-screenshot.webp"
-          />
+          <Link href="/pro">
+            <img
+              alt="TheToolk.it Pro Screenshot"
+              className="h-auto w-full rounded-xs border border-gray-400 border-r-black border-b-black shadow-lg contain-paint"
+              src="/home-screenshot.webp"
+            />
+          </Link>
         </div>
         <section>
           <h1 className="mb-4 text-4xl font-bold">TheToolk.it</h1>
