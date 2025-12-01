@@ -55,9 +55,11 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     (platform) => platform.isProcessing,
   );
 
-  const canPostToAllServices = postPlatformsArray.every(
-    (platform) => !platform.isEnabled || platform.isUsable,
+  const unauthorizedPostServices = postPlatformsArray.filter(
+    (platform) => platform.isEnabled && !platform.isUsable,
   );
+
+  const hasUnauthorizedPostServices = unauthorizedPostServices.length > 0;
 
   function resetPostState(): void {
     postPlatformsArray.forEach((platform) => platform.resetProcessState());
@@ -75,9 +77,11 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     (platform) => platform.isProcessing,
   );
 
-  const canStoreToAllServices = storagePlatformsArray.every(
-    (platform) => !platform.isEnabled || platform.isUsable,
+  const unauthorizedStorageServices = storagePlatformsArray.filter(
+    (platform) => platform.isEnabled && !platform.isUsable,
   );
+
+  const hasUnauthorizeStorageServices = unauthorizedStorageServices.length > 0;
 
   const hasStoragePlatform = storagePlatformsArray.some(
     (platform) => platform.isEnabled && platform.isUsable,
@@ -339,10 +343,10 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
 
   const providerValues = useMemo(
     () => ({
-      canPostToAllServices,
-      canStoreToAllServices,
       createPost,
       getVideoInfo,
+      hasUnauthorizedPostServices,
+      hasUnauthorizeStorageServices,
       hlsConversionError,
       hlsConversionProgress,
       hlsConversionStatus,
@@ -354,6 +358,8 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
       preparePostVideo,
       resetPostState,
       resetStoreState,
+      unauthorizedPostServices,
+      unauthorizedStorageServices,
       videoCodecInfo,
       videoConversionError,
       videoConversionProgress,
@@ -367,8 +373,8 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      canPostToAllServices,
-      canStoreToAllServices,
+      hasUnauthorizedPostServices,
+      hasUnauthorizeStorageServices,
       hlsConversionError,
       hlsConversionProgress,
       hlsConversionStatus,
@@ -380,6 +386,8 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
       preparePostVideo,
       resetPostState,
       resetStoreState,
+      unauthorizedPostServices,
+      unauthorizedStorageServices,
       videoCodecInfo,
       videoConversionError,
       videoConversionProgress,

@@ -37,6 +37,8 @@ interface Props {
 export function PinataProvider({ children, mode }: Readonly<Props>) {
   const { isLoading: authIsLoading } = use(AuthContext);
 
+  const id = "pinata";
+
   const label = "Pinata";
 
   const brandColor = "pinata";
@@ -268,6 +270,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
       hasAuthorizationStep,
       hasHostedCredentials,
       icon,
+      id,
       initial,
       isAuthorized,
       isComplete,
@@ -301,6 +304,7 @@ export function PinataProvider({ children, mode }: Readonly<Props>) {
       hasAuthorizationStep,
       hasHostedCredentials,
       icon,
+      id,
       initial,
       isAuthorized,
       isComplete,

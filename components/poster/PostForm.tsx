@@ -5,7 +5,9 @@ import { Form } from "radix-ui";
 import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
 
+import { ModalOverlay } from "@/components/general/ModalOverlay";
 import { Spinner } from "@/components/general/Spinner";
+import { ServiceAuthorizeButton } from "@/components/service/ServiceAuthorizeButton";
 import { CreatePostContext } from "@/contexts/CreatePostContext";
 import { formatFileDuration, formatFileSize } from "@/lib/video/video";
 import { POST_CONTEXTS } from "@/services/post/contexts";
@@ -127,10 +129,10 @@ function PostForm() {
   // ---------------------------------------------------------------------------
 
   const {
-    canPostToAllServices,
-    canStoreToAllServices,
     createPost,
     getVideoInfo,
+    hasUnauthorizedPostServices,
+    hasUnauthorizeStorageServices,
     hlsConversionProgress,
     hlsConversionStatus,
     isHLSConverting,
@@ -141,6 +143,8 @@ function PostForm() {
     preparePostVideo,
     resetPostState,
     resetStoreState,
+    unauthorizedPostServices,
+    unauthorizedStorageServices,
     // videoCodecInfo,
     videoConversionProgress,
     videoConversionStatus,
@@ -192,11 +196,11 @@ function PostForm() {
         throw new Error("Please select a video file.");
       }
 
-      if (!canPostToAllServices) {
+      if (hasUnauthorizedPostServices) {
         throw new Error("Some selected posting services are not authorized.");
       }
 
-      if (!canStoreToAllServices) {
+      if (hasUnauthorizeStorageServices) {
         throw new Error("Some selected storage services are not authorized.");
       }
 
@@ -227,10 +231,10 @@ function PostForm() {
 
   // Check if we should disable the form
   const isFormDisabled =
-    isPending || !canPostToAllServices || !canStoreToAllServices;
+    isPending || hasUnauthorizedPostServices || hasUnauthorizeStorageServices;
 
   return (
-    <div>
+    <div className="relative">
       <Form.Root>
         <Form.Field className="mb-4 flex flex-col" key="video" name="video">
           <Form.Label className="mb-2 font-semibold">Video</Form.Label>
@@ -838,19 +842,54 @@ function PostForm() {
           </p>
         ) : null}
 
-        {canPostToAllServices ? null : (
-          <p className="mb-4 rounded-xs bg-red-800 p-2 text-center text-white">
-            Some enabled posting services are not authorized. Finish authorizing
-            them before posting.
-          </p>
-        )}
+        {hasUnauthorizedPostServices || hasUnauthorizeStorageServices ? (
+          <>
+            <ModalOverlay />
+            <div className="absolute top-0 right-0 bottom-0 left-0 z-20">
+              {hasUnauthorizedPostServices ? (
+                <div className="mb-4 space-y-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-white p-2 text-black shadow-lg">
+                  <div className="text-center">
+                    <p>Some posting services are not authorized.</p>
+                    <p>Finish authorizing them before posting.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {unauthorizedPostServices.map((service) => (
+                      <ServiceAuthorizeButton
+                        authorize={service.authorize}
+                        hasAuthorizationStep={service.hasAuthorizationStep}
+                        icon={service.icon}
+                        isComplete={service.isComplete}
+                        key={service.id}
+                        label={service.label}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
-        {canStoreToAllServices ? null : (
-          <p className="mb-4 rounded-xs bg-red-800 p-2 text-center text-white">
-            Some enabled storage services are not authorized. Finish authorizing
-            them before posting.
-          </p>
-        )}
+              {hasUnauthorizeStorageServices ? (
+                <div className="mb-4 space-y-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-white p-2 text-black shadow-lg">
+                  <div className="text-center">
+                    <p>Some storage services are not configured.</p>
+                    <p>Finish configuring them before posting.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {unauthorizedStorageServices.map((service) => (
+                      <ServiceAuthorizeButton
+                        authorize={service.authorize}
+                        hasAuthorizationStep={service.hasAuthorizationStep}
+                        icon={service.icon}
+                        isComplete={service.isComplete}
+                        key={service.id}
+                        label={service.label}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </>
+        ) : null}
 
         <Form.Submit
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xs bg-black px-2 py-3 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
