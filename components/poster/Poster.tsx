@@ -33,7 +33,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
               {showStorageSwitches ? (
                 <PosterSettingsMenu
                   icon={<FaServer className="size-6" />}
-                  label="Storage Settings"
+                  label="Storage Service Settings"
                 >
                   <BoxSwitches>
                     <StorageSwitches mode={mode} />
@@ -43,7 +43,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
 
               <PosterSettingsMenu
                 icon={<FaUsersGear className="size-6" />}
-                label="Post Settings"
+                label="Posting Service Settings"
               >
                 <BoxSwitches>
                   <PostSwitches mode={mode} />
@@ -70,7 +70,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
                 {showStorageSwitches ? (
                   <PosterSettingsMenu
                     icon={<FaServer className="size-6" />}
-                    label="Storage Settings"
+                    label="Storage Service Settings"
                   >
                     <BoxSwitches>
                       <StorageSwitches mode={mode} />
@@ -93,7 +93,7 @@ function Poster({ mode }: Readonly<PosterProps>) {
 
                 <PosterSettingsMenu
                   icon={<FaUsersGear className="size-6" />}
-                  label="Post Settings"
+                  label="Posting Service Settings"
                 >
                   <BoxSwitches>
                     <PostSwitches mode={mode} />
