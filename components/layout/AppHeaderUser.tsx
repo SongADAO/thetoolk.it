@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { use } from "react";
 import {
   FaGear,
@@ -15,6 +15,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 
 function AppHeaderUser() {
   const { user, signOut } = use(AuthContext);
+  const pathname = usePathname();
 
   const router = useRouter();
 
@@ -26,7 +27,11 @@ function AppHeaderUser() {
   if (!user) {
     return (
       <div className="flex flex-row items-end gap-2">
-        <LinkButtonMenu href="/auth/signin" title="Sign In">
+        <LinkButtonMenu
+          href="/auth/signin"
+          isActive={pathname === "/auth/signin"}
+          title="Sign In"
+        >
           <FaRightToBracket className="size-6" />
           Sign in
         </LinkButtonMenu>
@@ -36,11 +41,19 @@ function AppHeaderUser() {
 
   return (
     <div className="flex flex-row items-end gap-2">
-      <LinkButtonMenu href="/pro" title="Create a Post">
+      <LinkButtonMenu
+        href="/pro"
+        isActive={pathname === "/pro"}
+        title="Create a Post"
+      >
         <FaPenToSquare className="size-6" />
         Post
       </LinkButtonMenu>
-      <LinkButtonMenu href="/account" title="Manage Account">
+      <LinkButtonMenu
+        href="/account"
+        isActive={pathname === "/account"}
+        title="Manage Account"
+      >
         <FaGear className="size-6" />
       </LinkButtonMenu>
       <ButtonMenu onClick={handleSignOut} title="Sign out" type="button">
