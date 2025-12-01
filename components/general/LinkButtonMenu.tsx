@@ -18,7 +18,7 @@ function LinkButtonMenu({
 }: Readonly<Props>) {
   return (
     <Link
-      className="inline-flex cursor-pointer items-center justify-center gap-3 rounded-xs bg-black p-3 font-semibold text-white no-underline hover:bg-blue-800 disabled:opacity-50 data-[purpose=danger]:bg-red-500 data-[purpose=danger]:hover:bg-red-600 data-[width=full]:w-full"
+      className="inline-flex cursor-pointer items-center justify-center gap-3 rounded-xs bg-black p-3 font-semibold text-white no-underline hover:bg-blue-800 disabled:opacity-50 data-[purpose=danger]:bg-red-700 data-[purpose=danger]:hover:bg-red-600 data-[width=full]:w-full"
       data-purpose={purpose}
       data-width={width}
       {...otherProps}
