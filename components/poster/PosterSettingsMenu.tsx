@@ -3,6 +3,7 @@
 import { DropdownMenu, ScrollArea } from "radix-ui";
 import { ReactNode } from "react";
 
+import { BoxHeader } from "@/components/general/BoxHeader";
 import { ButtonMenu } from "@/components/general/ButtonMenu";
 
 interface Props {
@@ -22,22 +23,25 @@ function PosterSettingsMenu({ label, icon, children }: Readonly<Props>) {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="w-[360px] rounded-xs bg-gray-600 shadow-[0px_10px_38px_-10px_rgba(22,23,24,0.35),0px_10px_20px_-15px_rgba(22,23,24,0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slide-up-and-fade data-[side=left]:animate-slide-right-and-fade data-[side=right]:animate-slide-left-and-fade data-[side=top]:animate-slide-down-and-fade lg:w-[720px]"
+          className="w-[360px] rounded-xs border border-gray-400 border-r-black border-b-black bg-white shadow-2xl will-change-[opacity,transform] data-[side=bottom]:animate-slide-up-and-fade data-[side=left]:animate-slide-right-and-fade data-[side=right]:animate-slide-left-and-fade data-[side=top]:animate-slide-down-and-fade lg:w-[720px]"
           onPointerDownOutside={(e) => e.preventDefault()}
-          sideOffset={5}
+          sideOffset={0}
         >
+          <BoxHeader>
+            <h2 className="font-bold">{label}</h2>
+          </BoxHeader>
           <ScrollArea.Root
             className="w-full overflow-hidden overscroll-contain"
             type="auto"
           >
-            <ScrollArea.Viewport className="size-full max-h-[70vh] overscroll-contain rounded-xs p-3">
-              {children}
+            <ScrollArea.Viewport className="size-full max-h-[50vh] overscroll-contain rounded-xs">
+              <div className="p-3">{children}</div>
             </ScrollArea.Viewport>
             <ScrollArea.Scrollbar
               className="flex touch-none overscroll-contain p-0.5 transition-colors duration-160 ease-out select-none hover:bg-[#e5e5e5] data-[orientation=vertical]:w-2.5"
               orientation="vertical"
             >
-              <ScrollArea.Thumb className="relative flex-1 rounded-full bg-[#000] before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2" />
+              <ScrollArea.Thumb className="relative flex-1 rounded-full bg-black before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2" />
             </ScrollArea.Scrollbar>
             <ScrollArea.Corner className="bg-blackA5" />
           </ScrollArea.Root>
