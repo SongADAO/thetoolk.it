@@ -28,7 +28,7 @@ function UpgradeModal() {
     return (
       <div>
         <ModalOverlay />
-        <div className="absolute top-[2rem] left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 transform rounded-xs border-2 border-gray-500 bg-white p-6 shadow-lg md:top-[4rem]">
+        <div className="absolute top-8 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 transform rounded-xs border-2 border-gray-500 bg-white p-6 shadow-lg md:top-16">
           <section className="space-y-4">
             <header>
               <h3 className="text-center font-bold">TheToolk.it Pro</h3>
@@ -67,7 +67,7 @@ function UpgradeModal() {
   return (
     <div>
       <ModalOverlay />
-      <div className="absolute top-[2rem] left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 transform rounded-xs border-2 border-gray-500 bg-white p-6 shadow-lg md:top-[4rem]">
+      <div className="absolute top-8 left-1/2 z-20 w-[90%] max-w-xl -translate-x-1/2 transform rounded-xs border-2 border-gray-500 bg-white p-6 shadow-lg md:top-16">
         <section className="space-y-4">
           <header>
             <h3 className="text-center font-bold">
