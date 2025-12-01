@@ -28,8 +28,10 @@ interface CreatePlatformPostProps extends CreatePostProps {
 }
 
 interface CreatePostContextType {
-  canPostToAllServices: boolean;
-  canStoreToAllServices: boolean;
+  unauthorizedPostServices: PostServiceContextType[];
+  hasUnauthorizedPostServices: boolean;
+  unauthorizedStorageServices: PostServiceContextType[];
+  hasUnauthorizeStorageServices: boolean;
   createPost: (params: CreatePostProps) => Promise<void>;
   getVideoInfo: (video: File | null) => void;
   hlsConversionError: string | null;

@@ -36,6 +36,8 @@ interface Props {
 export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
   const { isLoading: authIsLoading } = use(AuthContext);
 
+  const id = "amazons3";
+
   const label = "AmazonS3";
 
   const brandColor = "amazons3";
@@ -247,6 +249,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       hasAuthorizationStep,
       hasHostedCredentials,
       icon,
+      id,
       initial,
       isAuthorized,
       isComplete,
@@ -280,6 +283,7 @@ export function AmazonS3Provider({ children, mode }: Readonly<Props>) {
       hasAuthorizationStep,
       hasHostedCredentials,
       icon,
+      id,
       initial,
       isAuthorized,
       isComplete,
