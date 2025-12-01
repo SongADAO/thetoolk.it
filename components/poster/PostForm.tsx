@@ -78,6 +78,8 @@ function PostForm() {
 
   // const facebookIsEnabled = postPlatforms.facebook.isEnabled;
 
+  // const facebookIsUsable = postPlatforms.facebook.isUsable;
+
   // YouTube Settings
   // ---------------------------------------------------------------------------
 
@@ -88,6 +90,8 @@ function PostForm() {
   ];
 
   const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
+
+  const youtubeIsUsable = postPlatforms.youtube.isUsable;
 
   // TikTok Settings
   // ---------------------------------------------------------------------------
@@ -102,6 +106,8 @@ function PostForm() {
   ];
 
   const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
+
+  const tiktokIsUsable = postPlatforms.tiktok.isUsable;
 
   const tiktokPrivacyOptions = allTiktokPrivacyOptions.filter((option) =>
     postPlatforms.tiktok.accounts[0]?.permissions?.privacy_level_options?.includes(
@@ -324,7 +330,7 @@ function PostForm() {
           </div>
         </Form.Field>
 
-        {/* {facebookIsEnabled ? (
+        {/* {facebookIsEnabled && facebookIsUsable ? (
           <Form.Field
             className="mb-4 flex flex-col"
             key="facebookPrivacy"
@@ -375,7 +381,7 @@ function PostForm() {
           </Form.Field>
         )} */}
 
-        {youtubeIsEnabled ? (
+        {youtubeIsEnabled && youtubeIsUsable ? (
           <section className="mb-4 rounded-xs bg-gray-200 p-2">
             <h4 className="mb-2 font-semibold">YouTube Settings</h4>
             <Form.Field
@@ -423,7 +429,7 @@ function PostForm() {
           <input name="youtubePrivacy" type="hidden" value="" />
         )}
 
-        {tiktokIsEnabled ? (
+        {tiktokIsEnabled && tiktokIsUsable ? (
           <section className="mb-4 rounded-xs bg-gray-200 p-2">
             <h4 className="mb-2 font-semibold">TikTok Settings</h4>
 
