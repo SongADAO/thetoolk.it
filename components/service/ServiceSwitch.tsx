@@ -110,7 +110,7 @@ function ServiceSwitch({
 
           {hasCredentials || hasAuthorizedAccounts ? (
             <Collapsible.Trigger
-              className="ml-4 flex size-10 cursor-pointer items-center justify-center rounded-xs border border-black bg-white text-black data-[clickable=true]:hover:bg-gray-200"
+              className="ml-4 flex size-10 cursor-pointer items-center justify-center rounded-xs border border-gray-400 border-r-black border-b-black bg-white text-black data-[clickable=true]:hover:bg-black data-[clickable=true]:hover:text-white"
               data-clickable={needsCredentials ? "false" : "true"}
               disabled={needsCredentials}
             >
