@@ -61,6 +61,10 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
 
   const hasUnauthorizedPostServices = unauthorizedPostServices.length > 0;
 
+  const hasPostPlatform = postPlatformsArray.some(
+    (platform) => platform.isEnabled && platform.isUsable,
+  );
+
   function resetPostState(): void {
     postPlatformsArray.forEach((platform) => platform.resetProcessState());
   }
@@ -81,7 +85,7 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     (platform) => platform.isEnabled && !platform.isUsable,
   );
 
-  const hasUnauthorizeStorageServices = unauthorizedStorageServices.length > 0;
+  const hasUnauthorizedStorageServices = unauthorizedStorageServices.length > 0;
 
   const hasStoragePlatform = storagePlatformsArray.some(
     (platform) => platform.isEnabled && platform.isUsable,
@@ -118,8 +122,12 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
   async function preparePostVideo(
     video: File,
   ): Promise<Record<string, PostVideo>> {
+    if (!hasPostPlatform) {
+      throw new Error("You must enable at least one posting service.");
+    }
+
     if (!hasStoragePlatform) {
-      throw new Error("You must enable a storage provider.");
+      throw new Error("You must enable at least one storage provider.");
     }
 
     if (needsS3 && !storagePlatforms.amazons3.isUsable) {
@@ -345,8 +353,10 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     () => ({
       createPost,
       getVideoInfo,
+      hasPostPlatform,
+      hasStoragePlatform,
       hasUnauthorizedPostServices,
-      hasUnauthorizeStorageServices,
+      hasUnauthorizedStorageServices,
       hlsConversionError,
       hlsConversionProgress,
       hlsConversionStatus,
@@ -373,8 +383,10 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      hasPostPlatform,
+      hasStoragePlatform,
       hasUnauthorizedPostServices,
-      hasUnauthorizeStorageServices,
+      hasUnauthorizedStorageServices,
       hlsConversionError,
       hlsConversionProgress,
       hlsConversionStatus,

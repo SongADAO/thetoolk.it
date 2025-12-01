@@ -131,8 +131,10 @@ function PostForm() {
   const {
     createPost,
     getVideoInfo,
+    hasPostPlatform,
+    hasStoragePlatform,
     hasUnauthorizedPostServices,
-    hasUnauthorizeStorageServices,
+    hasUnauthorizedStorageServices,
     hlsConversionProgress,
     hlsConversionStatus,
     isHLSConverting,
@@ -200,7 +202,7 @@ function PostForm() {
         throw new Error("Some selected posting services are not authorized.");
       }
 
-      if (hasUnauthorizeStorageServices) {
+      if (hasUnauthorizedStorageServices) {
         throw new Error("Some selected storage services are not authorized.");
       }
 
@@ -231,7 +233,11 @@ function PostForm() {
 
   // Check if we should disable the form
   const isFormDisabled =
-    isPending || hasUnauthorizedPostServices || hasUnauthorizeStorageServices;
+    isPending ||
+    hasUnauthorizedPostServices ||
+    hasUnauthorizedStorageServices ||
+    !hasPostPlatform ||
+    !hasStoragePlatform;
 
   return (
     <div className="relative">
@@ -842,7 +848,19 @@ function PostForm() {
           </p>
         ) : null}
 
-        {hasUnauthorizedPostServices || hasUnauthorizeStorageServices ? (
+        {hasPostPlatform ? null : (
+          <p className="mb-4 rounded-xs bg-red-800 p-2 text-center text-white">
+            You must enable at least one posting service.
+          </p>
+        )}
+
+        {hasStoragePlatform ? null : (
+          <p className="mb-4 rounded-xs bg-red-800 p-2 text-center text-white">
+            You must enable at least one storage service.
+          </p>
+        )}
+
+        {hasUnauthorizedPostServices || hasUnauthorizedStorageServices ? (
           <>
             <ModalOverlay />
             <div className="absolute top-0 right-0 bottom-0 left-0 z-20">
@@ -867,7 +885,7 @@ function PostForm() {
                 </div>
               ) : null}
 
-              {hasUnauthorizeStorageServices ? (
+              {hasUnauthorizedStorageServices ? (
                 <div className="mb-4 space-y-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-white p-2 text-black shadow-lg">
                   <div className="text-center">
                     <p>Some storage services are not configured.</p>

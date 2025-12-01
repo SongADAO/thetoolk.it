@@ -28,12 +28,12 @@ interface CreatePlatformPostProps extends CreatePostProps {
 }
 
 interface CreatePostContextType {
-  unauthorizedPostServices: PostServiceContextType[];
-  hasUnauthorizedPostServices: boolean;
-  unauthorizedStorageServices: PostServiceContextType[];
-  hasUnauthorizeStorageServices: boolean;
   createPost: (params: CreatePostProps) => Promise<void>;
   getVideoInfo: (video: File | null) => void;
+  hasPostPlatform: boolean;
+  hasStoragePlatform: boolean;
+  hasUnauthorizedPostServices: boolean;
+  hasUnauthorizedStorageServices: boolean;
   hlsConversionError: string | null;
   hlsConversionProgress: number;
   hlsConversionStatus: string;
@@ -45,6 +45,8 @@ interface CreatePostContextType {
   preparePostVideo: (selectedFile: File) => Promise<Record<string, PostVideo>>;
   resetPostState: () => void;
   resetStoreState: () => void;
+  unauthorizedPostServices: PostServiceContextType[];
+  unauthorizedStorageServices: PostServiceContextType[];
   videoCodecInfo: string;
   videoConversionError: string | null;
   videoConversionProgress: number;
@@ -58,10 +60,12 @@ interface CreatePostContextType {
 }
 
 const CreatePostContext = createContext<CreatePostContextType>({
-  canPostToAllServices: false,
-  canStoreToAllServices: false,
   createPost: async () => {},
   getVideoInfo: () => {},
+  hasPostPlatform: false,
+  hasStoragePlatform: false,
+  hasUnauthorizedPostServices: false,
+  hasUnauthorizedStorageServices: false,
   hlsConversionError: null,
   hlsConversionProgress: 0,
   hlsConversionStatus: "",
@@ -80,6 +84,8 @@ const CreatePostContext = createContext<CreatePostContextType>({
     }),
   resetPostState: () => {},
   resetStoreState: () => {},
+  unauthorizedPostServices: [],
+  unauthorizedStorageServices: [],
   videoCodecInfo: "",
   videoConversionError: null,
   videoConversionProgress: 0,
