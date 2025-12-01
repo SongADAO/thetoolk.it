@@ -88,8 +88,8 @@ function createServiceProvider(
 
     const isHostedWithCredsComplete = Boolean(
       mode === "server" &&
-        config.hasHostedCredentials &&
-        isCompleteOwnCredentials,
+      config.hasHostedCredentials &&
+      isCompleteOwnCredentials,
     );
 
     const isSelfComplete = Boolean(
@@ -98,8 +98,8 @@ function createServiceProvider(
 
     const isComplete = Boolean(
       isHostedWithoutCredsComplete ||
-        isHostedWithCredsComplete ||
-        isSelfComplete,
+      isHostedWithCredsComplete ||
+      isSelfComplete,
     );
 
     const isAuthorized = config.authModule.hasCompleteAuthorization(

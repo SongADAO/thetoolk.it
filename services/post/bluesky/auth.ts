@@ -94,8 +94,8 @@ function shouldHandleAuthCallback(searchParams: URLSearchParams): boolean {
 function shouldHandleAuthRedirect(searchParams: URLSearchParams): boolean {
   return Boolean(
     shouldHandleAuthCallback(searchParams) &&
-      searchParams.get("code") &&
-      searchParams.get("state"),
+    searchParams.get("code") &&
+    searchParams.get("state"),
   );
 }
 
