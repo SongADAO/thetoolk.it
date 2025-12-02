@@ -4,7 +4,11 @@ import { LinkButtonMenu } from "@/components/general/LinkButtonMenu";
 
 function InstructionsButton() {
   return (
-    <LinkButtonMenu href="/instructions" target="_blank" title="Instructions">
+    <LinkButtonMenu
+      href="/instructions/free"
+      target="_blank"
+      title="Instructions"
+    >
       <FaCircleQuestion className="size-6" />
     </LinkButtonMenu>
   );
