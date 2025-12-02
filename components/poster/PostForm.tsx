@@ -331,46 +331,49 @@ function PostForm() {
         </Form.Field>
 
         {/* {facebookIsEnabled && facebookIsUsable ? (
-          <Form.Field
-            className="mb-4 flex flex-col"
-            key="facebookPrivacy"
-            name="facebookPrivacy"
-          >
-            <Form.Label className="mb-2 font-semibold">
-              Facebook Privacy Settings
-            </Form.Label>
-            <Form.Control
-              asChild
-              className="w-full rounded-xs text-black"
-              disabled={isFormDisabled}
-              required
-              title="Facebook Privacy"
-              value={state.facebookPrivacy}
+          <section className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 p-2">
+            <h4 className="mb-2 font-semibold">Facebook Settings</h4>
+            <Form.Field
+              className="mb-4 flex flex-col"
+              key="facebookPrivacy"
+              name="facebookPrivacy"
             >
-              <select
-                onInput={(e: ChangeEvent<HTMLSelectElement>) =>
-                  setState((prev) => ({
-                    ...prev,
-                    facebookPrivacy: e.target.value,
-                  }))
-                }
+              <Form.Label className="mb-2 font-semibold">
+                Who can view this video
+              </Form.Label>
+              <Form.Control
+                asChild
+                className="w-full rounded-xs text-black"
+                disabled={isFormDisabled}
+                required
+                title="Who can view this video"
+                value={state.facebookPrivacy}
               >
-                <option key="none" value="">
-                  Select Facebook Privacy Settings
-                </option>
-                {facebookPrivacyOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+                <select
+                  onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setState((prev) => ({
+                      ...prev,
+                      facebookPrivacy: e.target.value,
+                    }))
+                  }
+                >
+                  <option key="none" value="">
+                    Select Facebook Privacy Settings
                   </option>
-                ))}
-              </select>
-            </Form.Control>
-            <div>
-              <Form.Message match="valueMissing">
-                Missing Facebook Privacy Settings.
-              </Form.Message>
-            </div>
-          </Form.Field>
+                  {facebookPrivacyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </Form.Control>
+              <div>
+                <Form.Message match="valueMissing">
+                  Missing Facebook Privacy Settings.
+                </Form.Message>
+              </div>
+            </Form.Field>
+          </section>
         ) : (
           <Form.Field
             className="mb-4 flex flex-col"
@@ -382,7 +385,7 @@ function PostForm() {
         )} */}
 
         {youtubeIsEnabled && youtubeIsUsable ? (
-          <section className="mb-4 rounded-xs bg-gray-200 p-2">
+          <section className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 p-2">
             <h4 className="mb-2 font-semibold">YouTube Settings</h4>
             <Form.Field
               className="flex flex-col"
@@ -397,7 +400,7 @@ function PostForm() {
                 className="w-full rounded-xs text-black"
                 disabled={isFormDisabled}
                 required
-                title="YouTube Privacy"
+                title="Who can view this video"
                 value={state.youtubePrivacy}
               >
                 <select
@@ -430,7 +433,7 @@ function PostForm() {
         )}
 
         {tiktokIsEnabled && tiktokIsUsable ? (
-          <section className="mb-4 rounded-xs bg-gray-200 p-2">
+          <section className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 p-2">
             <h4 className="mb-2 font-semibold">TikTok Settings</h4>
 
             <Form.Field
@@ -475,7 +478,7 @@ function PostForm() {
             </Form.Field>
 
             {canTiktokComment || canTiktokDuet || canTiktokStitch ? (
-              <section className="mt-4 rounded-xs bg-gray-300 p-2">
+              <section className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2">
                 <h4 className="mb-2 font-semibold">Allow users to</h4>
                 <div className="flex gap-8">
                   {canTiktokComment ? (
@@ -588,7 +591,7 @@ function PostForm() {
 
             <section>
               <div>
-                <div className="mt-4 rounded-xs bg-gray-300 p-2">
+                <div className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2">
                   <Form.Field
                     className="mb-1 flex flex-row items-center gap-2"
                     key="tiktokDisclose"
@@ -618,7 +621,7 @@ function PostForm() {
                     </Form.Label>
                   </Form.Field>
                   {state.tiktokDisclose ? (
-                    <div className="mb-2 flex items-start gap-3 rounded-xs bg-blue-200 p-2 pl-3 text-sm">
+                    <div className="mb-2 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-blue-200 p-2 pl-3 text-sm">
                       <div>
                         <FaCircleExclamation className="size-5 text-blue-600" />
                       </div>
@@ -637,7 +640,7 @@ function PostForm() {
                 </div>
 
                 {state.tiktokDisclose ? (
-                  <div className="mt-4 rounded-xs bg-gray-300 p-2">
+                  <div className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2">
                     <Form.Field
                       className="mb-1 flex flex-row items-center gap-2"
                       key="tiktokDiscloseBrandSelf"
@@ -680,7 +683,7 @@ function PostForm() {
                 )}
 
                 {state.tiktokDisclose ? (
-                  <div className="mt-4 rounded-xs bg-gray-300 p-2">
+                  <div className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2">
                     <Form.Field
                       className="mb-1 flex flex-row items-center gap-2"
                       key="tiktokDiscloseBrandOther"
@@ -711,7 +714,7 @@ function PostForm() {
                     </Form.Field>
                     <p className="text-sm">
                       You are promoting another brand or a third party. This
-                      video will be classified sa Branded Content.
+                      video will be classified as Branded Content.
                     </p>
                   </div>
                 ) : (
@@ -725,7 +728,7 @@ function PostForm() {
             </section>
 
             {state.tiktokDisclose && state.tiktokDiscloseBrandOther ? (
-              <p className="mt-4 rounded-xs bg-gray-300 p-2 text-sm">
+              <p className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2 text-sm">
                 By posting, you agree to TikTok&apos;s{" "}
                 <Link
                   className="text-blue-800 underline"
@@ -745,7 +748,7 @@ function PostForm() {
                 .
               </p>
             ) : (
-              <p className="mt-4 rounded-xs bg-gray-300 p-2 text-sm">
+              <p className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2 text-sm">
                 By posting, you agree to TikTok&apos;s{" "}
                 <Link
                   className="text-blue-800 underline"
