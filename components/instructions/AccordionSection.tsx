@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { FaAngleDown } from "react-icons/fa6";
 
 interface AccordionSectionProps {
   readonly title: string;
@@ -25,7 +26,7 @@ function AccordionSection({
           className="transform text-2xl text-gray-600 transition-transform duration-200"
           style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
         >
-          ▼
+          <FaAngleDown />
         </span>
       </button>
       {isOpen ? (
