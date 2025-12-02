@@ -13,8 +13,10 @@ export const metadata: Metadata = {
 
 export default function InstructionsPage() {
   return (
-    <div className="bg-gray-50">
-      <Instructions />
+    <div className="flex items-center justify-center p-4 md:py-20">
+      <div className="w-full">
+        <Instructions />
+      </div>
     </div>
   );
 }
