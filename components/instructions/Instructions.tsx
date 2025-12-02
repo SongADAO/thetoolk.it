@@ -331,7 +331,7 @@ function Instructions() {
                 <li>
                   Click on <strong>SIWN</strong> and enter{" "}
                   <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                    https://www.thetoolk.it
+                    https://free.thetoolk.it
                   </code>{" "}
                   under <strong>Authorized origins</strong>
                   <ScreenshotButton
@@ -505,7 +505,7 @@ function Instructions() {
                     <li>
                       Enter the redirect url:{" "}
                       <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                        https://www.thetoolk.it/authorize
+                        https://free.thetoolk.it/authorize
                       </code>{" "}
                       and hit <strong>Save</strong>
                     </li>
@@ -576,7 +576,7 @@ function Instructions() {
                         <li>
                           Set App domains to:{" "}
                           <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                            https://www.thetoolk.it
+                            https://free.thetoolk.it
                           </code>
                         </li>
                         <li>
@@ -584,7 +584,7 @@ function Instructions() {
                           <strong>Data deletion callback URL</strong>, then set
                           it to:{" "}
                           <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                            https://www.thetoolk.it/data-delete
+                            https://free.thetoolk.it/data-delete
                           </code>
                           <ScreenshotButton
                             altText="Switch User data deletion to Data deletion callback URL"
@@ -741,20 +741,20 @@ function Instructions() {
                     <li>
                       Set Redirect Callback URLs to:{" "}
                       <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                        https://www.thetoolk.it/authorize
+                        https://free.thetoolk.it/authorize
                       </code>{" "}
                       (make sure to hit Enter)
                     </li>
                     <li>
                       Set Uninstall Callback URL to:{" "}
                       <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                        https://www.thetoolk.it/deauthorize
+                        https://free.thetoolk.it/deauthorize
                       </code>
                     </li>
                     <li>
                       Set Delete Callback URL to:{" "}
                       <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                        https://www.thetoolk.it/delete-data
+                        https://free.thetoolk.it/delete-data
                       </code>
                     </li>
                     <li>
@@ -909,7 +909,7 @@ function Instructions() {
                         <li>
                           Set App domains to:{" "}
                           <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                            https://www.thetoolk.it
+                            https://free.thetoolk.it
                           </code>
                           <ScreenshotButton
                             altText="Set App domains to www.thetoolk.it"
@@ -921,7 +921,7 @@ function Instructions() {
                           <strong>Data deletion callback URL</strong>, then set
                           it to:{" "}
                           <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                            https://www.thetoolk.it/data-delete
+                            https://free.thetoolk.it/data-delete
                           </code>
                         </li>
                       </ul>
@@ -931,7 +931,7 @@ function Instructions() {
                       then <strong>Settings</strong>. Under{" "}
                       <strong>Valid OAuth Redirect URIs</strong> enter:{" "}
                       <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                        https://www.thetoolk.it/authorize
+                        https://free.thetoolk.it/authorize
                       </code>
                       <ScreenshotButton
                         altText="Click Facebook Login for Business and enter Valid OAuth Redirect URIs"
@@ -1030,13 +1030,13 @@ function Instructions() {
                     <li>
                       Callback URL:{" "}
                       <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                        https://www.thetoolk.it/authorize
+                        https://free.thetoolk.it/authorize
                       </code>
                     </li>
                     <li>
                       Website URL:{" "}
                       <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                        https://www.thetoolk.it
+                        https://free.thetoolk.it
                       </code>
                     </li>
                   </ul>
@@ -1168,14 +1168,14 @@ function Instructions() {
                   Click <strong>+Add URI</strong> for Authorized JavaScript
                   origins and enter:{" "}
                   <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                    https://www.thetoolk.it
+                    https://free.thetoolk.it
                   </code>
                 </li>
                 <li>
                   Click <strong>+Add URI</strong> for Authorized redirect URIs
                   and enter:{" "}
                   <code className="rounded-xs bg-gray-100 px-2 py-1 text-sm">
-                    https://www.thetoolk.it/authorize
+                    https://free.thetoolk.it/authorize
                   </code>
                 </li>
                 <li>
