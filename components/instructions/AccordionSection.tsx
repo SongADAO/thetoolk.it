@@ -23,8 +23,8 @@ function AccordionSection({
       >
         <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
         <span
-          className="transform text-2xl text-gray-600 transition-transform duration-200"
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+          className="transform text-2xl text-gray-600 transition-transform duration-200 data-[open=true]:rotate-180"
+          data-open={isOpen}
         >
           <FaAngleDown />
         </span>
