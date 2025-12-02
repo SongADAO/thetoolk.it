@@ -23,7 +23,9 @@ function Instructions() {
     <div className="mx-auto max-w-2xl space-y-8">
       <Box>
         <BoxHeader>
-          <h1 className="font-bold">TheToolkit Setup Instructions</h1>
+          <h1 className="font-bold">
+            TheToolk.it Free Edition Setup Instructions
+          </h1>
         </BoxHeader>
         <BoxMain>
           {/* Welcome Section */}
@@ -50,7 +52,7 @@ function Instructions() {
               </p>
               <p className="text-gray-700">
                 Keep in mind, we don&apos;t get access to any of your API keys
-                or credentials for any of these sites; they are saved locally on
+                or credentials for any of these sites; they are saved locally in
                 your browser.
               </p>
             </div>
@@ -62,22 +64,22 @@ function Instructions() {
               Roadmap
             </h2>
             <div className="space-y-4">
-              <div>
+              {/* <div>
                 <h3 className="mb-2 font-medium text-gray-700">Paid Version</h3>
                 <p className="text-gray-600">
                   If there&apos;s enough demand, we may offer a paid version
                   that handles all API credentials for you—no setup required.
                 </p>
-              </div>
+              </div> */}
 
-              <div>
+              {/* <div>
                 <h3 className="mb-2 font-medium text-gray-700">TikTok</h3>
                 <p className="text-gray-600">
                   We&apos;re waiting for TikTok API access approval. Once
                   approved, we&apos;ll update these instructions with steps to
                   get your own access.
                 </p>
-              </div>
+              </div> */}
 
               <div>
                 <h3 className="mb-2 font-medium text-gray-700">
