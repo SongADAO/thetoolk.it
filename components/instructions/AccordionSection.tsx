@@ -16,7 +16,7 @@ function AccordionSection({
   return (
     <section className="mb-4">
       <button
-        className="flex w-full items-center justify-between rounded-t-lg border border-gray-300 bg-gray-100 p-4 text-left hover:bg-gray-200"
+        className="flex w-full items-center justify-between rounded-t-xs border border-gray-300 bg-gray-100 p-4 text-left hover:bg-gray-200"
         onClick={onToggle}
         type="button"
       >
@@ -29,7 +29,7 @@ function AccordionSection({
         </span>
       </button>
       {isOpen ? (
-        <div className="rounded-b-lg border-x border-b border-gray-300 bg-white p-6">
+        <div className="rounded-b-xs border-x border-b border-gray-300 bg-white p-6">
           {children}
         </div>
       ) : null}
