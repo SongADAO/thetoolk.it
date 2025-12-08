@@ -55,18 +55,20 @@ export default function Home() {
             </div>
           </section>
 
-          <div className="mt-10 bg-yellow-100 p-4">
+          <div className="mt-10 max-w-160 bg-yellow-100 p-4">
             <p className="mb-4 text-left font-semibold">
               TheToolk.it Free Edition
             </p>
             <p className="mb-4 text-left">
               TheToolk.it Pro requires zero API setup for all posting services
               offered. All API setup and any file storage costs are part of your
-              plan. For the more technically inclined we also offer a
-              TheToolk.it Free Edition. This version runs in your browser and
-              requires you to setup the service APIs yourself. Setup
-              instructions for each API can be found on TheToolk.it Feed
-              Edition&apos;s page by clicking the instruction buttons.
+              plan.
+            </p>
+            <p className="mb-4 text-left">
+              For the more technically inclined we also offer{" "}
+              <strong>TheToolk.it Free Edition</strong>. The free edition runs
+              in your browser and requires you to provide your own API keys for
+              posting and storage services.
             </p>
             <p className="text-left">
               <LinkButton href="https://free.thetoolk.it" target="_blank">
