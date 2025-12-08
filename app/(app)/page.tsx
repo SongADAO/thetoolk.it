@@ -15,9 +15,11 @@ export default function Home() {
         <div className="flex max-w-130 items-center justify-center md:m-auto lg:max-w-160">
           <Link href="/pro">
             <img
-              alt="TheToolk.it Pro Screenshot"
+              alt="A screenshot of TheToolk.it Pro"
               className="h-auto w-full rounded-xs border border-gray-400 border-r-black border-b-black shadow-lg contain-paint"
-              src="/home-screenshot.webp"
+              height="1470"
+              src="/thetoolkit-preview.webp"
+              width="2688"
             />
           </Link>
         </div>
