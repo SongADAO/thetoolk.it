@@ -38,7 +38,7 @@ export default function Home() {
               </ul>
               <ul className="list-disc pl-5">
                 <li>
-                  TikTok <em>(pro only)</em>
+                  TikTok <em className="font-semibold">(pro only)</em>
                 </li>
                 <li>Threads</li>
                 <li>X (Twitter)</li>
