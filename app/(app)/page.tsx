@@ -24,8 +24,8 @@ export default function Home() {
         <section>
           <h1 className="mb-4 text-4xl font-bold">TheToolk.it</h1>
           <p className="mb-4">
-            TheToolk.it Pro is your one place to post videos to all your
-            favorite social media networks at once.
+            TheToolk.it is your one place to post videos to all your favorite
+            social media networks at once.
           </p>
           <section className="mb-4">
             <h2 className="mb-2 font-semibold">Supported Networks</h2>
@@ -37,7 +37,9 @@ export default function Home() {
                 <li>Instagram</li>
               </ul>
               <ul className="list-disc pl-5">
-                <li>TikTok</li>
+                <li>
+                  TikTok <em>(pro only)</em>
+                </li>
                 <li>Threads</li>
                 <li>X (Twitter)</li>
                 <li>YouTube</li>
@@ -50,6 +52,26 @@ export default function Home() {
               <LinkButton href="/pro">Access TheToolk.it Pro</LinkButton>
             </div>
           </section>
+
+          <div className="mt-10 bg-yellow-100 p-4">
+            <p className="mb-4 text-left font-semibold">
+              TheToolk.it Free Edition
+            </p>
+            <p className="mb-4 text-left">
+              TheToolk.it Pro requires zero API setup for all posting services
+              offered. All API setup and any file storage costs are part of your
+              plan. For the more technically inclined we also offer a
+              TheToolk.it Free Edition. This version runs in your browser and
+              requires you to setup the service APIs yourself. Setup
+              instructions for each API can be found on TheToolk.it Feed
+              Edition&apos;s page by clicking the instruction buttons.
+            </p>
+            <p className="text-left">
+              <LinkButton href="https://free.thetoolk.it" target="_blank">
+                Try TheToolk.it Free Edition
+              </LinkButton>
+            </p>
+          </div>
         </section>
       </div>
     </div>

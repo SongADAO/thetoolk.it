@@ -51,8 +51,10 @@ function UpgradeModal() {
             </p>
           </section>
 
-          <div className="mt-10">
-            <p className="mb-4 text-center">Not ready to subscribe?</p>
+          <div className="mt-6 bg-yellow-100 p-4">
+            <p className="mb-4 text-center font-semibold">
+              Not ready to subscribe?
+            </p>
             <p className="text-center">
               <LinkButton href="https://free.thetoolk.it" target="_blank">
                 Try TheToolk.it Free Edition
@@ -101,6 +103,17 @@ function UpgradeModal() {
               />
             </div>
           </section>
+
+          <div className="mt-6 bg-yellow-100 p-4">
+            <p className="mb-4 text-center font-semibold">
+              Not ready to subscribe?
+            </p>
+            <p className="text-center">
+              <LinkButton href="https://free.thetoolk.it" target="_blank">
+                Try TheToolk.it Free Edition
+              </LinkButton>
+            </p>
+          </div>
         </section>
       </div>
     </div>
