@@ -17,7 +17,7 @@ export default function SignUpPage() {
         <h1 className="mx-auto mb-4 max-w-md text-2xl font-bold">
           Create an Account
         </h1>
-        <div>TheToolk.it Pro is launching soon!</div>
+        <div className="text-center">TheToolk.it Pro is launching soon!</div>
         {/* <SignUpForm /> */}
 
         <section className="mt-8 text-center">
