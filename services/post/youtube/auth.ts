@@ -268,7 +268,6 @@ async function exchangeCodeForTokens(
   }
 
   const tokens = await response.json();
-  console.log(tokens);
 
   return {
     authorization: formatTokens(tokens),
@@ -354,7 +353,6 @@ async function refreshAccessToken(
   }
 
   const tokens = await response.json();
-  console.log(tokens);
 
   // The refresh token doesn't change, but is also not in the returned data,
   // so we copy over the existing one.

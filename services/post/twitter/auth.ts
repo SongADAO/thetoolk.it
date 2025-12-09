@@ -267,7 +267,6 @@ async function exchangeCodeForTokens(
   }
 
   const tokens = await response.json();
-  console.log(tokens);
 
   return {
     authorization: formatTokens(tokens),
@@ -355,7 +354,6 @@ async function refreshAccessToken(
   }
 
   const tokens = await response.json();
-  console.log(tokens);
 
   return {
     authorization: formatTokens(tokens),
