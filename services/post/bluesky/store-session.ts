@@ -10,24 +10,16 @@ import {
 } from "@/lib/supabase/service";
 
 interface SupabaseSessionStoreProps {
-  supabase: SupabaseClient;
   supabaseAdmin: SupabaseClient;
   user: User;
 }
 
 class SupabaseSessionStore implements NodeSavedSessionStore {
-  private readonly supabase: SupabaseClient;
-
   private readonly supabaseAdmin: SupabaseClient;
 
   private readonly user: User;
 
-  public constructor({
-    supabase,
-    supabaseAdmin,
-    user,
-  }: SupabaseSessionStoreProps) {
-    this.supabase = supabase;
+  public constructor({ supabaseAdmin, user }: SupabaseSessionStoreProps) {
     this.supabaseAdmin = supabaseAdmin;
     this.user = user;
   }
@@ -49,7 +41,6 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
       serviceAuthorization,
       serviceExpiration,
       serviceId: "bluesky",
-      supabase: this.supabase,
       supabaseAdmin: this.supabaseAdmin,
       user: this.user,
     });
@@ -59,7 +50,6 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
   public async get(key: string): Promise<NodeSavedSession | undefined> {
     const authorization = await getServiceAuthorizationAndExpiration({
       serviceId: "bluesky",
-      supabase: this.supabase,
       supabaseAdmin: this.supabaseAdmin,
       user: this.user,
     });
@@ -69,7 +59,7 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/class-methods-use-this, @typescript-eslint/require-await
   public async del(key: string): Promise<void> {
-    // const { error } = await this.supabase
+    // const { error } = await this.supabaseAdmin
     //   .from("services")
     //   .delete()
     //   // .eq("key", key)

@@ -5,24 +5,16 @@ import type {
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 interface SupabaseStateStoreProps {
-  // supabase: SupabaseClient;
   supabaseAdmin: SupabaseClient;
   user: User;
 }
 
 class SupabaseStateStore implements NodeSavedStateStore {
-  // private readonly supabase: SupabaseClient;
-
   private readonly supabaseAdmin: SupabaseClient;
 
   private readonly user: User;
 
-  public constructor({
-    // supabase,
-    supabaseAdmin,
-    user,
-  }: SupabaseStateStoreProps) {
-    // this.supabase = supabase;
+  public constructor({ supabaseAdmin, user }: SupabaseStateStoreProps) {
     this.supabaseAdmin = supabaseAdmin;
     this.user = user;
   }

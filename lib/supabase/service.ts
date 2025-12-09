@@ -15,14 +15,12 @@ interface ServiceAuthorization {
 
 interface GetServiceAuthorization {
   serviceId: string;
-  supabase: SupabaseClient;
   supabaseAdmin: SupabaseClient;
   user: User;
 }
 
 async function getServiceAuthorizationAndExpiration({
   serviceId,
-  supabase,
   supabaseAdmin,
   user,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,7 +51,7 @@ async function getServiceAuthorizationAndExpiration({
           encryptionKey,
         );
 
-  const { data: dataExpiration, error: errorExpiration } = await supabase
+  const { data: dataExpiration, error: errorExpiration } = await supabaseAdmin
     .from("services")
     .select("service_expiration")
     .eq("user_id", user.id)
@@ -80,7 +78,6 @@ interface UpdateServiceAuthorization {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceExpiration: any;
   serviceId: string;
-  supabase: SupabaseClient;
   supabaseAdmin: SupabaseClient;
   user: User;
 }
@@ -89,7 +86,6 @@ async function updateServiceAuthorization({
   serviceAuthorization,
   serviceExpiration,
   serviceId,
-  supabase,
   supabaseAdmin,
   user,
 }: UpdateServiceAuthorization): Promise<void> {
@@ -117,7 +113,7 @@ async function updateServiceAuthorization({
     throw new Error("Could not update service authorization");
   }
 
-  const { error: errorServices } = await supabase.from("services").upsert(
+  const { error: errorServices } = await supabaseAdmin.from("services").upsert(
     {
       service_expiration: serviceExpiration,
       service_id: serviceId,
@@ -137,17 +133,17 @@ interface UpdateServiceAccounts {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceAccounts: any;
   serviceId: string;
-  supabase: SupabaseClient;
+  supabaseAdmin: SupabaseClient;
   user: User;
 }
 
 async function updateServiceAccounts({
   serviceAccounts,
   serviceId,
-  supabase,
+  supabaseAdmin,
   user,
 }: UpdateServiceAccounts): Promise<void> {
-  const { error } = await supabase.from("services").upsert(
+  const { error } = await supabaseAdmin.from("services").upsert(
     {
       service_accounts: serviceAccounts,
       service_id: serviceId,
@@ -171,7 +167,6 @@ interface UpdateServiceAuthorizationAndAccounts {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceExpiration: any;
   serviceId: string;
-  supabase: SupabaseClient;
   supabaseAdmin: SupabaseClient;
   user: User;
 }
@@ -181,7 +176,6 @@ async function updateServiceAuthorizationAndAccounts({
   serviceAuthorization,
   serviceExpiration,
   serviceId,
-  supabase,
   supabaseAdmin,
   user,
 }: UpdateServiceAuthorizationAndAccounts): Promise<void> {
@@ -209,7 +203,7 @@ async function updateServiceAuthorizationAndAccounts({
     throw new Error("Could not update service authorization");
   }
 
-  const { error: errorServices } = await supabase.from("services").upsert(
+  const { error: errorServices } = await supabaseAdmin.from("services").upsert(
     {
       service_accounts: serviceAccounts,
       service_expiration: serviceExpiration,
