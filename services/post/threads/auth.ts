@@ -258,7 +258,6 @@ async function exchangeCodeForTokens(
   }
 
   const tokens = await response.json();
-  console.log(tokens);
 
   // Get long-lived token
   const longLivedParams = new URLSearchParams({
@@ -362,7 +361,6 @@ async function refreshAccessToken(
   }
 
   const tokens = await response.json();
-  console.log(tokens);
 
   return {
     authorization: formatTokens(tokens),
