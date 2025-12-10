@@ -129,7 +129,12 @@ function formatExpiration(tokens: GoogleTokenResponse): OauthExpiration {
   const expiresIn = tokens.expires_in * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
 
-  const refreshExpiresIn = tokens.refresh_token_expires_in * 1000;
+  // Dev Refresh Tokens have a short lifespan.
+  // Production Refresh Tokens have a lifetime lifespan.
+  const refreshExpiresIn = tokens.refresh_token_expires_in
+    ? tokens.refresh_token_expires_in * 1000
+    : 10 * 365 * 24 * 60 * 60 * 1000;
+
   const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   return {
