@@ -383,19 +383,27 @@ async function getCreatorInfo(
       : "/api/browser/tiktok/v2/post/publish/creator_info/query/";
 
   // Fetch creator info
-  const creatorResponse = await fetch(endpoint, {
+  const response = await fetch(endpoint, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
     method: "POST",
   });
 
-  if (!creatorResponse.ok) {
-    const errorText = await creatorResponse.text();
+  if (!response.ok) {
+    const errorText = await response.text();
     throw new Error(`Failed to get Tiktok creator info: ${errorText}`);
   }
 
-  return await creatorResponse.json();
+  const creatorInfo = await response.json();
+
+  if (creatorInfo.error.code !== "ok") {
+    throw new Error(
+      creatorInfo.error.message ?? "Failed to get Tiktok user info",
+    );
+  }
+
+  return creatorInfo;
 }
 
 async function getUserInfo(token: string): Promise<TikTokUserInfoResponse> {
@@ -457,6 +465,7 @@ export {
   getAuthorizationUrl,
   getAuthorizationUrlHosted,
   getAuthorizeUrl,
+  getCreatorInfo,
   getCredentialsId,
   getRedirectUri,
   getRedirectUriHosted,

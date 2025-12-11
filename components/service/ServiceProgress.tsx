@@ -75,7 +75,7 @@ function ServiceProgress({
 
   return (
     <div
-      className={`group relative rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 font-semibold data-[has-error=true]:text-shadow-xs data-[is-complete=true]:text-shadow-xs data-[is-processing=true]:text-shadow-xs text-brand-${brandColor} contain-paint data-[has-error=true]:bg-red-800 data-[has-error=true]:text-white data-[is-complete=true]:bg-green-800 data-[is-complete=true]:text-white data-[is-processing=true]:bg-gray-600 data-[is-processing=true]:text-white`}
+      className={`group relative rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 font-semibold data-[has-error=true]:text-shadow-xs data-[is-complete=true]:text-shadow-xs data-[is-processing=true]:text-shadow-xs text-brand-${brandColor} wrap-anywhere contain-paint data-[has-error=true]:bg-red-800 data-[has-error=true]:text-white data-[is-complete=true]:bg-green-800 data-[is-complete=true]:text-white data-[is-processing=true]:bg-gray-600 data-[is-processing=true]:text-white`}
       data-has-error={hasError ? "true" : "false"}
       data-is-complete={isProcessComplete ? "true" : "false"}
       data-is-processing={showProgress ? "true" : "false"}
