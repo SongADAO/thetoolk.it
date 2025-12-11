@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { Form } from "radix-ui";
-import { type ChangeEvent, type FormEvent, use, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type FormEvent,
+  use,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
 
 import { ModalOverlay } from "@/components/general/ModalOverlay";
@@ -244,6 +251,16 @@ function PostForm() {
     hasUnauthorizedStorageServices ||
     !hasPostPlatform ||
     !hasStoragePlatform;
+
+  useEffect(() => {
+    if (state.tiktokPrivacy === "SELF_ONLY") {
+      setState((prev) => ({
+        ...prev,
+        tiktokDiscloseBrandOther: false,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.tiktokPrivacy]);
 
   return (
     <div className="relative">
@@ -685,7 +702,8 @@ function PostForm() {
                 {state.tiktokDisclose ? (
                   <div className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2">
                     <Form.Field
-                      className="mb-1 flex flex-row items-center gap-2"
+                      className="mb-1 flex flex-row items-center gap-2 data-[disabled=true]:opacity-50"
+                      data-disabled={state.tiktokPrivacy === "SELF_ONLY"}
                       key="tiktokDiscloseBrandOther"
                       name="tiktokDiscloseBrandOther"
                     >
@@ -693,7 +711,10 @@ function PostForm() {
                         <input
                           checked={state.tiktokDiscloseBrandOther}
                           className="h-4 w-4 rounded"
-                          disabled={isFormDisabled}
+                          disabled={
+                            isFormDisabled ||
+                            state.tiktokPrivacy === "SELF_ONLY"
+                          }
                           id="tiktokDiscloseBrandOther"
                           onChange={(e: ChangeEvent<HTMLInputElement>) =>
                             setState((prev) => ({
@@ -712,6 +733,19 @@ function PostForm() {
                         Branded content
                       </Form.Label>
                     </Form.Field>
+                    {state.tiktokPrivacy === "SELF_ONLY" ? (
+                      <div className="mb-2 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-blue-200 p-2 pl-3 text-sm">
+                        <div>
+                          <FaCircleExclamation className="size-5 text-blue-600" />
+                        </div>
+                        <p className="text-sm">
+                          Branded content is not available for content with a
+                          privacy setting of &quot;Only You&quot;. To post
+                          branded content, please select &quot;Friends&quot; or
+                          &quot;Followers&quot; in the privacy settings above.
+                        </p>
+                      </div>
+                    ) : null}
                     <p className="text-sm">
                       You are promoting another brand or a third party. This
                       video will be classified as Branded Content.

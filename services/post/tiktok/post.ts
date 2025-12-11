@@ -92,9 +92,14 @@ async function uploadVideo({
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(
-      `Video publish failed: ${errorData?.details?.error?.code ?? 0} - ${errorData?.details?.error?.message ?? response.statusText}`,
-    );
+
+    if (accessToken === "server") {
+      throw new Error(`${errorData.error.message ?? response.statusText}`);
+    } else {
+      throw new Error(
+        `Video publish failed: ${errorData?.error?.code ?? 0} - ${errorData?.error?.message ?? response.statusText}`,
+      );
+    }
   }
 
   const result = await response.json();
