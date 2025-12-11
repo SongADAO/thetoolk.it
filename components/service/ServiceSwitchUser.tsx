@@ -15,7 +15,7 @@ function ServiceSwitchUser({
   authorizationExpiresAt,
 }: Readonly<Props>) {
   return (
-    <div className="flex items-center justify-between gap-2">
+    <div className="flex flex-wrap items-center justify-between gap-2">
       {accounts.map((account) => (
         <div className="flex items-center gap-1 text-sm" key={account.id}>
           <FaCircleUser className="size-4" /> {account.username}{" "}
