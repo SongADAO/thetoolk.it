@@ -136,7 +136,7 @@ async function getAuthorizationUrl(
   requestUrl: string,
 ): Promise<string> {
   try {
-    console.log("Starting OAuth flow for:", username);
+    console.log("Starting OAuth flow");
 
     const client = await getOAuthClient(sessionStore, stateStore, requestUrl);
 
@@ -145,7 +145,8 @@ async function getAuthorizationUrl(
       scope: SCOPES.join(" "),
     });
 
-    console.log("Authorization URL generated:", authUrl.toString());
+    console.log("Authorization URL generated");
+
     return authUrl.toString();
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Auth URL failed";

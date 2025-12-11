@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     const { username } = await request.json();
 
-    console.log("Generating authorization URL for user:", username);
+    console.log("Generating authorization URL for user.");
 
     const authUrl = await getAuthorizationUrl(
       username,

@@ -386,7 +386,6 @@ async function getUserInfo(
   }
 
   const userInfo = await response.json();
-  console.log("Twitter user info:", userInfo);
 
   return {
     id: userInfo.data.id,

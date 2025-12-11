@@ -278,7 +278,6 @@ async function exchangeCodeForTokens(
   }
 
   const longLivedTokens = await longLivedTokenResponse.json();
-  console.log(longLivedTokens);
 
   return {
     authorization: formatTokens(longLivedTokens),
@@ -388,7 +387,6 @@ async function getUserInfo(token: string): Promise<PostServiceAccount> {
   }
 
   const userInfo = await response.json();
-  console.log("Threads user info:", userInfo);
 
   return {
     id: userInfo.id,

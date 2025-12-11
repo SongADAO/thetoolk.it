@@ -140,7 +140,7 @@ async function getAuthorizationUrlHosted(
   credentials: OauthCredentials,
 ): Promise<string> {
   try {
-    console.log("Starting OAuth flow for:", credentials.username);
+    console.log("Starting OAuth flow");
 
     const response = await fetch("/api/hosted/bluesky/oauth/authorize", {
       body: JSON.stringify({
@@ -183,7 +183,7 @@ async function getAuthorizationUrl(
   requestUrl: string,
 ): Promise<string> {
   try {
-    console.log("Starting OAuth flow for:", credentials.username);
+    console.log("Starting OAuth flow");
 
     const client = await getOAuthClient(credentials, requestUrl);
 
@@ -192,7 +192,8 @@ async function getAuthorizationUrl(
       scope: SCOPES.join(" "),
     });
 
-    console.log("Authorization URL generated:", authUrl.toString());
+    console.log("Authorization URL generated");
+
     return authUrl.toString();
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Auth URL failed";
@@ -226,8 +227,6 @@ async function exchangeCodeForTokens(
     const { session } = await client.callback(
       new URLSearchParams({ code, iss, state }),
     );
-    console.log("OAuth session:", session);
-
     console.log("OAuth session created successfully");
 
     return {
@@ -297,7 +296,8 @@ async function refreshAccessToken(
 
     // Try to restore the session (this will refresh tokens if needed)
     const session = await client.restore(authorization.accessToken);
-    console.log("Refreshed session:", session);
+
+    console.log("OAuth session refreshed successfully");
 
     return {
       authorization: formatTokens(session),
@@ -320,8 +320,6 @@ async function getAccountsFromAgent(
 
     // Get the user's profile
     const profile = await agent.getProfile({ actor: accessToken });
-
-    console.log("User profile retrieved:", profile.data);
 
     return [
       {
