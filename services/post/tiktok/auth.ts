@@ -22,6 +22,25 @@ interface TiktokTokenResponse {
   token_type: string;
 }
 
+interface TikTokCreatorInfoResponse {
+  data: {
+    comment_disabled: boolean;
+    duet_disabled: boolean;
+    max_video_post_duration_sec: number;
+    privacy_level_options: string[];
+    stitch_disabled: boolean;
+  };
+}
+
+interface TikTokUserInfoResponse {
+  data: {
+    user: {
+      open_id: string;
+      display_name: string;
+    };
+  };
+}
+
 const HOSTED_CREDENTIALS: OauthCredentials = {
   clientId: String(process.env.NEXT_PUBLIC_TIKTOK_CLIENT_ID ?? ""),
   clientSecret: String(process.env.TIKTOK_CLIENT_SECRET ?? ""),
@@ -352,10 +371,34 @@ async function refreshAccessToken(
 
 // -----------------------------------------------------------------------------
 
-async function getUserInfo(
+async function getCreatorInfo(
   token: string,
   mode: "server" | "browser",
-): Promise<PostServiceAccount> {
+): Promise<TikTokCreatorInfoResponse> {
+  console.log(`Checking Tiktok creator info`);
+
+  const endpoint =
+    mode === "server"
+      ? "https://open.tiktokapis.com/v2/post/publish/creator_info/query/"
+      : "/api/browser/tiktok/v2/post/publish/creator_info/query/";
+
+  // Fetch creator info
+  const creatorResponse = await fetch(endpoint, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: "POST",
+  });
+
+  if (!creatorResponse.ok) {
+    const errorText = await creatorResponse.text();
+    throw new Error(`Failed to get Tiktok creator info: ${errorText}`);
+  }
+
+  return await creatorResponse.json();
+}
+
+async function getUserInfo(token: string): Promise<TikTokUserInfoResponse> {
   console.log(`Checking Tiktok user info`);
 
   const params = new URLSearchParams({
@@ -377,35 +420,7 @@ async function getUserInfo(
     throw new Error(`Failed to get Tiktok user info: ${errorText}`);
   }
 
-  const userInfo = await response.json();
-  console.log("Tiktok user info:", userInfo);
-
-  const endpoint =
-    mode === "server"
-      ? "https://open.tiktokapis.com/v2/post/publish/creator_info/query/"
-      : "/api/browser/tiktok/v2/post/publish/creator_info/query/";
-
-  // Fetch creator info
-  const creatorResponse = await fetch(endpoint, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    method: "POST",
-  });
-
-  if (!creatorResponse.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to get Tiktok creator info: ${errorText}`);
-  }
-
-  const creatorInfo = await creatorResponse.json();
-  console.log("Tiktok creator info:", creatorInfo);
-
-  return {
-    id: userInfo.data.user.open_id,
-    permissions: creatorInfo.data,
-    username: userInfo.data.user.display_name,
-  };
+  return await response.json();
 }
 
 async function getAccounts(
@@ -418,7 +433,14 @@ async function getAccounts(
 ): Promise<PostServiceAccount[]> {
   const accounts = [];
 
-  const account = await getUserInfo(token, mode);
+  const userInfo = await getUserInfo(token);
+  const creatorInfo = await getCreatorInfo(token, mode);
+
+  const account = {
+    id: userInfo.data.user.open_id,
+    permissions: creatorInfo.data,
+    username: userInfo.data.user.display_name,
+  };
 
   accounts.push(account);
 
