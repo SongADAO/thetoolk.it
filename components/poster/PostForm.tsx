@@ -741,8 +741,8 @@ function PostForm() {
                         <p className="text-sm">
                           Branded content is not available for content with a
                           privacy setting of &quot;Only You&quot;. To post
-                          branded content, please &quot;Friends&quot; or
-                          &quot;Followers&quot;.
+                          branded content, please select &quot;Friends&quot; or
+                          &quot;Followers&quot; in the privacy settings above.
                         </p>
                       </div>
                     ) : null}
