@@ -175,13 +175,10 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       loadFactors();
 
-      // console.log("Factor check");
-      // console.log(sessionUser?.factors?.length);
       // Check MFA level
       if (sessionUser?.factors?.length) {
         const { data: mfaData } =
           await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-        // console.log("MFA Data:", mfaData);
 
         setSessionAALNextLevel(mfaData?.nextLevel ?? "");
         setSessionAALCurrentLevel(mfaData?.currentLevel ?? "");
@@ -198,7 +195,7 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log("Initial session:", session);
+
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       updateUserData(session?.user ?? null);
     }
@@ -212,7 +209,6 @@ export function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       data: { subscription },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", { event, session });
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       updateUserData(session?.user ?? null);
     });

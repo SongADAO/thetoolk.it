@@ -68,10 +68,10 @@ export async function GET(request: NextRequest) {
       session.sub,
       getBaseUrlFromRequest(request),
     );
-    console.log("Created agent for user:", session.sub);
+    console.log("Created agent for user");
 
     const accounts = await getAccountsFromAgent(agent, session.sub);
-    console.log("Retrieved accounts from agent:", accounts);
+    console.log("Retrieved accounts from agent");
 
     await updateServiceAccounts({
       ...serverAuth,

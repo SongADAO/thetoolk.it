@@ -292,7 +292,6 @@ async function exchangeCodeForTokens(
   }
 
   const longLivedTokens = await longLivedTokenResponse.json();
-  console.log(longLivedTokens);
 
   return {
     authorization: formatTokens(longLivedTokens),
@@ -414,7 +413,6 @@ async function getFacebookPages(token: string): Promise<FacebookPage[]> {
   }
 
   const pagesData = await pagesResponse.json();
-  console.log("Pages data:", pagesData);
 
   if (!pagesData.data || pagesData.data.length === 0) {
     throw new Error(
@@ -430,7 +428,7 @@ async function getFacebookPages(token: string): Promise<FacebookPage[]> {
 async function getUserInfoFromPage(
   page: FacebookPage,
 ): Promise<PostServiceAccount> {
-  console.log(`Checking page: ${page.name} (ID: ${page.id})`);
+  console.log(`Checking page`);
 
   const params = new URLSearchParams({
     access_token: page.access_token,
@@ -447,8 +445,7 @@ async function getUserInfoFromPage(
     throw new Error(`Facebook account found but not accessible: ${page.name}:`);
   }
 
-  const testData = await testResponse.json();
-  console.log("✅ Facebook Account Details:", testData);
+  await testResponse.json();
 
   return {
     id: page.id,

@@ -30,7 +30,6 @@ function ServiceRedirectHandler({
     if (isLoading) {
       return;
     }
-    console.log("Loading", isLoading);
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleAuthRedirect(searchParams);

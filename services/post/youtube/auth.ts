@@ -404,7 +404,6 @@ async function getUserInfo(token: string): Promise<PostServiceAccount> {
   }
 
   const channel = data.items[0];
-  console.log("YouTube user info:", channel);
 
   return {
     id: channel.id,
