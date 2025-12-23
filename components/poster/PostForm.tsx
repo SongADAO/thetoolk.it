@@ -71,10 +71,24 @@ function PostForm() {
   // Post services
   // ---------------------------------------------------------------------------
   const postPlatforms = Object.fromEntries(
-    POST_CONTEXTS.filter((context) => context.hasPostFields).map(
-      ({ context, id }) => [id, use(context)],
-    ),
+    POST_CONTEXTS.map(({ context, id }) => [id, use(context)]),
   );
+
+  const blueskyIsEnabled = postPlatforms.bluesky.isEnabled;
+  const facebookIsEnabled = postPlatforms.facebook.isEnabled;
+  // const neynarIsEnabled = postPlatforms.neynar.isEnabled;
+  // const threadsIsEnabled = postPlatforms.threads.isEnabled;
+  const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
+  // const twitterIsEnabled = postPlatforms.twitter.isEnabled;
+  const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
+
+  // const facebookIsUsable = postPlatforms.facebook.isUsable;
+  const tiktokIsUsable = postPlatforms.tiktok.isUsable;
+  const youtubeIsUsable = postPlatforms.youtube.isUsable;
+
+  const needsTitle = blueskyIsEnabled || facebookIsEnabled || youtubeIsEnabled;
+
+  const needsMessage = true;
 
   // Facebook Settings
   // ---------------------------------------------------------------------------
@@ -85,10 +99,6 @@ function PostForm() {
   //   { label: "Public", value: "EVERYONE" },
   // ];
 
-  const facebookIsEnabled = postPlatforms.facebook.isEnabled;
-
-  // const facebookIsUsable = postPlatforms.facebook.isUsable;
-
   // YouTube Settings
   // ---------------------------------------------------------------------------
 
@@ -97,10 +107,6 @@ function PostForm() {
     { label: "Public", value: "public" },
     { label: "Unlisted", value: "unlisted" },
   ];
-
-  const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
-
-  const youtubeIsUsable = postPlatforms.youtube.isUsable;
 
   // TikTok Settings
   // ---------------------------------------------------------------------------
@@ -113,10 +119,6 @@ function PostForm() {
     },
     { label: "Only You", value: "SELF_ONLY" },
   ];
-
-  const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
-
-  const tiktokIsUsable = postPlatforms.tiktok.isUsable;
 
   const tiktokPrivacyOptions = allTiktokPrivacyOptions.filter((option) =>
     postPlatforms.tiktok.accounts[0]?.permissions?.privacy_level_options?.includes(
@@ -323,53 +325,55 @@ function PostForm() {
       ) : null}
 
       <Form.Root onSubmit={handleSubmit}>
-        <Form.Field className="mb-4 flex flex-col" key="title" name="title">
-          <Form.Label className="mb-2 font-semibold">Title</Form.Label>
-          <Form.Control
-            autoComplete="off"
-            className="w-full rounded-xs text-black"
-            disabled={isFormDisabled}
-            onChange={(e) =>
-              setState((prev) => ({ ...prev, title: e.target.value }))
-            }
-            placeholder="Title"
-            required
-            title="Title"
-            type="text"
-            value={state.title}
-          />
-          <div>
-            <Form.Message match="valueMissing">Missing title.</Form.Message>
-          </div>
-        </Form.Field>
-
-        {youtubeIsEnabled || facebookIsEnabled ? (
-          <Form.Field className="mb-4 flex flex-col" key="text" name="text">
-            <Form.Label className="mb-2 font-semibold">Description</Form.Label>
+        {needsTitle ? (
+          <Form.Field className="mb-4 flex flex-col" key="title" name="title">
+            <Form.Label className="mb-2 font-semibold">Video Title</Form.Label>
             <Form.Control
-              asChild
               autoComplete="off"
               className="w-full rounded-xs text-black"
               disabled={isFormDisabled}
               onChange={(e) =>
-                setState((prev) => ({ ...prev, text: e.target.value }))
+                setState((prev) => ({ ...prev, title: e.target.value }))
               }
-              placeholder="Description"
+              placeholder="Enter the title for your video."
               required
-              title="Description"
-              value={state.text}
-            >
-              <textarea rows={6} />
-            </Form.Control>
+              title="Media Title"
+              type="text"
+              value={state.title}
+            />
             <div>
               <Form.Message match="valueMissing">
-                Missing description.
+                Missing video title.
               </Form.Message>
             </div>
           </Form.Field>
         ) : (
-          <input name="text" type="hidden" value="" />
+          <input name="title" type="hidden" value="" />
         )}
+
+        <Form.Field className="mb-4 flex flex-col" key="text" name="text">
+          <Form.Label className="mb-2 font-semibold">
+            Message / Caption / Description
+          </Form.Label>
+          <Form.Control
+            asChild
+            autoComplete="off"
+            className="w-full rounded-xs text-black"
+            disabled={isFormDisabled}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, text: e.target.value }))
+            }
+            placeholder="Enter the text that will appear as your post message, video caption, or video description depending on platform."
+            required
+            title="Message / Caption / Description"
+            value={state.text}
+          >
+            <textarea rows={6} />
+          </Form.Control>
+          <div>
+            <Form.Message match="valueMissing">Missing message.</Form.Message>
+          </div>
+        </Form.Field>
 
         {/* {facebookIsEnabled && facebookIsUsable ? (
           <section className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 p-2">
