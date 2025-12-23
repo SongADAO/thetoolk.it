@@ -510,8 +510,25 @@ function PostForm() {
                     Select TikTok Privacy Status
                   </option>
                   {tiktokPrivacyOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
+                    <option
+                      disabled={
+                        option.value === "SELF_ONLY" &&
+                        state.tiktokDiscloseBrandOther
+                      }
+                      key={option.value}
+                      title={
+                        option.value === "SELF_ONLY" &&
+                        state.tiktokDiscloseBrandOther
+                          ? "Branded content visibility cannot be set to private."
+                          : ""
+                      }
+                      value={option.value}
+                    >
+                      {option.label}{" "}
+                      {option.value === "SELF_ONLY" &&
+                      state.tiktokDiscloseBrandOther
+                        ? "(Branded content cannot be private)"
+                        : ""}
                     </option>
                   ))}
                 </select>
@@ -996,6 +1013,11 @@ function PostForm() {
         <Form.Submit
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xs bg-black px-2 py-3 text-white enabled:hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isFormDisabled || hasIncompleteTikTokDisclosure}
+          title={
+            hasIncompleteTikTokDisclosure
+              ? "You need to indicate if your content promotes yourself, a third party, or both."
+              : "Create Post"
+          }
         >
           {isPending ? <Spinner /> : null}
           {isPending ? "Posting..." : "Create Post"}
