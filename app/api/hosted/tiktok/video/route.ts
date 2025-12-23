@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       serviceId,
     });
 
-    const { options, privacy, text, title, videoUrl } = await request.json();
+    const { options, privacy, title, videoUrl } = await request.json();
 
     // Check user info to verify posting is allowed.
     await getCreatorInfo(authorization.authorization.accessToken, "server");
@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
       mode: "server",
       options,
       privacy,
-      text,
       title,
       videoUrl: proxyVideoUrl,
     });
@@ -50,7 +49,6 @@ export async function POST(request: NextRequest) {
         privacy,
         proxyVideoUrl,
         publishId,
-        text,
         title,
         videoUrl,
       },
