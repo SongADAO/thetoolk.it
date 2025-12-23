@@ -204,7 +204,7 @@ function PostForm() {
       resetStoreState();
 
       if (!newFormState.text) {
-        throw new Error("Please enter a message.");
+        throw new Error("Please enter a message/caption/description.");
       }
 
       if (needsTitle && !newFormState.title) {
