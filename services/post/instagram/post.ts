@@ -16,13 +16,13 @@ const VIDEO_MAX_DURATION = 240;
 // Create Instagram media container
 interface CreateMediaContainerProps {
   accessToken: string;
-  text: string;
+  title: string;
   userId: string;
   videoUrl: string;
 }
 async function createMediaContainer({
   accessToken,
-  text,
+  title,
   userId,
   videoUrl,
 }: Readonly<CreateMediaContainerProps>): Promise<string> {
@@ -38,7 +38,7 @@ async function createMediaContainer({
     accessToken === "server"
       ? await fetch(`/api/hosted/instagram/media`, {
           body: JSON.stringify({
-            text,
+            title,
             userId,
             videoUrl,
           }),
@@ -50,7 +50,7 @@ async function createMediaContainer({
       : await fetch(`https://graph.instagram.com/v23.0/${userId}/media`, {
           body: new URLSearchParams({
             access_token: accessToken,
-            caption: text,
+            caption: title,
             media_type: "REELS",
             video_url: videoUrl,
           }),
@@ -247,8 +247,8 @@ async function createPost({
   setProcessError,
   setProcessProgress,
   setProcessStatus,
-  text,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  text,
   title,
   userId,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -276,7 +276,7 @@ async function createPost({
       // Step 2: Create media container (30-50% progress)
       const creationId = await createMediaContainer({
         accessToken,
-        text,
+        title,
         userId,
         videoUrl,
       });

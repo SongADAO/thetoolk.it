@@ -18,11 +18,11 @@ export async function POST(request: NextRequest) {
       serviceId,
     });
 
-    const { text, userId, videoUrl } = await request.json();
+    const { title, userId, videoUrl } = await request.json();
 
     const creationId = await createMediaContainer({
       accessToken: authorization.authorization.accessToken,
-      text,
+      title,
       userId,
       videoUrl,
     });
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       ...serverAuth,
       postData: {
         creationId,
-        text,
+        title,
         videoUrl,
       },
       serviceId,
