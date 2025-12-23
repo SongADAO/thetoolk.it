@@ -88,7 +88,7 @@ function PostForm() {
 
   const needsTitle = blueskyIsEnabled || facebookIsEnabled || youtubeIsEnabled;
 
-  const needsMessage = true;
+  // const needsMessage = true;
 
   // Facebook Settings
   // ---------------------------------------------------------------------------
@@ -207,7 +207,7 @@ function PostForm() {
         throw new Error("Please enter a message.");
       }
 
-      if (!newFormState.title) {
+      if (needsTitle && !newFormState.title) {
         throw new Error("Please enter a title.");
       }
 
