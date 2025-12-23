@@ -85,7 +85,7 @@ function PostForm() {
   //   { label: "Public", value: "EVERYONE" },
   // ];
 
-  // const facebookIsEnabled = postPlatforms.facebook.isEnabled;
+  const facebookIsEnabled = postPlatforms.facebook.isEnabled;
 
   // const facebookIsUsable = postPlatforms.facebook.isUsable;
 
@@ -343,27 +343,33 @@ function PostForm() {
           </div>
         </Form.Field>
 
-        <Form.Field className="mb-4 flex flex-col" key="text" name="text">
-          <Form.Label className="mb-2 font-semibold">Message</Form.Label>
-          <Form.Control
-            asChild
-            autoComplete="off"
-            className="w-full rounded-xs text-black"
-            disabled={isFormDisabled}
-            onChange={(e) =>
-              setState((prev) => ({ ...prev, text: e.target.value }))
-            }
-            placeholder="Message"
-            required
-            title="Message"
-            value={state.text}
-          >
-            <textarea rows={6} />
-          </Form.Control>
-          <div>
-            <Form.Message match="valueMissing">Missing message.</Form.Message>
-          </div>
-        </Form.Field>
+        {youtubeIsEnabled || facebookIsEnabled ? (
+          <Form.Field className="mb-4 flex flex-col" key="text" name="text">
+            <Form.Label className="mb-2 font-semibold">Description</Form.Label>
+            <Form.Control
+              asChild
+              autoComplete="off"
+              className="w-full rounded-xs text-black"
+              disabled={isFormDisabled}
+              onChange={(e) =>
+                setState((prev) => ({ ...prev, text: e.target.value }))
+              }
+              placeholder="Description"
+              required
+              title="Description"
+              value={state.text}
+            >
+              <textarea rows={6} />
+            </Form.Control>
+            <div>
+              <Form.Message match="valueMissing">
+                Missing description.
+              </Form.Message>
+            </div>
+          </Form.Field>
+        ) : (
+          <input name="text" type="hidden" value="" />
+        )}
 
         {/* {facebookIsEnabled && facebookIsUsable ? (
           <section className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 p-2">

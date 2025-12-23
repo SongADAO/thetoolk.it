@@ -18,7 +18,7 @@ const POST_CONTEXTS = [
   },
   {
     context: FacebookContext,
-    hasPostFields: false,
+    hasPostFields: true,
     id: "facebook",
     modes: ["server", "browser"],
   },
