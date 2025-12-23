@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable max-lines */
+
 import Link from "next/link";
 import { Form } from "radix-ui";
 import {
@@ -37,13 +39,13 @@ function fromInitial(): FormState {
   return {
     facebookPrivacy: "",
     text: "",
-    tiktokComment: true,
+    tiktokComment: false,
     tiktokDisclose: false,
     tiktokDiscloseBrandOther: false,
     tiktokDiscloseBrandSelf: false,
-    tiktokDuet: true,
+    tiktokDuet: false,
     tiktokPrivacy: "",
-    tiktokStitch: true,
+    tiktokStitch: false,
     title: "",
     youtubePrivacy: "",
   };
@@ -262,6 +264,22 @@ function PostForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.tiktokPrivacy]);
 
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      tiktokComment: false,
+      tiktokDuet: false,
+      tiktokStitch: false,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canTiktokComment, canTiktokDuet, canTiktokStitch]);
+
+  const hasIncompleteTikTokDisclosure =
+    tiktokIsEnabled &&
+    state.tiktokDisclose &&
+    !state.tiktokDiscloseBrandSelf &&
+    !state.tiktokDiscloseBrandOther;
+
   return (
     <div className="relative">
       <Form.Root>
@@ -452,6 +470,17 @@ function PostForm() {
         {tiktokIsEnabled && tiktokIsUsable ? (
           <section className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 p-2">
             <h4 className="mb-2 font-semibold">TikTok Settings</h4>
+            <p className="mb-4 text-sm">
+              <strong>Posting as:</strong>{" "}
+              <a
+                className="text-blue-600 underline"
+                href={`https://www.tiktok.com/@${postPlatforms.tiktok.accounts[0].username}`}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                @{postPlatforms.tiktok.accounts[0].username}
+              </a>
+            </p>
 
             <Form.Field
               className="flex flex-col"
@@ -478,7 +507,7 @@ function PostForm() {
                   }
                 >
                   <option key="none" value="">
-                    Select TikTok Privacy Settings
+                    Select TikTok Privacy Status
                   </option>
                   {tiktokPrivacyOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -489,7 +518,7 @@ function PostForm() {
               </Form.Control>
               <div>
                 <Form.Message match="valueMissing">
-                  Missing TikTok Privacy Settings.
+                  Missing TikTok Privacy Status.
                 </Form.Message>
               </div>
             </Form.Field>
@@ -498,104 +527,92 @@ function PostForm() {
               <section className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2">
                 <h4 className="mb-2 font-semibold">Allow users to</h4>
                 <div className="flex gap-8">
-                  {canTiktokComment ? (
-                    <Form.Field
-                      className="flex flex-row items-center gap-2"
-                      key="tiktokComment"
-                      name="tiktokComment"
+                  <Form.Field
+                    className="flex flex-row items-center gap-2 data-[disabled=true]:opacity-50"
+                    data-disabled={!canTiktokComment}
+                    key="tiktokComment"
+                    name="tiktokComment"
+                  >
+                    <Form.Control asChild>
+                      <input
+                        checked={state.tiktokComment}
+                        className="h-4 w-4 rounded"
+                        disabled={isFormDisabled || !canTiktokComment}
+                        id="tiktokComment"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setState((prev) => ({
+                            ...prev,
+                            tiktokComment: e.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                        value="1"
+                      />
+                    </Form.Control>
+                    <Form.Label
+                      className="cursor-pointer"
+                      htmlFor="tiktokComment"
                     >
-                      <Form.Control asChild>
-                        <input
-                          checked={state.tiktokComment}
-                          className="h-4 w-4 rounded"
-                          disabled={isFormDisabled}
-                          id="tiktokComment"
-                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                            setState((prev) => ({
-                              ...prev,
-                              tiktokComment: e.target.checked,
-                            }))
-                          }
-                          type="checkbox"
-                          value="1"
-                        />
-                      </Form.Control>
-                      <Form.Label
-                        className="cursor-pointer"
-                        htmlFor="tiktokComment"
-                      >
-                        Comment
-                      </Form.Label>
-                    </Form.Field>
-                  ) : (
-                    <input name="tiktokComment" type="hidden" value="0" />
-                  )}
+                      Comment
+                    </Form.Label>
+                  </Form.Field>
 
-                  {canTiktokDuet ? (
-                    <Form.Field
-                      className="flex flex-row items-center gap-2"
-                      key="tiktokDuet"
-                      name="tiktokDuet"
-                    >
-                      <Form.Control asChild>
-                        <input
-                          checked={state.tiktokDuet}
-                          className="h-4 w-4 rounded"
-                          disabled={isFormDisabled}
-                          id="tiktokDuet"
-                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                            setState((prev) => ({
-                              ...prev,
-                              tiktokDuet: e.target.checked,
-                            }))
-                          }
-                          type="checkbox"
-                          value="1"
-                        />
-                      </Form.Control>
-                      <Form.Label
-                        className="cursor-pointer"
-                        htmlFor="tiktokDuet"
-                      >
-                        Duet
-                      </Form.Label>
-                    </Form.Field>
-                  ) : (
-                    <input name="tiktokDuet" type="hidden" value="0" />
-                  )}
+                  <Form.Field
+                    className="flex flex-row items-center gap-2 data-[disabled=true]:opacity-50"
+                    data-disabled={!canTiktokDuet}
+                    key="tiktokDuet"
+                    name="tiktokDuet"
+                  >
+                    <Form.Control asChild>
+                      <input
+                        checked={state.tiktokDuet}
+                        className="h-4 w-4 rounded"
+                        disabled={isFormDisabled || !canTiktokDuet}
+                        id="tiktokDuet"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setState((prev) => ({
+                            ...prev,
+                            tiktokDuet: e.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                        value="1"
+                      />
+                    </Form.Control>
+                    <Form.Label className="cursor-pointer" htmlFor="tiktokDuet">
+                      Duet
+                    </Form.Label>
+                  </Form.Field>
 
-                  {canTiktokStitch ? (
-                    <Form.Field
-                      className="flex flex-row items-center gap-2"
-                      key="tiktokStitch"
-                      name="tiktokStitch"
+                  <Form.Field
+                    className="flex flex-row items-center gap-2 data-[disabled=true]:opacity-50"
+                    data-disabled={!canTiktokStitch}
+                    key="tiktokStitch"
+                    name="tiktokStitch"
+                  >
+                    <Form.Control asChild>
+                      <input
+                        checked={state.tiktokStitch}
+                        className="h-4 w-4 rounded"
+                        disabled={isFormDisabled || !canTiktokStitch}
+                        id="tiktokStitch"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setState((prev) => ({
+                            ...prev,
+                            tiktokStitch: e.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                        value="1"
+                      />
+                    </Form.Control>
+                    <Form.Label
+                      className="cursor-pointer"
+                      htmlFor="tiktokStitch"
                     >
-                      <Form.Control asChild>
-                        <input
-                          checked={state.tiktokStitch}
-                          className="h-4 w-4 rounded"
-                          disabled={isFormDisabled}
-                          id="tiktokStitch"
-                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                            setState((prev) => ({
-                              ...prev,
-                              tiktokStitch: e.target.checked,
-                            }))
-                          }
-                          type="checkbox"
-                          value="1"
-                        />
-                      </Form.Control>
-                      <Form.Label
-                        className="cursor-pointer"
-                        htmlFor="tiktokStitch"
-                      >
-                        Stitch
-                      </Form.Label>
-                    </Form.Field>
-                  ) : (
-                    <input name="tiktokStitch" type="hidden" value="0" />
-                  )}
+                      Stitch
+                    </Form.Label>
+                  </Form.Field>
                 </div>
               </section>
             ) : (
@@ -637,18 +654,6 @@ function PostForm() {
                       Disclose video content
                     </Form.Label>
                   </Form.Field>
-                  {state.tiktokDisclose ? (
-                    <div className="mb-2 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-blue-200 p-2 pl-3 text-sm">
-                      <div>
-                        <FaCircleExclamation className="size-5 text-blue-600" />
-                      </div>
-                      <p>
-                        Your video will be labeled &quot;Promotional
-                        content&quot;. This cannot be changed once your video is
-                        posted.
-                      </p>
-                    </div>
-                  ) : null}
                   <p className="text-sm">
                     Turn on to disclose that this video promotes goods or
                     services in exchange for something of value. Your video
@@ -760,6 +765,30 @@ function PostForm() {
                 )}
               </div>
             </section>
+
+            {state.tiktokDiscloseBrandOther ? (
+              <div className="mt-4 mb-2 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-blue-200 p-2 pl-3 text-sm">
+                <div>
+                  <FaCircleExclamation className="size-5 text-blue-600" />
+                </div>
+                <p>
+                  Your photo/video will be labeled &quot;Promotional
+                  content&quot;.
+                </p>
+              </div>
+            ) : null}
+
+            {state.tiktokDiscloseBrandSelf &&
+            !state.tiktokDiscloseBrandOther ? (
+              <div className="mt-4 mb-2 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-blue-200 p-2 pl-3 text-sm">
+                <div>
+                  <FaCircleExclamation className="size-5 text-blue-600" />
+                </div>
+                <p>
+                  Your photo/video will be labeled &quot;Paid partnership&quot;.
+                </p>
+              </div>
+            ) : null}
 
             {state.tiktokDisclose && state.tiktokDiscloseBrandOther ? (
               <p className="mt-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-200 p-2 text-sm">
@@ -952,9 +981,21 @@ function PostForm() {
           </>
         ) : null}
 
+        {hasIncompleteTikTokDisclosure ? (
+          <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
+            <div>
+              <FaCircleExclamation className="size-5 text-red-600" />
+            </div>
+            <p>
+              You need to indicate if your content promotes yourself, a third
+              party, or both.
+            </p>
+          </div>
+        ) : null}
+
         <Form.Submit
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xs bg-black px-2 py-3 text-white enabled:hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={isFormDisabled}
+          disabled={isFormDisabled || hasIncompleteTikTokDisclosure}
         >
           {isPending ? <Spinner /> : null}
           {isPending ? "Posting..." : "Create Post"}
