@@ -25,7 +25,7 @@ interface UploadVideoProps {
     permissionStitch?: boolean;
   };
   privacy: string;
-  title: string;
+  text: string;
   videoUrl: string;
 }
 async function uploadVideo({
@@ -33,7 +33,7 @@ async function uploadVideo({
   mode,
   options,
   privacy,
-  title,
+  text,
   videoUrl,
 }: Readonly<UploadVideoProps>) {
   if (DEBUG_POST) {
@@ -54,7 +54,7 @@ async function uploadVideo({
           body: JSON.stringify({
             options,
             privacy,
-            title,
+            text,
             videoUrl,
           }),
           headers: {
@@ -75,7 +75,7 @@ async function uploadVideo({
               disable_stitch: options.permissionStitch === false,
               // is_aigc: false,
               privacy_level: privacy,
-              title,
+              title: text,
               // video_cover_timestamp_ms: 1000,
             },
             source_info: {
@@ -247,8 +247,8 @@ async function createPost({
   setProcessError,
   setProcessProgress,
   setProcessStatus,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   text,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userId,
@@ -289,7 +289,7 @@ async function createPost({
         mode: "browser",
         options,
         privacy,
-        title,
+        text,
         videoUrl,
       });
     } else {
