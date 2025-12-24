@@ -52,16 +52,25 @@ function fromInitial(): FormState {
 }
 
 function fromFormData(formData: FormData): FormState {
+  // Log all key/value pairs
+  // for (const [key, value] of formData.entries()) {
+  //   console.log(`${key}: ${value}`);
+  // }
+
   return {
     facebookPrivacy: String(formData.get("facebookPrivacy")),
     text: String(formData.get("text")),
-    tiktokComment: Boolean(formData.get("tiktokComment")),
-    tiktokDisclose: Boolean(formData.get("tiktokDisclose")),
-    tiktokDiscloseBrandOther: Boolean(formData.get("tiktokDiscloseBrandOther")),
-    tiktokDiscloseBrandSelf: Boolean(formData.get("tiktokDiscloseBrandSelf")),
-    tiktokDuet: Boolean(formData.get("tiktokDuet")),
+    tiktokComment: Boolean(Number(formData.get("tiktokComment"))),
+    tiktokDisclose: Boolean(Number(formData.get("tiktokDisclose"))),
+    tiktokDiscloseBrandOther: Boolean(
+      Number(formData.get("tiktokDiscloseBrandOther")),
+    ),
+    tiktokDiscloseBrandSelf: Boolean(
+      Number(formData.get("tiktokDiscloseBrandSelf")),
+    ),
+    tiktokDuet: Boolean(Number(formData.get("tiktokDuet"))),
     tiktokPrivacy: String(formData.get("tiktokPrivacy")),
-    tiktokStitch: Boolean(formData.get("tiktokStitch")),
+    tiktokStitch: Boolean(Number(formData.get("tiktokStitch"))),
     title: String(formData.get("title")),
     youtubePrivacy: String(formData.get("youtubePrivacy")),
   };
