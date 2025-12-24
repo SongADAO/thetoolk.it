@@ -267,6 +267,17 @@ function PostForm() {
   }, [state.tiktokPrivacy]);
 
   useEffect(() => {
+    if (!state.tiktokDisclose) {
+      setState((prev) => ({
+        ...prev,
+        tiktokDiscloseBrandOther: false,
+        tiktokDiscloseBrandSelf: false,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.tiktokDisclose]);
+
+  useEffect(() => {
     setState((prev) => ({
       ...prev,
       tiktokComment: false,
@@ -281,6 +292,9 @@ function PostForm() {
     state.tiktokDisclose &&
     !state.tiktokDiscloseBrandSelf &&
     !state.tiktokDiscloseBrandOther;
+
+  const canPost =
+    !hasIncompleteTikTokDisclosure && hasPostPlatform && hasStoragePlatform;
 
   return (
     <div className="relative">
@@ -799,8 +813,8 @@ function PostForm() {
                   <FaCircleExclamation className="size-5 text-blue-600" />
                 </div>
                 <p>
-                  Your photo/video will be labeled &quot;Promotional
-                  content&quot;.
+                  Your photo/video will be labeled{" "}
+                  <strong>&quot;Promotional content&quot;</strong>.
                 </p>
               </div>
             ) : null}
@@ -812,7 +826,8 @@ function PostForm() {
                   <FaCircleExclamation className="size-5 text-blue-600" />
                 </div>
                 <p>
-                  Your photo/video will be labeled &quot;Paid partnership&quot;.
+                  Your photo/video will be labeled{" "}
+                  <strong>&quot;Paid partnership&quot;</strong>.
                 </p>
               </div>
             ) : null}
@@ -861,102 +876,6 @@ function PostForm() {
             <input name="tiktokDiscloseBrandSelf" type="hidden" value="0" />
             <input name="tiktokDiscloseBrandOther" type="hidden" value="0" />
           </>
-        )}
-
-        {isVideoConverting ? (
-          <div className="mb-4 rounded-xs bg-gray-500 p-3 text-white">
-            <div className="flex items-center gap-2">
-              <Spinner />
-              {videoConversionStatus}
-            </div>
-            <div className="mt-2">
-              <div className="h-2 w-full rounded-xs bg-gray-600">
-                <div
-                  className="h-2 rounded-xs bg-yellow-600 transition-all duration-300"
-                  style={{ width: `${videoConversionProgress}%` }}
-                />
-              </div>
-              <div className="mt-1 text-center text-sm">
-                {videoConversionProgress}% complete
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        {isVideoTrimming ? (
-          <div className="mb-4 rounded-xs bg-gray-500 p-3 text-white">
-            <div className="flex items-center gap-2">
-              <Spinner />
-              {videoTrimStatus}
-            </div>
-            <div className="mt-2">
-              <div className="h-2 w-full rounded-xs bg-gray-600">
-                <div
-                  className="h-2 rounded-xs bg-yellow-600 transition-all duration-300"
-                  style={{ width: `${videoTrimProgress}%` }}
-                />
-              </div>
-              <div className="mt-1 text-center text-sm">
-                {videoTrimProgress}% complete
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        {isHLSConverting ? (
-          <div className="mb-4 rounded-xs bg-gray-500 p-3 text-white">
-            <div className="flex items-center gap-2">
-              <Spinner />
-              {hlsConversionStatus}
-            </div>
-            <div className="mt-2">
-              <div className="h-2 w-full rounded-xs bg-gray-600">
-                <div
-                  className="h-2 rounded-xs bg-yellow-600 transition-all duration-300"
-                  style={{ width: `${hlsConversionProgress}%` }}
-                />
-              </div>
-              <div className="mt-1 text-center text-sm">
-                {hlsConversionProgress}% complete
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        {isStoring ? (
-          <div className="mb-4 rounded-xs bg-gray-500 p-3 text-white">
-            <div className="flex items-center gap-2">
-              <Spinner />
-              Uploading videos to storage...
-            </div>
-          </div>
-        ) : null}
-
-        {isPosting ? (
-          <div className="mb-4 rounded-xs bg-gray-500 p-3 text-white">
-            <div className="flex items-center gap-2">
-              <Spinner />
-              Submitting posts to services...
-            </div>
-          </div>
-        ) : null}
-
-        {error ? (
-          <p className="mb-4 rounded-xs bg-red-800 p-2 text-center text-white">
-            {error}
-          </p>
-        ) : null}
-
-        {hasPostPlatform ? null : (
-          <p className="mb-4 rounded-xs bg-red-800 p-2 text-center text-white">
-            You must enable at least one posting service.
-          </p>
-        )}
-
-        {hasStoragePlatform ? null : (
-          <p className="mb-4 rounded-xs bg-red-800 p-2 text-center text-white">
-            You must enable at least one storage service.
-          </p>
         )}
 
         {hasUnauthorizedPostServices || hasUnauthorizedStorageServices ? (
@@ -1008,6 +927,24 @@ function PostForm() {
           </>
         ) : null}
 
+        {hasPostPlatform ? null : (
+          <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
+            <div>
+              <FaCircleExclamation className="size-5 text-red-600" />
+            </div>
+            <p>You must enable at least one posting service.</p>
+          </div>
+        )}
+
+        {hasStoragePlatform ? null : (
+          <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
+            <div>
+              <FaCircleExclamation className="size-5 text-red-600" />
+            </div>
+            <p>You must enable at least one storage service.</p>
+          </div>
+        )}
+
         {hasIncompleteTikTokDisclosure ? (
           <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
             <div>
@@ -1017,6 +954,107 @@ function PostForm() {
               You need to indicate if your content promotes yourself, a third
               party, or both.
             </p>
+          </div>
+        ) : null}
+
+        {canPost ? (
+          <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-blue-200 p-2 pl-3 text-sm">
+            <div>
+              <FaCircleExclamation className="size-5 text-blue-600" />
+            </div>
+            <p>
+              Clicking <strong>&quot;Create Post&quot;</strong> will start the
+              process of publishing your video to each service you have enabled.
+              Once published it may take a few minutes for the post to become
+              visible on your profile or timeline.
+            </p>
+          </div>
+        ) : null}
+
+        {isVideoConverting ? (
+          <div className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              {videoConversionStatus}
+            </div>
+            <div className="mt-2">
+              <div className="h-2 w-full rounded-xs bg-gray-600">
+                <div
+                  className="h-2 rounded-xs bg-yellow-600 transition-all duration-300"
+                  style={{ width: `${videoConversionProgress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-center text-sm">
+                {videoConversionProgress}% complete
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isVideoTrimming ? (
+          <div className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              {videoTrimStatus}
+            </div>
+            <div className="mt-2">
+              <div className="h-2 w-full rounded-xs bg-gray-600">
+                <div
+                  className="h-2 rounded-xs bg-yellow-600 transition-all duration-300"
+                  style={{ width: `${videoTrimProgress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-center text-sm">
+                {videoTrimProgress}% complete
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isHLSConverting ? (
+          <div className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              {hlsConversionStatus}
+            </div>
+            <div className="mt-2">
+              <div className="h-2 w-full rounded-xs bg-gray-600">
+                <div
+                  className="h-2 rounded-xs bg-yellow-600 transition-all duration-300"
+                  style={{ width: `${hlsConversionProgress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-center text-sm">
+                {hlsConversionProgress}% complete
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isStoring ? (
+          <div className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              Uploading videos to storage...
+            </div>
+          </div>
+        ) : null}
+
+        {isPosting ? (
+          <div className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-500 p-3 text-white">
+            <div className="flex items-center gap-2">
+              <Spinner />
+              Submitting posts to services...
+            </div>
+          </div>
+        ) : null}
+
+        {error ? (
+          <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
+            <div>
+              <FaCircleExclamation className="size-5 text-red-600" />
+            </div>
+            <p>{error}</p>
           </div>
         ) : null}
 
