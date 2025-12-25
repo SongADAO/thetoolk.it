@@ -199,6 +199,36 @@ function PostForm() {
     getVideoInfo(file);
   }
 
+  // State Conditions
+  // ---------------------------------------------------------------------------
+
+  const hasIncompleteTikTokPrivacy = tiktokIsEnabled && !state.tiktokPrivacy;
+
+  const hasIncompleteTikTokDisclosure =
+    tiktokIsEnabled &&
+    state.tiktokDisclose &&
+    !state.tiktokDiscloseBrandSelf &&
+    !state.tiktokDiscloseBrandOther;
+
+  const canPost =
+    !hasIncompleteTikTokPrivacy &&
+    !hasIncompleteTikTokDisclosure &&
+    hasPostPlatform &&
+    hasStoragePlatform &&
+    state.text !== "" &&
+    (!needsTitle || state.title !== "") &&
+    selectedFile !== null;
+
+  const isFormDisabled =
+    isPending ||
+    hasUnauthorizedPostServices ||
+    hasUnauthorizedStorageServices ||
+    !hasPostPlatform ||
+    !hasStoragePlatform;
+
+  // Submit
+  // ---------------------------------------------------------------------------
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     try {
       event.preventDefault();
@@ -232,6 +262,14 @@ function PostForm() {
         throw new Error("Some selected storage services are not authorized.");
       }
 
+      if (!canPost) {
+        throw new Error("The form is incomplete. Please check all fields.");
+      }
+
+      if (isFormDisabled) {
+        throw new Error("The form cannot be submitted at this time.");
+      }
+
       const videos = await preparePostVideo(selectedFile);
 
       await createPost({
@@ -257,13 +295,8 @@ function PostForm() {
     }
   }
 
-  // Check if we should disable the form
-  const isFormDisabled =
-    isPending ||
-    hasUnauthorizedPostServices ||
-    hasUnauthorizedStorageServices ||
-    !hasPostPlatform ||
-    !hasStoragePlatform;
+  // State Effects
+  // ---------------------------------------------------------------------------
 
   useEffect(() => {
     if (state.tiktokPrivacy === "SELF_ONLY") {
@@ -296,14 +329,8 @@ function PostForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canTiktokComment, canTiktokDuet, canTiktokStitch]);
 
-  const hasIncompleteTikTokDisclosure =
-    tiktokIsEnabled &&
-    state.tiktokDisclose &&
-    !state.tiktokDiscloseBrandSelf &&
-    !state.tiktokDiscloseBrandOther;
-
-  const canPost =
-    !hasIncompleteTikTokDisclosure && hasPostPlatform && hasStoragePlatform;
+  // HTML
+  // ---------------------------------------------------------------------------
 
   return (
     <div className="relative">
@@ -1069,7 +1096,7 @@ function PostForm() {
 
         <Form.Submit
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xs bg-black px-2 py-3 text-white enabled:hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={isFormDisabled || hasIncompleteTikTokDisclosure}
+          disabled={isFormDisabled || !canPost}
           title={
             hasIncompleteTikTokDisclosure
               ? "You need to indicate if your content promotes yourself, a third party, or both."
