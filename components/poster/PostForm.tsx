@@ -202,6 +202,11 @@ function PostForm() {
   // State Conditions
   // ---------------------------------------------------------------------------
 
+  // const hasIncompleteFacebookPrivacy =
+  //   facebookIsEnabled && !state.facebookPrivacy;
+
+  const hasIncompleteYouTubePrivacy = youtubeIsEnabled && !state.youtubePrivacy;
+
   const hasIncompleteTikTokPrivacy = tiktokIsEnabled && !state.tiktokPrivacy;
 
   const hasIncompleteTikTokDisclosure =
@@ -211,6 +216,8 @@ function PostForm() {
     !state.tiktokDiscloseBrandOther;
 
   const canPost =
+    // !hasIncompleteFacebookPrivacy &&
+    !hasIncompleteYouTubePrivacy &&
     !hasIncompleteTikTokPrivacy &&
     !hasIncompleteTikTokDisclosure &&
     hasPostPlatform &&
