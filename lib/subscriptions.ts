@@ -32,9 +32,9 @@ function getPriceType(priceId: string) {
 function getPriceName(type: string) {
   switch (type) {
     case "pro-month":
-      return "$5 per month";
+      return "$4.99 per month";
     case "pro-year":
-      return "$48 per year";
+      return "$49.99 per year";
     default:
       throw new Error("Invalid subscription type");
   }
