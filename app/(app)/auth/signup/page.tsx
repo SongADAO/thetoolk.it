@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SignUpForm } from "@/components/auth/SignUpForm";
+
 export const metadata: Metadata = {
   alternates: {
     canonical: "/auth/signup",
@@ -17,8 +19,8 @@ export default function SignUpPage() {
         <h1 className="mx-auto mb-4 max-w-md text-2xl font-bold">
           Create an Account
         </h1>
-        <div className="text-center">TheToolk.it Pro is launching soon!</div>
-        {/* <SignUpForm /> */}
+        {/* <div className="text-center">TheToolk.it Pro is launching soon!</div> */}
+        <SignUpForm />
 
         <section className="mt-8 text-center">
           <h3 className="font-bold">Already have an account?</h3>
