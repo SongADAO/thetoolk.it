@@ -9,6 +9,7 @@ import {
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
 import { formatServerExpiration } from "@/services/post/bluesky/auth";
+// import { defaultOauthExpiration } from "@/services/post/types";
 
 interface SupabaseSessionStoreProps {
   supabaseAdmin: SupabaseClient;
@@ -52,16 +53,13 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/class-methods-use-this, @typescript-eslint/require-await
   public async del(key: string): Promise<void> {
-    // const { error } = await this.supabaseAdmin
-    //   .from("services")
-    //   .delete()
-    //   // .eq("key", key)
-    //   .eq("service_id", "bluesky")
-    //   .eq("user_id", this.user.id);
-    // if (error) {
-    //   throw new Error(`Failed to delete OAuth session: ${error.message}`);
-    // }
-    throw new Error(`Bluesky tried to delete a session`);
+    // await updateServiceAuthorization({
+    //   serviceAuthorization: null,
+    //   serviceExpiration: defaultOauthExpiration,
+    //   serviceId: "bluesky",
+    //   supabaseAdmin: this.supabaseAdmin,
+    //   user: this.user,
+    // });
   }
 }
 
