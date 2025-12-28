@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getBaseUrlFromRequest } from "@/lib/request";
 // import { gateHasActiveSubscription } from "@/lib/subscriptions";
 import { initServerAuth } from "@/lib/supabase/server-auth";
-import {
-  getServiceAuthorizationAndExpiration,
-  updateServiceAuthorization,
-} from "@/lib/supabase/service";
+import { getServiceAuthorizationAndExpiration } from "@/lib/supabase/service";
 import { getOAuthClient } from "@/services/post/bluesky/oauth-client-node";
 import { SupabaseSessionStore } from "@/services/post/bluesky/store-session";
 import { SupabaseStateStore } from "@/services/post/bluesky/store-state";
@@ -33,20 +30,6 @@ export async function POST(request: NextRequest) {
     );
 
     await client.restore(authorization.authorization.tokenSet.sub);
-
-    // Refresh token is renewed whenever used.
-    const now = new Date();
-    const refreshTokenExpiresAt = new Date(
-      now.getTime() + 7 * 24 * 60 * 60 * 1000,
-    );
-    authorization.expiration.refreshTokenExpiresAt =
-      refreshTokenExpiresAt.toISOString();
-    await updateServiceAuthorization({
-      ...serverAuth,
-      serviceAuthorization: authorization.authorization,
-      serviceExpiration: authorization.expiration,
-      serviceId,
-    });
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
