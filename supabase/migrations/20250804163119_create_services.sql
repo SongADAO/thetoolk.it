@@ -92,6 +92,7 @@ CREATE TABLE posts (
   user_id UUID REFERENCES auth.users(id) NOT NULL,
   service_id VARCHAR NOT NULL,
   status_id INTEGER DEFAULT 0,
+  post_data JSONB,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
