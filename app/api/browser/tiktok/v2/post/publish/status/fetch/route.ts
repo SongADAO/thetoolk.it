@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
     const result = await response.json();
     return NextResponse.json(result);
   } catch (err: unknown) {
-    const errMessage = err instanceof Error ? err.message : "Status check failed";
+    const errMessage =
+      err instanceof Error ? err.message : "Status check failed";
     return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }
