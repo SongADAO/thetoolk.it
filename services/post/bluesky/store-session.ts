@@ -26,16 +26,19 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
   public async set(key: string, session: NodeSavedSession): Promise<void> {
     const now = new Date();
-    const accessTokenExpiresAt = new Date(
-      now.getTime() + 7 * 24 * 60 * 60 * 1000,
-    );
+    // Tokens have a 15 minutes lifespan (TODO: verify expiration)
+    const accessTokenExpiresAt = new Date(now.getTime() + 15 * 60 * 60 * 1000);
+    // 3 Months
     const refreshTokenExpiresAt = new Date(
-      now.getTime() + 7 * 24 * 60 * 60 * 1000,
+      now.getTime() + 3 * 30 * 24 * 60 * 60 * 1000,
     );
 
     const serviceAuthorization = { ...session, key };
 
-    const serviceExpiration = { accessTokenExpiresAt, refreshTokenExpiresAt };
+    const serviceExpiration = {
+      accessTokenExpiresAt: accessTokenExpiresAt.toISOString(),
+      refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+    };
 
     await updateServiceAuthorization({
       serviceAuthorization,
