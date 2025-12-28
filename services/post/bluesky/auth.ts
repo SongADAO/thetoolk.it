@@ -108,8 +108,8 @@ function formatTokens(tokens: OAuthSession): OauthAuthorization {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatExpiration(tokens: OAuthSession): OauthExpiration {
-  // Tokens have a 2 minutes lifespan (TODO: verify expiration)
-  const expiresIn = 2 * 60 * 60 * 1000;
+  // Tokens have a 15 minutes lifespan (TODO: verify expiration)
+  const expiresIn = 15 * 60 * 60 * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
 
   // Refresh tokens have a 7-day lifespan
