@@ -7,7 +7,6 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import {
   getServiceAuthorizationAndExpiration,
   updateServiceAuthorization,
-  updateServiceExpiration,
 } from "@/lib/supabase/service";
 
 interface SupabaseSessionStoreProps {
@@ -40,14 +39,6 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
 
     await updateServiceAuthorization({
       serviceAuthorization,
-      serviceExpiration,
-      serviceId: "bluesky",
-      supabaseAdmin: this.supabaseAdmin,
-      user: this.user,
-    });
-
-    // Update public side refresh token expiration
-    await updateServiceExpiration({
       serviceExpiration,
       serviceId: "bluesky",
       supabaseAdmin: this.supabaseAdmin,

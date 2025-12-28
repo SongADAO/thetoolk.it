@@ -220,36 +220,6 @@ async function updateServiceAuthorizationAndAccounts({
   }
 }
 
-interface UpdateServiceExpiration {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  serviceExpiration: any;
-  serviceId: string;
-  supabaseAdmin: SupabaseClient;
-  user: User;
-}
-
-async function updateServiceExpiration({
-  serviceExpiration,
-  serviceId,
-  supabaseAdmin,
-  user,
-}: UpdateServiceExpiration): Promise<void> {
-  const { error: errorServices } = await supabaseAdmin.from("services").upsert(
-    {
-      service_expiration: serviceExpiration,
-      service_id: serviceId,
-      user_id: user.id,
-    },
-    {
-      onConflict: "user_id,service_id",
-    },
-  );
-
-  if (errorServices) {
-    throw new Error("Could not update service data");
-  }
-}
-
 interface UpdateCodeVerifier {
   codeVerifier: string;
   serviceId: string;
@@ -289,5 +259,4 @@ export {
   updateServiceAccounts,
   updateServiceAuthorization,
   updateServiceAuthorizationAndAccounts,
-  updateServiceExpiration,
 };
