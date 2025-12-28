@@ -8,6 +8,7 @@ import {
   getServiceAuthorizationAndExpiration,
   updateServiceAuthorization,
 } from "@/lib/supabase/service";
+import { formatServerExpiration } from "@/services/post/bluesky/auth";
 
 interface SupabaseSessionStoreProps {
   supabaseAdmin: SupabaseClient;
@@ -25,20 +26,9 @@ class SupabaseSessionStore implements NodeSavedSessionStore {
   }
 
   public async set(key: string, session: NodeSavedSession): Promise<void> {
-    const now = new Date();
-    // Tokens have a 15 minutes lifespan (TODO: verify expiration)
-    const accessTokenExpiresAt = new Date(now.getTime() + 15 * 60 * 60 * 1000);
-    // 3 Months
-    const refreshTokenExpiresAt = new Date(
-      now.getTime() + 3 * 30 * 24 * 60 * 60 * 1000,
-    );
-
     const serviceAuthorization = { ...session, key };
 
-    const serviceExpiration = {
-      accessTokenExpiresAt: accessTokenExpiresAt.toISOString(),
-      refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
-    };
+    const serviceExpiration = formatServerExpiration();
 
     await updateServiceAuthorization({
       serviceAuthorization,
