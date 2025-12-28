@@ -72,7 +72,10 @@ export const blueskyServiceConfig: ServiceConfig = {
     shouldHandleAuthRedirect,
   },
   defaultAuthorization: defaultOauthAuthorization,
-  defaultCredentials: defaultOauthCredentials,
+  defaultCredentials: {
+    ...defaultOauthCredentials,
+    serviceUrl: "https://bsky.social",
+  },
   defaultExpiration: defaultOauthExpiration,
   postModule: {
     VIDEO_MAX_DURATION,
