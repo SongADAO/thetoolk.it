@@ -41,14 +41,22 @@ function AppHeaderUser() {
 
   return (
     <div className="flex flex-row items-end gap-2">
-      <LinkButtonMenu
-        href="/pro"
-        isActive={pathname === "/pro"}
-        title="Create a Post"
-      >
-        <FaPenToSquare className="size-6" />
-        Post
-      </LinkButtonMenu>
+      {pathname === "/pro" ? (
+        <LinkButtonMenu
+          forceReload
+          href="/pro"
+          isActive={false}
+          title="Create a Post"
+        >
+          <FaPenToSquare className="size-6" />
+          Post
+        </LinkButtonMenu>
+      ) : (
+        <LinkButtonMenu href="/pro" isActive={false} title="Create a Post">
+          <FaPenToSquare className="size-6" />
+          Post
+        </LinkButtonMenu>
+      )}
       <LinkButtonMenu
         href="/account"
         isActive={pathname === "/account"}
