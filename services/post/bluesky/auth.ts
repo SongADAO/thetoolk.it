@@ -22,6 +22,14 @@ const HOSTED_CREDENTIALS: OauthCredentials = {
   username: "",
 };
 
+function sanitizeUsername(username: string): string {
+  if (!username.includes(".")) {
+    return `${username}.bsky.social`;
+  }
+
+  return username;
+}
+
 // -----------------------------------------------------------------------------
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
@@ -163,7 +171,7 @@ async function getAuthorizationUrlHosted(
 
     const response = await fetch("/api/hosted/bluesky/oauth/authorize", {
       body: JSON.stringify({
-        username: credentials.username,
+        username: sanitizeUsername(credentials.username),
       }),
       headers: {
         "Content-Type": "application/json",
@@ -207,9 +215,12 @@ async function getAuthorizationUrl(
     const client = await getOAuthClient(credentials, requestUrl);
 
     // The library handles all the complexity (PAR, DPoP, PKCE, etc.)
-    const authUrl = await client.authorize(credentials.username, {
-      scope: SCOPES.join(" "),
-    });
+    const authUrl = await client.authorize(
+      sanitizeUsername(credentials.username),
+      {
+        scope: SCOPES.join(" "),
+      },
+    );
 
     console.log("Authorization URL generated");
 
