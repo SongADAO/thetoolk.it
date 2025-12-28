@@ -56,6 +56,11 @@ export async function POST(request: NextRequest) {
         serviceId,
         statusId: 2,
       });
+
+      return NextResponse.json(responseData, {
+        status: response.status,
+        statusText: response.statusText,
+      });
     }
 
     return new NextResponse(response.body, {
