@@ -108,12 +108,31 @@ function formatTokens(tokens: OAuthSession): OauthAuthorization {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatExpiration(tokens: OAuthSession): OauthExpiration {
-  // Tokens have a 15 minutes lifespan (TODO: verify expiration)
+  // Tokens have a 15-30 minutes lifespan (TODO: verify expiration)
   const expiresIn = 15 * 60 * 60 * 1000;
   const expiryTime = new Date(Date.now() + expiresIn);
 
-  // Refresh tokens have a 7-day lifespan
+  // Client side refresh tokens have a 7-day lifespan
   const refreshExpiresIn = 7 * 24 * 60 * 60 * 1000;
+  const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
+
+  // Access tokens are the same as the refresh token.
+  // It is just the session DID.
+
+  return {
+    accessTokenExpiresAt: expiryTime.toISOString(),
+    refreshTokenExpiresAt: refreshExpiryTime.toISOString(),
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function formatServerExpiration(): OauthExpiration {
+  // Tokens have a 15-30 minutes lifespan (TODO: verify expiration)
+  const expiresIn = 15 * 60 * 60 * 1000;
+  const expiryTime = new Date(Date.now() + expiresIn);
+
+  // Server side refresh tokens have a 3-month lifespan
+  const refreshExpiresIn = 3 * 30 * 24 * 60 * 60 * 1000;
   const refreshExpiryTime = new Date(Date.now() + refreshExpiresIn);
 
   // Access tokens are the same as the refresh token.
@@ -361,6 +380,7 @@ async function getAccounts(
 export {
   disconnectHosted,
   exchangeCodeForTokens,
+  formatServerExpiration,
   getAccounts,
   getAccountsFromAgent,
   getAuthorizationExpiresAt,
