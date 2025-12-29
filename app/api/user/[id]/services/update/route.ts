@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
       {
         [serviceField]: value,
         service_id: serviceId,
+        updated_at: new Date().toISOString(),
         user_id: serverAuth.user.id,
       },
       { onConflict: "user_id,service_id" },
