@@ -102,6 +102,7 @@ async function updateServiceAuthorization({
       {
         service_authorization: encryptedAuthorization,
         service_id: serviceId,
+        updated_at: new Date().toISOString(),
         user_id: user.id,
       },
       {
@@ -117,6 +118,7 @@ async function updateServiceAuthorization({
     {
       service_expiration: serviceExpiration,
       service_id: serviceId,
+      updated_at: new Date().toISOString(),
       user_id: user.id,
     },
     {
@@ -147,6 +149,7 @@ async function updateServiceAccounts({
     {
       service_accounts: serviceAccounts,
       service_id: serviceId,
+      updated_at: new Date().toISOString(),
       user_id: user.id,
     },
     {
@@ -192,6 +195,7 @@ async function updateServiceAuthorizationAndAccounts({
       {
         service_authorization: encryptedAuthorization,
         service_id: serviceId,
+        updated_at: new Date().toISOString(),
         user_id: user.id,
       },
       {
@@ -208,6 +212,7 @@ async function updateServiceAuthorizationAndAccounts({
       service_accounts: serviceAccounts,
       service_expiration: serviceExpiration,
       service_id: serviceId,
+      updated_at: new Date().toISOString(),
       user_id: user.id,
     },
     {
