@@ -345,7 +345,7 @@ function PostForm() {
         <Form.Field className="mb-4 flex flex-col" key="video" name="video">
           <Form.Label className="mb-2 font-semibold">Video</Form.Label>
           <Form.Control
-            accept="video/mp4"
+            accept="video/mp4,video/quicktime"
             autoComplete="off"
             className="w-full rounded-xs border border-gray-400 border-r-black border-b-black bg-white p-2 text-black enabled:cursor-pointer enabled:hover:bg-black enabled:hover:text-white"
             disabled={isFormDisabled}
