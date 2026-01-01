@@ -85,10 +85,10 @@ function PostForm() {
 
   const blueskyIsEnabled = postPlatforms.bluesky.isEnabled;
   const facebookIsEnabled = postPlatforms.facebook.isEnabled;
-  // const neynarIsEnabled = postPlatforms.neynar.isEnabled;
-  // const threadsIsEnabled = postPlatforms.threads.isEnabled;
+  const neynarIsEnabled = postPlatforms.neynar.isEnabled;
+  const threadsIsEnabled = postPlatforms.threads.isEnabled;
   const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
-  // const twitterIsEnabled = postPlatforms.twitter.isEnabled;
+  const twitterIsEnabled = postPlatforms.twitter.isEnabled;
   const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
 
   // const facebookIsUsable = postPlatforms.facebook.isUsable;
@@ -97,7 +97,14 @@ function PostForm() {
 
   const needsTitle = blueskyIsEnabled || facebookIsEnabled || youtubeIsEnabled;
 
-  // const needsMessage = true;
+  const needsText =
+    blueskyIsEnabled ||
+    facebookIsEnabled ||
+    youtubeIsEnabled ||
+    neynarIsEnabled ||
+    threadsIsEnabled ||
+    twitterIsEnabled ||
+    tiktokIsEnabled;
 
   // Facebook Settings
   // ---------------------------------------------------------------------------
@@ -215,6 +222,60 @@ function PostForm() {
     !state.tiktokDiscloseBrandSelf &&
     !state.tiktokDiscloseBrandOther;
 
+  const hasValidTitleLengthYoutube =
+    !youtubeIsEnabled ||
+    state.title.length <= postPlatforms.youtube.TITLE_MAX_LENGTH;
+
+  const hasValidTitleLengthFacebook =
+    !facebookIsEnabled ||
+    state.title.length <= postPlatforms.facebook.TITLE_MAX_LENGTH;
+
+  const hasValidTitleLengthBluesky =
+    !blueskyIsEnabled ||
+    state.title.length <= postPlatforms.bluesky.TITLE_MAX_LENGTH;
+
+  const hasValidTitleLength =
+    hasValidTitleLengthYoutube &&
+    hasValidTitleLengthFacebook &&
+    hasValidTitleLengthBluesky;
+
+  const hasValidTextLengthYoutube =
+    !youtubeIsEnabled ||
+    state.text.length <= postPlatforms.youtube.TEXT_MAX_LENGTH;
+
+  const hasValidTextLengthFacebook =
+    !facebookIsEnabled ||
+    state.text.length <= postPlatforms.facebook.TEXT_MAX_LENGTH;
+
+  const hasValidTextLengthBluesky =
+    !blueskyIsEnabled ||
+    state.text.length <= postPlatforms.bluesky.TEXT_MAX_LENGTH;
+
+  const hasValidTextLengthNeynar =
+    !neynarIsEnabled ||
+    state.text.length <= postPlatforms.neynar.TEXT_MAX_LENGTH;
+
+  const hasValidTextLengthThreads =
+    !threadsIsEnabled ||
+    state.text.length <= postPlatforms.threads.TEXT_MAX_LENGTH;
+
+  const hasValidTextLengthTwitter =
+    !twitterIsEnabled ||
+    state.text.length <= postPlatforms.twitter.TEXT_MAX_LENGTH;
+
+  const hasValidTextLengthTikTok =
+    !tiktokIsEnabled ||
+    state.text.length <= postPlatforms.tiktok.TEXT_MAX_LENGTH;
+
+  const hasValidTextLength =
+    hasValidTextLengthYoutube &&
+    hasValidTextLengthFacebook &&
+    hasValidTextLengthBluesky &&
+    hasValidTextLengthNeynar &&
+    hasValidTextLengthThreads &&
+    hasValidTextLengthTwitter &&
+    hasValidTextLengthTikTok;
+
   const canPost =
     // !hasIncompleteFacebookPrivacy &&
     !hasIncompleteYouTubePrivacy &&
@@ -224,6 +285,9 @@ function PostForm() {
     hasStoragePlatform &&
     state.text !== "" &&
     (!needsTitle || state.title !== "") &&
+    (!needsText || state.text !== "") &&
+    hasValidTitleLength &&
+    hasValidTextLength &&
     selectedFile !== null;
 
   const isFormDisabled =
