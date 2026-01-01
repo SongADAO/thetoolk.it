@@ -222,59 +222,22 @@ function PostForm() {
     !state.tiktokDiscloseBrandSelf &&
     !state.tiktokDiscloseBrandOther;
 
-  const hasValidTitleLengthYoutube =
-    !youtubeIsEnabled ||
-    state.title.length <= postPlatforms.youtube.TITLE_MAX_LENGTH;
+  // Services that exceed title length limit
+  const servicesWithInvalidTitleLength = POST_CONTEXTS.filter(
+    ({ id }) =>
+      postPlatforms[id].isEnabled &&
+      state.title.length > postPlatforms[id].TITLE_MAX_LENGTH,
+  ).map(({ id }) => id);
 
-  const hasValidTitleLengthFacebook =
-    !facebookIsEnabled ||
-    state.title.length <= postPlatforms.facebook.TITLE_MAX_LENGTH;
+  // Services that exceed text length limit
+  const servicesWithInvalidTextLength = POST_CONTEXTS.filter(
+    ({ id }) =>
+      postPlatforms[id].isEnabled &&
+      state.text.length > postPlatforms[id].TEXT_MAX_LENGTH,
+  ).map(({ id }) => id);
 
-  const hasValidTitleLengthBluesky =
-    !blueskyIsEnabled ||
-    state.title.length <= postPlatforms.bluesky.TITLE_MAX_LENGTH;
-
-  const hasValidTitleLength =
-    hasValidTitleLengthYoutube &&
-    hasValidTitleLengthFacebook &&
-    hasValidTitleLengthBluesky;
-
-  const hasValidTextLengthYoutube =
-    !youtubeIsEnabled ||
-    state.text.length <= postPlatforms.youtube.TEXT_MAX_LENGTH;
-
-  const hasValidTextLengthFacebook =
-    !facebookIsEnabled ||
-    state.text.length <= postPlatforms.facebook.TEXT_MAX_LENGTH;
-
-  const hasValidTextLengthBluesky =
-    !blueskyIsEnabled ||
-    state.text.length <= postPlatforms.bluesky.TEXT_MAX_LENGTH;
-
-  const hasValidTextLengthNeynar =
-    !neynarIsEnabled ||
-    state.text.length <= postPlatforms.neynar.TEXT_MAX_LENGTH;
-
-  const hasValidTextLengthThreads =
-    !threadsIsEnabled ||
-    state.text.length <= postPlatforms.threads.TEXT_MAX_LENGTH;
-
-  const hasValidTextLengthTwitter =
-    !twitterIsEnabled ||
-    state.text.length <= postPlatforms.twitter.TEXT_MAX_LENGTH;
-
-  const hasValidTextLengthTikTok =
-    !tiktokIsEnabled ||
-    state.text.length <= postPlatforms.tiktok.TEXT_MAX_LENGTH;
-
-  const hasValidTextLength =
-    hasValidTextLengthYoutube &&
-    hasValidTextLengthFacebook &&
-    hasValidTextLengthBluesky &&
-    hasValidTextLengthNeynar &&
-    hasValidTextLengthThreads &&
-    hasValidTextLengthTwitter &&
-    hasValidTextLengthTikTok;
+  const hasValidTitleLength = servicesWithInvalidTitleLength.length === 0;
+  const hasValidTextLength = servicesWithInvalidTextLength.length === 0;
 
   const canPost =
     // !hasIncompleteFacebookPrivacy &&
