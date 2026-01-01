@@ -224,6 +224,8 @@ function createServiceProvider(
 
     const providerValues = useMemo(
       () => ({
+        TEXT_MAX_LENGTH: config.postModule.TEXT_MAX_LENGTH,
+        TITLE_MAX_LENGTH: config.postModule.TITLE_MAX_LENGTH,
         VIDEO_MAX_DURATION: config.postModule.VIDEO_MAX_DURATION,
         VIDEO_MAX_FILESIZE: config.postModule.VIDEO_MAX_FILESIZE,
         VIDEO_MIN_DURATION: config.postModule.VIDEO_MIN_DURATION,
@@ -266,6 +268,8 @@ function createServiceProvider(
         config.hasHostedCredentials,
         config.icon,
         config.label,
+        config.postModule.TEXT_MAX_LENGTH,
+        config.postModule.TITLE_MAX_LENGTH,
         config.postModule.VIDEO_MAX_DURATION,
         config.postModule.VIDEO_MAX_FILESIZE,
         config.postModule.VIDEO_MIN_DURATION,

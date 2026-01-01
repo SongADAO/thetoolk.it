@@ -23,6 +23,8 @@ import {
 import { NeynarContext } from "@/services/post/neynar/Context";
 import {
   createPost,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
@@ -253,6 +255,8 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
 
   const providerValues = useMemo(
     () => ({
+      TEXT_MAX_LENGTH,
+      TITLE_MAX_LENGTH,
       VIDEO_MAX_DURATION,
       VIDEO_MAX_FILESIZE,
       VIDEO_MIN_DURATION,
@@ -290,6 +294,8 @@ export function NeynarProvider({ children, mode }: Readonly<Props>) {
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      TEXT_MAX_LENGTH,
+      TITLE_MAX_LENGTH,
       VIDEO_MAX_DURATION,
       VIDEO_MAX_FILESIZE,
       VIDEO_MIN_DURATION,

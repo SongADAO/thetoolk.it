@@ -9,6 +9,10 @@ const VIDEO_MIN_DURATION = 3;
 // 100 days
 const VIDEO_MAX_DURATION = 60 * 24 * 100;
 
+const TITLE_MAX_LENGTH = 255;
+
+const TEXT_MAX_LENGTH = 1024;
+
 interface CreateCastProps {
   accessToken: string;
   clientSecret: string;
@@ -159,6 +163,8 @@ async function createPost({
 export {
   createCast,
   createPost,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,

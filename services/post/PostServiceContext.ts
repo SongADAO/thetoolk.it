@@ -10,6 +10,8 @@ import type {
 } from "@/services/post/types";
 
 interface PostServiceContextType {
+  TEXT_MAX_LENGTH: number;
+  TITLE_MAX_LENGTH: number;
   VIDEO_MAX_DURATION: number;
   VIDEO_MAX_FILESIZE: number;
   VIDEO_MIN_DURATION: number;
@@ -48,6 +50,8 @@ interface PostServiceContextType {
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const postServiceContextDefault = {
+  TEXT_MAX_LENGTH: 0,
+  TITLE_MAX_LENGTH: 0,
   VIDEO_MAX_DURATION: 0,
   VIDEO_MAX_FILESIZE: 0,
   VIDEO_MIN_DURATION: 0,

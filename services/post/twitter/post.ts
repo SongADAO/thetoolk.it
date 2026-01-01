@@ -11,6 +11,10 @@ const VIDEO_MIN_DURATION = 3;
 // 2 minutes and 20 seconds
 const VIDEO_MAX_DURATION = 140;
 
+const TITLE_MAX_LENGTH = 255;
+
+const TEXT_MAX_LENGTH = 280;
+
 interface TwitterFinalizeUploadResponse {
   data?: {
     media_id?: string;
@@ -556,6 +560,8 @@ export {
   initializeUploadVideo,
   publishPost,
   statusUploadVideo,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,

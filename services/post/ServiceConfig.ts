@@ -84,6 +84,8 @@ interface ServiceConfig {
   // Post module
   postModule: {
     createPost: (props: PostServiceCreatePostProps) => Promise<string | null>;
+    TEXT_MAX_LENGTH: number;
+    TITLE_MAX_LENGTH: number;
     VIDEO_MAX_DURATION: number;
     VIDEO_MAX_FILESIZE: number;
     VIDEO_MIN_DURATION: number;

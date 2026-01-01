@@ -9,6 +9,10 @@ const VIDEO_MIN_DURATION = 3;
 // 12 hours
 const VIDEO_MAX_DURATION = 60 * 24 * 12;
 
+const TITLE_MAX_LENGTH = 100;
+
+const TEXT_MAX_LENGTH = 5000;
+
 // Start resumable upload
 interface InitiateResumableUploadProps {
   accessToken: string;
@@ -347,6 +351,8 @@ async function createPost({
 export {
   createPost,
   initiateResumableUpload,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   uploadFileChunk,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
