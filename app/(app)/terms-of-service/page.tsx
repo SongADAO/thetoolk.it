@@ -140,7 +140,7 @@ export default function TermsOfServicePage() {
         </li>
         <li>
           Twitter (X):{" "}
-          <a href="https://twitter.com/tos" target="_blank">
+          <a href="https://x.com/tos" target="_blank">
             X Terms of Service
           </a>
         </li>
