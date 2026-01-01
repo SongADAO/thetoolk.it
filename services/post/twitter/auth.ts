@@ -148,7 +148,7 @@ function getAuthorizeUrl(
     state: `${OAUTH_STATE}----${codeChallenge}`,
   });
 
-  return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+  return `https://x.com/i/oauth2/authorize?${params.toString()}`;
 }
 
 async function getAuthorizationUrlHosted(
