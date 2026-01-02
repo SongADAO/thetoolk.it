@@ -6,8 +6,8 @@ import type { PostServiceCreatePostProps } from "@/services/post/types";
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 100;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
-// 100 days
-const VIDEO_MAX_DURATION = 60 * 24 * 100;
+// 12 hours
+const VIDEO_MAX_DURATION = 43200;
 
 const TITLE_MAX_LENGTH = 255;
 
