@@ -1,6 +1,9 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { PostServiceCreatePostProps } from "@/services/post/types";
+import type {
+  PostLimits,
+  PostServiceCreatePostProps,
+} from "@/services/post/types";
 
 let DEBUG_STATUS_STEP = 0;
 
@@ -27,13 +30,6 @@ const TITLE_MAX_LENGTH_PREMIUM = 255;
 
 // 25,000 characters
 const TEXT_MAX_LENGTH_PREMIUM = 25000;
-
-interface PostLimits {
-  textMaxLength: number;
-  titleMaxLength: number;
-  videoMaxDuration: number;
-  videoMaxFilesize: number;
-}
 
 function getLimitsForSubscription(
   subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus",
