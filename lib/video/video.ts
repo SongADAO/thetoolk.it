@@ -21,21 +21,51 @@ function formatFileDuration(duration: number) {
 }
 
 async function getVideoDuration(video: File): Promise<number> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const videoElement = document.createElement("video");
     videoElement.preload = "metadata";
 
-    videoElement.onloadedmetadata = () => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    const cleanup = () => {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
       window.URL.revokeObjectURL(videoElement.src);
+      videoElement.onloadedmetadata = null;
+      videoElement.onerror = null;
+    };
+
+    // timeoutId = setTimeout(() => {
+    //   cleanup();
+    //   reject(
+    //     new Error(`Timeout: Could not load video metadata after 10 seconds`),
+    //   );
+    // }, 10000);
+
+    // On timeout, resolve with a really large duration so it will just trim regardless.
+    timeoutId = setTimeout(() => {
+      cleanup();
+      resolve(43200);
+    }, 10000);
+
+    videoElement.onloadedmetadata = () => {
+      cleanup();
       resolve(videoElement.duration);
     };
 
     videoElement.onerror = () => {
-      window.URL.revokeObjectURL(videoElement.src);
-      resolve(0);
+      cleanup();
+      reject(new Error("Failed to load video metadata"));
     };
 
     videoElement.src = URL.createObjectURL(video);
+
+    // Handle race condition where metadata may already be loaded
+    if (videoElement.readyState >= 1) {
+      cleanup();
+      resolve(videoElement.duration);
+    }
   });
 }
 
