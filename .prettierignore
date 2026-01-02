@@ -9,3 +9,5 @@ next-env.d.ts
 
 /public/fonts
 /PROGRESS.md
+
+/supabase/emails
