@@ -2,12 +2,16 @@ import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import type { PostServiceCreatePostProps } from "@/services/post/types";
 
-// 100GB
-const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 100;
+// 8GB
+const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 8;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
-// 100 days
-const VIDEO_MAX_DURATION = 60 * 24 * 100;
+// 3 hours (in seconds)
+const VIDEO_MAX_DURATION = 10800;
+
+const TITLE_MAX_LENGTH = 255;
+
+const TEXT_MAX_LENGTH = 1024;
 
 interface CreateCastProps {
   accessToken: string;
@@ -159,6 +163,8 @@ async function createPost({
 export {
   createCast,
   createPost,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,

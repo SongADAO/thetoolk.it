@@ -84,8 +84,21 @@ interface ServiceConfig {
   // Post module
   postModule: {
     createPost: (props: PostServiceCreatePostProps) => Promise<string | null>;
+    getLimitsForSubscription?: (
+      subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus",
+    ) => {
+      textMaxLength: number;
+      titleMaxLength: number;
+      videoMaxDuration: number;
+      videoMaxFilesize: number;
+    };
+    TEXT_MAX_LENGTH: number;
+    TEXT_MAX_LENGTH_PREMIUM?: number;
+    TITLE_MAX_LENGTH: number;
     VIDEO_MAX_DURATION: number;
+    VIDEO_MAX_DURATION_PREMIUM?: number;
     VIDEO_MAX_FILESIZE: number;
+    VIDEO_MAX_FILESIZE_PREMIUM?: number;
     VIDEO_MIN_DURATION: number;
   };
 }

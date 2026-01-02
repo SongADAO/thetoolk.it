@@ -30,6 +30,7 @@ interface PostServiceAccount {
     privacy_level_options: string[];
     stitch_disabled: boolean;
   };
+  subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus";
 }
 
 interface PostServicePostProps {
@@ -93,6 +94,13 @@ const defaultOauthCredentials: OauthCredentials = {
   username: "",
 };
 
+interface PostLimits {
+  textMaxLength: number;
+  titleMaxLength: number;
+  videoMaxDuration: number;
+  videoMaxFilesize: number;
+}
+
 export {
   defaultOauthAuthorization,
   defaultOauthCredentials,
@@ -101,6 +109,7 @@ export {
   type OauthAuthorizationAndExpiration,
   type OauthCredentials,
   type OauthExpiration,
+  type PostLimits,
   type PostServiceAccount,
   type PostServiceCreatePostProps,
   type PostServicePostProps,

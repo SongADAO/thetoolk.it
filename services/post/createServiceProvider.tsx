@@ -223,42 +223,61 @@ function createServiceProvider(
     }
 
     const providerValues = useMemo(
-      () => ({
-        VIDEO_MAX_DURATION: config.postModule.VIDEO_MAX_DURATION,
-        VIDEO_MAX_FILESIZE: config.postModule.VIDEO_MAX_FILESIZE,
-        VIDEO_MIN_DURATION: config.postModule.VIDEO_MIN_DURATION,
-        accounts: storage.accounts,
-        authorizationExpiresAt,
-        authorize,
-        brandColor: config.brandColor,
-        credentialsId,
-        disconnect: oauth.disconnect,
-        error,
-        fields: config.fields,
-        handleAuthRedirect,
-        hasAuthorizationStep: config.hasAuthorizationStep,
-        hasCompletedAuth: oauth.hasCompletedAuth,
-        hasHostedCredentials: config.hasHostedCredentials,
-        icon: config.icon,
-        id: config.id,
-        initial,
-        isAuthorized,
-        isComplete,
-        isEnabled: storage.isEnabled,
-        isHandlingAuth: oauth.isHandlingAuth,
-        isLoading,
-        isProcessing: posting.isProcessing,
-        isUsable,
-        label: config.label,
-        mode,
-        post,
-        processError: posting.processError,
-        processProgress: posting.processProgress,
-        processStatus: posting.processStatus,
-        resetProcessState: posting.resetProcessState,
-        saveData,
-        setIsEnabled: storage.setIsEnabled,
-      }),
+      () => {
+        // Get dynamic limits based on subscription type if available
+        const dynamicLimits =
+          config.postModule.getLimitsForSubscription &&
+          storage.accounts.length > 0
+            ? config.postModule.getLimitsForSubscription(
+                storage.accounts[0].subscriptionType,
+              )
+            : null;
+
+        return {
+          TEXT_MAX_LENGTH:
+            dynamicLimits?.textMaxLength ?? config.postModule.TEXT_MAX_LENGTH,
+          TITLE_MAX_LENGTH:
+            dynamicLimits?.titleMaxLength ?? config.postModule.TITLE_MAX_LENGTH,
+          VIDEO_MAX_DURATION:
+            dynamicLimits?.videoMaxDuration ??
+            config.postModule.VIDEO_MAX_DURATION,
+          VIDEO_MAX_FILESIZE:
+            dynamicLimits?.videoMaxFilesize ??
+            config.postModule.VIDEO_MAX_FILESIZE,
+          VIDEO_MIN_DURATION: config.postModule.VIDEO_MIN_DURATION,
+          accounts: storage.accounts,
+          authorizationExpiresAt,
+          authorize,
+          brandColor: config.brandColor,
+          credentialsId,
+          disconnect: oauth.disconnect,
+          error,
+          fields: config.fields,
+          handleAuthRedirect,
+          hasAuthorizationStep: config.hasAuthorizationStep,
+          hasCompletedAuth: oauth.hasCompletedAuth,
+          hasHostedCredentials: config.hasHostedCredentials,
+          icon: config.icon,
+          id: config.id,
+          initial,
+          isAuthorized,
+          isComplete,
+          isEnabled: storage.isEnabled,
+          isHandlingAuth: oauth.isHandlingAuth,
+          isLoading,
+          isProcessing: posting.isProcessing,
+          isUsable,
+          label: config.label,
+          mode,
+          post,
+          processError: posting.processError,
+          processProgress: posting.processProgress,
+          processStatus: posting.processStatus,
+          resetProcessState: posting.resetProcessState,
+          saveData,
+          setIsEnabled: storage.setIsEnabled,
+        };
+      },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [
         config.brandColor,
@@ -266,6 +285,8 @@ function createServiceProvider(
         config.hasHostedCredentials,
         config.icon,
         config.label,
+        config.postModule.TEXT_MAX_LENGTH,
+        config.postModule.TITLE_MAX_LENGTH,
         config.postModule.VIDEO_MAX_DURATION,
         config.postModule.VIDEO_MAX_FILESIZE,
         config.postModule.VIDEO_MIN_DURATION,

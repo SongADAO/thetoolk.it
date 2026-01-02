@@ -13,6 +13,10 @@ const STATUS_POLL_TIMEOUT = 900000;
 // Poll every 4 seconds
 const STATUS_POLL_INTERVAL = 4000;
 
+const TITLE_MAX_LENGTH = 255;
+
+const TEXT_MAX_LENGTH = 4000;
+
 interface UploadVideoProps {
   accessToken: string;
   mode: "server" | "browser";
@@ -336,6 +340,8 @@ export {
   checkPublishStatus,
   createPost,
   pollPublishStatus,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   uploadVideo,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,

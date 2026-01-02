@@ -27,6 +27,8 @@ import {
 } from "@/services/post/youtube/auth";
 import {
   createPost,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,
@@ -75,6 +77,8 @@ export const youtubeServiceConfig: ServiceConfig = {
   defaultCredentials: defaultOauthCredentials,
   defaultExpiration: defaultOauthExpiration,
   postModule: {
+    TEXT_MAX_LENGTH,
+    TITLE_MAX_LENGTH,
     VIDEO_MAX_DURATION,
     VIDEO_MAX_FILESIZE,
     VIDEO_MIN_DURATION,

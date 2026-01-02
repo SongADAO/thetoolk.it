@@ -170,7 +170,7 @@ export function CreatePostProvider({ children }: Readonly<Props>) {
 
     // Trim platform specific videos
     // -------------------------------------------------------------------------
-    console.log("Converting HLS video before upload...");
+    console.log("Trimming platform videos...");
     const videos = await trimPlatformVideos({
       platforms: postPlatformsArray,
       setIsProcessing: setIsVideoTrimming,

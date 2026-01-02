@@ -12,6 +12,10 @@ const VIDEO_MIN_DURATION = 3;
 // 4 minutes
 const VIDEO_MAX_DURATION = 240;
 
+const TITLE_MAX_LENGTH = 255;
+
+const TEXT_MAX_LENGTH = 500;
+
 interface UploadVideoProps {
   accessToken: string;
   privacy: string;
@@ -184,6 +188,8 @@ async function createPost({
 
 export {
   createPost,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   uploadVideo,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,

@@ -85,10 +85,10 @@ function PostForm() {
 
   const blueskyIsEnabled = postPlatforms.bluesky.isEnabled;
   const facebookIsEnabled = postPlatforms.facebook.isEnabled;
-  // const neynarIsEnabled = postPlatforms.neynar.isEnabled;
-  // const threadsIsEnabled = postPlatforms.threads.isEnabled;
+  const neynarIsEnabled = postPlatforms.neynar.isEnabled;
+  const threadsIsEnabled = postPlatforms.threads.isEnabled;
   const tiktokIsEnabled = postPlatforms.tiktok.isEnabled;
-  // const twitterIsEnabled = postPlatforms.twitter.isEnabled;
+  const twitterIsEnabled = postPlatforms.twitter.isEnabled;
   const youtubeIsEnabled = postPlatforms.youtube.isEnabled;
 
   // const facebookIsUsable = postPlatforms.facebook.isUsable;
@@ -97,7 +97,14 @@ function PostForm() {
 
   const needsTitle = blueskyIsEnabled || facebookIsEnabled || youtubeIsEnabled;
 
-  // const needsMessage = true;
+  const needsText =
+    blueskyIsEnabled ||
+    facebookIsEnabled ||
+    youtubeIsEnabled ||
+    neynarIsEnabled ||
+    threadsIsEnabled ||
+    twitterIsEnabled ||
+    tiktokIsEnabled;
 
   // Facebook Settings
   // ---------------------------------------------------------------------------
@@ -215,6 +222,23 @@ function PostForm() {
     !state.tiktokDiscloseBrandSelf &&
     !state.tiktokDiscloseBrandOther;
 
+  // Services that exceed title length limit
+  const servicesWithInvalidTitleLength = POST_CONTEXTS.filter(
+    ({ id }) =>
+      postPlatforms[id].isEnabled &&
+      state.title.length > postPlatforms[id].TITLE_MAX_LENGTH,
+  ).map(({ id }) => id);
+
+  // Services that exceed text length limit
+  const servicesWithInvalidTextLength = POST_CONTEXTS.filter(
+    ({ id }) =>
+      postPlatforms[id].isEnabled &&
+      state.text.length > postPlatforms[id].TEXT_MAX_LENGTH,
+  ).map(({ id }) => id);
+
+  const hasValidTitleLength = servicesWithInvalidTitleLength.length === 0;
+  const hasValidTextLength = servicesWithInvalidTextLength.length === 0;
+
   const canPost =
     // !hasIncompleteFacebookPrivacy &&
     !hasIncompleteYouTubePrivacy &&
@@ -224,6 +248,9 @@ function PostForm() {
     hasStoragePlatform &&
     state.text !== "" &&
     (!needsTitle || state.title !== "") &&
+    (!needsText || state.text !== "") &&
+    hasValidTitleLength &&
+    hasValidTextLength &&
     selectedFile !== null;
 
   const isFormDisabled =
@@ -345,7 +372,7 @@ function PostForm() {
         <Form.Field className="mb-4 flex flex-col" key="video" name="video">
           <Form.Label className="mb-2 font-semibold">Video</Form.Label>
           <Form.Control
-            accept="video/mp4"
+            accept="video/mp4,video/quicktime"
             autoComplete="off"
             className="w-full rounded-xs border border-gray-400 border-r-black border-b-black bg-white p-2 text-black enabled:cursor-pointer enabled:hover:bg-black enabled:hover:text-white"
             disabled={isFormDisabled}
@@ -408,6 +435,28 @@ function PostForm() {
           <input name="title" type="hidden" value="" />
         )}
 
+        {servicesWithInvalidTitleLength.length > 0 ? (
+          <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
+            <div>
+              <FaCircleExclamation className="size-5 text-red-600" />
+            </div>
+            <div>
+              <p className="mb-2">
+                <strong>Title is too long</strong> (current:{" "}
+                {state.title.length} characters)
+              </p>
+              <ul className="list-disc pl-5">
+                {servicesWithInvalidTitleLength.map((serviceId) => (
+                  <li key={serviceId}>
+                    <strong className="capitalize">{serviceId}</strong>: max{" "}
+                    {postPlatforms[serviceId].TITLE_MAX_LENGTH} characters
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : null}
+
         <Form.Field className="mb-4 flex flex-col" key="text" name="text">
           <Form.Label className="mb-2 font-semibold">
             Message / Caption / Description
@@ -431,6 +480,28 @@ function PostForm() {
             <Form.Message match="valueMissing">Missing message.</Form.Message>
           </div>
         </Form.Field>
+
+        {servicesWithInvalidTextLength.length > 0 ? (
+          <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
+            <div>
+              <FaCircleExclamation className="size-5 text-red-600" />
+            </div>
+            <div>
+              <p className="mb-2">
+                <strong>Text is too long</strong> (current: {state.text.length}{" "}
+                characters)
+              </p>
+              <ul className="list-disc pl-5">
+                {servicesWithInvalidTextLength.map((serviceId) => (
+                  <li key={serviceId}>
+                    <strong className="capitalize">{serviceId}</strong>: max{" "}
+                    {postPlatforms[serviceId].TEXT_MAX_LENGTH} characters
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : null}
 
         {/* {facebookIsEnabled && facebookIsUsable ? (
           <section className="mb-4 rounded-xs border border-gray-400 border-r-black border-b-black bg-gray-100 p-2">

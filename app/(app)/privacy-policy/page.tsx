@@ -106,7 +106,7 @@ export default function PrivacyPolicyPage() {
         </li>
         <li>
           Twitter (X):{" "}
-          <a href="https://twitter.com/privacy" target="_blank">
+          <a href="https://x.com/privacy" target="_blank">
             X Privacy Policy
           </a>
         </li>

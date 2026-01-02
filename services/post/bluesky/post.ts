@@ -16,6 +16,10 @@ const VIDEO_MIN_DURATION = 3;
 // 3 minutes
 const VIDEO_MAX_DURATION = 180;
 
+const TITLE_MAX_LENGTH = 100;
+
+const TEXT_MAX_LENGTH = 300;
+
 interface AgentPostVideo {
   agent: Agent;
   blobRef: BlobRef;
@@ -320,6 +324,8 @@ export {
   agentPostVideo,
   agentUploadBlob,
   createPost,
+  TEXT_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_FILESIZE,
   VIDEO_MIN_DURATION,

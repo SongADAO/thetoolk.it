@@ -32,6 +32,7 @@ async function trimVideo({
     );
 
     // Get actual video duration
+    console.log("Getting video actual duration...");
     const actualDuration = await getVideoDuration(video);
     console.log(`Video actual duration: ${actualDuration}s`);
 

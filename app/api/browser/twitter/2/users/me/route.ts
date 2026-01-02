@@ -10,7 +10,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const response = await fetch("https://api.twitter.com/2/users/me", {
+    // Forward query parameters (like user.fields) to Twitter API
+    const { searchParams } = new URL(request.url);
+    const queryString = searchParams.toString();
+    const twitterUrl = queryString
+      ? `https://api.twitter.com/2/users/me?${queryString}`
+      : "https://api.twitter.com/2/users/me";
+
+    const response = await fetch(twitterUrl, {
       headers: {
         Authorization: authHeader,
       },

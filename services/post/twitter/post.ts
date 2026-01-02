@@ -1,15 +1,61 @@
 import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
-import type { PostServiceCreatePostProps } from "@/services/post/types";
+import type {
+  PostLimits,
+  PostServiceCreatePostProps,
+} from "@/services/post/types";
 
 let DEBUG_STATUS_STEP = 0;
 
+// Default limits for free users
 // 512MB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 512;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
 // 2 minutes and 20 seconds
 const VIDEO_MAX_DURATION = 140;
+
+const TITLE_MAX_LENGTH = 255;
+
+const TEXT_MAX_LENGTH = 280;
+
+// Premium limits
+// 8GB
+const VIDEO_MAX_FILESIZE_PREMIUM = 1024 * 1024 * 1024 * 8;
+
+// 3 hours (in seconds)
+const VIDEO_MAX_DURATION_PREMIUM = 10800;
+
+const TITLE_MAX_LENGTH_PREMIUM = 255;
+
+// 25,000 characters
+const TEXT_MAX_LENGTH_PREMIUM = 25000;
+
+function getLimitsForSubscription(
+  subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus",
+): PostLimits {
+  // Premium, Basic, and PremiumPlus all get enhanced limits
+  if (
+    subscriptionType === "Premium" ||
+    subscriptionType === "Basic" ||
+    subscriptionType === "PremiumPlus"
+  ) {
+    return {
+      textMaxLength: TEXT_MAX_LENGTH_PREMIUM,
+      titleMaxLength: TITLE_MAX_LENGTH_PREMIUM,
+      videoMaxDuration: VIDEO_MAX_DURATION_PREMIUM,
+      videoMaxFilesize: VIDEO_MAX_FILESIZE_PREMIUM,
+    };
+  }
+
+  // Default limits for free users or when subscription type is unknown
+  return {
+    textMaxLength: TEXT_MAX_LENGTH,
+    titleMaxLength: TITLE_MAX_LENGTH,
+    videoMaxDuration: VIDEO_MAX_DURATION,
+    videoMaxFilesize: VIDEO_MAX_FILESIZE,
+  };
+}
 
 interface TwitterFinalizeUploadResponse {
   data?: {
@@ -553,10 +599,17 @@ export {
   appendUploadVideo,
   createPost,
   finalizeUploadVideo,
+  getLimitsForSubscription,
   initializeUploadVideo,
+  type PostLimits,
   publishPost,
   statusUploadVideo,
+  TEXT_MAX_LENGTH,
+  TEXT_MAX_LENGTH_PREMIUM,
+  TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
+  VIDEO_MAX_DURATION_PREMIUM,
   VIDEO_MAX_FILESIZE,
+  VIDEO_MAX_FILESIZE_PREMIUM,
   VIDEO_MIN_DURATION,
 };

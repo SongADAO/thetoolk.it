@@ -148,7 +148,7 @@ function getAuthorizeUrl(
     state: `${OAUTH_STATE}----${codeChallenge}`,
   });
 
-  return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+  return `https://x.com/i/oauth2/authorize?${params.toString()}`;
 }
 
 async function getAuthorizationUrlHosted(
@@ -369,10 +369,14 @@ async function getUserInfo(
 ): Promise<PostServiceAccount> {
   console.log(`Checking Twitter user info`);
 
+  const params = new URLSearchParams({
+    "user.fields": "subscription_type",
+  });
+
   const endpoint =
     mode === "server"
-      ? "https://api.twitter.com/2/users/me"
-      : "/api/browser/twitter/2/users/me";
+      ? `https://api.twitter.com/2/users/me?${params.toString()}`
+      : `/api/browser/twitter/2/users/me?${params.toString()}`;
 
   const response = await fetch(endpoint, {
     headers: {
@@ -389,6 +393,7 @@ async function getUserInfo(
 
   return {
     id: userInfo.data.id,
+    subscriptionType: userInfo.data.subscription_type,
     username: userInfo.data.username,
   };
 }
