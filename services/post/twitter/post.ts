@@ -19,20 +19,25 @@ const TEXT_MAX_LENGTH = 280;
 // Premium limits
 // 8GB
 const VIDEO_MAX_FILESIZE_PREMIUM = 1024 * 1024 * 1024 * 8;
+
 // 3 hours (in seconds)
 const VIDEO_MAX_DURATION_PREMIUM = 180 * 60;
+
+const TITLE_MAX_LENGTH_PREMIUM = 255;
+
 // 25,000 characters
 const TEXT_MAX_LENGTH_PREMIUM = 25000;
 
-interface TwitterLimits {
+interface PostLimits {
   textMaxLength: number;
+  titleMaxLength: number;
   videoMaxDuration: number;
   videoMaxFilesize: number;
 }
 
 function getLimitsForSubscription(
   subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus",
-): TwitterLimits {
+): PostLimits {
   // Premium, Basic, and PremiumPlus all get enhanced limits
   if (
     subscriptionType === "Premium" ||
@@ -41,6 +46,7 @@ function getLimitsForSubscription(
   ) {
     return {
       textMaxLength: TEXT_MAX_LENGTH_PREMIUM,
+      titleMaxLength: TITLE_MAX_LENGTH_PREMIUM,
       videoMaxDuration: VIDEO_MAX_DURATION_PREMIUM,
       videoMaxFilesize: VIDEO_MAX_FILESIZE_PREMIUM,
     };
@@ -49,6 +55,7 @@ function getLimitsForSubscription(
   // Default limits for free users or when subscription type is unknown
   return {
     textMaxLength: TEXT_MAX_LENGTH,
+    titleMaxLength: TITLE_MAX_LENGTH,
     videoMaxDuration: VIDEO_MAX_DURATION,
     videoMaxFilesize: VIDEO_MAX_FILESIZE,
   };
@@ -598,12 +605,12 @@ export {
   finalizeUploadVideo,
   getLimitsForSubscription,
   initializeUploadVideo,
+  type PostLimits,
   publishPost,
   statusUploadVideo,
   TEXT_MAX_LENGTH,
   TEXT_MAX_LENGTH_PREMIUM,
   TITLE_MAX_LENGTH,
-  type TwitterLimits,
   VIDEO_MAX_DURATION,
   VIDEO_MAX_DURATION_PREMIUM,
   VIDEO_MAX_FILESIZE,
