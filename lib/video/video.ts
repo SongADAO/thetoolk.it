@@ -13,9 +13,15 @@ function formatDuration(duration: number) {
   const minutes = Math.floor((duration % 3600) / 60);
   const seconds = Math.floor(duration % 60);
 
-  return hours > 0
-    ? `${hours}h ${minutes}m ${seconds}s`
-    : `${minutes}m ${seconds}s`;
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+
+  return `${seconds}s`;
 }
 
 async function getVideoDuration(video: File): Promise<number> {
