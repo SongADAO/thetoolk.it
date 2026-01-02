@@ -41,7 +41,7 @@
     "@neynar/react": "^1.2.5",
     "@pigment-css/react": "^0.0.30",
     "@rainbow-me/rainbowkit": "^2.2.8",
-    "@sentry/nextjs": "^10.26.0",
+    "@sentry/nextjs": "^10.32.1",
     "@stripe/stripe-js": "^8.1.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.53.0",
