@@ -8,16 +8,14 @@ function formatFileSize(sizeInBytes: number) {
   return `${kb.toFixed(2)} KB`;
 }
 
-function formatFileDuration(duration: number) {
+function formatDuration(duration: number) {
   const hours = Math.floor(duration / 3600);
   const minutes = Math.floor((duration % 3600) / 60);
   const seconds = Math.floor(duration % 60);
 
-  const padded = (num: number) => num.toString().padStart(2, "0");
-
   return hours > 0
-    ? `${padded(hours)}:${padded(minutes)}:${padded(seconds)}`
-    : `${padded(minutes)}:${padded(seconds)}`;
+    ? `${hours}h ${minutes}m ${seconds}s`
+    : `${minutes}m ${seconds}s`;
 }
 
 async function getVideoDuration(video: File): Promise<number> {
@@ -105,7 +103,7 @@ function calculateTargetBitrate(
 export {
   calculateTargetBitrate,
   downloadFile,
-  formatFileDuration,
+  formatDuration,
   formatFileSize,
   getFileExtension,
   getVideoDuration,
