@@ -2,8 +2,8 @@ import { DEBUG_POST } from "@/config/constants";
 import { sleep } from "@/lib/utils";
 import type { PostServiceCreatePostProps } from "@/services/post/types";
 
-// 100GB
-const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 100;
+// 128GB
+const VIDEO_MAX_FILESIZE = 1024 * 1024 * 1024 * 128;
 // 3 seconds
 const VIDEO_MIN_DURATION = 3;
 // 12 hours
