@@ -4,7 +4,7 @@ import { sleep } from "@/lib/utils";
 import { convertToHLS, type HLSFiles } from "@/lib/video/hls";
 import { convertVideoMediabunny } from "@/lib/video/mediabunny";
 import { trimVideo } from "@/lib/video/trim";
-import { downloadFile } from "@/lib/video/video";
+import { downloadFile, getVideoDuration } from "@/lib/video/video";
 import type { PostServiceContextType } from "@/services/post/PostServiceContext";
 
 interface ConvertVideoProps {
@@ -166,6 +166,11 @@ async function trimPlatformVideo({
     return video;
   }
 
+  // Get actual video duration
+  console.log("Getting full video duration...");
+  const videoDuration = await getVideoDuration(video);
+  console.log(`Full video duration: ${videoDuration}s`);
+
   const maxDuration =
     platform.accounts[0]?.permissions?.max_video_post_duration_sec ??
     platform.VIDEO_MAX_DURATION;
@@ -177,6 +182,7 @@ async function trimPlatformVideo({
     minDuration: platform.VIDEO_MIN_DURATION,
     onProgress: setProcessProgress,
     video,
+    videoDuration,
   });
 }
 

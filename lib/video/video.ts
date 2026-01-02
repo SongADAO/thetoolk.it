@@ -46,7 +46,7 @@ async function getVideoDuration(video: File): Promise<number> {
     // On timeout, resolve with a really large duration so it will just trim regardless.
     timeoutId = setTimeout(() => {
       cleanup();
-      resolve(43200);
+      resolve(43201);
     }, 10000);
 
     videoElement.onloadedmetadata = () => {

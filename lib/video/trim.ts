@@ -1,7 +1,7 @@
 import { fetchFile } from "@ffmpeg/util";
 
 import { cleanupFFmpeg, initializeFFmpeg } from "@/lib/video/ffmpeg";
-import { getFileExtension, getVideoDuration } from "@/lib/video/video";
+import { getFileExtension } from "@/lib/video/video";
 
 // -----------------------------------------------------------------------------
 
@@ -12,6 +12,7 @@ interface TrimVideoOptions {
   minDuration: number;
   onProgress: ((progress: number) => void) | undefined | null;
   video: File;
+  videoDuration: number;
 }
 
 async function trimVideo({
@@ -21,6 +22,7 @@ async function trimVideo({
   minDuration,
   onProgress,
   video,
+  videoDuration,
 }: TrimVideoOptions): Promise<File | null> {
   // Initialize FFmpeg
   console.log("Initializing FFmpeg...");
@@ -31,18 +33,13 @@ async function trimVideo({
       `Trimming video: maxDuration=${maxDuration}s, maxFilesize=${maxFilesize} bytes, minDuration=${minDuration}s`,
     );
 
-    // Get actual video duration
-    console.log("Getting video actual duration...");
-    const actualDuration = await getVideoDuration(video);
-    console.log(`Video actual duration: ${actualDuration}s`);
-
     // If video is shorter than minimum duration, return as-is
-    if (actualDuration < minDuration) {
+    if (videoDuration < minDuration) {
       throw new Error("Video is shorter than minimum duration!");
     }
 
     // Check if video needs trimming
-    if (actualDuration <= maxDuration && video.size <= maxFilesize) {
+    if (videoDuration <= maxDuration && video.size <= maxFilesize) {
       console.log("Video is within limits, no trimming needed");
       return null;
     }
@@ -55,7 +52,7 @@ async function trimVideo({
     await ffmpeg.writeFile(inputFileName, await fetchFile(video));
 
     // Calculate trim duration (use the smaller of maxDuration or actual duration)
-    const trimDuration = Math.min(maxDuration, actualDuration);
+    const trimDuration = Math.min(maxDuration, videoDuration);
     console.log(`Trimming to ${trimDuration}s`);
 
     // Trim video using stream copy (no re-encoding)
@@ -105,7 +102,7 @@ async function trimVideo({
     );
 
     console.log(
-      `Trim complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB (${actualDuration.toFixed(1)}s) -> ` +
+      `Trim complete! Original: ${(video.size / 1024 / 1024).toFixed(2)}MB (${videoDuration.toFixed(1)}s) -> ` +
         `Trimmed: ${(trimmedFile.size / 1024 / 1024).toFixed(2)}MB (${trimDuration.toFixed(1)}s)`,
     );
 
