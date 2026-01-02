@@ -30,6 +30,7 @@ interface PostServiceAccount {
     privacy_level_options: string[];
     stitch_disabled: boolean;
   };
+  subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus";
 }
 
 interface PostServicePostProps {

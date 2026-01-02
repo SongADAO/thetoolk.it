@@ -4,6 +4,7 @@ import type { PostServiceCreatePostProps } from "@/services/post/types";
 
 let DEBUG_STATUS_STEP = 0;
 
+// Default limits for free users
 // 512MB
 const VIDEO_MAX_FILESIZE = 1024 * 1024 * 512;
 // 3 seconds
@@ -14,6 +15,44 @@ const VIDEO_MAX_DURATION = 140;
 const TITLE_MAX_LENGTH = 255;
 
 const TEXT_MAX_LENGTH = 280;
+
+// Premium limits
+// 8GB
+const VIDEO_MAX_FILESIZE_PREMIUM = 1024 * 1024 * 1024 * 8;
+// 3 hours (in seconds)
+const VIDEO_MAX_DURATION_PREMIUM = 180 * 60;
+// 25,000 characters
+const TEXT_MAX_LENGTH_PREMIUM = 25000;
+
+interface TwitterLimits {
+  textMaxLength: number;
+  videoMaxDuration: number;
+  videoMaxFilesize: number;
+}
+
+function getLimitsForSubscription(
+  subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus",
+): TwitterLimits {
+  // Premium, Basic, and PremiumPlus all get enhanced limits
+  if (
+    subscriptionType === "Premium" ||
+    subscriptionType === "Basic" ||
+    subscriptionType === "PremiumPlus"
+  ) {
+    return {
+      textMaxLength: TEXT_MAX_LENGTH_PREMIUM,
+      videoMaxDuration: VIDEO_MAX_DURATION_PREMIUM,
+      videoMaxFilesize: VIDEO_MAX_FILESIZE_PREMIUM,
+    };
+  }
+
+  // Default limits for free users or when subscription type is unknown
+  return {
+    textMaxLength: TEXT_MAX_LENGTH,
+    videoMaxDuration: VIDEO_MAX_DURATION,
+    videoMaxFilesize: VIDEO_MAX_FILESIZE,
+  };
+}
 
 interface TwitterFinalizeUploadResponse {
   data?: {
@@ -557,12 +596,17 @@ export {
   appendUploadVideo,
   createPost,
   finalizeUploadVideo,
+  getLimitsForSubscription,
   initializeUploadVideo,
   publishPost,
   statusUploadVideo,
   TEXT_MAX_LENGTH,
+  TEXT_MAX_LENGTH_PREMIUM,
   TITLE_MAX_LENGTH,
+  type TwitterLimits,
   VIDEO_MAX_DURATION,
+  VIDEO_MAX_DURATION_PREMIUM,
   VIDEO_MAX_FILESIZE,
+  VIDEO_MAX_FILESIZE_PREMIUM,
   VIDEO_MIN_DURATION,
 };

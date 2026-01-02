@@ -22,10 +22,14 @@ import {
 } from "@/services/post/twitter/auth";
 import {
   createPost,
+  getLimitsForSubscription,
   TEXT_MAX_LENGTH,
+  TEXT_MAX_LENGTH_PREMIUM,
   TITLE_MAX_LENGTH,
   VIDEO_MAX_DURATION,
+  VIDEO_MAX_DURATION_PREMIUM,
   VIDEO_MAX_FILESIZE,
+  VIDEO_MAX_FILESIZE_PREMIUM,
   VIDEO_MIN_DURATION,
 } from "@/services/post/twitter/post";
 import {
@@ -78,10 +82,14 @@ export const twitterServiceConfig: ServiceConfig = {
   defaultExpiration: defaultOauthExpiration,
   postModule: {
     TEXT_MAX_LENGTH,
+    TEXT_MAX_LENGTH_PREMIUM,
     TITLE_MAX_LENGTH,
     VIDEO_MAX_DURATION,
+    VIDEO_MAX_DURATION_PREMIUM,
     VIDEO_MAX_FILESIZE,
+    VIDEO_MAX_FILESIZE_PREMIUM,
     VIDEO_MIN_DURATION,
     createPost,
+    getLimitsForSubscription,
   },
 };
