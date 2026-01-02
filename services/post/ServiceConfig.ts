@@ -88,6 +88,7 @@ interface ServiceConfig {
       subscriptionType?: "None" | "Basic" | "Premium" | "PremiumPlus",
     ) => {
       textMaxLength: number;
+      titleMaxLength: number;
       videoMaxDuration: number;
       videoMaxFilesize: number;
     };
