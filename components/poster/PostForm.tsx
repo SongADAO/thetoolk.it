@@ -18,7 +18,7 @@ import { ModalOverlay } from "@/components/general/ModalOverlay";
 import { Spinner } from "@/components/general/Spinner";
 import { ServiceAuthorizeButton } from "@/components/service/ServiceAuthorizeButton";
 import { CreatePostContext } from "@/contexts/CreatePostContext";
-import { formatFileDuration, formatFileSize } from "@/lib/video/video";
+import { formatDuration, formatFileSize } from "@/lib/video/video";
 import { POST_CONTEXTS } from "@/services/post/contexts";
 
 interface FormState {
@@ -236,8 +236,25 @@ function PostForm() {
       state.text.length > postPlatforms[id].TEXT_MAX_LENGTH,
   ).map(({ id }) => id);
 
+  // Services that exceed video duration limit (warning only, doesn't block posting)
+  const servicesWithExceededDuration = POST_CONTEXTS.filter(
+    ({ id }) =>
+      postPlatforms[id].isEnabled &&
+      videoDuration > 0 &&
+      videoDuration > postPlatforms[id].VIDEO_MAX_DURATION,
+  ).map(({ id }) => id);
+
+  // Services where video doesn't meet minimum duration (error, blocks posting)
+  const servicesWithInvalidMinDuration = POST_CONTEXTS.filter(
+    ({ id }) =>
+      postPlatforms[id].isEnabled &&
+      videoDuration > 0 &&
+      videoDuration < postPlatforms[id].VIDEO_MIN_DURATION,
+  ).map(({ id }) => id);
+
   const hasValidTitleLength = servicesWithInvalidTitleLength.length === 0;
   const hasValidTextLength = servicesWithInvalidTextLength.length === 0;
+  const hasValidVideoDuration = servicesWithInvalidMinDuration.length === 0;
 
   const canPost =
     // !hasIncompleteFacebookPrivacy &&
@@ -251,6 +268,7 @@ function PostForm() {
     (!needsText || state.text !== "") &&
     hasValidTitleLength &&
     hasValidTextLength &&
+    hasValidVideoDuration &&
     selectedFile !== null;
 
   const isFormDisabled =
@@ -400,11 +418,68 @@ function PostForm() {
           </div>
           <div className="flex items-center justify-between gap-2 text-sm">
             <div>Size: {formatFileSize(videoFileSize)}</div>
-            <div>Duration: {formatFileDuration(videoDuration)}</div>
+            <div>Duration: {formatDuration(videoDuration)}</div>
           </div>
           {/* <div className="flex items-center justify-between gap-2 text-sm">
             <div>Codec: {videoCodecInfo}</div>
           </div> */}
+        </div>
+      ) : null}
+
+      {servicesWithExceededDuration.length > 0 ? (
+        <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-yellow-200 p-2 pl-3 text-sm">
+          <div>
+            <FaCircleExclamation className="size-5 text-yellow-700" />
+          </div>
+          <div>
+            <p className="mb-2">
+              <strong>Video will be trimmed</strong>
+            </p>
+            <p className="mb-2">
+              <strong>Video duration:</strong> {formatDuration(videoDuration)}
+            </p>
+            <p className="mb-2">
+              Your video exceeds the maximum duration for the following
+              platforms. For these platforms, the video will be trimmed to fit
+              the maximum allowed duration.
+            </p>
+            <ul className="list-disc pl-5">
+              {servicesWithExceededDuration.map((serviceId) => (
+                <li key={serviceId}>
+                  <strong className="capitalize">{serviceId}</strong>:{" "}
+                  {formatDuration(postPlatforms[serviceId].VIDEO_MAX_DURATION)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null}
+
+      {servicesWithInvalidMinDuration.length > 0 ? (
+        <div className="mb-4 flex items-start gap-3 rounded-xs border border-gray-400 border-r-black border-b-black bg-red-200 p-2 pl-3 text-sm">
+          <div>
+            <FaCircleExclamation className="size-5 text-red-600" />
+          </div>
+          <div>
+            <p className="mb-2">
+              <strong>Video is too short</strong>
+            </p>
+            <p className="mb-2">
+              <strong>Video duration:</strong> {formatDuration(videoDuration)}
+            </p>
+            <p className="mb-2">
+              Your video does not meet the minimum duration for the following
+              platforms:
+            </p>
+            <ul className="list-disc pl-5">
+              {servicesWithInvalidMinDuration.map((serviceId) => (
+                <li key={serviceId}>
+                  <strong className="capitalize">{serviceId}</strong>:{" "}
+                  {formatDuration(postPlatforms[serviceId].VIDEO_MIN_DURATION)}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       ) : null}
 

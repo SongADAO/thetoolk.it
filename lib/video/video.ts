@@ -8,16 +8,20 @@ function formatFileSize(sizeInBytes: number) {
   return `${kb.toFixed(2)} KB`;
 }
 
-function formatFileDuration(duration: number) {
+function formatDuration(duration: number) {
   const hours = Math.floor(duration / 3600);
   const minutes = Math.floor((duration % 3600) / 60);
   const seconds = Math.floor(duration % 60);
 
-  const padded = (num: number) => num.toString().padStart(2, "0");
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  }
 
-  return hours > 0
-    ? `${padded(hours)}:${padded(minutes)}:${padded(seconds)}`
-    : `${padded(minutes)}:${padded(seconds)}`;
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+
+  return `${seconds}s`;
 }
 
 async function getVideoDuration(video: File): Promise<number> {
@@ -46,7 +50,7 @@ async function getVideoDuration(video: File): Promise<number> {
     // On timeout, resolve with a really large duration so it will just trim regardless.
     timeoutId = setTimeout(() => {
       cleanup();
-      resolve(43200);
+      resolve(43201);
     }, 10000);
 
     videoElement.onloadedmetadata = () => {
@@ -105,7 +109,7 @@ function calculateTargetBitrate(
 export {
   calculateTargetBitrate,
   downloadFile,
-  formatFileDuration,
+  formatDuration,
   formatFileSize,
   getFileExtension,
   getVideoDuration,
