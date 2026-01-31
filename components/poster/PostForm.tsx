@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Form } from "radix-ui";
 import {
   type ChangeEvent,
-  type FormEvent,
+  type SubmitEvent,
   use,
   useEffect,
   useRef,
@@ -281,7 +281,7 @@ function PostForm() {
   // Submit
   // ---------------------------------------------------------------------------
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     try {
       event.preventDefault();
       setIsPending(true);

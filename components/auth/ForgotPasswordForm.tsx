@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { type FormEvent, useState } from "react";
+import { type SubmitEvent, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { createClient } from "@/lib/supabase/client";
@@ -15,7 +15,7 @@ function ForgotPasswordForm() {
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>): Promise<void> {
     try {
       e.preventDefault();
 

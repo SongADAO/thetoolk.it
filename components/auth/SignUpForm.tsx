@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Form } from "radix-ui";
-import { type FormEvent, use, useState } from "react";
+import { type SubmitEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -17,7 +17,7 @@ function SignUpForm() {
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>): Promise<void> {
     try {
       e.preventDefault();
 
