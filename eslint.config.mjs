@@ -15,8 +15,8 @@ import tseslint from "typescript-eslint";
 // import pluginVue from "eslint-plugin-vue";
 // import vueParser from "vue-eslint-parser";
 import unusedImports from "eslint-plugin-unused-imports";
-import nextVitals from 'eslint-config-next/core-web-vitals'
-import nextTs from 'eslint-config-next/typescript'
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
@@ -61,28 +61,32 @@ export default tseslint.config(
 
   {
     ignores: [
+      "_disabled/**",
       ".git/**",
       ".next/**",
       ".vscode/**",
-      "node_modules/**",
-      "vendor/**",
-      "storage/**",
-      "public/**",
-      "_disabled/**",
-      "dist/**",
+      "build/**",
       "dist-ssr/**",
+      "dist/**",
+      "node_modules/**",
+      "out/**",
+      "public/**",
+      "public/fonts/**",
+      "storage/**",
+      "vendor/**",
       "package-lock.json",
       "eslint.config.mjs",
+      "next-env.d.ts",
+      "next.config.ts",
       "postcss.config.mjs",
+      "PROGRESS.md",
+      "pwa-assets.config.js",
+      "stylelint.config.mjs",
+      "vite-env.d.ts",
+      "vite.*.config.js",
+      "vite.*.config.ts",
       "vite.config.js",
       "vite.config.ts",
-      "vite.network.config.js",
-      "vite.dashboard.config.js",
-      "pwa-assets.config.js",
-      // "next.config.ts",
-      "vite-env.d.ts",
-      "next-env.d.ts",
-      "public/fonts/**",
       "types/supabase.ts",
       "scripts/generate-keys.mjs",
       // "**/hls-converter.ts",
@@ -113,14 +117,15 @@ export default tseslint.config(
       },
     },
     rules: {
-      "func-style": ["error", "declaration", { allowArrowFunctions: true }],
-      "multiline-comment-style": ["error", "separate-lines"],
-      "one-var": ["error", "never"],
       camelcase: ["error", { properties: "never" }],
+      "func-style": ["error", "declaration", { allowArrowFunctions: true }],
       "id-length": [
         "error",
         { exceptions: ["$", "a", "b", "e", "i", "j", "k", "o", "x", "y", "_"] },
       ],
+      "multiline-comment-style": ["error", "separate-lines"],
+      "no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
+      "one-var": ["error", "never"],
 
       // Unwanted
       "capitalized-comments": "off",
@@ -223,7 +228,7 @@ export default tseslint.config(
       "import/no-amd": "error",
       "import/no-commonjs": "error",
       "import/no-nodejs-modules": "error",
-      "import/unambiguous": "error",
+      "import/unambiguous": "off",
 
       // Imports Style Guide
       "import/no-namespace": [
@@ -299,8 +304,11 @@ export default tseslint.config(
       // "no-restricted-modules": "error",
       // "no-sync": "error",
 
-      // Typescript
+      // Typescript Unwanted
       // ---------------------------------------------------------------------
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/no-confusing-void-expression": "off",
+      "@typescript-eslint/no-magic-numbers": "off",
       "@typescript-eslint/no-misused-promises": [
         "error",
         {
@@ -315,22 +323,6 @@ export default tseslint.config(
           },
         },
       ],
-      "@typescript-eslint/no-unnecessary-type-conversion": "off",
-      "@typescript-eslint/consistent-type-imports": "off",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/naming-convention": "off",
-      "@typescript-eslint/no-confusing-void-expression": "off",
-      "@typescript-eslint/no-empty-function": "off",
-      "@typescript-eslint/no-magic-numbers": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
-      "@typescript-eslint/prefer-readonly-parameter-types": "off",
-      "@typescript-eslint/return-await": "off",
-      "@typescript-eslint/strict-boolean-expressions": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -343,10 +335,25 @@ export default tseslint.config(
           ignoreRestSiblings: true,
         },
       ],
-      "@typescript-eslint/no-base-to-string": "off",
       "@typescript-eslint/prefer-destructuring": "off",
+      "@typescript-eslint/prefer-readonly-parameter-types": "off",
+      "@typescript-eslint/strict-boolean-expressions": "off",
 
-      // "@typescript-eslint/no-unnecessary-condition": "off",
+      // Typescript Desired (but not that big a deal to turn them off)
+      // ---------------------------------------------------------------------
+      "@typescript-eslint/no-unnecessary-type-conversion": "off",
+      "@typescript-eslint/consistent-type-imports": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/return-await": "off",
+      "@typescript-eslint/no-base-to-string": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
 
       // React
       // ---------------------------------------------------------------------
@@ -428,6 +435,7 @@ export default tseslint.config(
 
       // Vue
       // ---------------------------------------------------------------------
+      // "no-useless-assignment": "off", // Doesn't work right in Vue components
       // "vue/multi-word-component-names": "off",
       // "vue/no-v-html": "off",
 
@@ -457,6 +465,8 @@ export default tseslint.config(
       // "no-inline-comments": "off",
       "@typescript-eslint/max-params": "off",
       // "@typescript-eslint/no-unnecessary-condition": "off",
+      "@typescript-eslint/strict-void-return": "off",
+      // "@typescript-eslint/no-deprecated": "off",
     },
   },
 );

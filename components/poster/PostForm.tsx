@@ -6,7 +6,8 @@ import Link from "next/link";
 import { Form } from "radix-ui";
 import {
   type ChangeEvent,
-  type FormEvent,
+  type InputEvent,
+  type SubmitEvent,
   use,
   useEffect,
   useRef,
@@ -281,7 +282,7 @@ function PostForm() {
   // Submit
   // ---------------------------------------------------------------------------
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     try {
       event.preventDefault();
       setIsPending(true);
@@ -598,9 +599,10 @@ function PostForm() {
                 value={state.facebookPrivacy}
               >
                 <select
-                  onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                  onInput={(e: InputEvent<HTMLSelectElement>) =>
                     setState((prev) => ({
                       ...prev,
+                      // @ts-expect-error InputEvent target value
                       facebookPrivacy: e.target.value,
                     }))
                   }
@@ -652,9 +654,10 @@ function PostForm() {
                 value={state.youtubePrivacy}
               >
                 <select
-                  onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                  onInput={(e: InputEvent<HTMLSelectElement>) =>
                     setState((prev) => ({
                       ...prev,
+                      // @ts-expect-error InputEvent target value
                       youtubePrivacy: e.target.value,
                     }))
                   }
@@ -712,9 +715,10 @@ function PostForm() {
                 value={state.tiktokPrivacy}
               >
                 <select
-                  onInput={(e: ChangeEvent<HTMLSelectElement>) =>
+                  onInput={(e: InputEvent<HTMLSelectElement>) =>
                     setState((prev) => ({
                       ...prev,
+                      // @ts-expect-error InputEvent target value
                       tiktokPrivacy: e.target.value,
                     }))
                   }

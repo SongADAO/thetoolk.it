@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { type FormEvent, use, useState } from "react";
+import { type SubmitEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -21,7 +21,7 @@ function TOTPVerification({
   const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     try {

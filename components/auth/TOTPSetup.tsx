@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "radix-ui";
-import { type FormEvent, use, useState } from "react";
+import { type SubmitEvent, use, useState } from "react";
 
 import { Button } from "@/components/general/Button";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -68,7 +68,7 @@ function TOTPSetup() {
     }
   }
 
-  async function handleVerify(e: FormEvent<HTMLFormElement>) {
+  async function handleVerify(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!enrollmentState) {
