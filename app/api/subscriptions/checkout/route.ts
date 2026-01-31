@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     const baseUrl = getBaseUrlFromRequest(request);
 
     const session = await stripe.checkout.sessions.create({
+      allow_promotion_codes: true,
       cancel_url: `${baseUrl}/subscribe/cancel`,
       client_reference_id: serverAuth.user.id,
       line_items: [{ price: getPriceId(type), quantity: 1 }],
