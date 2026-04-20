@@ -353,6 +353,7 @@ function PostForm() {
 
   useEffect(() => {
     if (state.tiktokPrivacy === "SELF_ONLY") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState((prev) => ({
         ...prev,
         tiktokDiscloseBrandOther: false,
@@ -363,6 +364,7 @@ function PostForm() {
 
   useEffect(() => {
     if (!state.tiktokDisclose) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState((prev) => ({
         ...prev,
         tiktokDiscloseBrandOther: false,
@@ -373,6 +375,7 @@ function PostForm() {
   }, [state.tiktokDisclose]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState((prev) => ({
       ...prev,
       tiktokComment: false,
