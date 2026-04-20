@@ -41,9 +41,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data: { id: mediaId } });
   } catch (err: unknown) {
     const errMessage = err instanceof Error ? err.message : "Upload failed";
-    return NextResponse.json(
-      { error: { message: errMessage } },
-      { status: 500 },
-    );
+    return NextResponse.json({ detail: errMessage }, { status: 500 });
   }
 }
