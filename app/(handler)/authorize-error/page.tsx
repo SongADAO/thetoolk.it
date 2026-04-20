@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AuthorizeError } from "@/components/poster/AuthorizeError";
+import { MODE } from "@/config/constants";
 import { UserStorageProvider } from "@/contexts/UserStorageProvider";
 import { PostProviders } from "@/services/post/PostProviders";
 import { StorageProviders } from "@/services/storage/StorageProviders";
@@ -19,9 +20,9 @@ export const metadata: Metadata = {
 
 export default function AuthorizeErrorPage() {
   return (
-    <UserStorageProvider mode="browser">
-      <StorageProviders mode="browser">
-        <PostProviders mode="browser">
+    <UserStorageProvider mode={MODE}>
+      <StorageProviders mode={MODE}>
+        <PostProviders mode={MODE}>
           <AuthorizeError />
         </PostProviders>
       </StorageProviders>
