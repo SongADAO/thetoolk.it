@@ -1,6 +1,3 @@
-// import { dirname } from "path";
-// import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import globals from "globals";
@@ -18,18 +15,6 @@ import unusedImports from "eslint-plugin-unused-imports";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-
-// const compat = new FlatCompat({
-//   baseDirectory: __dirname,
-// });
-
-const compat = new FlatCompat({
-  // import.meta.dirname is available after Node.js v20.11.0
-  baseDirectory: import.meta.dirname,
-});
-
 export default tseslint.config(
   // eslint.configs.recommended,
   eslint.configs.all,
@@ -41,12 +26,12 @@ export default tseslint.config(
 
   // ...pluginVue.configs["flat/recommended"],
 
-  // reactPlugin.configs.flat.recommended
+  // reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat.all,
 
   reactRefresh.configs.recommended,
 
-  // reactHooks.configs["recommended-latest"],
+  // reactHooks.configs.flat["recommended-latest"],
 
   nextVitals,
   nextTs,
@@ -74,10 +59,11 @@ export default tseslint.config(
       "public/fonts/**",
       "storage/**",
       "vendor/**",
-      "package-lock.json",
+      "env.d.ts",
       "eslint.config.mjs",
       "next-env.d.ts",
       "next.config.ts",
+      "package-lock.json",
       "postcss.config.mjs",
       "PROGRESS.md",
       "pwa-assets.config.js",
@@ -86,6 +72,7 @@ export default tseslint.config(
       "vite.*.config.js",
       "vite.*.config.ts",
       "vite.config.js",
+      "vite.config.mts",
       "vite.config.ts",
       "types/supabase.ts",
       "scripts/generate-keys.mjs",
@@ -96,8 +83,8 @@ export default tseslint.config(
   {
     plugins: {
       "simple-import-sort": simpleImportSort,
-      prettier: prettier,
       "unused-imports": unusedImports,
+      prettier: prettier,
     },
     linterOptions: {
       reportUnusedDisableDirectives: "off",
@@ -341,6 +328,7 @@ export default tseslint.config(
 
       // Typescript Desired (but not that big a deal to turn them off)
       // ---------------------------------------------------------------------
+      "@typescript-eslint/no-useless-default-assignment": "off",
       "@typescript-eslint/no-unnecessary-type-conversion": "off",
       "@typescript-eslint/consistent-type-imports": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
