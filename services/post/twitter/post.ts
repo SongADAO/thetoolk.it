@@ -138,7 +138,8 @@ async function initializeUploadVideo({
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error);
+    console.error("Initialize upload error response:", errorData);
+    throw new Error(errorData.detail ?? "Unknown initialization error");
   }
 
   const initData = await response.json();
@@ -203,7 +204,8 @@ async function appendUploadVideo({
 
   if (!appendResponse.ok) {
     const errorData = await appendResponse.json();
-    throw new Error(errorData.error);
+    console.error("Append upload error response:", errorData);
+    throw new Error(errorData.detail ?? "Unknown append error");
   }
 
   return appendResponse;
@@ -264,7 +266,8 @@ async function finalizeUploadVideo({
 
   if (!finalizeResponse.ok) {
     const errorData = await finalizeResponse.json();
-    throw new Error(errorData.error);
+    console.error("Finalize upload error response:", errorData);
+    throw new Error(errorData.detail ?? "Unknown finalize error");
   }
 
   const finalizeData = await finalizeResponse.json();
@@ -333,7 +336,8 @@ async function statusUploadVideo({
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error);
+    console.error("Status upload error response:", errorData);
+    throw new Error(errorData.detail ?? "Unknown status error");
   }
 
   const statusData = await response.json();
@@ -429,7 +433,8 @@ async function uploadVideo({
 
       if (statusData.data?.processing_info?.state === "failed") {
         const errorMessage =
-          statusData.data.processing_info.error?.message ?? "Unknown error";
+          statusData.data.processing_info.error?.message ??
+          "Unknown processing error";
         throw new Error(`Video processing failed: ${errorMessage}`);
       }
 
@@ -508,7 +513,10 @@ async function publishPost({
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(`Post creation failed: ${errorData.error}`);
+    console.error("Publish post error response:", errorData);
+    throw new Error(
+      `Post creation failed: ${errorData.detail ?? "Unknown post creation error"}`,
+    );
   }
 
   const result = await response.json();
