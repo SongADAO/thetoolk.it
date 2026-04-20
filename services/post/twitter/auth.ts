@@ -386,7 +386,8 @@ async function getUserInfo(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(`Failed to get user info: ${error.error}`);
+    console.error("Failed to fetch Twitter user info:", error);
+    throw new Error(`Failed to get user info: ${error.detail}`);
   }
 
   const userInfo = await response.json();
