@@ -1,7 +1,7 @@
 import { Agent } from "@atproto/api";
-import {
+import type {
   BrowserOAuthClient,
-  type OAuthSession,
+  OAuthSession,
 } from "@atproto/oauth-client-browser";
 
 import type { OauthCredentials } from "@/services/post/types";
@@ -38,6 +38,11 @@ async function getOAuthClient(
 ): Promise<BrowserOAuthClient> {
   if (!oauthClient) {
     const clientMetadata = getClientMetadata(requestUrl);
+    /* eslint-disable no-inline-comments */
+    const { BrowserOAuthClient } = await import(
+      /* webpackChunkName: "atproto-browser-oauth" */ "@atproto/oauth-client-browser"
+    );
+    /* eslint-enable no-inline-comments */
 
     // eslint-disable-next-line require-atomic-updates
     oauthClient = await BrowserOAuthClient.load({
