@@ -2,11 +2,11 @@
 
 import { Agent } from "@atproto/api";
 import { JoseKey } from "@atproto/jwk-jose";
-import {
+import type {
   NodeOAuthClient,
-  type NodeSavedSessionStore,
-  type NodeSavedStateStore,
-  type OAuthSession,
+  NodeSavedSessionStore,
+  NodeSavedStateStore,
+  OAuthSession,
 } from "@atproto/oauth-client-node";
 
 const SCOPES: string[] = ["atproto", "transition:generic"];
@@ -59,6 +59,13 @@ async function getOAuthClient(
   requestUrl: string,
 ): Promise<NodeOAuthClient> {
   if (!oauthClient) {
+    // The Node OAuth package loads undici (and its WASM parser) on import.
+    // Keep it out of unrelated Worker routes such as client metadata and JWKS.
+    /* eslint-disable no-inline-comments */
+    const { NodeOAuthClient } = await import(
+      /* webpackChunkName: "atproto-node-oauth" */ "@atproto/oauth-client-node"
+    );
+    /* eslint-enable no-inline-comments */
     const clientMetadata = getClientMetadata(requestUrl);
 
     // eslint-disable-next-line require-atomic-updates
